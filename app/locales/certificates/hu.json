@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "A szervezeted által megbízhatónak tartott hitelesítő tanúsította, annak bizonyítéka nélkül, hogy nem vonták vissza",
   "certificates.trust.untrusted": "Nem a szervezeted által megbízhatónak tartott hitelesítő tanúsította",
   "certificates.trust.revoked": "A tanúsítványát visszavonták, mielőtt ezt lepecsételték",
-  "certificates.qualified": "Az uniós jog szerinti minősített pecsét"
+  "certificates.qualified": "Az uniós jog szerinti minősített pecsét",
+  "certificates.from": "Ebből készült",
+  "certificates.fromIntact": "Egy gyűjtemény {n}. verziója, lepecsételve és azóta változatlan",
+  "certificates.fromBroken": "Egy gyűjtemény {n}. verziója, módosult, vagy nem a megnevezett kulccsal pecsételték",
+  "certificates.fromMissing": "Egy gyűjtemény {n}. verziója, amelynek tanúsítványát nem adták meg",
+  "certificates.fromLive": "Egy gyűjtemény akkori sorai, amelyeket egyik verzió sem őriz"
 }

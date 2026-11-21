@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "組織が信頼する認証局が証明（失効していない証拠はありません）",
   "certificates.trust.untrusted": "組織が信頼する認証局の証明はありません",
   "certificates.trust.revoked": "この封印の前に証明書が失効しています",
-  "certificates.qualified": "EU 法に基づく適格な封印"
+  "certificates.qualified": "EU 法に基づく適格な封印",
+  "certificates.from": "元にしたもの",
+  "certificates.fromIntact": "コレクションのバージョン {n}：封印済みで、それ以降変更なし",
+  "certificates.fromBroken": "コレクションのバージョン {n}：変更されているか、記された鍵で封印されていません",
+  "certificates.fromMissing": "コレクションのバージョン {n}：証明書が渡されていません",
+  "certificates.fromLive": "その時点のコレクションの行：どのバージョンにも残っていません"
 }

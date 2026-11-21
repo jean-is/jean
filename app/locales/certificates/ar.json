@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "وثّقته جهة تثق بها مؤسستك، دون دليل على أنه لم يُلغَ",
   "certificates.trust.untrusted": "لم توثّقه جهة تثق بها مؤسستك",
   "certificates.trust.revoked": "أُلغيت شهادته قبل هذا الختم",
-  "certificates.qualified": "ختم مؤهَّل بموجب قانون الاتحاد الأوروبي"
+  "certificates.qualified": "ختم مؤهَّل بموجب قانون الاتحاد الأوروبي",
+  "certificates.from": "مصنوع من",
+  "certificates.fromIntact": "الإصدار {n} من مجموعة، مختوم ولم يتغيّر منذ ذلك الحين",
+  "certificates.fromBroken": "الإصدار {n} من مجموعة، تغيّر أو لم يُختم بالمفتاح الذي يذكره",
+  "certificates.fromMissing": "الإصدار {n} من مجموعة، لم تُقدَّم شهادته",
+  "certificates.fromLive": "صفوف مجموعة كما كانت آنذاك، لا يحفظها أي إصدار"
 }

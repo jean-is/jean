@@ -30,5 +30,11 @@
   "compose.update": "今すぐ更新",
   "compose.ran": "{date} に更新",
   "compose.failed": "前回の更新に失敗しました。その前の内容を表示しています。",
-  "compose.unasked": "まだ表示できません：指示を実行できる頭脳がありませんでした。"
+  "compose.unasked": "まだ表示できません：指示を実行できる頭脳がありませんでした。",
+  "compose.certified": "認証済み：コレクションのバージョン {n} まで",
+  "compose.certifiedLive": "認証済み：その時点のコレクションの行から",
+  "compose.uncertified": "現在の行です：バージョンがないため証明書はありません",
+  "compose.unproven": "証明書が有効ではありません：変更されているか、記された鍵で封印されていません",
+  "compose.saveProof": "出どころを保存",
+  "compose.proofFile": "{name} の出どころ"
 }

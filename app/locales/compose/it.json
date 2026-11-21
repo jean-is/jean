@@ -30,5 +30,11 @@
   "compose.update": "Aggiorna ora",
   "compose.ran": "Aggiornato il {date}",
   "compose.failed": "L’ultimo aggiornamento non è riuscito; resta mostrato il precedente.",
-  "compose.unasked": "Non ancora mostrato: nessun cervello è riuscito a fare ciò che chiede."
+  "compose.unasked": "Non ancora mostrato: nessun cervello è riuscito a fare ciò che chiede.",
+  "compose.certified": "Certificato, fino alla versione {n} della raccolta",
+  "compose.certifiedLive": "Certificato, dalle righe della raccolta com’erano allora",
+  "compose.uncertified": "Le righe come sono ora: nessuna versione, quindi nessun certificato",
+  "compose.unproven": "I suoi certificati non reggono: modificati, o non sigillati con la chiave che indicano",
+  "compose.saveProof": "Salva la provenienza",
+  "compose.proofFile": "Provenienza di {name}"
 }

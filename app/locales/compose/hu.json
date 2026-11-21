@@ -30,5 +30,11 @@
   "compose.update": "Frissítés most",
   "compose.ran": "Frissítve: {date}",
   "compose.failed": "Az utolsó frissítés nem sikerült; az előző látható továbbra is.",
-  "compose.unasked": "Még nem látható: egyik agy sem tudta elvégezni a kérést."
+  "compose.unasked": "Még nem látható: egyik agy sem tudta elvégezni a kérést.",
+  "compose.certified": "Hitelesítve, a gyűjtemény {n}. verziójáig",
+  "compose.certifiedLive": "Hitelesítve, a gyűjtemény akkori soraiból",
+  "compose.uncertified": "A sorok, ahogy most vannak: nincs verzió, így tanúsítvány sincs",
+  "compose.unproven": "A tanúsítványai nem érvényesek: módosultak, vagy nem a megnevezett kulccsal pecsételték őket",
+  "compose.saveProof": "Eredet mentése",
+  "compose.proofFile": "{name} eredete"
 }

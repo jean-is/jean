@@ -30,5 +30,11 @@
   "compose.update": "حدِّث الآن",
   "compose.ran": "حُدِّث في {date}",
   "compose.failed": "فشل آخر تحديث؛ يبقى السابق معروضًا.",
-  "compose.unasked": "لم يُعرض بعد: لم يستطع أي عقل تنفيذ ما يطلبه."
+  "compose.unasked": "لم يُعرض بعد: لم يستطع أي عقل تنفيذ ما يطلبه.",
+  "compose.certified": "مُصدَّق، حتى الإصدار {n} من المجموعة",
+  "compose.certifiedLive": "مُصدَّق، من صفوف المجموعة كما كانت آنذاك",
+  "compose.uncertified": "الصفوف كما هي الآن: لا إصدار، فلا شهادة",
+  "compose.unproven": "شهاداته لا تصمد: تغيّرت، أو لم تُختم بالمفتاح الذي تذكره",
+  "compose.saveProof": "احفظ مصدره",
+  "compose.proofFile": "مصدر {name}"
 }

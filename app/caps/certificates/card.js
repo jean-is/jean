@@ -5,20 +5,22 @@
 // Content Credentials too (D324): whether they hold, who signed them and when, and whether they
 // say AI made it; what a file says of itself, unsigned, as those Jean makes do (D410); and whether
 // words carry the watermark of the brain on a device (D402). Where the organisation names authorities
-// it trusts, whether one vouches for the seal (D434), and whether it is an EU qualified seal (D437).
+// it trusts, whether one vouches for the seal (D434), and whether it is an EU qualified seal (D437). A creation's provenance, its version's
+// certificate with those of the versions it was made from (D762), checked as a chain, each ingredient said.
 // Drawn with About this answer's card's look (caps/receipt/receipt.css).
 import { html, nothing } from 'lit-html'
 import { t, intlLocales } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
 import { check } from '../receipt/certificate.js'
+import { chainOf } from '../compose/proof.js'
 import { credentialsOf, marksOf, NONE } from '../receipt/c2pa.js'
 import { dataOf } from '../pictures/watermark.js'
 import { said } from '../brain-local/watermark.js'
 
 /**
  * A certificate as checked, kept as the call's `_meta.checked`: when it was sealed as text, the certificate's own
- * file by name (a proof alone has none), and each other file given by name, with whether the certificate names it.
- * @typedef {Omit<Reading, 'at'> & { at: string | Date, file?: string, files: { name: string, named: boolean }[], own?: boolean }} Checked
+ * file by name (a proof alone has none), and each other file given by name, with whether the certificate names it; for a provenance, its chain.
+ * @typedef {Omit<Reading, 'at'> & { at: string | Date, file?: string, files: { name: string, named: boolean }[], own?: boolean, chain?: import('../compose/proof.js').Step[] }} Checked
  */
 
 /**
@@ -41,17 +43,19 @@ const sri = async (bytes) => `sha256-${btoa(Array.from(new Uint8Array(await cryp
  * @param {{ name: string, bytes: Uint8Array }[]} given @param {Parameters<typeof check>[1]} [known] @returns {Promise<Checked | null>}
  */
 export async function checkGiven(given, known) {
-  /** @type {{ certificate?: any, proof?: string, file?: string }} */
+  /** @type {{ certificate?: any, proof?: string, file?: string, chain?: any[] }} */
   const found = {}
   const others = []
   for (const { name, bytes } of given) {
     const text = new TextDecoder().decode(bytes).trim()
     if (/^[\w-]+\.[\w-]+\.[\w-]+~/.test(text)) found.proof = text
     else if (text.startsWith('{') && text.includes('"protected"')) [found.certificate, found.file] = [JSON.parse(text), name]
+    else if (text.startsWith('[') && text.includes('"protected"')) [found.chain, found.file] = [JSON.parse(text), name]
     else others.push({ name, sri: await sri(bytes) })
   }
-  if (!found.certificate && !found.proof) return null
+  if (!found.certificate && !found.proof && !found.chain) return null
   try {
+    if (found.chain) return ((checked) => ({ ...checked, at: checked.at.toISOString(), file: found.file, files: [] }))(await chainOf(found.chain, known))
     const checked = await check(found, known)
     const named = new Set([...(checked.words?.files ?? []), ...(checked.words?.made ?? [])])
     return { ...checked, at: checked.at.toISOString(), ...(found.file && { file: found.file }), files: others.map(({ name, sri }) => ({ name, named: named.has(sri) })) }
@@ -151,6 +155,8 @@ export function card(checked) {
       ${checked.proven === undefined ? nothing : html`<div class="receipt-list"><dt>${t(checked.proven ? 'certificates.proven' : 'certificates.unproven')}</dt>
         ${checked.proven ? [['certificates.request', checked.words?.request], ['certificates.answer', checked.words?.answer]].map(([key, words]) => html`<dd><span class="receipt-host">${t(String(key))}</span> <q dir="auto">${words}</q></dd>`) : nothing}</div>`}
       ${checked.files.map(({ name, named }) => html`<div class="receipt-list"><dd>${t(named ? 'certificates.file' : 'certificates.notFile', { name })}</dd></div>`)}
+      ${checked.chain?.length ? html`<div class="receipt-list"><dt>${t('certificates.from')}</dt>${checked.chain.map((step) => html`<dd>${!step.certificate ? t('certificates.fromLive')
+        : t(!step.given ? 'certificates.fromMissing' : step.intact ? 'certificates.fromIntact' : 'certificates.fromBroken', { n: step.read.slice(1) })}</dd>`)}</div>` : nothing}
     </dl>
   </div>`
 }

@@ -9,8 +9,9 @@ import { canonical } from '../tables/table.js'
 /** @import { Table } from '../tables/table.js' */
 /** @import { Row, Line } from '../tables/changes.js' */
 /**
- * A version: its number, when, by whom and why it was made, the journal's head it was taken at, its columns, its rows and its relations' names.
- * @typedef {{ format: 1, n: number, at: string, by: string, why: 'published' | 'schema', head: string, table: Pick<Table, 'name' | 'properties'>, rows: Pick<Row, 'id' | 'cells' | 'created' | 'changed'>[], names?: [string, string][] }} Version
+ * A version: its number, when, by whom and why it was made, the journal's head it was taken at, its columns, its rows and its relations' names;
+ * once certified (./proof.js), its certificate and the salts of its digests.
+ * @typedef {{ format: 1, n: number, at: string, by: string, why: 'published' | 'schema', head: string, table: Pick<Table, 'name' | 'properties'>, rows: Pick<Row, 'id' | 'cells' | 'created' | 'changed'>[], names?: [string, string][], certificate?: import('../receipt/certificate.js').Sealed, salts?: object }} Version
  */
 
 /** Kinds whose values read alike, so that a column turned from one into another breaks no recipe. */

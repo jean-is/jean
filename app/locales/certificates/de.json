@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "Zertifiziert von einer Stelle, der deine Organisation vertraut, ohne Nachweis, dass es nicht widerrufen wurde",
   "certificates.trust.untrusted": "Nicht zertifiziert von einer Stelle, der deine Organisation vertraut",
   "certificates.trust.revoked": "Sein Zertifikat wurde widerrufen, bevor dies versiegelt wurde",
-  "certificates.qualified": "Ein qualifiziertes Siegel nach EU-Recht"
+  "certificates.qualified": "Ein qualifiziertes Siegel nach EU-Recht",
+  "certificates.from": "Erstellt aus",
+  "certificates.fromIntact": "Version {n} einer Sammlung, versiegelt und seitdem unverändert",
+  "certificates.fromBroken": "Version {n} einer Sammlung, geändert oder nicht mit dem genannten Schlüssel versiegelt",
+  "certificates.fromMissing": "Version {n} einer Sammlung, deren Zertifikat nicht mitgegeben wurde",
+  "certificates.fromLive": "Die Zeilen einer Sammlung, wie sie damals waren, die keine Version festhält"
 }

@@ -30,5 +30,11 @@
   "compose.update": "Aktualizuj teraz",
   "compose.ran": "Zaktualizowano {date}",
   "compose.failed": "Ostatnia aktualizacja się nie powiodła; nadal widać poprzednią.",
-  "compose.unasked": "Jeszcze nie pokazano: żaden mózg nie zdołał wykonać polecenia."
+  "compose.unasked": "Jeszcze nie pokazano: żaden mózg nie zdołał wykonać polecenia.",
+  "compose.certified": "Poświadczone, aż do wersji {n} kolekcji",
+  "compose.certifiedLive": "Poświadczone, z wierszy kolekcji takich, jakie były wtedy",
+  "compose.uncertified": "Wiersze takie, jakie są teraz: brak wersji, więc brak certyfikatu",
+  "compose.unproven": "Jego certyfikaty nie są ważne: zmienione albo niezapieczętowane kluczem, który wskazują",
+  "compose.saveProof": "Zapisz pochodzenie",
+  "compose.proofFile": "Pochodzenie: {name}"
 }

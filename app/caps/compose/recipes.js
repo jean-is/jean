@@ -9,7 +9,7 @@ import { propertyOf } from '../tables/table.js'
 /** @import { Table } from '../tables/table.js' */
 /** @import { Row } from '../tables/changes.js' */
 /** @import { Ref } from './refs.js' */
-/** A run of a reference's `ask`: its number, when, what it read (the source's version or its journal's head), the brain, and what it wrote or why it failed. @typedef {{ format: 1, key: string, n: number, at: string, read: string, brain: string, output?: string, error?: string }} Run */
+/** A run of a reference's `ask`: its number, when, what it read (the source's version or its journal's head), the brain, and what it wrote or why it failed. @typedef {{ format: 1, key: string, n: number, at: string, read: string, brain: string, output?: string, error?: string, certificate?: import('../receipt/certificate.js').Sealed, salts?: object }} Run */
 
 /** How deep a change carries, consumer after consumer, and how long close changes wait to be run as one. */
 export const DEPTH = 3, GATHER = 2000

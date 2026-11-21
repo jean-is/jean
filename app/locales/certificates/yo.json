@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "Àjọ ìjẹ́rìí tí àjọ yín gbẹ́kẹ̀lé ló jẹ́rìí sí i, láìsí ẹ̀rí pé a kò fagi lé e",
   "certificates.trust.untrusted": "Kì í ṣe àjọ ìjẹ́rìí tí àjọ yín gbẹ́kẹ̀lé ló jẹ́rìí sí i",
   "certificates.trust.revoked": "A ti fagi lé ìwé ẹ̀rí rẹ̀ kí a tó fi èdìdì yìí dì í",
-  "certificates.qualified": "Èdìdì tó péye lábẹ́ òfin Ìṣọ̀kan Yúróòpù"
+  "certificates.qualified": "Èdìdì tó péye lábẹ́ òfin Ìṣọ̀kan Yúróòpù",
+  "certificates.from": "A ṣe é láti inú",
+  "certificates.fromIntact": "Ẹ̀dà {n} ti àkójọpọ̀ kan, a ti dí i, kò sì yípadà láti ìgbà náà",
+  "certificates.fromBroken": "Ẹ̀dà {n} ti àkójọpọ̀ kan, a ti yí i padà tàbí a kò fi kọ́kọ́rọ́ tí ó dárúkọ dí i",
+  "certificates.fromMissing": "Ẹ̀dà {n} ti àkójọpọ̀ kan, tí a kò fún ní ìwé ẹ̀rí rẹ̀",
+  "certificates.fromLive": "Àwọn ìlà àkójọpọ̀ kan bí wọ́n ṣe wà nígbà náà, tí ẹ̀dà kankan kò pa mọ́"
 }

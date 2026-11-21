@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "ایسی اتھارٹی سے تصدیق شدہ جس پر آپ کا ادارہ بھروسا کرتا ہے، اس ثبوت کے بغیر کہ اسے منسوخ نہیں کیا گیا",
   "certificates.trust.untrusted": "ایسی اتھارٹی سے تصدیق شدہ نہیں جس پر آپ کا ادارہ بھروسا کرتا ہے",
   "certificates.trust.revoked": "اس مہر سے پہلے اس کا سرٹیفکیٹ منسوخ ہو چکا تھا",
-  "certificates.qualified": "یورپی یونین کے قانون کے تحت مستند مہر"
+  "certificates.qualified": "یورپی یونین کے قانون کے تحت مستند مہر",
+  "certificates.from": "اس سے بنا",
+  "certificates.fromIntact": "ایک مجموعے کا ورژن {n}، مہر بند اور تب سے غیر تبدیل",
+  "certificates.fromBroken": "ایک مجموعے کا ورژن {n}، بدلا گیا یا اُس چابی سے مہر بند نہیں جس کا نام لیتا ہے",
+  "certificates.fromMissing": "ایک مجموعے کا ورژن {n}، جس کی سند نہیں دی گئی",
+  "certificates.fromLive": "ایک مجموعے کی قطاریں جیسی اُس وقت تھیں، جنہیں کوئی ورژن نہیں رکھتا"
 }

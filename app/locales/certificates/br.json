@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "Testeniet gant un aotrouniezh a fiz hoc’h aozadur enni, hep prouenn n’eo ket bet nullet",
   "certificates.trust.untrusted": "N’eo ket testeniet gant un aotrouniezh a fiz hoc’h aozadur enni",
   "certificates.trust.revoked": "Nullet e oa bet e desteni a-raok ma oa bet siellet an dra-mañ",
-  "certificates.qualified": "Ur siell kalifiet hervez gwir an UE"
+  "certificates.qualified": "Ur siell kalifiet hervez gwir an UE",
+  "certificates.from": "Graet diwar",
+  "certificates.fromIntact": "Stumm {n} un dastumad, siellet ha digemm abaoe",
+  "certificates.fromBroken": "Stumm {n} un dastumad, kemmet pe n’eo ket siellet gant an alc’hwez a envel",
+  "certificates.fromMissing": "Stumm {n} un dastumad, n’eo ket bet roet e destenì",
+  "certificates.fromLive": "Linennoù un dastumad evel ma oant d’ar mare-se, ha n’eus stumm ebet o mirout"
 }

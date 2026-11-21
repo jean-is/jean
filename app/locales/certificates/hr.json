@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "Certificirala ga je ustanova kojoj vaša organizacija vjeruje, bez dokaza da nije opozvan",
   "certificates.trust.untrusted": "Nije ga certificirala ustanova kojoj vaša organizacija vjeruje",
   "certificates.trust.revoked": "Njegov je certifikat opozvan prije nego što je ovo zapečaćeno",
-  "certificates.qualified": "Kvalificirani pečat prema pravu EU-a"
+  "certificates.qualified": "Kvalificirani pečat prema pravu EU-a",
+  "certificates.from": "Napravljeno od",
+  "certificates.fromIntact": "Verzija {n} zbirke, zapečaćena i nepromijenjena otada",
+  "certificates.fromBroken": "Verzija {n} zbirke, promijenjena ili nije zapečaćena ključem koji navodi",
+  "certificates.fromMissing": "Verzija {n} zbirke, čija potvrda nije dana",
+  "certificates.fromLive": "Retci zbirke kakvi su tada bili, koje nijedna verzija ne čuva"
 }

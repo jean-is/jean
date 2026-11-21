@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "Sertipikado ng isang awtoridad na pinagkakatiwalaan ng organisasyon mo, pero walang patunay na hindi ito binawi",
   "certificates.trust.untrusted": "Hindi sertipikado ng awtoridad na pinagkakatiwalaan ng organisasyon mo",
   "certificates.trust.revoked": "Binawi ang sertipiko nito bago ang pagselyong ito",
-  "certificates.qualified": "Kwalipikadong selyo ayon sa batas ng EU"
+  "certificates.qualified": "Kwalipikadong selyo ayon sa batas ng EU",
+  "certificates.from": "Ginawa mula sa",
+  "certificates.fromIntact": "Bersyon {n} ng isang koleksiyon, nakaselyo at hindi nagbago mula noon",
+  "certificates.fromBroken": "Bersyon {n} ng isang koleksiyon, binago o hindi sinelyuhan ng susing binabanggit nito",
+  "certificates.fromMissing": "Bersyon {n} ng isang koleksiyon, na hindi ibinigay ang sertipiko",
+  "certificates.fromLive": "Mga hilera ng isang koleksiyon noon, na walang bersyong nag-iingat"
 }

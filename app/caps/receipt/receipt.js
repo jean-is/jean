@@ -266,6 +266,9 @@ export const fingerprint = async () => thumbprint((await sealOf()).keys.publicKe
 /** A certificate saved undated, dated now by the witnesses as the user asked on its card (D276), and what the hooks add, the organisation's validation data for their dates (D434). @param {Sealed} sealed @returns {Promise<Sealed>} */
 export const dated = async (sealed) => (({ by, ...made }) => made)(await fire(contributions().hooks, 'seal', { kind: 'dated', seal: await sealOf() }, () => vouched(sealed, { date: true })))
 
+/** A credential sealed as an answer's certificate is: through the hooks on `seal`, the organisation's authority's (D434), then dated or logged by the witnesses chosen (D276), without whose hook it was (D299). @param {object} credential @returns {Promise<Sealed>} */
+export const certify = async (credential) => (({ by, ...made }) => made)(await fire(contributions().hooks, 'seal', { kind: 'certificate', seal: await sealOf() }, async (e) => vouched(await seal(credential, e.seal))))
+
 /**
  * A picture or a film made here with its Content Credentials (D324, D585): signed by the seal, and dated by the first
  * witness when the user chose to have certificates dated, one that fails said and the file left undated; with any
@@ -304,8 +307,7 @@ async function keepCertificate(facts, turn, text, words = false) {
   let made = kept && { sealed: sealedOf(kept.jws), salts: kept.salts, places: kept.places ?? [] }
   if (!made) {
     const { credential, salts, places } = await certificate({ facts, turn, text, conversation: current.id, origin: location.origin, version: await versionOf(), placed })
-    // The file is what the hooks made of it, without whose hook it was (D299).
-    const { by, ...sealed } = await fire(contributions().hooks, 'seal', { kind: 'certificate', seal: await sealOf() }, async (e) => vouched(await seal(credential, e.seal)))
+    const sealed = await certify(credential)
     await append(current.path, { certificate: { id: credential.id, jws: compact(sealed), salts, places } })
     made = { sealed, salts, places }
   }

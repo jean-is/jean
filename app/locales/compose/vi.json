@@ -30,5 +30,11 @@
   "compose.update": "Cập nhật ngay",
   "compose.ran": "Đã cập nhật {date}",
   "compose.failed": "Lần cập nhật gần nhất thất bại; lần trước vẫn được hiển thị.",
-  "compose.unasked": "Chưa hiển thị: không bộ não nào làm được điều nó yêu cầu."
+  "compose.unasked": "Chưa hiển thị: không bộ não nào làm được điều nó yêu cầu.",
+  "compose.certified": "Đã chứng nhận, ngược về phiên bản {n} của bộ sưu tập",
+  "compose.certifiedLive": "Đã chứng nhận, từ các hàng của bộ sưu tập lúc đó",
+  "compose.uncertified": "Các hàng như hiện nay: không có phiên bản nên không có chứng chỉ",
+  "compose.unproven": "Chứng chỉ không hợp lệ: đã bị thay đổi, hoặc không được niêm phong bằng khóa được nêu",
+  "compose.saveProof": "Lưu nguồn gốc",
+  "compose.proofFile": "Nguồn gốc của {name}"
 }

@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "Certificat de o autoritate în care organizația dvs. are încredere, fără dovadă că nu a fost revocat",
   "certificates.trust.untrusted": "Necertificat de o autoritate în care organizația dvs. are încredere",
   "certificates.trust.revoked": "Certificatul său a fost revocat înainte ca acesta să fie sigilat",
-  "certificates.qualified": "Un sigiliu calificat conform dreptului UE"
+  "certificates.qualified": "Un sigiliu calificat conform dreptului UE",
+  "certificates.from": "Făcut din",
+  "certificates.fromIntact": "Versiunea {n} a unei colecții, sigilată și neschimbată de atunci",
+  "certificates.fromBroken": "Versiunea {n} a unei colecții, modificată sau nesigilată cu cheia pe care o numește",
+  "certificates.fromMissing": "Versiunea {n} a unei colecții, al cărei certificat nu a fost dat",
+  "certificates.fromLive": "Rândurile unei colecții așa cum erau atunci, pe care nicio versiune nu le păstrează"
 }

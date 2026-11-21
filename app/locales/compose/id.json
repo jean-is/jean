@@ -30,5 +30,11 @@
   "compose.update": "Perbarui sekarang",
   "compose.ran": "Diperbarui {date}",
   "compose.failed": "Pembaruan terakhir gagal; yang sebelumnya tetap ditampilkan.",
-  "compose.unasked": "Belum ditampilkan: tidak ada otak yang bisa menjalankan permintaannya."
+  "compose.unasked": "Belum ditampilkan: tidak ada otak yang bisa menjalankan permintaannya.",
+  "compose.certified": "Bersertifikat, sampai versi {n} koleksi",
+  "compose.certifiedLive": "Bersertifikat, dari baris koleksi seperti saat itu",
+  "compose.uncertified": "Baris seperti sekarang: tidak ada versi, jadi tidak ada sertifikat",
+  "compose.unproven": "Sertifikatnya tidak berlaku: diubah, atau tidak disegel dengan kunci yang disebutkan",
+  "compose.saveProof": "Simpan asal-usulnya",
+  "compose.proofFile": "Asal-usul {name}"
 }

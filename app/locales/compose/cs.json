@@ -30,5 +30,11 @@
   "compose.update": "Aktualizovat teď",
   "compose.ran": "Aktualizováno {date}",
   "compose.failed": "Poslední aktualizace selhala; zůstává zobrazená předchozí.",
-  "compose.unasked": "Zatím nezobrazeno: žádný mozek nedokázal udělat, co se žádá."
+  "compose.unasked": "Zatím nezobrazeno: žádný mozek nedokázal udělat, co se žádá.",
+  "compose.certified": "Ověřeno, až po verzi {n} sbírky",
+  "compose.certifiedLive": "Ověřeno, z řádků sbírky, jak tehdy byly",
+  "compose.uncertified": "Řádky, jak jsou teď: žádná verze, tedy žádný certifikát",
+  "compose.unproven": "Jeho certifikáty neplatí: změněné, nebo nezapečetěné klíčem, který uvádějí",
+  "compose.saveProof": "Uložit jeho původ",
+  "compose.proofFile": "Původ: {name}"
 }

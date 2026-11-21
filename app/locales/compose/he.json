@@ -30,5 +30,11 @@
   "compose.update": "עדכון עכשיו",
   "compose.ran": "עודכן {date}",
   "compose.failed": "העדכון האחרון נכשל; הקודם ממשיך להיות מוצג.",
-  "compose.unasked": "עדיין לא מוצג: אף מוח לא הצליח לבצע את מה שהתבקש."
+  "compose.unasked": "עדיין לא מוצג: אף מוח לא הצליח לבצע את מה שהתבקש.",
+  "compose.certified": "מאושר, עד גרסה {n} של האוסף",
+  "compose.certifiedLive": "מאושר, משורות האוסף כפי שהיו אז",
+  "compose.uncertified": "השורות כפי שהן עכשיו: אין גרסה, ולכן אין אישור",
+  "compose.unproven": "האישורים שלו לא תקפים: שונו, או לא נחתמו במפתח שהם מזכירים",
+  "compose.saveProof": "שמירת המקור",
+  "compose.proofFile": "המקור של {name}"
 }

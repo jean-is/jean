@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "Varmentanut taho, johon organisaatiosi luottaa, ilman todistetta siitä, ettei sitä ole peruttu",
   "certificates.trust.untrusted": "Ei varmentanut taho, johon organisaatiosi luottaa",
   "certificates.trust.revoked": "Sen varmenne peruttiin ennen kuin tämä sinetöitiin",
-  "certificates.qualified": "EU-oikeuden mukainen hyväksytty sinetti"
+  "certificates.qualified": "EU-oikeuden mukainen hyväksytty sinetti",
+  "certificates.from": "Tehty tästä",
+  "certificates.fromIntact": "Kokoelman versio {n}, sinetöity ja muuttumaton siitä asti",
+  "certificates.fromBroken": "Kokoelman versio {n}, muutettu tai ei sinetöity mainitulla avaimella",
+  "certificates.fromMissing": "Kokoelman versio {n}, jonka varmennetta ei annettu",
+  "certificates.fromLive": "Kokoelman rivit sellaisina kuin ne silloin olivat, joita mikään versio ei säilytä"
 }

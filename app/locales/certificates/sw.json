@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "Imethibitishwa na mamlaka ambayo shirika lako linaiamini, bila uthibitisho kwamba haikufutwa",
   "certificates.trust.untrusted": "Haijathibitishwa na mamlaka ambayo shirika lako linaiamini",
   "certificates.trust.revoked": "Cheti chake kilifutwa kabla ya muhuri huu",
-  "certificates.qualified": "Muhuri ulioidhinishwa chini ya sheria ya Umoja wa Ulaya"
+  "certificates.qualified": "Muhuri ulioidhinishwa chini ya sheria ya Umoja wa Ulaya",
+  "certificates.from": "Imetengenezwa kutoka",
+  "certificates.fromIntact": "Toleo la {n} la mkusanyiko, lililotiwa muhuri na halijabadilika tangu hapo",
+  "certificates.fromBroken": "Toleo la {n} la mkusanyiko, lililobadilishwa au halikutiwa muhuri kwa ufunguo linaoutaja",
+  "certificates.fromMissing": "Toleo la {n} la mkusanyiko, ambalo cheti chake hakikutolewa",
+  "certificates.fromLive": "Safu za mkusanyiko jinsi zilivyokuwa wakati huo, ambazo hakuna toleo linazihifadhi"
 }

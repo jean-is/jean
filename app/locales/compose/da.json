@@ -30,5 +30,11 @@
   "compose.update": "Opdater nu",
   "compose.ran": "Opdateret {date}",
   "compose.failed": "Den seneste opdatering mislykkedes; den forrige vises stadig.",
-  "compose.unasked": "Ikke vist endnu: ingen hjerne kunne udføre det, der bedes om."
+  "compose.unasked": "Ikke vist endnu: ingen hjerne kunne udføre det, der bedes om.",
+  "compose.certified": "Certificeret, tilbage til version {n} af samlingen",
+  "compose.certifiedLive": "Certificeret, ud fra samlingens rækker, som de var dengang",
+  "compose.uncertified": "Rækkerne, som de er nu: ingen version, altså intet certifikat",
+  "compose.unproven": "Dets certifikater holder ikke: ændret, eller ikke forseglet med den nøgle, de nævner",
+  "compose.saveProof": "Gem dets oprindelse",
+  "compose.proofFile": "Oprindelse af {name}"
 }

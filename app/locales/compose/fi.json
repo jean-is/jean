@@ -30,5 +30,11 @@
   "compose.update": "Päivitä nyt",
   "compose.ran": "Päivitetty {date}",
   "compose.failed": "Viimeisin päivitys epäonnistui; edellinen näkyy yhä.",
-  "compose.unasked": "Ei vielä näytetty: mikään aivo ei pystynyt tekemään pyydettyä."
+  "compose.unasked": "Ei vielä näytetty: mikään aivo ei pystynyt tekemään pyydettyä.",
+  "compose.certified": "Varmennettu, kokoelman versioon {n} asti",
+  "compose.certifiedLive": "Varmennettu, kokoelman riveistä sellaisina kuin ne silloin olivat",
+  "compose.uncertified": "Rivit sellaisina kuin ne nyt ovat: ei versiota, joten ei varmennetta",
+  "compose.unproven": "Sen varmenteet eivät pidä: muutettu tai ei sinetöity mainitulla avaimella",
+  "compose.saveProof": "Tallenna alkuperä",
+  "compose.proofFile": "Kohteen {name} alkuperä"
 }

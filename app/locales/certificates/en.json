@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "Certified by an authority your organization trusts, with no proof it wasn’t revoked",
   "certificates.trust.untrusted": "Not certified by an authority your organization trusts",
   "certificates.trust.revoked": "Its certificate was revoked before this was sealed",
-  "certificates.qualified": "A qualified seal under EU law"
+  "certificates.qualified": "A qualified seal under EU law",
+  "certificates.from": "Made from",
+  "certificates.fromIntact": "Version {n} of a collection, sealed and unchanged since",
+  "certificates.fromBroken": "Version {n} of a collection, changed or not sealed by the key it names",
+  "certificates.fromMissing": "Version {n} of a collection, whose certificate wasn’t given",
+  "certificates.fromLive": "A collection’s rows as they were then, which no version holds"
 }

@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "אושר על ידי רשות שהארגון סומך עליה, בלי הוכחה שלא בוטל",
   "certificates.trust.untrusted": "לא אושר על ידי רשות שהארגון סומך עליה",
   "certificates.trust.revoked": "התעודה שלו בוטלה לפני החתימה הזו",
-  "certificates.qualified": "חותמת מוסמכת לפי דיני האיחוד האירופי"
+  "certificates.qualified": "חותמת מוסמכת לפי דיני האיחוד האירופי",
+  "certificates.from": "נוצר מתוך",
+  "certificates.fromIntact": "גרסה {n} של אוסף, חתומה ולא השתנתה מאז",
+  "certificates.fromBroken": "גרסה {n} של אוסף, שונתה או לא נחתמה במפתח שהיא מזכירה",
+  "certificates.fromMissing": "גרסה {n} של אוסף, שהאישור שלה לא צורף",
+  "certificates.fromLive": "שורות של אוסף כפי שהיו אז, שאף גרסה לא שומרת"
 }

@@ -30,5 +30,11 @@
   "compose.update": "Sasisha sasa",
   "compose.ran": "Imesasishwa {date}",
   "compose.failed": "Sasisho la mwisho lilishindwa; lililotangulia linaendelea kuonyeshwa.",
-  "compose.unasked": "Bado haijaonyeshwa: hakuna ubongo ulioweza kufanya inachoomba."
+  "compose.unasked": "Bado haijaonyeshwa: hakuna ubongo ulioweza kufanya inachoomba.",
+  "compose.certified": "Imethibitishwa, hadi toleo la {n} la mkusanyiko",
+  "compose.certifiedLive": "Imethibitishwa, kutoka safu za mkusanyiko kama zilivyokuwa wakati huo",
+  "compose.uncertified": "Safu jinsi zilivyo sasa: hakuna toleo, kwa hiyo hakuna cheti",
+  "compose.unproven": "Vyeti vyake havisimami: vimebadilishwa, au havikutiwa muhuri kwa ufunguo vinaoutaja",
+  "compose.saveProof": "Hifadhi asili yake",
+  "compose.proofFile": "Asili ya {name}"
 }

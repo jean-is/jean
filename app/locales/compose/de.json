@@ -30,5 +30,11 @@
   "compose.update": "Jetzt aktualisieren",
   "compose.ran": "Aktualisiert {date}",
   "compose.failed": "Die letzte Aktualisierung ist fehlgeschlagen; die vorherige bleibt angezeigt.",
-  "compose.unasked": "Noch nicht angezeigt: Kein Gehirn konnte ausführen, worum es bittet."
+  "compose.unasked": "Noch nicht angezeigt: Kein Gehirn konnte ausführen, worum es bittet.",
+  "compose.certified": "Zertifiziert, bis zu Version {n} der Sammlung",
+  "compose.certifiedLive": "Zertifiziert, aus den Zeilen der Sammlung, wie sie damals waren",
+  "compose.uncertified": "Die Zeilen, wie sie jetzt sind: keine Version, also kein Zertifikat",
+  "compose.unproven": "Seine Zertifikate halten nicht: geändert oder nicht mit dem genannten Schlüssel versiegelt",
+  "compose.saveProof": "Herkunft speichern",
+  "compose.proofFile": "Herkunft von {name}"
 }

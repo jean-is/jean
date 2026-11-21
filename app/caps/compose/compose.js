@@ -5,20 +5,24 @@
 // versions (./versions.js) are made when its author publishes one or its columns change, never on a row's change. The pane's head says, for a
 // collection, slides or a document, what it uses and what uses it, which version each reads, and for a collection its versions and what
 // changed since the last. A reference's `ask` is run by a brain (./recipes.js) the first time it shows, then by hand, every so many minutes or
-// as its source changes, as its user chose, each run kept on the consumer's side. Loaded with Tables.
+// as its source changes, as its user chose, each run kept on the consumer's side. Each version and each run is certified (./proof.js), as an
+// answer is, and the consumer's menu checks the chain back to the collection's version. Loaded with Tables.
 import { html, render, nothing } from 'lit-html'
 import { keyed } from 'lit-html/directives/keyed.js'
 import { signal, effect } from '@preact/signals-core'
-import { register, isDenied, contributions } from '../../ui/caps.js'
+import { register, isDenied, contributions, unlock } from '../../ui/caps.js'
 import { app, openFile, notify, activeBrain, brainsHere } from '../../ui/state.js'
 import { markdown } from '../../ui/markdown.js'
 import { fire } from '../../core/hooks.js'
+import { isLocal } from '../../core/settings.js'
 import { icons } from '../../ui/menu-icons.js'
 import { t, useStrings, locale, intlLocales } from '../../core/i18n.js'
 import { PLACE } from '../tables/table.js'
 import { parseRef, refsIn, loops, refused, versionless, tableOf, withRef, filledPage } from './refs.js'
 import { versionOf, loadedOf, reshaped, breaks, current, headOf } from './versions.js'
 import { keyOf, paceOf, askOf, lastRun, due, PROMPT, DEPTH, GATHER } from './recipes.js'
+import { credentialOf, chainOf, holds } from './proof.js'
+import { imprint } from '../receipt/certificate.js'
 
 await useStrings('compose')
 
@@ -53,23 +57,30 @@ const versionsOf = async (dir, folder) => (await Promise.all((await app.fs.list(
 
 /**
  * What a reference shows of a collection loaded, at the version it reads (`read`), its recipe's old names read as the columns are named now; or
- * why it shows nothing. @param {Ref} ref @param {NonNullable<Loaded>} live @param {string} dir @returns {Promise<{ why?: string, rows?: string[][], read?: string, old?: [string, string][] }>}
+ * why it shows nothing. @param {Ref} ref @param {NonNullable<Loaded>} live @param {string} dir @returns {Promise<{ why?: string, rows?: string[][], read?: string, old?: [string, string][], certificate?: import('../receipt/certificate.js').Sealed }>}
  */
 async function resolved(ref, live, dir, most = 12) {
   const versions = await versionsOf(dir, ref.place), version = ref.at === 'published' ? versions.at(-1) : versions.find((one) => one.n === ref.at)
   if (ref.at !== 'live' && !version) return { why: versionless(ref.at) }
   const base = version ? loadedOf(version) : live, { table, recipe, old } = current(base.table, versions, ref.recipe)
-  try { return { rows: tableOf({ ...base, table }, recipe, HOW(), most), read: version ? `v${version.n}` : headOf(live.lines), old } } catch { return { why: 'recipe' } }
+  try { return { rows: tableOf({ ...base, table }, recipe, HOW(), most), read: version ? `v${version.n}` : headOf(live.lines), old, certificate: version?.certificate } } catch { return { why: 'recipe' } }
 }
 
 /** Where a consumer's runs are kept, by its ULID, or its task's for slides in an answer: composed/<ulid>.jsonl, appended, never edited. @param {string} dir @param {string} from */
-const runsAt = (dir, from) => `${dir}/composed/${/[0-9A-HJKMNP-TV-Z]{26}/.exec(from)?.[0] ?? app.current.peek()?.id ?? 'answers'}.jsonl`
+const runsAt = (dir, from) => `${dir}/composed/${ulidOf(from)}.jsonl`, ulidOf = (/** @type {string} */ from) => /[0-9A-HJKMNP-TV-Z]{26}/.exec(from)?.[0] ?? app.current.peek()?.id ?? 'answers'
 /** @param {string} at @returns {Promise<Run[]>} */
 const runsOf = async (at) => ((await app.fs.read(at)) ?? '').split('\n').flatMap((line) => { try { return line ? [JSON.parse(line)] : [] } catch { return [] } })
 /** How many runs were kept, which a block that shows one reads. */
 const ran = signal(0)
 /** @param {Edge} edge @returns {Ref} */
 const refOf = ({ to, at, recipe }) => ({ place: to, at, recipe })
+
+/** A version or a run certified as an answer is, where About this answer is there: its certificate, and the salts its holder keeps. @param {Parameters<typeof credentialOf>[0]} made */
+async function certified(made) {
+  if (!(await unlock('receipt'))) return {}
+  const [{ credential, salts }, { certify }] = await Promise.all([credentialOf(made), import('../receipt/receipt.js')])
+  return { certificate: await certify(credential), salts }
+}
 
 /**
  * A reference's `ask` run over what its query keeps of its source now, at the version it reads, by the brain it names or the one at hand;
@@ -84,6 +95,9 @@ async function run(ref, from, dir) {
   if (same) return same
   const line = /** @type {Run} */ ({ format: 1, key, n: runs.filter((one) => one.key === key).length + 1, at: new Date().toISOString(), read: shown.read, brain: `${brain.provider}:${brain.model}` })
   try { line.output = await asked(brain, askOf(String(ref.recipe.ask), shown.rows), from) } catch (error) { line.error = String(/** @type {Error} */ (error)?.message ?? error) }
+  // What it read: its source at the version it read, by that version's certificate.
+  if (line.output !== undefined) Object.assign(line, await certified({ kind: 'run', creation: ulidOf(from), n: line.n, at: line.at, by: 'jean', content: line.output, recipe: ref.recipe, brain: { provider: brain.provider, model: brain.model, local: isLocal(brain) },
+    ingredients: [{ kind: 'collection', creation: ref.place.slice(12, 38), read: shown.read, ...(shown.certificate && { certificate: await imprint(shown.certificate) }) }] }))
   await app.fs.append(at, `${JSON.stringify(line)}\n`)
   ran.value++
   return line
@@ -142,6 +156,7 @@ export async function publish(folder, why = 'published', dir = app.projectDir) {
   const broken = last ? breaks(last.table, one.table) : []
   if (broken.length) return { broken }
   const version = versionOf(one, { n: (last?.n ?? 0) + 1, at: new Date().toISOString(), by: 'user', why })
+  Object.assign(version, await certified({ kind: 'collection', creation: folder.slice(12, 38), n: version.n, at: version.at, by: version.by, content: JSON.stringify(version) }))
   await app.fs.write(`${dir}/${folder}/versions/${version.n}.json`, `${JSON.stringify(version, null, 1)}\n`)
   await tables.reread(one)
   return { version }
@@ -181,7 +196,7 @@ async function choose(from, index, change) {
 }
 /** When a reference's `ask` runs again, each choice by its `refresh`: by hand, every five minutes, every hour, or as its source changes. */
 const PACES = [['', 'compose.byHand'], ['5 min', 'compose.every5'], ['60 min', 'compose.hourly'], ['auto', 'compose.auto']]
-/** What the pane's head lists for each place, once read; `runs`, each `ask`'s last run. @typedef {{ uses: Edge[], usedIn: Edge[], names: Map<string, string>, versions: Map<string, Version[]>, old: Map<Edge, [string, string][]>, runs: Map<Edge, Run | undefined>, changes: number, broken: string[] }} Links */
+/** What the pane's head lists for each place, once read; `runs`, each `ask`'s last run; `proofs`, the certificates of what each shows, checked. @typedef {{ uses: Edge[], usedIn: Edge[], names: Map<string, string>, versions: Map<string, Version[]>, old: Map<Edge, [string, string][]>, runs: Map<Edge, Run | undefined>, proofs: Map<Edge, { chain: import('../receipt/certificate.js').Sealed[], holds: boolean, n?: number } | null>, changes: number, broken: string[] }} Links */
 const links = signal(/** @type {Map<string, Links>} */ (new Map()))
 /** Each place's links, read as its menu opens. @param {string} uri */
 async function linksOf(uri) {
@@ -189,8 +204,14 @@ async function linksOf(uri) {
   const versions = new Map(await Promise.all([...new Set([uri, ...uses.map((edge) => edge.to)])].map(async (place) => /** @type {[string, Version[]]} */ ([place, await versionsOf(dir, place)]))))
   const own = PLACE.test(uri) ? await tables.load(uri, dir) : null, last = versions.get(uri)?.at(-1), old = new Map()
   for (const edge of uses) { const live = await tables.load(edge.to, dir).catch(() => null); if (live) old.set(edge, current(live.table, versions.get(edge.to) ?? [], edge.recipe).old) }
-  const runs = await runsOf(runsAt(dir, uri)), lastOf = (/** @type {Edge} */ edge) => runs.findLast((one) => one.key === keyOf(refOf(edge)))
-  links.value = new Map(links.peek()).set(uri, { uses, usedIn: edges.filter((edge) => edge.to === uri), names, versions, old, runs: new Map(uses.map((edge) => [edge, lastOf(edge)])), broken: own && last ? breaks(last.table, own.table) : [],
+  const runs = await runsOf(runsAt(dir, uri)), lastOf = (/** @type {Edge} */ edge) => runs.findLast((one) => one.key === keyOf(refOf(edge))), proofs = new Map()
+  // What each shows, certified: its last run's and the version it read, else the version it reads; nothing for the rows as they are.
+  for (const edge of uses) {
+    const run = edge.recipe.ask ? lastRun(runs, keyOf(refOf(edge))) : undefined, all = versions.get(edge.to) ?? [], read = run?.read ?? (edge.at === 'published' ? `v${all.at(-1)?.n}` : typeof edge.at === 'number' ? `v${edge.at}` : '')
+    const version = all.find((one) => `v${one.n}` === read), chain = [run?.certificate, version?.certificate].filter((one) => one !== undefined)
+    proofs.set(edge, chain.length ? { chain, holds: holds(await chainOf(chain)), n: version?.n } : null)
+  }
+  links.value = new Map(links.peek()).set(uri, { uses, usedIn: edges.filter((edge) => edge.to === uri), names, versions, old, proofs, runs: new Map(uses.map((edge) => [edge, lastOf(edge)])), broken: own && last ? breaks(last.table, own.table) : [],
     changes: own ? own.lines.filter((line) => 'at' in line && line.at > (last?.head ?? '')).length : 0 })
 }
 
@@ -207,7 +228,10 @@ function head({ uri }) {
       @change=${(/** @type {Event} */ event) => choose(uri, edge.index, (ref) => ((refresh) => ({ ...ref, recipe: { ...Object.fromEntries(Object.entries(ref.recipe).filter(([what]) => what !== 'refresh')), ...(refresh && { refresh }) } }))(/** @type {HTMLSelectElement} */ (event.target).value)).then(() => linksOf(uri))}>
       ${PACES.map(([refresh, key]) => html`<option value=${refresh} ?selected=${(edge.recipe.refresh ?? '') === refresh}>${t(key)}</option>`)}</select>
       <button type="button" @click=${() => run(refOf(edge), uri, app.projectDir).then(() => linksOf(uri))}>${icons.sync}<span>${t('compose.update')}</span></button>
-      ${last ? html`<p class="menu-heading" role=${last.error ? 'alert' : 'status'}>${last.error ? t('compose.failed') : t('compose.ran', { date: date.format(new Date(last.at)) })}</p>` : nothing}`)(these?.runs.get(edge)) : nothing}</li>`)
+      ${last ? html`<p class="menu-heading" role=${last.error ? 'alert' : 'status'}>${last.error ? t('compose.failed') : t('compose.ran', { date: date.format(new Date(last.at)) })}</p>` : nothing}`)(these?.runs.get(edge)) : nothing}
+    ${((proof) => (proof ? html`<p class="menu-heading" role=${proof.holds ? 'status' : 'alert'}>${proof.holds ? (proof.n ? t('compose.certified', { n: proof.n }) : t('compose.certifiedLive')) : t('compose.unproven')}</p>
+      <button type="button" @click=${async () => (await import('../../ui/save.js')).save(new Blob([JSON.stringify(proof.chain, null, 1)], { type: 'application/json' }), `${t('compose.proofFile', { name: name(uri) })}.json`)}>${icons.download}<span>${t('compose.saveProof')}</span></button>`
+      : html`<p class="menu-heading">${t('compose.uncertified')}</p>`))(these?.proofs.get(edge))}</li>`)
   const versions = PLACE.test(uri) && these ? html`<div role="group" aria-label=${t('compose.versions')}><p class="menu-heading" aria-hidden="true">${t('compose.versions')}</p>
     <p class="menu-heading" role="status">${t('compose.journal', { count: these.changes })}</p>${these.broken.length ? html`<p class="menu-heading" role="alert">${t('compose.breaks', { columns: new Intl.ListFormat(intlLocales(locale.value)).format(these.broken) })}</p>` : nothing}
     <ul><li><button type="button" ?disabled=${these.broken.length > 0} @click=${async () => { const made = await publish(uri); if (made?.version) notify(t('compose.done', { n: made.version.n })); await linksOf(uri) }}>${icons.upload}<span>${t('compose.publish', { n: (these.versions.get(uri)?.at(-1)?.n ?? 0) + 1 })}</span></button></li>
