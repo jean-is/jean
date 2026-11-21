@@ -70,7 +70,7 @@ export function folderKind(kind) {
     const files = new Map()
     for (const file of record.files) { const bytes = await app.fs.readBytes(`${dir}/${path}/${file}`); if (bytes) files.set(file, bytes) }
     // A table that says data-from shows a collection as it is now (caps/compose, D763).
-    const from = [...files].some(([file, bytes]) => file.endsWith('.html') && new TextDecoder().decode(bytes).includes(' data-from=')) && await unlock('compose')
+    const from = [...files].some(([file, bytes]) => file.endsWith('.html') && new TextDecoder().decode(bytes).includes(' data-from=')) && await unlock('tables')
     return { dir, path, record, files: from ? await (await import('../compose/compose.js')).composed(files, dir) : files }
   }
   /** One written: its files, those it had and no longer has taken away, then its record. @param {One} one @param {string[]} [before] */

@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "د داسې مرجع له خوا تصدیق شوی چې ستاسو اداره پرې باور لري، بې له دې ثبوته چې لغوه شوی نه دی",
   "certificates.trust.untrusted": "د داسې مرجع له خوا تصدیق شوی نه دی چې ستاسو اداره پرې باور لري",
   "certificates.trust.revoked": "سند یې مخکې له دې مهر لغوه شوی و",
-  "certificates.qualified": "د اروپايي اتحادیې د قانون له مخې وړ مهر"
+  "certificates.qualified": "د اروپايي اتحادیې د قانون له مخې وړ مهر",
+  "certificates.from": "له دې جوړ شوی",
+  "certificates.fromIntact": "د یوې ټولګې نسخه {n}، مهر شوې او له هغه وخته نه ده بدله شوې",
+  "certificates.fromBroken": "د یوې ټولګې نسخه {n}، بدله شوې یا په هغه کیلي نه ده مهر شوې چې یادوي یې",
+  "certificates.fromMissing": "د یوې ټولګې نسخه {n}، چې سند یې نه دی ورکړل شوی",
+  "certificates.fromLive": "د یوې ټولګې کرښې لکه هغه وخت چې وې، چې هېڅ نسخه یې نه ساتي"
 }

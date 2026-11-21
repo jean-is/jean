@@ -49,8 +49,8 @@ export const CAPABILITY_RUNTIMES = /** @type {Record<string, string[]>} */ ({
   enterprise: ['ee'],
   // Not runtimes either, but on demand as one: a collection's board, gallery, calendar, timeline and list, each in a folder of its own, which Tables fetches as one is
   // first shown, with the card they share, a row's sheet, as one first opens, what fills a page's parts from a collection, as a page first follows one,
-  // and what makes a view of what a brain proposes.
-  tables: ['caps/board', 'caps/gallery', 'caps/calendar', 'caps/timeline', 'caps/list', 'caps/card', 'caps/row', 'caps/formula', 'caps/paste', 'caps/fill', 'caps/views'],
+  // and what makes a view of what a brain proposes; and composition (D763), whose module Tables' loader is, importing Tables itself.
+  tables: ['caps/board', 'caps/gallery', 'caps/calendar', 'caps/timeline', 'caps/list', 'caps/card', 'caps/row', 'caps/formula', 'caps/paste', 'caps/fill', 'caps/views', 'caps/compose', 'locales/compose'],
   // No capability of its own: a page that holds a map fetches it then, as it does the map's tiles (D291).
   maps: ['vendor/maplibre'],
 })

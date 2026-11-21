@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "Confirmatum ab auctoritate cui ordo tuus confidit, sine probatione id non revocatum esse",
   "certificates.trust.untrusted": "Non confirmatum ab auctoritate cui ordo tuus confidit",
   "certificates.trust.revoked": "Testimonium eius revocatum est antequam hoc obsignaretur",
-  "certificates.qualified": "Sigillum qualificatum secundum ius UE"
+  "certificates.qualified": "Sigillum qualificatum secundum ius UE",
+  "certificates.from": "Factum ex",
+  "certificates.fromIntact": "Versio {n} collectionis, obsignata nec ex eo mutata",
+  "certificates.fromBroken": "Versio {n} collectionis, mutata aut non obsignata clave quam nominat",
+  "certificates.fromMissing": "Versio {n} collectionis, cuius testimonium datum non est",
+  "certificates.fromLive": "Ordines collectionis ut tum erant, quos nulla versio servat"
 }

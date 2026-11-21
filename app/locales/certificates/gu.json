@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "તમારી સંસ્થા જેના પર વિશ્વાસ રાખે છે તે સત્તા દ્વારા પ્રમાણિત, પણ તે રદ થયું નથી તેનો કોઈ પુરાવો નથી",
   "certificates.trust.untrusted": "તમારી સંસ્થા જેના પર વિશ્વાસ રાખે છે તે સત્તા દ્વારા પ્રમાણિત નથી",
   "certificates.trust.revoked": "આ સીલ થયું તે પહેલાં તેનું પ્રમાણપત્ર રદ થયું હતું",
-  "certificates.qualified": "EU કાયદા હેઠળની માન્ય સીલ"
+  "certificates.qualified": "EU કાયદા હેઠળની માન્ય સીલ",
+  "certificates.from": "આમાંથી બનાવ્યું",
+  "certificates.fromIntact": "એક સંગ્રહનું વર્ઝન {n}, સીલ કરેલું અને ત્યારથી અપરિવર્તિત",
+  "certificates.fromBroken": "એક સંગ્રહનું વર્ઝન {n}, બદલાયેલું અથવા જે કી જણાવે છે તેનાથી સીલ ન થયેલું",
+  "certificates.fromMissing": "એક સંગ્રહનું વર્ઝન {n}, જેનું પ્રમાણપત્ર આપવામાં આવ્યું નથી",
+  "certificates.fromLive": "એક સંગ્રહની તે સમયની પંક્તિઓ, જે કોઈ વર્ઝનમાં સચવાયેલી નથી"
 }

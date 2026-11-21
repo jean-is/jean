@@ -38,7 +38,7 @@ const tableOf = (token) => (token.lang === 'table' && /^collections\/[0-9A-HJKMN
 const composedOf = (token) => token.lang === 'table' && !tableOf(token) && /^collections\//.test(token.text.trim())
 /** A block as drawn: a table as Tables draws it, which loads Tables if it isn't yet, an element for each place; else as an answer draws it. @param {any} token */
 const shape = (token) => (tableOf(token) ? (unlock('tables'), keyed(tableOf(token), html`<app-table folder=${tableOf(token)}></app-table>`))
-  : composedOf(token) ? (unlock('compose'), keyed(token.text, html`<app-composed source=${token.text}></app-composed>`)) : blocks([token]))
+  : composedOf(token) ? (unlock('tables'), keyed(token.text, html`<app-composed source=${token.text}></app-composed>`)) : blocks([token]))
 
 /** Whether an answer draws a block otherwise than as its text, by the kind of its token. @type {Record<string, (token: any) => boolean>} */
 const DRAWN = {

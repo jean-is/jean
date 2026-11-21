@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "Kuqinisekiswe yisiphathimandla inhlangano yakho esithembayo, ngaphandle kobufakazi bokuthi asihoxiswanga",
   "certificates.trust.untrusted": "Akuqinisekiswanga yisiphathimandla inhlangano yakho esithembayo",
   "certificates.trust.revoked": "Isitifiketi saso sahoxiswa ngaphambi kokuthi lokhu kubekwe uphawu",
-  "certificates.qualified": "Uphawu olufanelekile ngaphansi komthetho we-EU"
+  "certificates.qualified": "Uphawu olufanelekile ngaphansi komthetho we-EU",
+  "certificates.from": "Kwenziwe ngoku-",
+  "certificates.fromIntact": "Inguqulo {n} yeqoqo, ivaliwe futhi ayishintshanga kusukela lapho",
+  "certificates.fromBroken": "Inguqulo {n} yeqoqo, ishintshiwe noma ayivalwanga ngokhiye eyibalayo",
+  "certificates.fromMissing": "Inguqulo {n} yeqoqo, isitifiketi sayo asinikezwanga",
+  "certificates.fromLive": "Imigqa yeqoqo njengoba yayinjalo ngaleso sikhathi, engagcinwa yinguqulo"
 }

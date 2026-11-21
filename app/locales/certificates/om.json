@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "Abbaa taayitaa dhaabbanni kee amanuun mirkanaa'e, garuu akka hin haqamne ragaan hin jiru",
   "certificates.trust.untrusted": "Abbaa taayitaa dhaabbanni kee amanuun hin mirkanoofne",
   "certificates.trust.revoked": "Ragaan isaa utuu kun hin chaappessamin dura haqameera",
-  "certificates.qualified": "Chaappaa seera qabeessa seera EU jalatti"
+  "certificates.qualified": "Chaappaa seera qabeessa seera EU jalatti",
+  "certificates.from": "Irraa hojjetame",
+  "certificates.fromIntact": "Veershinii {n} tuuta tokkoo, chaappaa’ee fi yeroo sanaa as hin jijjiiramne",
+  "certificates.fromBroken": "Veershinii {n} tuuta tokkoo, jijjiirame ykn furtuu inni maqaa dhahuun hin chaappaa’amne",
+  "certificates.fromMissing": "Veershinii {n} tuuta tokkoo, ragaan isaa hin kennamne",
+  "certificates.fromLive": "Sarara tuuta tokkoo akka yeroo sanaa turanitti, kan veershiniin tokko illee hin qabanne"
 }

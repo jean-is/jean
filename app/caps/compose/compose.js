@@ -7,7 +7,8 @@
 // changed since the last. A reference's `ask` is run by a brain (./recipes.js) the first time it shows, then by hand, every so many minutes or
 // as its source changes, as its user chose, each run kept on the consumer's side. Each version and each run is certified (./proof.js), as an
 // answer is, and the consumer's menu checks the chain back to the collection's version. What people outside propose comes in through the
-// collection's port alone (./ports.js), into its journal; what shows of it is each consumer's own criteria. Loaded with Tables.
+// collection's port alone (./ports.js), into its journal; what shows of it is each consumer's own criteria. It is Tables' loader (ui/caps.js),
+// importing Tables itself, so that the two come and go together, off the first screen.
 import { html, render, nothing } from 'lit-html'
 import { keyed } from 'lit-html/directives/keyed.js'
 import { signal, effect } from '@preact/signals-core'
@@ -18,7 +19,9 @@ import { fire } from '../../core/hooks.js'
 import { isLocal } from '../../core/settings.js'
 import { icons } from '../../ui/menu-icons.js'
 import { t, useStrings, locale, intlLocales } from '../../core/i18n.js'
+import { styleSheet } from '../../ui/sheet.js'
 import { PLACE } from '../tables/table.js'
+import '../tables/tables.js'
 import { parseRef, refsIn, loops, refused, versionless, tableOf, withRef, filledPage } from './refs.js'
 import { versionOf, loadedOf, reshaped, breaks, current, headOf } from './versions.js'
 import { keyOf, paceOf, askOf, lastRun, due, PROMPT, DEPTH, GATHER } from './recipes.js'
@@ -26,7 +29,7 @@ import { credentialOf, chainOf, holds } from './proof.js'
 import { admitted, portOf as portFor } from './ports.js'
 import { imprint } from '../receipt/certificate.js'
 
-await useStrings('compose')
+await Promise.all([useStrings('compose'), styleSheet(new URL('compose.css', import.meta.url))])
 
 /** @import { Edge, Ref } from './refs.js' */
 /** @import { Version } from './versions.js' */

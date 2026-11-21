@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "Ọ nwere asambodo sitere n’aka ụlọ ọrụ nzukọ gị tụkwasịrị obi, na-enweghị ihe akaebe na a kagbughị ya",
   "certificates.trust.untrusted": "Ọ nweghị asambodo sitere n’aka ụlọ ọrụ nzukọ gị tụkwasịrị obi",
   "certificates.trust.revoked": "A kagburu asambodo ya tupu e kaa nke a akara",
-  "certificates.qualified": "Akara ruru eru n’okpuru iwu EU"
+  "certificates.qualified": "Akara ruru eru n’okpuru iwu EU",
+  "certificates.from": "E si na ya mee",
+  "certificates.fromIntact": "Mbipụta {n} nke nchịkọta, e kpọchiri akara ya, ọ gbanwebeghịkwa kemgbe",
+  "certificates.fromBroken": "Mbipụta {n} nke nchịkọta, agbanwere ya ma ọ bụ e jighị igodo ọ kpọrọ kpọchie ya",
+  "certificates.fromMissing": "Mbipụta {n} nke nchịkọta, e nyeghị asambodo ya",
+  "certificates.fromLive": "Ahịrị nchịkọta dịka ha dị mgbe ahụ, nke mbipụta ọ bụla anaghị echekwa"
 }

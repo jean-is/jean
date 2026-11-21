@@ -81,7 +81,7 @@ export const BLOCKS = {
     colour(picture, drawn)
   },
   // A collection of the project's, read live through composition (caps/compose, D763); its source as it is where that is turned off.
-  table: async (box, source) => ((await unlock('compose')) ? (await import('../compose/compose.js')).drawn(box, source) : box.classList.add('is-failed')),
+  table: async (box, source) => ((await unlock('tables')) ? (await import('../compose/compose.js')).drawn(box, source) : box.classList.add('is-failed')),
 }
 /** The slide of Jean's version a change shows on: its first, or for slides taken away, the one before where they were. @param {{ theirs: [number, number] }} change */
 const placeOf = ({ theirs: [from, to] }) => (from === to ? Math.max(0, from - 1) : from)

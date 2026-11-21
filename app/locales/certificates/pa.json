@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "ਤੁਹਾਡੀ ਸੰਸਥਾ ਦੀ ਭਰੋਸੇਮੰਦ ਅਥਾਰਟੀ ਵੱਲੋਂ ਤਸਦੀਕਸ਼ੁਦਾ, ਪਰ ਇਸਦਾ ਕੋਈ ਸਬੂਤ ਨਹੀਂ ਕਿ ਇਹ ਰੱਦ ਨਹੀਂ ਹੋਇਆ",
   "certificates.trust.untrusted": "ਤੁਹਾਡੀ ਸੰਸਥਾ ਦੀ ਭਰੋਸੇਮੰਦ ਅਥਾਰਟੀ ਵੱਲੋਂ ਤਸਦੀਕਸ਼ੁਦਾ ਨਹੀਂ",
   "certificates.trust.revoked": "ਇਸਦਾ ਸਰਟੀਫ਼ਿਕੇਟ ਇਸਦੇ ਸੀਲ ਹੋਣ ਤੋਂ ਪਹਿਲਾਂ ਹੀ ਰੱਦ ਹੋ ਚੁੱਕਾ ਸੀ",
-  "certificates.qualified": "EU ਕਾਨੂੰਨ ਅਧੀਨ ਯੋਗ ਸੀਲ"
+  "certificates.qualified": "EU ਕਾਨੂੰਨ ਅਧੀਨ ਯੋਗ ਸੀਲ",
+  "certificates.from": "ਇਸ ਤੋਂ ਬਣਾਇਆ",
+  "certificates.fromIntact": "ਇੱਕ ਸੰਗ੍ਰਹਿ ਦਾ ਵਰਜਨ {n}, ਮੋਹਰਬੰਦ ਅਤੇ ਉਦੋਂ ਤੋਂ ਨਾ ਬਦਲਿਆ",
+  "certificates.fromBroken": "ਇੱਕ ਸੰਗ੍ਰਹਿ ਦਾ ਵਰਜਨ {n}, ਬਦਲਿਆ ਗਿਆ ਜਾਂ ਦੱਸੀ ਕੁੰਜੀ ਨਾਲ ਮੋਹਰਬੰਦ ਨਹੀਂ",
+  "certificates.fromMissing": "ਇੱਕ ਸੰਗ੍ਰਹਿ ਦਾ ਵਰਜਨ {n}, ਜਿਸਦਾ ਸਰਟੀਫਿਕੇਟ ਨਹੀਂ ਦਿੱਤਾ ਗਿਆ",
+  "certificates.fromLive": "ਇੱਕ ਸੰਗ੍ਰਹਿ ਦੀਆਂ ਉਸ ਵੇਲੇ ਦੀਆਂ ਕਤਾਰਾਂ, ਜੋ ਕਿਸੇ ਵਰਜਨ ਵਿੱਚ ਨਹੀਂ ਰੱਖੀਆਂ"
 }
