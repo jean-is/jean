@@ -84,8 +84,11 @@ async function gather(path, dir) {
     const [tables, { propertyOf, converted }] = await Promise.all([import('../tables/tables.js'), import('../tables/table.js')]), sent = t('sites.sentAt')
     // A collection's own form (caps/collect) is a site whose page is that collection: its replies are rows there, and add no column to it.
     const own = /^collections\//.test(record.page ?? '') ? String(record.page) : ''
+    // A form whose data-to names a collection with its port open proposes into it (caps/compose, D763); any other goes on as before.
+    const to = (await import('../compose/refs.js')).formsTo([...(await kind.load(path, dir))?.files ?? []].map(([file, bytes]) => (file.endsWith('.html') ? new TextDecoder().decode(bytes) : '')).join('\n'))
     for (const form of new Set(came.map((one) => one.form))) {
       const rows = came.filter((one) => one.form === form), at = collections[form] ?? own
+      if (to.has(form) && (await unlock('compose')) && (await (await import('../compose/compose.js')).contribute(String(to.get(form)), rows, dir)) !== null) continue
       let one = (at && await tables.load(at, dir).catch(() => null)) || await tables.load(await tables.makeTable({ name: t('sites.repliesOf', { form, site: record.name }), columns: [{ name: sent, type: 'date' }] }, dir), dir)
       for (const field of rows.flatMap((reply) => reply.fields)) if (one && one.folder !== own && !propertyOf(one.table, field.label)) one = (await tables.reshapeTable(one, { add: { name: field.label, type: field.choice ? 'select' : 'text' } }, false), await tables.load(one.folder, dir))
       if (!one) continue

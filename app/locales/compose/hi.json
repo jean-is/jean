@@ -36,5 +36,11 @@
   "compose.uncertified": "पंक्तियाँ जैसी अभी हैं: कोई संस्करण नहीं, इसलिए कोई प्रमाणपत्र नहीं",
   "compose.unproven": "इसके प्रमाणपत्र टिकते नहीं: बदले गए, या उस कुंजी से मुहरबंद नहीं जिसका वे नाम लेते हैं",
   "compose.saveProof": "इसका स्रोत सहेजें",
-  "compose.proofFile": "{name} का स्रोत"
+  "compose.proofFile": "{name} का स्रोत",
+  "compose.ports": "सुझाव",
+  "compose.open": "किसी साइट से सुझाव स्वीकार करें",
+  "compose.close": "सुझाव स्वीकार करना बंद करें",
+  "compose.port": "साइट का फ़ॉर्म {columns} भर सकता है; स्वीकृति केवल आप देते हैं, “{approval}” में।",
+  "compose.waiting": "आपकी स्वीकृति की प्रतीक्षा में: {count}",
+  "compose.approved": "स्वीकृत"
 }

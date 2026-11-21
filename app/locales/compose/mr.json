@@ -36,5 +36,11 @@
   "compose.uncertified": "ओळी आत्ता जशा आहेत: आवृत्ती नाही, म्हणून प्रमाणपत्र नाही",
   "compose.unproven": "त्याची प्रमाणपत्रे टिकत नाहीत: बदललेली, किंवा नमूद केलेल्या किल्लीने मोहोरबंद नाहीत",
   "compose.saveProof": "त्याचा उगम जतन करा",
-  "compose.proofFile": "{name} चा उगम"
+  "compose.proofFile": "{name} चा उगम",
+  "compose.ports": "प्रस्ताव",
+  "compose.open": "साइटवरून प्रस्ताव स्वीकारा",
+  "compose.close": "प्रस्ताव स्वीकारणे थांबवा",
+  "compose.port": "साइटचा फॉर्म {columns} भरू शकतो; मान्यता फक्त तुम्ही देता, “{approval}” मध्ये.",
+  "compose.waiting": "तुमच्या मान्यतेच्या प्रतीक्षेत: {count}",
+  "compose.approved": "मान्य"
 }

@@ -36,5 +36,11 @@
   "compose.uncertified": "الصفوف كما هي الآن: لا إصدار، فلا شهادة",
   "compose.unproven": "شهاداته لا تصمد: تغيّرت، أو لم تُختم بالمفتاح الذي تذكره",
   "compose.saveProof": "احفظ مصدره",
-  "compose.proofFile": "مصدر {name}"
+  "compose.proofFile": "مصدر {name}",
+  "compose.ports": "المقترحات",
+  "compose.open": "قبول مقترحات من موقع",
+  "compose.close": "إيقاف قبول المقترحات",
+  "compose.port": "يمكن لنموذج موقع أن يملأ {columns}؛ وأنت وحدك توافق، في «{approval}».",
+  "compose.waiting": "بانتظار موافقتك: {count}",
+  "compose.approved": "موافَق عليه"
 }

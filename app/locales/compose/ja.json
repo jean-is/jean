@@ -36,5 +36,11 @@
   "compose.uncertified": "現在の行です：バージョンがないため証明書はありません",
   "compose.unproven": "証明書が有効ではありません：変更されているか、記された鍵で封印されていません",
   "compose.saveProof": "出どころを保存",
-  "compose.proofFile": "{name} の出どころ"
+  "compose.proofFile": "{name} の出どころ",
+  "compose.ports": "提案",
+  "compose.open": "サイトからの提案を受け付ける",
+  "compose.close": "提案の受け付けを止める",
+  "compose.port": "サイトのフォームは {columns} を入力できます。承認できるのはあなただけで、「{approval}」で行います。",
+  "compose.waiting": "承認待ち：{count}",
+  "compose.approved": "承認済み"
 }

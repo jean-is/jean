@@ -36,5 +36,11 @@
   "compose.uncertified": "Riadky, aké sú teraz: žiadna verzia, teda žiadny certifikát",
   "compose.unproven": "Jeho certifikáty neplatia: zmenené alebo nezapečatené kľúčom, ktorý uvádzajú",
   "compose.saveProof": "Uložiť pôvod",
-  "compose.proofFile": "Pôvod: {name}"
+  "compose.proofFile": "Pôvod: {name}",
+  "compose.ports": "Návrhy",
+  "compose.open": "Prijímať návrhy z webu",
+  "compose.close": "Prestať prijímať návrhy",
+  "compose.port": "Formulár webu môže vyplniť {columns}; schvaľujete len vy, v stĺpci „{approval}“.",
+  "compose.waiting": "Čaká na vaše schválenie: {count}",
+  "compose.approved": "Schválené"
 }

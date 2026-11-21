@@ -36,5 +36,11 @@
   "compose.uncertified": "Le righe come sono ora: nessuna versione, quindi nessun certificato",
   "compose.unproven": "I suoi certificati non reggono: modificati, o non sigillati con la chiave che indicano",
   "compose.saveProof": "Salva la provenienza",
-  "compose.proofFile": "Provenienza di {name}"
+  "compose.proofFile": "Provenienza di {name}",
+  "compose.ports": "Proposte",
+  "compose.open": "Accetta proposte da un sito",
+  "compose.close": "Smetti di accettare proposte",
+  "compose.port": "Un modulo di un sito può compilare {columns}; solo tu approvi, in «{approval}».",
+  "compose.waiting": "In attesa della tua approvazione: {count}",
+  "compose.approved": "Approvato"
 }

@@ -36,5 +36,11 @@
   "compose.uncertified": "Satırlar şu anki hâliyle: sürüm yok, bu yüzden sertifika yok",
   "compose.unproven": "Sertifikaları geçerli değil: değiştirilmiş ya da belirttikleri anahtarla mühürlenmemiş",
   "compose.saveProof": "Kaynağını kaydet",
-  "compose.proofFile": "{name} kaynağı"
+  "compose.proofFile": "{name} kaynağı",
+  "compose.ports": "Öneriler",
+  "compose.open": "Bir siteden öneri kabul et",
+  "compose.close": "Öneri kabul etmeyi durdur",
+  "compose.port": "Bir sitenin formu {columns} alanlarını doldurabilir; yalnızca siz onaylarsınız, “{approval}” içinde.",
+  "compose.waiting": "Onayınızı bekleyen: {count}",
+  "compose.approved": "Onaylandı"
 }
