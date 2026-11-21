@@ -1,0 +1,11 @@
+{
+  "compose.links": "Liên kết với tác phẩm khác",
+  "compose.uses": "Dùng",
+  "compose.usedIn": "Được dùng trong",
+  "compose.none": "Chưa có liên kết với tác phẩm khác.",
+  "compose.live": "Trực tiếp",
+  "compose.missing": "Dự án này không có bộ sưu tập như vậy.",
+  "compose.shared": "Bộ sưu tập chỉ hiện trong các nhiệm vụ của chính dự án này.",
+  "compose.loop": "Không hiển thị: mỗi bên sẽ dùng bên kia, thành vòng lặp.",
+  "compose.denied": "Bộ sưu tập đang tắt."
+}

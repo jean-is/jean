@@ -1,0 +1,11 @@
+{
+  "compose.links": "Pautan dengan ciptaan lain",
+  "compose.uses": "Menggunakan",
+  "compose.usedIn": "Digunakan dalam",
+  "compose.none": "Belum ada pautan dengan ciptaan lain.",
+  "compose.live": "Langsung",
+  "compose.missing": "Projek ini tiada koleksi sedemikian.",
+  "compose.shared": "Koleksi hanya dipaparkan dalam tugas projek ini sendiri.",
+  "compose.loop": "Tidak dipaparkan: setiap satu akan menggunakan yang lain, berpusing.",
+  "compose.denied": "Koleksi dimatikan."
+}

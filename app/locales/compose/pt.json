@@ -1,0 +1,11 @@
+{
+  "compose.links": "Ligações com outras criações",
+  "compose.uses": "Usa",
+  "compose.usedIn": "Usado em",
+  "compose.none": "Ainda sem ligações com outras criações.",
+  "compose.live": "Ao vivo",
+  "compose.missing": "Este projeto não tem essa coleção.",
+  "compose.shared": "As coleções só aparecem nas tarefas deste projeto.",
+  "compose.loop": "Não mostrada: cada uma usaria a outra, em círculo.",
+  "compose.denied": "As coleções estão desativadas."
+}

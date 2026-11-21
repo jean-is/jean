@@ -35,4 +35,11 @@ One capability, `caps/compose/`, loaded with Tables: pure modules under `node --
 
 ## Steps
 
-Filled in as each lands.
+### Step 1 — A live reference, and the graph
+
+- **Identity and contract.** A creation's place is its identifier. A collection's contract is its live columns and its rows as the journal's head folds them (`load()` in `caps/tables/tables.js`); slides are the consumer.
+- **The reference.** A slide holds the block documents already hold: ```` ```table ````, its first line the collection's place. `fields: Name | Trade` and `where: Trade is Baker` under it come free, since `fill()` already reads them (`tableOf()` in `caps/compose/refs.js`). Slides' `BLOCKS` hands the block to `drawn()` (`caps/compose/compose.js`), which reads the collection again each time the slides are drawn and, while it shows, after every change, the user's, Jean's or Sync's (Tables' `watched()`). Twelve rows at most on a slide.
+- **Rights, at each resolution** (`refused()`): Tables turned off or denied by policy; a task brought in from someone else's share, which never reads the project's collections; a loop; no such collection in the consumer's own project, a place being relative to it, so another project's collections are out of reach. The slide says which, in words.
+- **Loops** (`loops()`): the graph is read from the project's slides and documents (`graph()`, read again at most once a second, as slides draw all their blocks at once), and a reference from `from` to `to` is refused when `from` is reached from `to`. While collections are the only sources, and never consumers, no loop can form; the check is there for the day slides or documents become sources.
+- **The graph's first view.** In the head of a collection's, slides' or a document's pane, *Links with other creations* lists what it uses and what uses it, each with which version it reads (*Live*), each opening it.
+- **Exit criterion, verified** (`test/compose.spec.js`, Chromium, in English, Arabic and Japanese): a row changed shows changed on the slide at once while it shows, and once the slides are opened again.

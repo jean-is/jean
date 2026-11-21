@@ -1,0 +1,11 @@
+{
+  "compose.links": "Links with other creations",
+  "compose.uses": "Uses",
+  "compose.usedIn": "Used in",
+  "compose.none": "No links with other creations yet.",
+  "compose.live": "Live",
+  "compose.missing": "This project has no such collection.",
+  "compose.shared": "Collections show only in this project’s own tasks.",
+  "compose.loop": "Not shown: each would use the other, in a loop.",
+  "compose.denied": "Collections are turned off."
+}

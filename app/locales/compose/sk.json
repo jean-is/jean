@@ -1,0 +1,11 @@
+{
+  "compose.links": "Prepojenia s inými výtvormi",
+  "compose.uses": "Používa",
+  "compose.usedIn": "Použité v",
+  "compose.none": "Zatiaľ žiadne prepojenia s inými výtvormi.",
+  "compose.live": "Naživo",
+  "compose.missing": "Tento projekt takú zbierku nemá.",
+  "compose.shared": "Zbierky sa zobrazujú len v úlohách tohto projektu.",
+  "compose.loop": "Nezobrazené: jedno by používalo druhé, dookola.",
+  "compose.denied": "Zbierky sú vypnuté."
+}

@@ -1,0 +1,11 @@
+{
+  "compose.links": "Powiązania z innymi kreacjami",
+  "compose.uses": "Używa",
+  "compose.usedIn": "Używane w",
+  "compose.none": "Brak jeszcze powiązań z innymi kreacjami.",
+  "compose.live": "Na żywo",
+  "compose.missing": "Ten projekt nie ma takiej kolekcji.",
+  "compose.shared": "Kolekcje widać tylko w zadaniach tego projektu.",
+  "compose.loop": "Nie pokazano: jedno używałoby drugiego w kółko.",
+  "compose.denied": "Kolekcje są wyłączone."
+}

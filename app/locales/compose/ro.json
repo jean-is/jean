@@ -1,0 +1,11 @@
+{
+  "compose.links": "Legături cu alte creații",
+  "compose.uses": "Folosește",
+  "compose.usedIn": "Folosit în",
+  "compose.none": "Încă nicio legătură cu alte creații.",
+  "compose.live": "În direct",
+  "compose.missing": "Proiectul acesta nu are o astfel de colecție.",
+  "compose.shared": "Colecțiile apar doar în sarcinile acestui proiect.",
+  "compose.loop": "Neafișat: fiecare l-ar folosi pe celălalt, în cerc.",
+  "compose.denied": "Colecțiile sunt dezactivate."
+}

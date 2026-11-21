@@ -176,7 +176,7 @@ to pay the oven back
    - `versus`: two `##` parts face to face; `matrix`: four `##` parts in a grid of two by two;
    - `end`: the last slide.
 5. To show a list one point at a click, put it between `<v-clicks>` and `</v-clicks>`, each on its own line with empty lines around.
-6. A chart is an ECharts option as strict JSON in a block tagged `echarts` inside the slide: titles and labels in the user's language, `"tooltip"` and `"legend"` when there is more than one series, no colours. Get the numbers from the user; never make them up.
+6. A chart is an ECharts option as strict JSON in a block tagged `echarts` inside the slide: titles and labels in the user's language, `"tooltip"` and `"legend"` when there is more than one series, no colours. Get the numbers from the user; never make them up. To show one of the project’s collections as its rows are now, kept up to date, put a block tagged `table` holding its place as `<tables>` names it, `collections/…`, then `fields: Name | Trade` on the next line for some columns, `where: Status is Done` for some rows.
 7. A few steps one after another are `process` or `steps`; a plan with branches or loops is a Mermaid `flowchart LR` in a block tagged `mermaid`, a few short boxes.
 8. A picture the user asks for, a scene, a photo or a drawn schema (the water cycle, a machine's parts), is made first with `picture`, its shape `wide`. Then put it alone on its line under the slide's heading, by the name `picture` gave it: `![what it shows](its-name.png)`. Beside a few points, it goes in the slide's settings instead: `layout: image-right` and `image: its-name.png`.
 9. What the speaker should say goes in an HTML comment at the slide's end: `<!-- … -->`.
