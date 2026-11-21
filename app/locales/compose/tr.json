@@ -21,5 +21,14 @@
   "compose.noVersion": "Bu koleksiyonun {n}. sürümü yok.",
   "compose.old": "“{old}” artık “{name}”",
   "compose.done": "{n}. sürüm yayımlandı.",
-  "compose.recipe": "Gösterilmedi: filtre bu koleksiyonda olmayan bir sütun ya da değer belirtiyor."
+  "compose.recipe": "Gösterilmedi: filtre bu koleksiyonda olmayan bir sütun ya da değer belirtiyor.",
+  "compose.pace": "Ne zaman güncellenir",
+  "compose.byHand": "Elle",
+  "compose.every5": "5 dakikada bir",
+  "compose.hourly": "Saatte bir",
+  "compose.auto": "Koleksiyon değiştiğinde",
+  "compose.update": "Şimdi güncelle",
+  "compose.ran": "{date} tarihinde güncellendi",
+  "compose.failed": "Son güncelleme başarısız oldu; bir öncekisi gösterilmeye devam ediyor.",
+  "compose.unasked": "Henüz gösterilmedi: istediğini yapabilen bir beyin olmadı."
 }

@@ -21,5 +21,14 @@
   "compose.noVersion": "Questa raccolta non ha la versione {n}.",
   "compose.old": "«{old}» ora è «{name}»",
   "compose.done": "Versione {n} pubblicata.",
-  "compose.recipe": "Non mostrata: il filtro nomina una colonna o un valore che questa raccolta non ha."
+  "compose.recipe": "Non mostrata: il filtro nomina una colonna o un valore che questa raccolta non ha.",
+  "compose.pace": "Quando si aggiorna",
+  "compose.byHand": "A mano",
+  "compose.every5": "Ogni 5 minuti",
+  "compose.hourly": "Ogni ora",
+  "compose.auto": "Quando la raccolta cambia",
+  "compose.update": "Aggiorna ora",
+  "compose.ran": "Aggiornato il {date}",
+  "compose.failed": "L’ultimo aggiornamento non è riuscito; resta mostrato il precedente.",
+  "compose.unasked": "Non ancora mostrato: nessun cervello è riuscito a fare ciò che chiede."
 }

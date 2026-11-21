@@ -21,5 +21,14 @@
   "compose.noVersion": "N’en deus ket an dastumad-mañ ur stumm {n}.",
   "compose.old": "“{old}” a zo “{name}” bremañ",
   "compose.done": "Embannet eo ar stumm {n}.",
-  "compose.recipe": "N’eo ket diskouezet: ar sil a envel ur bann pe un dalvoudegezh n’emañ ket en dastumad."
+  "compose.recipe": "N’eo ket diskouezet: ar sil a envel ur bann pe un dalvoudegezh n’emañ ket en dastumad.",
+  "compose.pace": "Pegoulz e vez hizivaet",
+  "compose.byHand": "Gant an dorn",
+  "compose.every5": "Bep 5 munutenn",
+  "compose.hourly": "Bep eur",
+  "compose.auto": "Pa cheñch an dastumad",
+  "compose.update": "Hizivaat bremañ",
+  "compose.ran": "Hizivaet d’an {date}",
+  "compose.failed": "C’hwitet eo an hizivadur diwezhañ; an hini a-raok a chom diskouezet.",
+  "compose.unasked": "N’eo ket diskouezet c’hoazh: empenn ebet n’en deus gallet ober ar pezh a c’houlenn."
 }

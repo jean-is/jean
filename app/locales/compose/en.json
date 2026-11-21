@@ -21,5 +21,14 @@
   "compose.noVersion": "This collection has no version {n}.",
   "compose.old": "“{old}” is now “{name}”",
   "compose.done": "Version {n} published.",
-  "compose.recipe": "Not shown: what it keeps names a column or a value this collection hasn’t."
+  "compose.recipe": "Not shown: what it keeps names a column or a value this collection hasn’t.",
+  "compose.pace": "When it updates",
+  "compose.byHand": "By hand",
+  "compose.every5": "Every 5 minutes",
+  "compose.hourly": "Every hour",
+  "compose.auto": "As the collection changes",
+  "compose.update": "Update now",
+  "compose.ran": "Updated {date}",
+  "compose.failed": "The last update failed; the one before stays on show.",
+  "compose.unasked": "Not shown yet: no brain could carry out what it asks."
 }

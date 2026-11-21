@@ -21,5 +21,14 @@
   "compose.noVersion": "Tato sbírka nemá verzi {n}.",
   "compose.old": "„{old}“ je teď „{name}“",
   "compose.done": "Verze {n} zveřejněna.",
-  "compose.recipe": "Nezobrazeno: filtr uvádí sloupec nebo hodnotu, které tato sbírka nemá."
+  "compose.recipe": "Nezobrazeno: filtr uvádí sloupec nebo hodnotu, které tato sbírka nemá.",
+  "compose.pace": "Kdy se aktualizuje",
+  "compose.byHand": "Ručně",
+  "compose.every5": "Každých 5 minut",
+  "compose.hourly": "Každou hodinu",
+  "compose.auto": "Když se sbírka změní",
+  "compose.update": "Aktualizovat teď",
+  "compose.ran": "Aktualizováno {date}",
+  "compose.failed": "Poslední aktualizace selhala; zůstává zobrazená předchozí.",
+  "compose.unasked": "Zatím nezobrazeno: žádný mozek nedokázal udělat, co se žádá."
 }

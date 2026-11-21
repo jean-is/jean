@@ -21,5 +21,14 @@
   "compose.noVersion": "Tällä kokoelmalla ei ole versiota {n}.",
   "compose.old": "”{old}” on nyt ”{name}”",
   "compose.done": "Versio {n} julkaistu.",
-  "compose.recipe": "Ei näytetty: suodatin mainitsee sarakkeen tai arvon, jota kokoelmassa ei ole."
+  "compose.recipe": "Ei näytetty: suodatin mainitsee sarakkeen tai arvon, jota kokoelmassa ei ole.",
+  "compose.pace": "Milloin päivittyy",
+  "compose.byHand": "Käsin",
+  "compose.every5": "5 minuutin välein",
+  "compose.hourly": "Tunnin välein",
+  "compose.auto": "Kun kokoelma muuttuu",
+  "compose.update": "Päivitä nyt",
+  "compose.ran": "Päivitetty {date}",
+  "compose.failed": "Viimeisin päivitys epäonnistui; edellinen näkyy yhä.",
+  "compose.unasked": "Ei vielä näytetty: mikään aivo ei pystynyt tekemään pyydettyä."
 }

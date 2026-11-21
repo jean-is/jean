@@ -21,5 +21,14 @@
   "compose.noVersion": "Koleksi ini tiada versi {n}.",
   "compose.old": "“{old}” kini “{name}”",
   "compose.done": "Versi {n} diterbitkan.",
-  "compose.recipe": "Tidak dipaparkan: penapisnya menyebut lajur atau nilai yang tiada dalam koleksi ini."
+  "compose.recipe": "Tidak dipaparkan: penapisnya menyebut lajur atau nilai yang tiada dalam koleksi ini.",
+  "compose.pace": "Bila dikemas kini",
+  "compose.byHand": "Secara manual",
+  "compose.every5": "Setiap 5 minit",
+  "compose.hourly": "Setiap jam",
+  "compose.auto": "Apabila koleksi berubah",
+  "compose.update": "Kemas kini sekarang",
+  "compose.ran": "Dikemas kini {date}",
+  "compose.failed": "Kemas kini terakhir gagal; yang sebelumnya kekal dipaparkan.",
+  "compose.unasked": "Belum dipaparkan: tiada otak yang dapat melakukan permintaannya."
 }

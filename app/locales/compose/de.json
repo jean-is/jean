@@ -21,5 +21,14 @@
   "compose.noVersion": "Diese Sammlung hat keine Version {n}.",
   "compose.old": "„{old}“ heißt jetzt „{name}“",
   "compose.done": "Version {n} veröffentlicht.",
-  "compose.recipe": "Nicht angezeigt: Der Filter nennt eine Spalte oder einen Wert, den diese Sammlung nicht hat."
+  "compose.recipe": "Nicht angezeigt: Der Filter nennt eine Spalte oder einen Wert, den diese Sammlung nicht hat.",
+  "compose.pace": "Wann es sich aktualisiert",
+  "compose.byHand": "Von Hand",
+  "compose.every5": "Alle 5 Minuten",
+  "compose.hourly": "Jede Stunde",
+  "compose.auto": "Wenn sich die Sammlung ändert",
+  "compose.update": "Jetzt aktualisieren",
+  "compose.ran": "Aktualisiert {date}",
+  "compose.failed": "Die letzte Aktualisierung ist fehlgeschlagen; die vorherige bleibt angezeigt.",
+  "compose.unasked": "Noch nicht angezeigt: Kein Gehirn konnte ausführen, worum es bittet."
 }

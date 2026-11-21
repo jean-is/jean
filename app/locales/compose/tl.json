@@ -21,5 +21,14 @@
   "compose.noVersion": "Walang bersyon {n} ang koleksiyong ito.",
   "compose.old": "Ang “{old}” ay “{name}” na ngayon",
   "compose.done": "Nailathala ang bersyon {n}.",
-  "compose.recipe": "Hindi ipinakita: may binabanggit ang filter na kolum o halagang wala sa koleksiyong ito."
+  "compose.recipe": "Hindi ipinakita: may binabanggit ang filter na kolum o halagang wala sa koleksiyong ito.",
+  "compose.pace": "Kailan ito nag-a-update",
+  "compose.byHand": "Mano-mano",
+  "compose.every5": "Bawat 5 minuto",
+  "compose.hourly": "Bawat oras",
+  "compose.auto": "Kapag nagbago ang koleksiyon",
+  "compose.update": "I-update ngayon",
+  "compose.ran": "Na-update noong {date}",
+  "compose.failed": "Nabigo ang huling update; nananatiling nakikita ang nauna.",
+  "compose.unasked": "Hindi pa ipinapakita: walang utak na nakagawa ng hinihingi nito."
 }

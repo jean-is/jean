@@ -21,5 +21,14 @@
   "compose.noVersion": "このコレクションにはバージョン {n} がありません。",
   "compose.old": "「{old}」は「{name}」になりました",
   "compose.done": "バージョン {n} を公開しました。",
-  "compose.recipe": "表示していません：このコレクションにない列や値を絞り込みで指定しています。"
+  "compose.recipe": "表示していません：このコレクションにない列や値を絞り込みで指定しています。",
+  "compose.pace": "更新のタイミング",
+  "compose.byHand": "手動",
+  "compose.every5": "5分ごと",
+  "compose.hourly": "1時間ごと",
+  "compose.auto": "コレクションが変わったとき",
+  "compose.update": "今すぐ更新",
+  "compose.ran": "{date} に更新",
+  "compose.failed": "前回の更新に失敗しました。その前の内容を表示しています。",
+  "compose.unasked": "まだ表示できません：指示を実行できる頭脳がありませんでした。"
 }

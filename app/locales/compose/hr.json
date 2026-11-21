@@ -21,5 +21,14 @@
   "compose.noVersion": "Ova zbirka nema verziju {n}.",
   "compose.old": "„{old}” je sada „{name}”",
   "compose.done": "Verzija {n} objavljena.",
-  "compose.recipe": "Nije prikazano: filtar navodi stupac ili vrijednost koje ova zbirka nema."
+  "compose.recipe": "Nije prikazano: filtar navodi stupac ili vrijednost koje ova zbirka nema.",
+  "compose.pace": "Kada se ažurira",
+  "compose.byHand": "Ručno",
+  "compose.every5": "Svakih 5 minuta",
+  "compose.hourly": "Svaki sat",
+  "compose.auto": "Kada se zbirka promijeni",
+  "compose.update": "Ažuriraj sada",
+  "compose.ran": "Ažurirano {date}",
+  "compose.failed": "Posljednje ažuriranje nije uspjelo; prethodno ostaje prikazano.",
+  "compose.unasked": "Još nije prikazano: nijedan mozak nije mogao izvršiti traženo."
 }

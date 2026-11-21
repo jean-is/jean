@@ -21,5 +21,14 @@
   "compose.noVersion": "Àkójọpọ̀ yìí kò ní ẹ̀dà {n}.",
   "compose.old": "“{old}” ti di “{name}” báyìí",
   "compose.done": "A ti tẹ ẹ̀dà {n} jáde.",
-  "compose.recipe": "A kò fi hàn: àlẹ̀mọ́ rẹ̀ dárúkọ òpó tàbí iye tí àkójọpọ̀ yìí kò ní."
+  "compose.recipe": "A kò fi hàn: àlẹ̀mọ́ rẹ̀ dárúkọ òpó tàbí iye tí àkójọpọ̀ yìí kò ní.",
+  "compose.pace": "Ìgbà tí ó ń ṣe àtúnṣe",
+  "compose.byHand": "Pẹ̀lú ọwọ́",
+  "compose.every5": "Ní ìṣẹ́jú 5 kọ̀ọ̀kan",
+  "compose.hourly": "Ní wákàtí kọ̀ọ̀kan",
+  "compose.auto": "Nígbà tí àkójọpọ̀ bá yípadà",
+  "compose.update": "Ṣe àtúnṣe báyìí",
+  "compose.ran": "A ṣe àtúnṣe ní {date}",
+  "compose.failed": "Àtúnṣe tó kẹ́yìn kùnà; èyí tó ṣáájú ṣì ń hàn.",
+  "compose.unasked": "Kò tíì hàn: kò sí ọpọlọ tó lè ṣe ohun tí ó béèrè."
 }

@@ -21,5 +21,14 @@
   "compose.noVersion": "Mkusanyiko huu hauna toleo la {n}.",
   "compose.old": "“{old}” sasa ni “{name}”",
   "compose.done": "Toleo la {n} limechapishwa.",
-  "compose.recipe": "Haikuonyeshwa: kichujio chake kinataja safu au thamani ambayo mkusanyiko huu hauna."
+  "compose.recipe": "Haikuonyeshwa: kichujio chake kinataja safu au thamani ambayo mkusanyiko huu hauna.",
+  "compose.pace": "Inaposasishwa",
+  "compose.byHand": "Kwa mkono",
+  "compose.every5": "Kila dakika 5",
+  "compose.hourly": "Kila saa",
+  "compose.auto": "Mkusanyiko unapobadilika",
+  "compose.update": "Sasisha sasa",
+  "compose.ran": "Imesasishwa {date}",
+  "compose.failed": "Sasisho la mwisho lilishindwa; lililotangulia linaendelea kuonyeshwa.",
+  "compose.unasked": "Bado haijaonyeshwa: hakuna ubongo ulioweza kufanya inachoomba."
 }

@@ -21,5 +21,14 @@
   "compose.noVersion": "Samlingen har ingen version {n}.",
   "compose.old": "”{old}” heter nu ”{name}”",
   "compose.done": "Version {n} publicerad.",
-  "compose.recipe": "Visas inte: filtret nämner en kolumn eller ett värde som samlingen inte har."
+  "compose.recipe": "Visas inte: filtret nämner en kolumn eller ett värde som samlingen inte har.",
+  "compose.pace": "När den uppdateras",
+  "compose.byHand": "För hand",
+  "compose.every5": "Var 5:e minut",
+  "compose.hourly": "Varje timme",
+  "compose.auto": "När samlingen ändras",
+  "compose.update": "Uppdatera nu",
+  "compose.ran": "Uppdaterad {date}",
+  "compose.failed": "Den senaste uppdateringen misslyckades; den förra visas fortfarande.",
+  "compose.unasked": "Visas inte än: ingen hjärna kunde göra det som efterfrågas."
 }
