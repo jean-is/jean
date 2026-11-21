@@ -7,5 +7,19 @@
   "compose.missing": "Wannan aikin ba shi da irin wannan kundi.",
   "compose.shared": "Kundaye suna bayyana ne kawai a ayyukan wannan aikin.",
   "compose.loop": "Ba a nuna ba: kowanne zai yi amfani da ɗayan, a zagaye.",
-  "compose.denied": "An kashe kundaye."
+  "compose.denied": "An kashe kundaye.",
+  "compose.published": "An wallafa",
+  "compose.pinned": "Siga ta {n}",
+  "compose.which": "Sigar da yake nunawa",
+  "compose.versions": "Sigogi",
+  "compose.publish": "Wallafa siga ta {n}",
+  "compose.journal": "Canje-canjen da ba su cikin siga ba tukuna: {count}",
+  "compose.version": "Siga ta {n}, {date}",
+  "compose.versionSchema": "Siga ta {n}, {date}, saboda ginshiƙansa sun canza",
+  "compose.breaks": "Ba za a iya yin siga ba muddin waɗannan ginshiƙai suna da wani nau’i: {columns}. Mayar musu da nau’insu, ko ƙara sababbin ginshiƙai.",
+  "compose.unpublished": "Wannan kundi bai da siga tukuna.",
+  "compose.noVersion": "Wannan kundi ba shi da siga ta {n}.",
+  "compose.old": "“{old}” yanzu shi ne “{name}”",
+  "compose.done": "An wallafa siga ta {n}.",
+  "compose.recipe": "Ba a nuna ba: matatarsa tana ambaton ginshiƙi ko ƙima da wannan kundi ba shi da shi."
 }

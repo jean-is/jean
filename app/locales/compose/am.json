@@ -7,5 +7,19 @@
   "compose.missing": "ይህ ፕሮጀክት እንዲህ ያለ ስብስብ የለውም።",
   "compose.shared": "ስብስቦች የሚታዩት በዚህ ፕሮጀክት የራሱ ተግባሮች ውስጥ ብቻ ነው።",
   "compose.loop": "አልታየም፦ እያንዳንዱ ሌላውን በዙር ይጠቀማል።",
-  "compose.denied": "ስብስቦች ጠፍተዋል።"
+  "compose.denied": "ስብስቦች ጠፍተዋል።",
+  "compose.published": "የታተመ",
+  "compose.pinned": "ስሪት {n}",
+  "compose.which": "የሚያሳየው ስሪት",
+  "compose.versions": "ስሪቶች",
+  "compose.publish": "ስሪት {n} አትም",
+  "compose.journal": "ገና በስሪት ያልገቡ ለውጦች፦ {count}",
+  "compose.version": "ስሪት {n}፣ {date}",
+  "compose.versionSchema": "ስሪት {n}፣ {date}፣ ዓምዶቹ ስለተቀየሩ",
+  "compose.breaks": "እነዚህ ዓምዶች ሌላ ዓይነት እስካላቸው ድረስ ስሪት መሥራት አይቻልም፦ {columns}። ዓይነታቸውን መልስ ወይም አዲስ ዓምዶች አክል።",
+  "compose.unpublished": "ይህ ስብስብ ገና ስሪት የለውም።",
+  "compose.noVersion": "ይህ ስብስብ ስሪት {n} የለውም።",
+  "compose.old": "“{old}” አሁን “{name}” ነው",
+  "compose.done": "ስሪት {n} ታትሟል።",
+  "compose.recipe": "አልታየም፦ የሚያቆየው ይህ ስብስብ የሌለውን ዓምድ ወይም እሴት ይጠቅሳል።"
 }

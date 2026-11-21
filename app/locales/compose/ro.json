@@ -7,5 +7,19 @@
   "compose.missing": "Proiectul acesta nu are o astfel de colecție.",
   "compose.shared": "Colecțiile apar doar în sarcinile acestui proiect.",
   "compose.loop": "Neafișat: fiecare l-ar folosi pe celălalt, în cerc.",
-  "compose.denied": "Colecțiile sunt dezactivate."
+  "compose.denied": "Colecțiile sunt dezactivate.",
+  "compose.published": "Publicată",
+  "compose.pinned": "Versiunea {n}",
+  "compose.which": "Versiunea afișată",
+  "compose.versions": "Versiuni",
+  "compose.publish": "Publică versiunea {n}",
+  "compose.journal": "Modificări din afara unei versiuni: {count}",
+  "compose.version": "Versiunea {n}, {date}",
+  "compose.versionSchema": "Versiunea {n}, {date}, după schimbarea coloanelor",
+  "compose.breaks": "Nu se poate face o versiune cât timp aceste coloane au alt tip: {columns}. Readu-le tipul sau adaugă coloane noi.",
+  "compose.unpublished": "Această colecție nu are încă nicio versiune.",
+  "compose.noVersion": "Această colecție nu are versiunea {n}.",
+  "compose.old": "„{old}” este acum „{name}”",
+  "compose.done": "Versiunea {n} a fost publicată.",
+  "compose.recipe": "Neafișată: filtrul numește o coloană sau o valoare pe care colecția nu o are."
 }

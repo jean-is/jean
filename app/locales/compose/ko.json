@@ -7,5 +7,19 @@
   "compose.missing": "이 프로젝트에는 그런 컬렉션이 없습니다.",
   "compose.shared": "컬렉션은 이 프로젝트의 작업에서만 표시됩니다.",
   "compose.loop": "표시하지 않음: 서로를 돌고 돌며 사용하게 됩니다.",
-  "compose.denied": "컬렉션이 꺼져 있습니다."
+  "compose.denied": "컬렉션이 꺼져 있습니다.",
+  "compose.published": "게시됨",
+  "compose.pinned": "버전 {n}",
+  "compose.which": "표시할 버전",
+  "compose.versions": "버전",
+  "compose.publish": "버전 {n} 게시",
+  "compose.journal": "아직 버전에 없는 변경: {count}",
+  "compose.version": "버전 {n}, {date}",
+  "compose.versionSchema": "버전 {n}, {date}, 열이 바뀌어서",
+  "compose.breaks": "다음 열의 종류가 바뀐 동안에는 버전을 만들 수 없습니다: {columns}. 종류를 되돌리거나 새 열을 추가하세요.",
+  "compose.unpublished": "이 컬렉션에는 아직 버전이 없습니다.",
+  "compose.noVersion": "이 컬렉션에는 버전 {n}이 없습니다.",
+  "compose.old": "“{old}”은(는) 이제 “{name}”입니다",
+  "compose.done": "버전 {n}을 게시했습니다.",
+  "compose.recipe": "표시하지 않음: 필터가 이 컬렉션에 없는 열이나 값을 가리킵니다."
 }

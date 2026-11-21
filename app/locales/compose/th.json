@@ -7,5 +7,19 @@
   "compose.missing": "โปรเจกต์นี้ไม่มีคอลเลกชันดังกล่าว",
   "compose.shared": "คอลเลกชันจะแสดงเฉพาะในงานของโปรเจกต์นี้เอง",
   "compose.loop": "ไม่แสดง: ต่างฝ่ายจะใช้กันและกันวนเป็นวง",
-  "compose.denied": "ปิดคอลเลกชันอยู่"
+  "compose.denied": "ปิดคอลเลกชันอยู่",
+  "compose.published": "เผยแพร่แล้ว",
+  "compose.pinned": "เวอร์ชัน {n}",
+  "compose.which": "เวอร์ชันที่แสดง",
+  "compose.versions": "เวอร์ชัน",
+  "compose.publish": "เผยแพร่เวอร์ชัน {n}",
+  "compose.journal": "การเปลี่ยนแปลงที่ยังไม่อยู่ในเวอร์ชัน: {count}",
+  "compose.version": "เวอร์ชัน {n}, {date}",
+  "compose.versionSchema": "เวอร์ชัน {n}, {date}, เพราะคอลัมน์เปลี่ยน",
+  "compose.breaks": "สร้างเวอร์ชันไม่ได้ขณะที่คอลัมน์เหล่านี้มีชนิดอื่น: {columns} ให้คืนชนิดเดิม หรือเพิ่มคอลัมน์ใหม่",
+  "compose.unpublished": "คอลเลกชันนี้ยังไม่มีเวอร์ชัน",
+  "compose.noVersion": "คอลเลกชันนี้ไม่มีเวอร์ชัน {n}",
+  "compose.old": "“{old}” ตอนนี้คือ “{name}”",
+  "compose.done": "เผยแพร่เวอร์ชัน {n} แล้ว",
+  "compose.recipe": "ไม่แสดง: ตัวกรองระบุคอลัมน์หรือค่าที่คอลเลกชันนี้ไม่มี"
 }

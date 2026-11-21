@@ -7,5 +7,19 @@
   "compose.missing": "Tento projekt takú zbierku nemá.",
   "compose.shared": "Zbierky sa zobrazujú len v úlohách tohto projektu.",
   "compose.loop": "Nezobrazené: jedno by používalo druhé, dookola.",
-  "compose.denied": "Zbierky sú vypnuté."
+  "compose.denied": "Zbierky sú vypnuté.",
+  "compose.published": "Zverejnená",
+  "compose.pinned": "Verzia {n}",
+  "compose.which": "Zobrazená verzia",
+  "compose.versions": "Verzie",
+  "compose.publish": "Zverejniť verziu {n}",
+  "compose.journal": "Zmeny mimo verzie: {count}",
+  "compose.version": "Verzia {n}, {date}",
+  "compose.versionSchema": "Verzia {n}, {date}, zmenili sa stĺpce",
+  "compose.breaks": "Verziu nemožno vytvoriť, kým majú tieto stĺpce iný druh: {columns}. Vráťte im druh alebo pridajte nové stĺpce.",
+  "compose.unpublished": "Táto zbierka zatiaľ nemá žiadnu verziu.",
+  "compose.noVersion": "Táto zbierka nemá verziu {n}.",
+  "compose.old": "„{old}“ je teraz „{name}“",
+  "compose.done": "Verzia {n} zverejnená.",
+  "compose.recipe": "Nezobrazené: filter uvádza stĺpec alebo hodnotu, ktoré táto zbierka nemá."
 }

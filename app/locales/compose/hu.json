@@ -7,5 +7,19 @@
   "compose.missing": "Ebben a projektben nincs ilyen gyűjtemény.",
   "compose.shared": "A gyűjtemények csak a projekt saját feladataiban jelennek meg.",
   "compose.loop": "Nem látható: egymást használnák körbe-körbe.",
-  "compose.denied": "A gyűjtemények ki vannak kapcsolva."
+  "compose.denied": "A gyűjtemények ki vannak kapcsolva.",
+  "compose.published": "Közzétéve",
+  "compose.pinned": "{n}. verzió",
+  "compose.which": "Megjelenített verzió",
+  "compose.versions": "Verziók",
+  "compose.publish": "A(z) {n}. verzió közzététele",
+  "compose.journal": "Verzión kívüli változások: {count}",
+  "compose.version": "{n}. verzió, {date}",
+  "compose.versionSchema": "{n}. verzió, {date}, mert az oszlopok megváltoztak",
+  "compose.breaks": "Nem készülhet verzió, amíg ezeknek az oszlopoknak más a típusa: {columns}. Állítsa vissza a típusukat, vagy adjon hozzá új oszlopokat.",
+  "compose.unpublished": "Ennek a gyűjteménynek még nincs verziója.",
+  "compose.noVersion": "Ennek a gyűjteménynek nincs {n}. verziója.",
+  "compose.old": "„{old}” most már „{name}”",
+  "compose.done": "A(z) {n}. verzió közzétéve.",
+  "compose.recipe": "Nem látható: a szűrő olyan oszlopot vagy értéket említ, amely nincs a gyűjteményben."
 }

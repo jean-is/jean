@@ -7,5 +7,19 @@
   "compose.missing": "इस प्रोजेक्ट में ऐसा कोई संग्रह नहीं है।",
   "compose.shared": "संग्रह केवल इसी प्रोजेक्ट के अपने कार्यों में दिखते हैं।",
   "compose.loop": "नहीं दिखाया: दोनों एक-दूसरे का घेरे में उपयोग करते।",
-  "compose.denied": "संग्रह बंद हैं।"
+  "compose.denied": "संग्रह बंद हैं।",
+  "compose.published": "प्रकाशित",
+  "compose.pinned": "संस्करण {n}",
+  "compose.which": "दिखाया जाने वाला संस्करण",
+  "compose.versions": "संस्करण",
+  "compose.publish": "संस्करण {n} प्रकाशित करें",
+  "compose.journal": "किसी संस्करण में न आए बदलाव: {count}",
+  "compose.version": "संस्करण {n}, {date}",
+  "compose.versionSchema": "संस्करण {n}, {date}, कॉलम बदलने पर",
+  "compose.breaks": "जब तक इन कॉलमों का प्रकार बदला हुआ है, संस्करण नहीं बन सकता: {columns}। उनका प्रकार लौटाएँ, या नए कॉलम जोड़ें।",
+  "compose.unpublished": "इस संग्रह का अभी कोई संस्करण नहीं है।",
+  "compose.noVersion": "इस संग्रह का संस्करण {n} नहीं है।",
+  "compose.old": "“{old}” अब “{name}” है",
+  "compose.done": "संस्करण {n} प्रकाशित हुआ।",
+  "compose.recipe": "नहीं दिखाया: फ़िल्टर ऐसा कॉलम या मान बताता है जो इस संग्रह में नहीं है।"
 }

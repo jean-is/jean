@@ -7,5 +7,19 @@
   "compose.missing": "Proyek ini tidak punya koleksi seperti itu.",
   "compose.shared": "Koleksi hanya tampil di tugas milik proyek ini sendiri.",
   "compose.loop": "Tidak ditampilkan: masing-masing akan memakai yang lain, berputar.",
-  "compose.denied": "Koleksi dimatikan."
+  "compose.denied": "Koleksi dimatikan.",
+  "compose.published": "Diterbitkan",
+  "compose.pinned": "Versi {n}",
+  "compose.which": "Versi yang ditampilkan",
+  "compose.versions": "Versi",
+  "compose.publish": "Terbitkan versi {n}",
+  "compose.journal": "Perubahan di luar versi: {count}",
+  "compose.version": "Versi {n}, {date}",
+  "compose.versionSchema": "Versi {n}, {date}, karena kolomnya berubah",
+  "compose.breaks": "Versi tidak bisa dibuat selama jenis kolom ini berbeda: {columns}. Kembalikan jenisnya, atau tambahkan kolom baru.",
+  "compose.unpublished": "Koleksi ini belum punya versi.",
+  "compose.noVersion": "Koleksi ini tidak punya versi {n}.",
+  "compose.old": "“{old}” sekarang “{name}”",
+  "compose.done": "Versi {n} diterbitkan.",
+  "compose.recipe": "Tidak ditampilkan: filternya menyebut kolom atau nilai yang tidak ada di koleksi ini."
 }

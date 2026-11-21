@@ -7,5 +7,19 @@
   "compose.missing": "Bu projede böyle bir koleksiyon yok.",
   "compose.shared": "Koleksiyonlar yalnızca bu projenin kendi görevlerinde görünür.",
   "compose.loop": "Gösterilmedi: her biri ötekini döngü içinde kullanırdı.",
-  "compose.denied": "Koleksiyonlar kapalı."
+  "compose.denied": "Koleksiyonlar kapalı.",
+  "compose.published": "Yayımlandı",
+  "compose.pinned": "Sürüm {n}",
+  "compose.which": "Gösterilen sürüm",
+  "compose.versions": "Sürümler",
+  "compose.publish": "{n}. sürümü yayımla",
+  "compose.journal": "Henüz bir sürümde olmayan değişiklikler: {count}",
+  "compose.version": "Sürüm {n}, {date}",
+  "compose.versionSchema": "Sürüm {n}, {date}, sütunlar değiştiği için",
+  "compose.breaks": "Bu sütunların türü farklıyken sürüm yapılamaz: {columns}. Türlerini geri verin ya da yeni sütunlar ekleyin.",
+  "compose.unpublished": "Bu koleksiyonun henüz bir sürümü yok.",
+  "compose.noVersion": "Bu koleksiyonun {n}. sürümü yok.",
+  "compose.old": "“{old}” artık “{name}”",
+  "compose.done": "{n}. sürüm yayımlandı.",
+  "compose.recipe": "Gösterilmedi: filtre bu koleksiyonda olmayan bir sütun ya da değer belirtiyor."
 }

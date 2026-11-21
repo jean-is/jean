@@ -7,5 +7,19 @@
   "compose.missing": "لا توجد مجموعة كهذه في هذا المشروع.",
   "compose.shared": "لا تظهر المجموعات إلا في مهام هذا المشروع نفسه.",
   "compose.loop": "لم تُعرض: كلٌّ منهما سيستخدم الآخر في حلقة.",
-  "compose.denied": "المجموعات متوقفة."
+  "compose.denied": "المجموعات متوقفة.",
+  "compose.published": "منشورة",
+  "compose.pinned": "الإصدار {n}",
+  "compose.which": "الإصدار المعروض",
+  "compose.versions": "الإصدارات",
+  "compose.publish": "نشر الإصدار {n}",
+  "compose.journal": "تغييرات خارج أي إصدار: {count}",
+  "compose.version": "الإصدار {n}، {date}",
+  "compose.versionSchema": "الإصدار {n}، {date}، بعد تغيّر أعمدتها",
+  "compose.breaks": "لا يمكن إنشاء إصدار ما دام نوع هذه الأعمدة قد تغيّر: {columns}. أعد إليها نوعها، أو أضف أعمدة جديدة.",
+  "compose.unpublished": "ليس لهذه المجموعة أي إصدار بعد.",
+  "compose.noVersion": "ليس لهذه المجموعة إصدار {n}.",
+  "compose.old": "«{old}» أصبح الآن «{name}»",
+  "compose.done": "نُشر الإصدار {n}.",
+  "compose.recipe": "لم تُعرض: ما تحتفظ به يذكر عمودًا أو قيمة ليست في هذه المجموعة."
 }

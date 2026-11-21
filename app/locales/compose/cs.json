@@ -7,5 +7,19 @@
   "compose.missing": "Tento projekt takovou sbírku nemá.",
   "compose.shared": "Sbírky se zobrazují jen v úkolech tohoto projektu.",
   "compose.loop": "Nezobrazeno: jedno by používalo druhé, dokola.",
-  "compose.denied": "Sbírky jsou vypnuté."
+  "compose.denied": "Sbírky jsou vypnuté.",
+  "compose.published": "Zveřejněná",
+  "compose.pinned": "Verze {n}",
+  "compose.which": "Zobrazená verze",
+  "compose.versions": "Verze",
+  "compose.publish": "Zveřejnit verzi {n}",
+  "compose.journal": "Změny mimo verzi: {count}",
+  "compose.version": "Verze {n}, {date}",
+  "compose.versionSchema": "Verze {n}, {date}, změnily se sloupce",
+  "compose.breaks": "Verzi nelze vytvořit, dokud mají tyto sloupce jiný druh: {columns}. Vraťte jim druh, nebo přidejte nové sloupce.",
+  "compose.unpublished": "Tato sbírka zatím nemá žádnou verzi.",
+  "compose.noVersion": "Tato sbírka nemá verzi {n}.",
+  "compose.old": "„{old}“ je teď „{name}“",
+  "compose.done": "Verze {n} zveřejněna.",
+  "compose.recipe": "Nezobrazeno: filtr uvádí sloupec nebo hodnotu, které tato sbírka nemá."
 }

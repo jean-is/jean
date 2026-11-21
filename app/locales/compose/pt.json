@@ -7,5 +7,19 @@
   "compose.missing": "Este projeto não tem essa coleção.",
   "compose.shared": "As coleções só aparecem nas tarefas deste projeto.",
   "compose.loop": "Não mostrada: cada uma usaria a outra, em círculo.",
-  "compose.denied": "As coleções estão desativadas."
+  "compose.denied": "As coleções estão desativadas.",
+  "compose.published": "Publicada",
+  "compose.pinned": "Versão {n}",
+  "compose.which": "Versão mostrada",
+  "compose.versions": "Versões",
+  "compose.publish": "Publicar a versão {n}",
+  "compose.journal": "Alterações fora de uma versão: {count}",
+  "compose.version": "Versão {n}, {date}",
+  "compose.versionSchema": "Versão {n}, {date}, por as colunas terem mudado",
+  "compose.breaks": "Não é possível criar uma versão enquanto estas colunas tiverem outro tipo: {columns}. Devolva-lhes o tipo ou adicione novas colunas.",
+  "compose.unpublished": "Esta coleção ainda não tem nenhuma versão.",
+  "compose.noVersion": "Esta coleção não tem a versão {n}.",
+  "compose.old": "«{old}» agora é «{name}»",
+  "compose.done": "Versão {n} publicada.",
+  "compose.recipe": "Não mostrada: o filtro indica uma coluna ou um valor que esta coleção não tem."
 }

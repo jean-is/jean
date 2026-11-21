@@ -7,5 +7,19 @@
   "compose.missing": "این پروژه چنین مجموعه‌ای ندارد.",
   "compose.shared": "مجموعه‌ها فقط در کارهای خود این پروژه نشان داده می‌شوند.",
   "compose.loop": "نشان داده نشد: هر کدام دیگری را در یک چرخه به کار می‌برد.",
-  "compose.denied": "مجموعه‌ها خاموش‌اند."
+  "compose.denied": "مجموعه‌ها خاموش‌اند.",
+  "compose.published": "منتشرشده",
+  "compose.pinned": "نسخهٔ {n}",
+  "compose.which": "نسخه‌ای که نشان می‌دهد",
+  "compose.versions": "نسخه‌ها",
+  "compose.publish": "انتشار نسخهٔ {n}",
+  "compose.journal": "تغییرهای بیرون از نسخه: {count}",
+  "compose.version": "نسخهٔ {n}، {date}",
+  "compose.versionSchema": "نسخهٔ {n}، {date}، چون ستون‌هایش عوض شد",
+  "compose.breaks": "تا وقتی نوع این ستون‌ها عوض شده، نسخه‌ای ساخته نمی‌شود: {columns}. نوعشان را برگردانید یا ستون تازه بیفزایید.",
+  "compose.unpublished": "این مجموعه هنوز نسخه‌ای ندارد.",
+  "compose.noVersion": "این مجموعه نسخهٔ {n} ندارد.",
+  "compose.old": "«{old}» اکنون «{name}» است",
+  "compose.done": "نسخهٔ {n} منتشر شد.",
+  "compose.recipe": "نشان داده نشد: صافی آن ستون یا مقداری را نام می‌برد که این مجموعه ندارد."
 }

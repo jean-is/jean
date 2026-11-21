@@ -7,5 +7,19 @@
   "compose.missing": "এই প্রকল্পে এমন কোনো সংগ্রহ নেই।",
   "compose.shared": "সংগ্রহ শুধু এই প্রকল্পের নিজের কাজগুলোতেই দেখা যায়।",
   "compose.loop": "দেখানো হয়নি: একটি অন্যটিকে ঘুরে ঘুরে ব্যবহার করত।",
-  "compose.denied": "সংগ্রহ বন্ধ আছে।"
+  "compose.denied": "সংগ্রহ বন্ধ আছে।",
+  "compose.published": "প্রকাশিত",
+  "compose.pinned": "সংস্করণ {n}",
+  "compose.which": "যে সংস্করণ দেখায়",
+  "compose.versions": "সংস্করণ",
+  "compose.publish": "সংস্করণ {n} প্রকাশ করুন",
+  "compose.journal": "এখনও কোনো সংস্করণে নেই এমন পরিবর্তন: {count}",
+  "compose.version": "সংস্করণ {n}, {date}",
+  "compose.versionSchema": "সংস্করণ {n}, {date}, কলাম বদলেছে বলে",
+  "compose.breaks": "এই কলামগুলোর ধরন বদলে থাকা পর্যন্ত সংস্করণ বানানো যাবে না: {columns}। ধরন ফিরিয়ে দিন, অথবা নতুন কলাম যোগ করুন।",
+  "compose.unpublished": "এই সংগ্রহের এখনও কোনো সংস্করণ নেই।",
+  "compose.noVersion": "এই সংগ্রহের সংস্করণ {n} নেই।",
+  "compose.old": "“{old}” এখন “{name}”",
+  "compose.done": "সংস্করণ {n} প্রকাশিত হয়েছে।",
+  "compose.recipe": "দেখানো হয়নি: এর ফিল্টার এমন কলাম বা মান বলে যা এই সংগ্রহে নেই।"
 }

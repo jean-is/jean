@@ -7,5 +7,19 @@
   "compose.missing": "У цьому проєкті немає такої колекції.",
   "compose.shared": "Колекції показуються лише в завданнях цього проєкту.",
   "compose.loop": "Не показано: вони використовували б одне одного по колу.",
-  "compose.denied": "Колекції вимкнено."
+  "compose.denied": "Колекції вимкнено.",
+  "compose.published": "Опублікована",
+  "compose.pinned": "Версія {n}",
+  "compose.which": "Показувана версія",
+  "compose.versions": "Версії",
+  "compose.publish": "Опублікувати версію {n}",
+  "compose.journal": "Зміни поза версією: {count}",
+  "compose.version": "Версія {n}, {date}",
+  "compose.versionSchema": "Версія {n}, {date}, після зміни стовпців",
+  "compose.breaks": "Версію не можна створити, поки ці стовпці мають інший тип: {columns}. Поверніть їм тип або додайте нові стовпці.",
+  "compose.unpublished": "Ця колекція ще не має версій.",
+  "compose.noVersion": "Ця колекція не має версії {n}.",
+  "compose.old": "«{old}» тепер «{name}»",
+  "compose.done": "Версію {n} опубліковано.",
+  "compose.recipe": "Не показано: фільтр називає стовпець або значення, яких ця колекція не має."
 }

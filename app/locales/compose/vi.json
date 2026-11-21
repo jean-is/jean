@@ -7,5 +7,19 @@
   "compose.missing": "Dự án này không có bộ sưu tập như vậy.",
   "compose.shared": "Bộ sưu tập chỉ hiện trong các nhiệm vụ của chính dự án này.",
   "compose.loop": "Không hiển thị: mỗi bên sẽ dùng bên kia, thành vòng lặp.",
-  "compose.denied": "Bộ sưu tập đang tắt."
+  "compose.denied": "Bộ sưu tập đang tắt.",
+  "compose.published": "Đã xuất bản",
+  "compose.pinned": "Phiên bản {n}",
+  "compose.which": "Phiên bản hiển thị",
+  "compose.versions": "Phiên bản",
+  "compose.publish": "Xuất bản phiên bản {n}",
+  "compose.journal": "Thay đổi chưa vào phiên bản: {count}",
+  "compose.version": "Phiên bản {n}, {date}",
+  "compose.versionSchema": "Phiên bản {n}, {date}, do các cột thay đổi",
+  "compose.breaks": "Không thể tạo phiên bản khi các cột này đang có kiểu khác: {columns}. Hãy trả lại kiểu cũ, hoặc thêm cột mới.",
+  "compose.unpublished": "Bộ sưu tập này chưa có phiên bản nào.",
+  "compose.noVersion": "Bộ sưu tập này không có phiên bản {n}.",
+  "compose.old": "“{old}” giờ là “{name}”",
+  "compose.done": "Đã xuất bản phiên bản {n}.",
+  "compose.recipe": "Không hiển thị: bộ lọc nhắc đến cột hoặc giá trị mà bộ sưu tập này không có."
 }

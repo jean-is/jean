@@ -7,5 +7,19 @@
   "compose.missing": "Ce projet n’a pas cette collection.",
   "compose.shared": "Les collections ne s’affichent que dans les tâches de ce projet.",
   "compose.loop": "Non affichée : chacune utiliserait l’autre, en boucle.",
-  "compose.denied": "Les collections sont désactivées."
+  "compose.denied": "Les collections sont désactivées.",
+  "compose.published": "Publiée",
+  "compose.pinned": "Version {n}",
+  "compose.which": "Version affichée",
+  "compose.versions": "Versions",
+  "compose.publish": "Publier la version {n}",
+  "compose.journal": "Modifications hors version : {count}",
+  "compose.version": "Version {n}, {date}",
+  "compose.versionSchema": "Version {n}, {date}, ses colonnes ayant changé",
+  "compose.breaks": "Aucune version possible tant que ces colonnes ont changé de type : {columns}. Rendez-leur leur type, ou ajoutez de nouvelles colonnes.",
+  "compose.unpublished": "Cette collection n’a encore aucune version.",
+  "compose.noVersion": "Cette collection n’a pas de version {n}.",
+  "compose.old": "« {old} » s’appelle désormais « {name} »",
+  "compose.done": "Version {n} publiée.",
+  "compose.recipe": "Non affichée : le filtre nomme une colonne ou une valeur que cette collection n’a pas."
 }
