@@ -21,5 +21,14 @@
   "compose.noVersion": "Koleksi ini tidak punya versi {n}.",
   "compose.old": "“{old}” sekarang “{name}”",
   "compose.done": "Versi {n} diterbitkan.",
-  "compose.recipe": "Tidak ditampilkan: filternya menyebut kolom atau nilai yang tidak ada di koleksi ini."
+  "compose.recipe": "Tidak ditampilkan: filternya menyebut kolom atau nilai yang tidak ada di koleksi ini.",
+  "compose.pace": "Kapan diperbarui",
+  "compose.byHand": "Manual",
+  "compose.every5": "Setiap 5 menit",
+  "compose.hourly": "Setiap jam",
+  "compose.auto": "Saat koleksi berubah",
+  "compose.update": "Perbarui sekarang",
+  "compose.ran": "Diperbarui {date}",
+  "compose.failed": "Pembaruan terakhir gagal; yang sebelumnya tetap ditampilkan.",
+  "compose.unasked": "Belum ditampilkan: tidak ada otak yang bisa menjalankan permintaannya."
 }

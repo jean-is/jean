@@ -6,6 +6,7 @@
 // Node's tests run it.
 import { PLACE } from '../tables/table.js'
 import { fill } from '../fill/fill.js'
+import { sorted } from './recipes.js'
 
 /** @import { Table } from '../tables/table.js' */
 /** @import { Row } from '../tables/changes.js' */
@@ -29,10 +30,10 @@ export const refsIn = (text) => [...text.matchAll(BLOCK)].map(([, , inner]) => i
   Object.fromEntries([...open.matchAll(/\bdata-(\w+)="([^"]*)"/g)].map(([, what, value]) => [what.toLowerCase(), value.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')])))))
   .flatMap((inner) => ((ref) => (ref ? [ref] : []))(parseRef(inner)))
 
-/** A Markdown consumer with its `index`th reference reading another version of its source. @param {string} markdown @param {number} index @param {Ref['at']} at */
-export function withAt(markdown, index, at) {
+/** A Markdown consumer with its `index`th reference changed, written again whole: its place, which version, its recipe's lines. @param {string} markdown @param {number} index @param {(ref: Ref) => Ref} change */
+export function withRef(markdown, index, change) {
   let n = -1
-  return markdown.replace(BLOCK, (all, fence, inner) => ((ref) => (ref && ++n === index ? all.replace(inner, [placeOf({ ...ref, at }), ...inner.split('\n').slice(1)].join('\n')) : all))(parseRef(inner)))
+  return markdown.replace(BLOCK, (all, fence, inner) => ((ref) => (ref && ++n === index ? ((now) => all.replace(inner, `${[placeOf(now), ...Object.entries(now.recipe).map(([what, value]) => `${what}: ${value}`)].join('\n')}\n`))(change(ref)) : all))(parseRef(inner)))
 }
 
 /** A site's page with each table that says `data-from` filled with what it shows, its heads then its rows, those it can't show as written. @param {string} page @param {(string[][] | null)[]} shown each one's, in order */
@@ -62,8 +63,8 @@ export const versionless = (at) => (at === 'published' ? 'unpublished' : 'noVers
 
 /**
  * What a reference shows of a collection: its heads, then at most `most` rows, of the columns its recipe's `fields` names and the rows its
- * `where` keeps, worked out as a page's part is (caps/fill). @param {{ table: Table, rows: Row[], names?: Map<string, string> }} one
+ * `where` keeps, in its `sort`'s order, worked out as a page's part is (caps/fill). @param {{ table: Table, rows: Row[], names?: Map<string, string> }} one
  * @param {Record<string, string>} recipe @param {import('../fill/fill.js').How} how @returns {string[][]}
  */
-export const tableOf = (one, recipe, how, most = 12) => fill(one, { tag: 'app-table', attrs: recipe.where ? { where: recipe.where } : {}, text: recipe.fields ?? '' }, how).text
+export const tableOf = (one, recipe, how, most = 12) => fill({ ...one, rows: sorted(one.table, one.rows, recipe.sort) }, { tag: 'app-table', attrs: recipe.where ? { where: recipe.where } : {}, text: recipe.fields ?? '' }, how).text
   .split('\n').slice(0, most + 1).map((line) => line.split(' | '))

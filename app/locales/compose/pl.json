@@ -21,5 +21,14 @@
   "compose.noVersion": "Ta kolekcja nie ma wersji {n}.",
   "compose.old": "„{old}” to teraz „{name}”",
   "compose.done": "Opublikowano wersję {n}.",
-  "compose.recipe": "Nie pokazano: filtr wymienia kolumnę lub wartość, której ta kolekcja nie ma."
+  "compose.recipe": "Nie pokazano: filtr wymienia kolumnę lub wartość, której ta kolekcja nie ma.",
+  "compose.pace": "Kiedy się aktualizuje",
+  "compose.byHand": "Ręcznie",
+  "compose.every5": "Co 5 minut",
+  "compose.hourly": "Co godzinę",
+  "compose.auto": "Gdy kolekcja się zmieni",
+  "compose.update": "Aktualizuj teraz",
+  "compose.ran": "Zaktualizowano {date}",
+  "compose.failed": "Ostatnia aktualizacja się nie powiodła; nadal widać poprzednią.",
+  "compose.unasked": "Jeszcze nie pokazano: żaden mózg nie zdołał wykonać polecenia."
 }

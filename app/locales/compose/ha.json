@@ -21,5 +21,14 @@
   "compose.noVersion": "Wannan kundi ba shi da siga ta {n}.",
   "compose.old": "“{old}” yanzu shi ne “{name}”",
   "compose.done": "An wallafa siga ta {n}.",
-  "compose.recipe": "Ba a nuna ba: matatarsa tana ambaton ginshiƙi ko ƙima da wannan kundi ba shi da shi."
+  "compose.recipe": "Ba a nuna ba: matatarsa tana ambaton ginshiƙi ko ƙima da wannan kundi ba shi da shi.",
+  "compose.pace": "Lokacin da yake sabuntawa",
+  "compose.byHand": "Da hannu",
+  "compose.every5": "Kowane minti 5",
+  "compose.hourly": "Kowace sa’a",
+  "compose.auto": "Idan kundin ya canza",
+  "compose.update": "Sabunta yanzu",
+  "compose.ran": "An sabunta {date}",
+  "compose.failed": "Sabuntawa ta ƙarshe ta kasa; wadda ta gabata tana nan a nuna.",
+  "compose.unasked": "Ba a nuna ba tukuna: babu ƙwaƙwalwa da ta iya yin abin da ya roƙa."
 }

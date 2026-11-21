@@ -849,6 +849,8 @@ createServer(async (req, res) => {
   else if (toolName === 'meet') answer = last.content.startsWith('Error') ? `That didn't work: ${last.content}` : `The meeting is over:\n\n${(/Round 1:\n([\s\S]*?)\n\n/.exec(last.content)?.[1] ?? '').split('\n').map((line) => `- ${line}`).join('\n')}`
   // Flows (D218): a step to do, a flow to draw (asked, or the steps just done, offering Flows first if they're off), one to run.
   else if (/doing one step of the user's flow/.test(system)) answer = /Total per client/.test(lastUser) ? 'Acme: 120\nBistro: 80' : ''
+  // A reference's recipe run (D762): the first cell of each row it is given, so that a run that read other rows says so.
+  else if (system.startsWith('You turn the rows of a collection')) answer = `Summary: ${(/<rows>\n([\s\S]*?)\n<\/rows>/.exec(lastUser)?.[1] ?? '').split('\n').slice(1).map((row) => row.split(' | ')[0]).join(', ') || 'none'}.`
   else if (flow && last.role === 'user' && declared.has('save_flow')) call = { name: 'save_flow', args: invoices }
   else if (flow && last.role === 'user' && declared.has('offer')) call = { name: 'offer', args: { capability: 'flows' } }
   else if (flow && toolName === 'offer' && /It is on/.test(last.content)) call = { name: 'save_flow', args: invoices }
@@ -1075,7 +1077,7 @@ createServer(async (req, res) => {
     const doc = documents.at(-1)
     answer = `I read **${doc?.[2]}**${cite(doc)}. It starts with: “${doc?.[3].replace(/\[\[page \d+\]\]\n/g, '').slice(0, 120).trim()}”\n\nYou asked: *${question.slice(0, 80)}*`
   } else answer = REPLIES[lang](question.slice(0, 80))
-  if (answer && !summing) answer += `\n\n<suggestions>\n${[...(tryIt ? [tryIt] : []), ...(answer === EULER ? EULER_NEXT : SUGGESTIONS[lang])].slice(0, 3).join('\n')}\n</suggestions>`
+  if (answer && !summing && !system.startsWith('You turn the rows of a collection')) answer += `\n\n<suggestions>\n${[...(tryIt ? [tryIt] : []), ...(answer === EULER ? EULER_NEXT : SUGGESTIONS[lang])].slice(0, 3).join('\n')}\n</suggestions>`
 
   res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' })
   const send = (/** @type {object} */ delta, finish = null) =>

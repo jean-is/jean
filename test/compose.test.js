@@ -3,8 +3,9 @@
 // asked at each resolution, and what a reference shows of a collection, read again from its journal.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { parseRef, placeOf, refsIn, withAt, filledPage, loops, refused, versionless, tableOf } from '../app/caps/compose/refs.js'
+import { parseRef, placeOf, refsIn, withRef, filledPage, loops, refused, versionless, tableOf } from '../app/caps/compose/refs.js'
 import { versionOf, loadedOf, headOf, reshaped, breaks, current } from '../app/caps/compose/versions.js'
+import { keyOf, paceOf, sorted, askOf, lastRun, due } from '../app/caps/compose/recipes.js'
 import { createTable } from '../app/caps/tables/table.js'
 import { stringifyChanges, reading } from '../app/caps/tables/changes.js'
 
@@ -60,8 +61,8 @@ test('a reference reads the journal’s head, its collection’s latest version 
   assert.deepEqual([placeOf({ place: PLACE, at: 'live' }), placeOf({ place: PLACE, at: 3 })], [PLACE, `${PLACE}@3`])
   assert.deepEqual([versionless('published'), versionless(4)], ['unpublished', 'noVersion'])
   const markdown = `\`\`\`table\nnot one\n\`\`\`\n\n\`\`\`table\n${PLACE}\n\`\`\`\n\n\`\`\`table\n${PLACE}@published\nfields: Name\n\`\`\``
-  assert.equal(withAt(markdown, 1, 1), markdown.replace(`${PLACE}@published\n`, `${PLACE}@1\n`), 'the second reference, the first block naming none')
-  assert.equal(withAt(markdown, 0, 'published'), markdown.replace(`${PLACE}\n\`\`\`\n\n`, `${PLACE}@published\n\`\`\`\n\n`))
+  assert.equal(withRef(markdown, 1, (ref) => ({ ...ref, at: 1 })), markdown.replace(`${PLACE}@published\n`, `${PLACE}@1\n`), 'the second reference, the first block naming none')
+  assert.equal(withRef(markdown, 0, (ref) => ({ ...ref, at: 'published' })), markdown.replace(`${PLACE}\n\`\`\`\n\n`, `${PLACE}@published\n\`\`\`\n\n`))
 })
 
 test('a site’s page refers with a table that says data-from, filled as the page is read, its words escaped, one it can’t show as written', () => {
@@ -104,4 +105,31 @@ test('a recipe reads a column by the name it had in an earlier version, said as 
   const plain = current(now, [v1], { where: 'Checked is yes' })
   assert.deepEqual(tableOf({ ...one, table: plain.table }, plain.recipe, how), [['Name', 'Craft'], ['Ana', 'Baker']], 'the deleted column filters, and isn’t shown')
   assert.deepEqual(current(one.table, [v1], {}), { table: one.table, recipe: {}, old: [] })
+})
+
+test('a recipe sorts, and its reference is rewritten whole with its lines as the menu changes them', () => {
+  const lines = ['Cy', 'ana', 'Bea'].map((name, i) => ({ row: `01JX000000000000000000000${i}`, set: { name, trade: 'Baker', checked: i !== 1 }, at: `2026-11-21T10:0${i}:00.000Z`, by: 'user' }))
+  const one = collection(lines)
+  assert.deepEqual(tableOf(one, { fields: 'Name', sort: 'Name' }, how).flat(), ['Name', 'ana', 'Bea', 'Cy'])
+  assert.deepEqual(tableOf(one, { fields: 'Name', sort: 'name desc' }, how).flat(), ['Name', 'Cy', 'Bea', 'ana'])
+  assert.deepEqual(sorted(one.table, one.rows, 'Nothing').map((row) => row.cells.name), ['Cy', 'ana', 'Bea'], 'a column it doesn’t name leaves the order')
+  const markdown = `\`\`\`table\n${PLACE}@published\nask: Summarise them\n\`\`\``
+  assert.equal(withRef(markdown, 0, (ref) => ({ ...ref, recipe: { ...ref.recipe, refresh: 'auto' } })), `\`\`\`table\n${PLACE}@published\nask: Summarise them\nrefresh: auto\n\`\`\``)
+})
+
+test('a run is kept by its reference’s key, which its pace leaves alone; one that read the same version with the same brain is read again, unpaid', () => {
+  const ref = { place: PLACE, at: /** @type {const} */ ('published'), recipe: { where: 'Checked is yes', ask: 'Summarise' } }
+  assert.equal(keyOf(ref), keyOf({ ...ref, recipe: { ask: 'Summarise', where: 'Checked is yes', refresh: 'auto' } }))
+  assert.notEqual(keyOf(ref), keyOf({ ...ref, recipe: { ...ref.recipe, ask: 'Summarise in one slide' } }))
+  assert.notEqual(keyOf(ref), keyOf({ ...ref, at: 2 }))
+  assert.deepEqual([paceOf({}), paceOf({ refresh: 'auto' }), paceOf({ refresh: '5 min' }), paceOf({ refresh: 'every 2 h' })], [{ auto: false, every: 0 }, { auto: true, every: 0 }, { auto: false, every: 5 }, { auto: false, every: 120 }])
+  assert.equal(askOf('Summarise', [['Name'], ['Ana']]), 'Summarise\n\n<rows>\nName\nAna\n</rows>')
+  const key = keyOf(ref), runs = [{ format: 1, key, n: 1, at: '2026-11-21T10:00:00.000Z', read: 'v1', brain: 'anthropic:x', output: 'One' },
+    { format: 1, key, n: 2, at: '2026-11-21T11:00:00.000Z', read: 'v2', brain: 'anthropic:x', error: 'HTTP 529' }]
+  assert.equal(lastRun(/** @type {any} */ (runs), key)?.output, 'One', 'a failure leaves the last good run on show')
+  assert.equal(lastRun(/** @type {any} */ (runs), key, 'v1', 'anthropic:x')?.n, 1)
+  assert.equal(lastRun(/** @type {any} */ (runs), key, 'v2', 'anthropic:x'), undefined, 'a version not run yet with that brain')
+  assert.equal(lastRun(/** @type {any} */ (runs), key, 'v1', 'openai:y'), undefined)
+  const at = Date.parse('2026-11-21T10:04:00.000Z')
+  assert.deepEqual([due(/** @type {any} */ (runs[0]), 5, at), due(/** @type {any} */ (runs[0]), 5, at + 60_000), due(undefined, 5, at), due(/** @type {any} */ (runs[0]), 0, at + 1e9)], [false, true, true, false])
 })

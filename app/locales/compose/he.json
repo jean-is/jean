@@ -21,5 +21,14 @@
   "compose.noVersion": "לאוסף הזה אין גרסה {n}.",
   "compose.old": "„{old}” הוא עכשיו „{name}”",
   "compose.done": "גרסה {n} פורסמה.",
-  "compose.recipe": "לא מוצג: המסנן מזכיר עמודה או ערך שאין באוסף הזה."
+  "compose.recipe": "לא מוצג: המסנן מזכיר עמודה או ערך שאין באוסף הזה.",
+  "compose.pace": "מתי זה מתעדכן",
+  "compose.byHand": "ידנית",
+  "compose.every5": "כל 5 דקות",
+  "compose.hourly": "כל שעה",
+  "compose.auto": "כשהאוסף משתנה",
+  "compose.update": "עדכון עכשיו",
+  "compose.ran": "עודכן {date}",
+  "compose.failed": "העדכון האחרון נכשל; הקודם ממשיך להיות מוצג.",
+  "compose.unasked": "עדיין לא מוצג: אף מוח לא הצליח לבצע את מה שהתבקש."
 }

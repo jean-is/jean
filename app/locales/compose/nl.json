@@ -21,5 +21,14 @@
   "compose.noVersion": "Deze verzameling heeft geen versie {n}.",
   "compose.old": "‘{old}’ heet nu ‘{name}’",
   "compose.done": "Versie {n} gepubliceerd.",
-  "compose.recipe": "Niet getoond: het filter noemt een kolom of waarde die deze verzameling niet heeft."
+  "compose.recipe": "Niet getoond: het filter noemt een kolom of waarde die deze verzameling niet heeft.",
+  "compose.pace": "Wanneer het bijwerkt",
+  "compose.byHand": "Met de hand",
+  "compose.every5": "Elke 5 minuten",
+  "compose.hourly": "Elk uur",
+  "compose.auto": "Als de verzameling verandert",
+  "compose.update": "Nu bijwerken",
+  "compose.ran": "Bijgewerkt {date}",
+  "compose.failed": "De laatste update is mislukt; de vorige blijft zichtbaar.",
+  "compose.unasked": "Nog niet getoond: geen brein kon doen wat er gevraagd wordt."
 }

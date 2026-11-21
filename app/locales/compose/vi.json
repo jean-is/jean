@@ -21,5 +21,14 @@
   "compose.noVersion": "Bộ sưu tập này không có phiên bản {n}.",
   "compose.old": "“{old}” giờ là “{name}”",
   "compose.done": "Đã xuất bản phiên bản {n}.",
-  "compose.recipe": "Không hiển thị: bộ lọc nhắc đến cột hoặc giá trị mà bộ sưu tập này không có."
+  "compose.recipe": "Không hiển thị: bộ lọc nhắc đến cột hoặc giá trị mà bộ sưu tập này không có.",
+  "compose.pace": "Khi nào cập nhật",
+  "compose.byHand": "Thủ công",
+  "compose.every5": "Mỗi 5 phút",
+  "compose.hourly": "Mỗi giờ",
+  "compose.auto": "Khi bộ sưu tập thay đổi",
+  "compose.update": "Cập nhật ngay",
+  "compose.ran": "Đã cập nhật {date}",
+  "compose.failed": "Lần cập nhật gần nhất thất bại; lần trước vẫn được hiển thị.",
+  "compose.unasked": "Chưa hiển thị: không bộ não nào làm được điều nó yêu cầu."
 }

@@ -21,5 +21,14 @@
   "compose.noVersion": "Sta cullezzione ùn hà micca a versione {n}.",
   "compose.old": "«{old}» hè avà «{name}»",
   "compose.done": "Versione {n} publicata.",
-  "compose.recipe": "Micca mustrata: u filtru nomina una culonna o un valore chì sta cullezzione ùn hà micca."
+  "compose.recipe": "Micca mustrata: u filtru nomina una culonna o un valore chì sta cullezzione ùn hà micca.",
+  "compose.pace": "Quandu si mette à ghjornu",
+  "compose.byHand": "À manu",
+  "compose.every5": "Ogni 5 minuti",
+  "compose.hourly": "Ogni ora",
+  "compose.auto": "Quandu a cullezzione cambia",
+  "compose.update": "Mette à ghjornu avà",
+  "compose.ran": "Messu à ghjornu u {date}",
+  "compose.failed": "L’ultima messa à ghjornu hè fallita; a precedente ferma mustrata.",
+  "compose.unasked": "Micca mustratu ancu: nisun cervellu hà pussutu fà ciò ch’ellu dumanda."
 }

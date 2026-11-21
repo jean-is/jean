@@ -21,5 +21,14 @@
   "compose.noVersion": "Táto zbierka nemá verziu {n}.",
   "compose.old": "„{old}“ je teraz „{name}“",
   "compose.done": "Verzia {n} zverejnená.",
-  "compose.recipe": "Nezobrazené: filter uvádza stĺpec alebo hodnotu, ktoré táto zbierka nemá."
+  "compose.recipe": "Nezobrazené: filter uvádza stĺpec alebo hodnotu, ktoré táto zbierka nemá.",
+  "compose.pace": "Kedy sa aktualizuje",
+  "compose.byHand": "Ručne",
+  "compose.every5": "Každých 5 minút",
+  "compose.hourly": "Každú hodinu",
+  "compose.auto": "Keď sa zbierka zmení",
+  "compose.update": "Aktualizovať teraz",
+  "compose.ran": "Aktualizované {date}",
+  "compose.failed": "Posledná aktualizácia zlyhala; zostáva zobrazená predchádzajúca.",
+  "compose.unasked": "Zatiaľ nezobrazené: žiadny mozog nedokázal urobiť, čo sa žiada."
 }

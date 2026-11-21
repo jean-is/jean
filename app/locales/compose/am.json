@@ -21,5 +21,14 @@
   "compose.noVersion": "ይህ ስብስብ ስሪት {n} የለውም።",
   "compose.old": "“{old}” አሁን “{name}” ነው",
   "compose.done": "ስሪት {n} ታትሟል።",
-  "compose.recipe": "አልታየም፦ የሚያቆየው ይህ ስብስብ የሌለውን ዓምድ ወይም እሴት ይጠቅሳል።"
+  "compose.recipe": "አልታየም፦ የሚያቆየው ይህ ስብስብ የሌለውን ዓምድ ወይም እሴት ይጠቅሳል።",
+  "compose.pace": "መቼ እንደሚዘምን",
+  "compose.byHand": "በእጅ",
+  "compose.every5": "በየ5 ደቂቃው",
+  "compose.hourly": "በየሰዓቱ",
+  "compose.auto": "ስብስቡ ሲቀየር",
+  "compose.update": "አሁን አዘምን",
+  "compose.ran": "የዘመነው {date}",
+  "compose.failed": "የመጨረሻው ማዘመን አልተሳካም፤ ከዚያ በፊት የነበረው እንደታየ ይቆያል።",
+  "compose.unasked": "ገና አልታየም፦ የሚጠይቀውን የሚሠራ አእምሮ አልተገኘም።"
 }

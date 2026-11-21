@@ -21,5 +21,14 @@
   "compose.noVersion": "Cette collection n’a pas de version {n}.",
   "compose.old": "« {old} » s’appelle désormais « {name} »",
   "compose.done": "Version {n} publiée.",
-  "compose.recipe": "Non affichée : le filtre nomme une colonne ou une valeur que cette collection n’a pas."
+  "compose.recipe": "Non affichée : le filtre nomme une colonne ou une valeur que cette collection n’a pas.",
+  "compose.pace": "Quand elle se met à jour",
+  "compose.byHand": "À la main",
+  "compose.every5": "Toutes les 5 minutes",
+  "compose.hourly": "Toutes les heures",
+  "compose.auto": "Quand la collection change",
+  "compose.update": "Mettre à jour",
+  "compose.ran": "Mise à jour le {date}",
+  "compose.failed": "La dernière mise à jour a échoué; la précédente reste affichée.",
+  "compose.unasked": "Pas encore affichée : aucun cerveau n’a pu faire ce qu’elle demande."
 }

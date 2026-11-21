@@ -21,5 +21,14 @@
   "compose.noVersion": "ليس لهذه المجموعة إصدار {n}.",
   "compose.old": "«{old}» أصبح الآن «{name}»",
   "compose.done": "نُشر الإصدار {n}.",
-  "compose.recipe": "لم تُعرض: ما تحتفظ به يذكر عمودًا أو قيمة ليست في هذه المجموعة."
+  "compose.recipe": "لم تُعرض: ما تحتفظ به يذكر عمودًا أو قيمة ليست في هذه المجموعة.",
+  "compose.pace": "متى يُحدَّث",
+  "compose.byHand": "يدويًا",
+  "compose.every5": "كل 5 دقائق",
+  "compose.hourly": "كل ساعة",
+  "compose.auto": "عندما تتغيّر المجموعة",
+  "compose.update": "حدِّث الآن",
+  "compose.ran": "حُدِّث في {date}",
+  "compose.failed": "فشل آخر تحديث؛ يبقى السابق معروضًا.",
+  "compose.unasked": "لم يُعرض بعد: لم يستطع أي عقل تنفيذ ما يطلبه."
 }

@@ -21,5 +21,14 @@
   "compose.noVersion": "Această colecție nu are versiunea {n}.",
   "compose.old": "„{old}” este acum „{name}”",
   "compose.done": "Versiunea {n} a fost publicată.",
-  "compose.recipe": "Neafișată: filtrul numește o coloană sau o valoare pe care colecția nu o are."
+  "compose.recipe": "Neafișată: filtrul numește o coloană sau o valoare pe care colecția nu o are.",
+  "compose.pace": "Când se actualizează",
+  "compose.byHand": "Manual",
+  "compose.every5": "La fiecare 5 minute",
+  "compose.hourly": "În fiecare oră",
+  "compose.auto": "Când se schimbă colecția",
+  "compose.update": "Actualizează acum",
+  "compose.ran": "Actualizat la {date}",
+  "compose.failed": "Ultima actualizare a eșuat; cea dinainte rămâne afișată.",
+  "compose.unasked": "Încă neafișat: niciun creier n-a putut face ce se cere."
 }

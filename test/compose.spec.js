@@ -2,9 +2,11 @@
 // Composition (docs/composition.md, D762): a slide's ```table block shows a collection of the project live, its rows as the journal's head
 // has them, read again as the slides are drawn again and while it changes; the pane's head lists what each creation uses and what uses it.
 // A collection's versions: published by its author, made as its columns change, refused while one would break; slides pinned to one stay
-// as they were while slides that read the published one follow it; a document and a site read them too. In Arabic and Japanese too.
+// as they were while slides that read the published one follow it; a document and a site read them too. A recipe a brain carries out, run
+// the first time it shows, then by hand, or as its collection changes once its user opts in, each run kept and paid once per version read.
+// In Arabic and Japanese too.
 import { test, expect } from '@playwright/test'
-import { start } from './helpers.js'
+import { start, connectFakeBrain } from './helpers.js'
 
 const COLLECTION = 'collections/01K85Z1T00000000000000000A-artisans', DECK = 'decks/01K85Z1T00000000000000000D-neighbourhood.deck.html', ROW = '01K8000000000000000000000A'
 
@@ -161,4 +163,55 @@ test('slides pinned to version 1 stay as they were once version 2 is published, 
   await expect(now.getByRole('alert')).toHaveText('No version can be made while these columns have another kind: Craft. Give them back their kind, or add new columns.')
   await expect(now.getByRole('button', { name: 'Publish version 4' })).toBeDisabled()
   expect(await page.evaluate(async ({ COLLECTION }) => { const { app } = await import('/ui/state.js'); return (await app.fs.list(`${app.projectDir}/${COLLECTION}/versions`)).length }, { COLLECTION })).toBe(3)
+})
+
+test('a recipe that sums up the approved artisans on a slide updates by itself once its user turns that on, and only then; a run is paid once per version read', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  const SUMMARY = 'decks/01K85Z1T00000000000000000R-summary.deck.html', HERE = 'collections/01K85Z1T00000000000000000H-neighbours', rows = ['01K8000000000000000000000H', '01K8000000000000000000000J', '01K8000000000000000000000K']
+  await page.evaluate(async ({ SUMMARY, HERE, rows }) => {
+    const [{ unlock }, { app }] = await Promise.all([import('/ui/caps.js'), import('/ui/state.js')])
+    await Promise.all([unlock('tables'), unlock('skills'), unlock('slides')])
+    const at = '2026-11-21T10:00:00.000Z'
+    await app.fs.write(`${app.projectDir}/${HERE}/collection.json`, JSON.stringify({ format: 1, id: HERE.slice(12, 38), name: 'Neighbours', author: 'user', created: at, changed: at,
+      properties: [{ id: 'name', name: 'Name', type: 'text' }, { id: 'approved', name: 'Approved', type: 'checkbox' }], views: [{ id: 'table', type: 'table' }] }))
+    await app.fs.write(`${app.projectDir}/${HERE}/changes.jsonl`, [['Ana', true], ['Bob', false]].map(([name, approved], i) => `${JSON.stringify({ row: rows[i], set: { name, approved }, at, by: 'user' })}\n`).join(''))
+    await (await import('/caps/skills/decks.js')).rewrite(SUMMARY, `# Neighbours\n\n\`\`\`table\n${HERE}\nwhere: Approved is yes\nask: Sum up the approved artisans of the neighbourhood in one slide\n\`\`\`\n`, 'Summary', app.projectDir)
+  }, { SUMMARY, HERE, rows })
+  /** The runs the slides keep, by number. */
+  const runs = () => page.evaluate(async () => { const { app } = await import('/ui/state.js'); return ((await app.fs.read(`${app.projectDir}/composed/01K85Z1T00000000000000000R.jsonl`)) ?? '').split('\n').filter(Boolean).map((line) => JSON.parse(line)) })
+  const set = (/** @type {number} */ i, /** @type {object} */ cells) => page.evaluate(async ({ HERE, row, cells }) => {
+    const tables = await import('/caps/tables/tables.js'), one = await tables.load(HERE)
+    if (one) await tables.change(one, [{ row, set: cells }], 'user')
+  }, { HERE, row: rows[i], cells })
+  await show(page, SUMMARY, 'Summary')
+  const slide = page.locator('app-preview .deck-slide .deck-table > div').first()
+  // Run the first time it shows: once.
+  await expect(slide).toHaveText('Summary: Ana.')
+  expect((await runs()).map((run) => [run.n, run.read.length > 0, run.brain.includes(':')])).toEqual([[1, true, true]])
+  // By hand, its default: Bob approved changes nothing on show, and nothing is run.
+  await set(1, { approved: true })
+  await page.waitForTimeout(2600)
+  await show(page, SUMMARY, 'Summary')
+  await expect(slide).toHaveText('Summary: Ana.')
+  expect(await runs()).toHaveLength(1)
+  // Update now runs it on the rows as they are; pressed again with nothing changed, it reads that run again, unpaid.
+  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  const menu = page.locator('.menu:popover-open')
+  await menu.getByRole('button', { name: 'Update now' }).click()
+  await expect(slide).toHaveText('Summary: Ana, Bob.')
+  await expect(menu.getByRole('status').last()).toContainText('Updated')
+  await menu.getByRole('button', { name: 'Update now' }).click()
+  await page.waitForTimeout(300)
+  expect((await runs()).map((run) => run.n)).toEqual([1, 2])
+  // Its user turns on updates as the collection changes: written into the slides, and Cy approved shows by itself.
+  await menu.getByTitle('When it updates').selectOption('auto')
+  await expect.poll(() => page.evaluate(async (SUMMARY) => (await (await import('/caps/skills/decks.js')).load(SUMMARY))?.source, SUMMARY)).toContain('refresh: auto')
+  await page.keyboard.press('Escape')
+  await page.evaluate(async ({ HERE, row }) => {
+    const tables = await import('/caps/tables/tables.js'), one = await tables.load(HERE)
+    if (one) await tables.change(one, [{ row, set: { name: 'Cy', approved: true } }], 'user')
+  }, { HERE, row: rows[2] })
+  await expect(slide).toHaveText('Summary: Ana, Bob, Cy.', { timeout: 8000 })
+  expect((await runs()).map((run) => run.n)).toEqual([1, 2, 3])
 })

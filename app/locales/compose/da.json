@@ -21,5 +21,14 @@
   "compose.noVersion": "Samlingen har ingen version {n}.",
   "compose.old": "“{old}” hedder nu “{name}”",
   "compose.done": "Version {n} udgivet.",
-  "compose.recipe": "Ikke vist: filteret nævner en kolonne eller værdi, som samlingen ikke har."
+  "compose.recipe": "Ikke vist: filteret nævner en kolonne eller værdi, som samlingen ikke har.",
+  "compose.pace": "Hvornår den opdateres",
+  "compose.byHand": "Manuelt",
+  "compose.every5": "Hvert 5. minut",
+  "compose.hourly": "Hver time",
+  "compose.auto": "Når samlingen ændres",
+  "compose.update": "Opdater nu",
+  "compose.ran": "Opdateret {date}",
+  "compose.failed": "Den seneste opdatering mislykkedes; den forrige vises stadig.",
+  "compose.unasked": "Ikke vist endnu: ingen hjerne kunne udføre det, der bedes om."
 }

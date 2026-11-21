@@ -21,5 +21,14 @@
   "compose.noVersion": "Ennek a gyűjteménynek nincs {n}. verziója.",
   "compose.old": "„{old}” most már „{name}”",
   "compose.done": "A(z) {n}. verzió közzétéve.",
-  "compose.recipe": "Nem látható: a szűrő olyan oszlopot vagy értéket említ, amely nincs a gyűjteményben."
+  "compose.recipe": "Nem látható: a szűrő olyan oszlopot vagy értéket említ, amely nincs a gyűjteményben.",
+  "compose.pace": "Mikor frissül",
+  "compose.byHand": "Kézzel",
+  "compose.every5": "5 percenként",
+  "compose.hourly": "Óránként",
+  "compose.auto": "Amikor a gyűjtemény változik",
+  "compose.update": "Frissítés most",
+  "compose.ran": "Frissítve: {date}",
+  "compose.failed": "Az utolsó frissítés nem sikerült; az előző látható továbbra is.",
+  "compose.unasked": "Még nem látható: egyik agy sem tudta elvégezni a kérést."
 }
