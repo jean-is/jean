@@ -40,7 +40,5 @@
   "compose.ports": "Propozycje",
   "compose.open": "Przyjmuj propozycje ze strony",
   "compose.close": "Przestań przyjmować propozycje",
-  "compose.port": "Formularz strony może wypełnić {columns}; zatwierdzasz tylko ty, w kolumnie „{approval}”.",
-  "compose.waiting": "Czeka na twoje zatwierdzenie: {count}",
-  "compose.approved": "Zatwierdzone"
+  "compose.port": "Formularz strony może wypełnić {columns}."
 }

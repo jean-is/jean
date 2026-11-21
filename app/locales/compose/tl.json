@@ -40,7 +40,5 @@
   "compose.ports": "Mga mungkahi",
   "compose.open": "Tumanggap ng mga mungkahi mula sa isang site",
   "compose.close": "Huminto sa pagtanggap ng mga mungkahi",
-  "compose.port": "Mapupunan ng form ng site ang {columns}; ikaw lang ang nag-aapruba, sa “{approval}”.",
-  "compose.waiting": "Naghihintay ng iyong pag-apruba: {count}",
-  "compose.approved": "Inaprubahan"
+  "compose.port": "Mapupunan ng form ng site ang {columns}."
 }

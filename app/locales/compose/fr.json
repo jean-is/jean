@@ -40,7 +40,5 @@
   "compose.ports": "Propositions",
   "compose.open": "Accepter des propositions d’un site",
   "compose.close": "Ne plus accepter de propositions",
-  "compose.port": "Un formulaire de site peut remplir {columns} ; la validation, dans « {approval} », n’appartient qu’à vous.",
-  "compose.waiting": "En attente de votre validation : {count}",
-  "compose.approved": "Validé"
+  "compose.port": "Un formulaire de site peut remplir {columns}."
 }

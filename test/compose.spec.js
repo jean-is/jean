@@ -6,7 +6,7 @@
 // the first time it shows, then by hand, or as its collection changes once its user opts in, each run kept and paid once per version read.
 // Each version and each run certified as an answer is; from slides, the chain checked back to the collection's version, in Jean and on the
 // check page. A neighbourhood's directory: proposals from its published site's form come in through the collection's port alone, into its
-// journal, and show once its owner approves them, no version changing. In Arabic and Japanese too.
+// journal, and show where they meet what the site's own table keeps, no version changing. In Arabic and Japanese too.
 import { test, expect } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
 import { start, connectFakeBrain, ask, answered, SHARE_URL } from './helpers.js'
@@ -269,7 +269,7 @@ test('from slides, their provenance is checked back to the collection’s versio
   await context.close()
 })
 
-test('a neighbourhood’s directory takes a proposal from its published site and shows it once its owner approves it, no published version changing', async ({ page, context, browserName }) => {
+test('a neighbourhood’s directory takes a proposal from its published site through its port, and the site shows it once it meets the site’s own criteria, no published version changing', async ({ page, context, browserName }) => {
   test.setTimeout(120_000)
   const name = `artisans-${browserName}-${test.info().retry}-${test.info().repeatEachIndex}`, address = `http://${name}.localhost:4185/`, HERE = 'collections/01K85Z1T00000000000000000T-artisans'
   await start(page)
@@ -286,15 +286,14 @@ test('a neighbourhood’s directory takes a proposal from its published site and
   }, { HERE, host: SHARE_URL })
   const version = () => page.evaluate(async (HERE) => { const { app } = await import('/ui/state.js'); return [(await app.fs.list(`${app.projectDir}/${HERE}/versions`)).length, await app.fs.read(`${app.projectDir}/${HERE}/versions/1.json`)] }, HERE)
   const before = await version()
-  // Its owner opens its port, from its pane: a form fills Name and Trade; only they approve, in Approved.
+  // Its owner opens its port, from its pane: a form fills Name and Trade, not the box, which the collection keeps to itself.
   await show(page, HERE, 'Artisans')
   await page.getByRole('button', { name: 'Links with other creations' }).click()
   const proposals = page.locator('.menu:popover-open').getByRole('group', { name: 'Proposals' })
   await proposals.getByRole('button', { name: 'Accept proposals from a site' }).click()
-  await expect(proposals).toContainText('A site’s form can fill Name and Trade; only you approve, in “Approved”.')
-  await expect(proposals.getByRole('status')).toHaveText('Waiting for your approval: 0')
+  await expect(proposals).toContainText('A site’s form can fill Name and Trade.')
   await page.keyboard.press('Escape')
-  // Its site: the approved artisans, and a form that proposes one, which also tries to approve it.
+  // Its site: the artisans its table keeps by its own criteria, Approved ticked, and a form that proposes one, which also tries to tick that box.
   const form = `<h1>Artisans of the neighbourhood</h1><table data-from="${HERE}" data-fields="Name | Trade" data-where="Approved is yes"></table><h2>Propose one</h2>`
     + `<form method="post" data-form="propose" data-to="${HERE}"><label for="who">Name</label><input id="who" name="who" required><label for="what">Trade</label><input id="what" name="what" required>`
     + '<input type="hidden" name="approved" value="yes"><button>Propose</button><p>We read each proposal before it shows here.</p><p data-sent hidden>Thank you: it shows once read.</p><p data-unsent hidden>It didn’t go. Write to us instead.</p></form>'
@@ -328,7 +327,7 @@ test('a neighbourhood’s directory takes a proposal from its published site and
   await visit.getByLabel('Trade').fill('Potter')
   await visit.getByRole('button', { name: 'Propose' }).click()
   await expect(visit.getByRole('status')).toHaveText('Thank you: it shows once read.')
-  // Collected into the directory itself, through its port: a visitor's row, not approved, in no collection of its own; the site doesn't show it yet.
+  // Collected into the directory itself, through its port: a visitor's row, the box left alone, in no collection of its own; the site's table doesn't keep it yet.
   await publishing()
   await expect(page.locator('.toast')).toContainText('1 new reply to Directory.')
   await dialog.locator('.dialog-head').getByRole('button', { name: 'Close' }).click()
@@ -339,11 +338,7 @@ test('a neighbourhood’s directory takes a proposal from its published site and
   expect(await rows()).toEqual({ all: 1, rows: [['Ana', 'Baker', true, 'user'], ['Bob', 'Potter', null, 'visitor']] })
   await show(page, (await page.evaluate(async () => { const { app } = await import('/ui/state.js'); return `sites/${(await app.fs.list(`${app.projectDir}/sites`))[0].name}` })), 'Directory')
   await expect(site.locator('tbody td')).toHaveText(['Ana', 'Baker'])
-  await show(page, HERE, 'Artisans')
-  await page.getByRole('button', { name: 'Links with other creations' }).click()
-  await expect(page.locator('.menu:popover-open').getByRole('group', { name: 'Proposals' }).getByRole('status')).toHaveText('Waiting for your approval: 1')
-  await page.keyboard.press('Escape')
-  // Its owner approves it: the site shows it, here and once published again; no version changed.
+  // Its owner ticks the box the site keeps rows by: the site shows it, here and once published again; no version changed.
   await page.evaluate(async (HERE) => {
     const tables = await import('/caps/tables/tables.js'), one = await tables.load(HERE), bob = one?.rows.find((row) => row.cells.name === 'Bob')
     if (one && bob) await tables.change(one, [{ row: bob.id, set: { approved: true } }], 'user')

@@ -40,7 +40,5 @@
   "compose.ports": "प्रस्ताव",
   "compose.open": "साइटवरून प्रस्ताव स्वीकारा",
   "compose.close": "प्रस्ताव स्वीकारणे थांबवा",
-  "compose.port": "साइटचा फॉर्म {columns} भरू शकतो; मान्यता फक्त तुम्ही देता, “{approval}” मध्ये.",
-  "compose.waiting": "तुमच्या मान्यतेच्या प्रतीक्षेत: {count}",
-  "compose.approved": "मान्य"
+  "compose.port": "साइटचा फॉर्म {columns} भरू शकतो."
 }

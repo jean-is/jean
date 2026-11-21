@@ -40,7 +40,5 @@
   "compose.ports": "Pruposte",
   "compose.open": "Accettà pruposte da un situ",
   "compose.close": "Piantà d’accettà pruposte",
-  "compose.port": "Un furmulariu di situ pò empie {columns}; solu voi appruvate, in «{approval}».",
-  "compose.waiting": "In attesa di a vostra appruvazione: {count}",
-  "compose.approved": "Appruvatu"
+  "compose.port": "Un furmulariu di situ pò empie {columns}."
 }

@@ -40,7 +40,5 @@
   "compose.ports": "تجاویز",
   "compose.open": "کسی سائٹ سے تجاویز قبول کریں",
   "compose.close": "تجاویز قبول کرنا بند کریں",
-  "compose.port": "سائٹ کا فارم {columns} بھر سکتا ہے؛ منظوری صرف آپ دیتے ہیں، “{approval}” میں۔",
-  "compose.waiting": "آپ کی منظوری کی منتظر: {count}",
-  "compose.approved": "منظور شدہ"
+  "compose.port": "سائٹ کا فارم {columns} بھر سکتا ہے۔"
 }

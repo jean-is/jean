@@ -40,7 +40,5 @@
   "compose.ports": "Propuneri",
   "compose.open": "Acceptă propuneri de pe un site",
   "compose.close": "Nu mai accepta propuneri",
-  "compose.port": "Un formular de pe site poate completa {columns}; doar tu aprobi, în „{approval}”.",
-  "compose.waiting": "Așteaptă aprobarea ta: {count}",
-  "compose.approved": "Aprobat"
+  "compose.port": "Un formular de pe site poate completa {columns}."
 }

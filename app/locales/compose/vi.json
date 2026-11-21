@@ -40,7 +40,5 @@
   "compose.ports": "Đề xuất",
   "compose.open": "Nhận đề xuất từ một trang web",
   "compose.close": "Ngừng nhận đề xuất",
-  "compose.port": "Biểu mẫu của trang web có thể điền {columns}; chỉ bạn phê duyệt, trong “{approval}”.",
-  "compose.waiting": "Đang chờ bạn phê duyệt: {count}",
-  "compose.approved": "Đã duyệt"
+  "compose.port": "Biểu mẫu của trang web có thể điền {columns}."
 }

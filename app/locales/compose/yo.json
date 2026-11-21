@@ -40,7 +40,5 @@
   "compose.ports": "Àwọn àbá",
   "compose.open": "Gba àbá láti ojú-òpó kan",
   "compose.close": "Dẹ́kun gbígba àbá",
-  "compose.port": "Fọ́ọ̀mù ojú-òpó kan lè kún {columns}; ìwọ nìkan ló ń fọwọ́ sí i, nínú “{approval}”.",
-  "compose.waiting": "Ń dúró de ìfọwọ́sí rẹ: {count}",
-  "compose.approved": "A ti fọwọ́ sí i"
+  "compose.port": "Fọ́ọ̀mù ojú-òpó kan lè kún {columns}."
 }

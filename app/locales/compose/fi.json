@@ -40,7 +40,5 @@
   "compose.ports": "Ehdotukset",
   "compose.open": "Ota vastaan ehdotuksia sivustolta",
   "compose.close": "Lopeta ehdotusten vastaanotto",
-  "compose.port": "Sivuston lomake voi täyttää kohdat {columns}; vain sinä hyväksyt, sarakkeessa ”{approval}”.",
-  "compose.waiting": "Odottaa hyväksyntääsi: {count}",
-  "compose.approved": "Hyväksytty"
+  "compose.port": "Sivuston lomake voi täyttää kohdat {columns}."
 }

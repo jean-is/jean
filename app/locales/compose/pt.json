@@ -40,7 +40,5 @@
   "compose.ports": "Propostas",
   "compose.open": "Aceitar propostas de um site",
   "compose.close": "Deixar de aceitar propostas",
-  "compose.port": "Um formulário de um site pode preencher {columns}; só você aprova, em «{approval}».",
-  "compose.waiting": "À espera da sua aprovação: {count}",
-  "compose.approved": "Aprovado"
+  "compose.port": "Um formulário de um site pode preencher {columns}."
 }

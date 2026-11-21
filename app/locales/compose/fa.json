@@ -40,7 +40,5 @@
   "compose.ports": "پیشنهادها",
   "compose.open": "پذیرفتن پیشنهاد از یک سایت",
   "compose.close": "دیگر پیشنهاد نپذیر",
-  "compose.port": "فرم یک سایت می‌تواند {columns} را پر کند؛ فقط شما تأیید می‌کنید، در «{approval}».",
-  "compose.waiting": "در انتظار تأیید شما: {count}",
-  "compose.approved": "تأییدشده"
+  "compose.port": "فرم یک سایت می‌تواند {columns} را پر کند."
 }
