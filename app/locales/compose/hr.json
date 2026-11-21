@@ -1,0 +1,11 @@
+{
+  "compose.links": "Veze s drugim kreacijama",
+  "compose.uses": "Koristi",
+  "compose.usedIn": "Koristi se u",
+  "compose.none": "Još nema veza s drugim kreacijama.",
+  "compose.live": "Uživo",
+  "compose.missing": "Ovaj projekt nema takvu zbirku.",
+  "compose.shared": "Zbirke se prikazuju samo u zadacima ovog projekta.",
+  "compose.loop": "Nije prikazano: jedno bi koristilo drugo, u krug.",
+  "compose.denied": "Zbirke su isključene."
+}

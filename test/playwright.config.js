@@ -25,7 +25,7 @@ const RELAY = 4187
 // language's run is Chromium's alone: a language changes the words and the layout, which are style sheets, not the engine's logic.
 const CHROMIUM_ONLY = ['out', 'people', 'together', 'colleagues', 'about', 'approvals', 'ask', 'audit', 'authority', 'away', 'compact', 'compare', 'delegate', 'demo', 'dlp', 'find', 'flows', 'google', 'session', 'starters',
   'guards', 'help', 'learn', 'lists', 'meaning', 'microsoft', 'notifications', 'panes', 'plan', 'policy', 'reach', 'remember', 'retention', 'signin', 'site', 'steer',
-  'thinking', 'you']
+  'thinking', 'you', 'compose']
 const RELAYED = { origins: [`http://127.0.0.1:${APP}`], hosts: ['127.0.0.1'],
   clients: [{ issuer: `http://127.0.0.1:${MAIL}/closed`, tokenEndpoint: `http://127.0.0.1:${MAIL}/token`, clientId: 'gateway-app', clientSecret: 'gateway-secret' }] }
 

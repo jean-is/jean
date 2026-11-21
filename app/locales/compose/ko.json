@@ -1,0 +1,11 @@
+{
+  "compose.links": "다른 창작물과의 연결",
+  "compose.uses": "사용하는 항목",
+  "compose.usedIn": "사용되는 곳",
+  "compose.none": "아직 다른 창작물과 연결되지 않았습니다.",
+  "compose.live": "실시간",
+  "compose.missing": "이 프로젝트에는 그런 컬렉션이 없습니다.",
+  "compose.shared": "컬렉션은 이 프로젝트의 작업에서만 표시됩니다.",
+  "compose.loop": "표시하지 않음: 서로를 돌고 돌며 사용하게 됩니다.",
+  "compose.denied": "컬렉션이 꺼져 있습니다."
+}

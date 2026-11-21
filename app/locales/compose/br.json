@@ -1,0 +1,11 @@
+{
+  "compose.links": "Liammoù gant krouidigezhioù all",
+  "compose.uses": "Implijout a ra",
+  "compose.usedIn": "Implijet e",
+  "compose.none": "N’eus liamm ebet gant krouidigezhioù all evit c’hoazh.",
+  "compose.live": "War-eeun",
+  "compose.missing": "N’eus ket eus an dastumad-se er raktres-mañ.",
+  "compose.shared": "Ne ziskouezer an dastumadoù nemet e trevelloù ar raktres-mañ.",
+  "compose.loop": "N’eo ket diskouezet: pep hini a implijfe egile, en ur c’helc’h.",
+  "compose.denied": "Lazhet eo an dastumadoù."
+}

@@ -1,0 +1,11 @@
+{
+  "compose.links": "Diğer oluşturulanlarla bağlantılar",
+  "compose.uses": "Kullandıkları",
+  "compose.usedIn": "Kullanıldığı yerler",
+  "compose.none": "Henüz diğer oluşturulanlarla bağlantı yok.",
+  "compose.live": "Canlı",
+  "compose.missing": "Bu projede böyle bir koleksiyon yok.",
+  "compose.shared": "Koleksiyonlar yalnızca bu projenin kendi görevlerinde görünür.",
+  "compose.loop": "Gösterilmedi: her biri ötekini döngü içinde kullanırdı.",
+  "compose.denied": "Koleksiyonlar kapalı."
+}

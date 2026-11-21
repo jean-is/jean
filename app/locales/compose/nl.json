@@ -1,0 +1,11 @@
+{
+  "compose.links": "Koppelingen met andere creaties",
+  "compose.uses": "Gebruikt",
+  "compose.usedIn": "Gebruikt in",
+  "compose.none": "Nog geen koppelingen met andere creaties.",
+  "compose.live": "Live",
+  "compose.missing": "Dit project heeft zo’n verzameling niet.",
+  "compose.shared": "Verzamelingen staan alleen in de eigen taken van dit project.",
+  "compose.loop": "Niet getoond: ze zouden elkaar in een kringetje gebruiken.",
+  "compose.denied": "Verzamelingen staan uit."
+}

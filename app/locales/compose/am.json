@@ -1,0 +1,11 @@
+{
+  "compose.links": "ከሌሎች ፈጠራዎች ጋር ያሉ ትስስሮች",
+  "compose.uses": "የሚጠቀመው",
+  "compose.usedIn": "የሚገኝበት",
+  "compose.none": "ከሌሎች ፈጠራዎች ጋር እስካሁን ትስስር የለም።",
+  "compose.live": "በቀጥታ",
+  "compose.missing": "ይህ ፕሮጀክት እንዲህ ያለ ስብስብ የለውም።",
+  "compose.shared": "ስብስቦች የሚታዩት በዚህ ፕሮጀክት የራሱ ተግባሮች ውስጥ ብቻ ነው።",
+  "compose.loop": "አልታየም፦ እያንዳንዱ ሌላውን በዙር ይጠቀማል።",
+  "compose.denied": "ስብስቦች ጠፍተዋል።"
+}
