@@ -1,0 +1,13 @@
+{
+  "sources.head": "Lähteet",
+  "sources.add": "Lisää lähde",
+  "sources.what": "Mitä luetaan",
+  "sources.when": "Milloin",
+  "sources.morning": "Joka aamu",
+  "sources.file": "Kun jaan tiedoston",
+  "sources.make": "Lisää",
+  "sources.waits": "Lähteen lisäämät rivit odottavat täällä, kunnes hyväksyt ne.",
+  "sources.named": "{name}: {what}",
+  "sources.request": "Lue tämä: {what}. Lisää kokoelmaan ”{name}” ({place}) rivi jokaisesta, jota siinä ei vielä ole, ja kirjaa riviin, mitä siinä sanotaan. Älä muuta muita rivejä.",
+  "sources.fileRequest": "Jos tämä tiedosto on tällainen: {what}, lisää siitä rivi kokoelmaan ”{name}” ({place}) ja kirjaa riviin, mitä tiedostossa sanotaan. Älä muuta muita rivejä. Jos ei ole, älä tee mitään."
+}

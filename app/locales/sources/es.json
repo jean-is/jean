@@ -1,0 +1,13 @@
+{
+  "sources.head": "Fuentes",
+  "sources.add": "Añadir una fuente",
+  "sources.what": "Qué leer",
+  "sources.when": "Cuándo",
+  "sources.morning": "Cada mañana",
+  "sources.file": "Cuando comparto un archivo",
+  "sources.make": "Añadir",
+  "sources.waits": "Las filas que añade una fuente esperan aquí a que las aceptes.",
+  "sources.named": "{name}: {what}",
+  "sources.request": "Lee esto: {what}. Por cada elemento que la colección «{name}» ({place}) aún no tenga, añádele una fila con lo que dice. No cambies ninguna otra fila.",
+  "sources.fileRequest": "Si este archivo es de este tipo: {what}, añade una fila para él a la colección «{name}» ({place}) con lo que dice. No cambies ninguna otra fila. Si no lo es, no hagas nada."
+}

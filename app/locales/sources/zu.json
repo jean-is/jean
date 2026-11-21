@@ -1,0 +1,13 @@
+{
+  "sources.head": "Imithombo",
+  "sources.add": "Engeza umthombo",
+  "sources.what": "Okufanele kufundwe",
+  "sources.when": "Nini",
+  "sources.morning": "Njalo ekuseni",
+  "sources.file": "Uma ngabelana ngefayela",
+  "sources.make": "Engeza",
+  "sources.waits": "Imigqa eyengezwa umthombo ilinda lapha uze uyamukele.",
+  "sources.named": "{name}: {what}",
+  "sources.request": "Funda lokhu: {what}. Kokunye nokunye iqoqo “{name}” ({place}) elingakabi nakho, engeza umugqa kulo onalokho okushoyo. Ungashintshi omunye umugqa.",
+  "sources.fileRequest": "Uma leli fayela lingolu hlobo: {what}, lengezele umugqa eqoqweni “{name}” ({place}) onalokho elikushoyo. Ungashintshi omunye umugqa. Uma kungenjalo, ungenzi lutho."
+}

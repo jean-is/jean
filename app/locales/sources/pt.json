@@ -1,0 +1,13 @@
+{
+  "sources.head": "Fontes",
+  "sources.add": "Adicionar uma fonte",
+  "sources.what": "O que ler",
+  "sources.when": "Quando",
+  "sources.morning": "Todas as manhãs",
+  "sources.file": "Quando eu partilhar um ficheiro",
+  "sources.make": "Adicionar",
+  "sources.waits": "As linhas que uma fonte adiciona ficam aqui à espera de que as aceites.",
+  "sources.named": "{name}: {what}",
+  "sources.request": "Lê isto: {what}. Para cada um que a coleção «{name}» ({place}) ainda não tenha, adiciona-lhe uma linha com o que diz. Não alteres nenhuma outra linha.",
+  "sources.fileRequest": "Se este ficheiro for deste tipo: {what}, adiciona uma linha para ele à coleção «{name}» ({place}) com o que diz. Não alteres nenhuma outra linha. Se não for, não faças nada."
+}

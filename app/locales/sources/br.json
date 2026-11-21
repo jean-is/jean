@@ -1,0 +1,13 @@
+{
+  "sources.head": "Mammennoù",
+  "sources.add": "Ouzhpennañ ur vammenn",
+  "sources.what": "Petra lenn",
+  "sources.when": "Pegoulz",
+  "sources.morning": "Bep mintin",
+  "sources.file": "Pa rannan ur restr",
+  "sources.make": "Ouzhpennañ",
+  "sources.waits": "Al linennoù ouzhpennet gant ur vammenn a c’hortoz amañ ma vefent asantet ganeoc’h.",
+  "sources.named": "{name} : {what}",
+  "sources.request": "Lenn an dra-mañ : {what}. Evit pep hini n’emañ ket c’hoazh en dastumad « {name} » ({place}), ouzhpenn ul linenn dezhañ gant ar pezh a lavar. Na cheñch linenn all ebet.",
+  "sources.fileRequest": "Mard eo ar restr-mañ eus ar seurt-mañ : {what}, ouzhpenn ul linenn eviti en dastumad « {name} » ({place}) gant ar pezh a lavar. Na cheñch linenn all ebet. Anez, na ra netra."
+}

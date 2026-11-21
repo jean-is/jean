@@ -1,0 +1,13 @@
+{
+  "sources.head": "Àwọn orísun",
+  "sources.add": "Ṣàfikún orísun",
+  "sources.what": "Ohun tí a ó kà",
+  "sources.when": "Ìgbà wo",
+  "sources.morning": "Láràárọ̀",
+  "sources.file": "Nígbà tí mo bá pín fáìlì",
+  "sources.make": "Ṣàfikún",
+  "sources.waits": "Àwọn ìlà tí orísun bá fi kún un ń dúró níbí kí ẹ gbà wọ́n.",
+  "sources.named": "{name}: {what}",
+  "sources.request": "Ka èyí: {what}. Fún ọ̀kọ̀ọ̀kan tí àkójọpọ̀ “{name}” ({place}) kò tíì ní, ṣàfikún ìlà kan sí i pẹ̀lú ohun tó sọ. Má ṣe yí ìlà mìíràn padà.",
+  "sources.fileRequest": "Bí fáìlì yìí bá jẹ́ irú èyí: {what}, ṣàfikún ìlà kan fún un sí àkójọpọ̀ “{name}” ({place}) pẹ̀lú ohun tó sọ. Má ṣe yí ìlà mìíràn padà. Bí kò bá jẹ́ bẹ́ẹ̀, má ṣe ohunkóhun."
+}

@@ -1,0 +1,13 @@
+{
+  "sources.head": "المصادر",
+  "sources.add": "إضافة مصدر",
+  "sources.what": "ما يُقرأ",
+  "sources.when": "متى",
+  "sources.morning": "كل صباح",
+  "sources.file": "عندما أشارك ملفًا",
+  "sources.make": "إضافة",
+  "sources.waits": "الصفوف التي يضيفها مصدر تنتظر هنا حتى تقبلها.",
+  "sources.named": "{name}: {what}",
+  "sources.request": "اقرأ هذا: {what}. لكل عنصر لا تحتويه بعد المجموعة «{name}» ({place})، أضف إليها صفًا بما يرد فيه. لا تغيّر أي صف آخر.",
+  "sources.fileRequest": "إذا كان هذا الملف من هذا النوع: {what}، فأضف له صفًا إلى المجموعة «{name}» ({place}) بما يرد فيه. لا تغيّر أي صف آخر. وإن لم يكن كذلك، فلا تفعل شيئًا."
+}

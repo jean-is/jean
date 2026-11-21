@@ -1,0 +1,13 @@
+{
+  "sources.head": "ምንጮች",
+  "sources.add": "ምንጭ ያክሉ",
+  "sources.what": "ምን ይነበብ",
+  "sources.when": "መቼ",
+  "sources.morning": "በየጠዋቱ",
+  "sources.file": "ፋይል ሳጋራ",
+  "sources.make": "ያክሉ",
+  "sources.waits": "ምንጭ የሚያክላቸው ረድፎች እስኪቀበሏቸው ድረስ እዚህ ይጠብቃሉ።",
+  "sources.named": "{name}፦ {what}",
+  "sources.request": "ይህን አንብብ፦ {what}። ስብስብ “{name}” ({place}) ገና ለሌለው ለእያንዳንዱ፣ የሚለውን ይዞ አንድ ረድፍ ጨምርበት። ሌላ ማንኛውንም ረድፍ አትቀይር።",
+  "sources.fileRequest": "ይህ ፋይል የዚህ ዓይነት ከሆነ፦ {what}፣ የሚለውን ይዞ ለእሱ አንድ ረድፍ በስብስብ “{name}” ({place}) ላይ ጨምር። ሌላ ማንኛውንም ረድፍ አትቀይር። ካልሆነ ምንም አታድርግ።"
+}

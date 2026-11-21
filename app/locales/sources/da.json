@@ -1,0 +1,13 @@
+{
+  "sources.head": "Kilder",
+  "sources.add": "Tilføj en kilde",
+  "sources.what": "Hvad der skal læses",
+  "sources.when": "Hvornår",
+  "sources.morning": "Hver morgen",
+  "sources.file": "Når jeg deler en fil",
+  "sources.make": "Tilføj",
+  "sources.waits": "Rækker, som en kilde tilføjer, venter her, til du godkender dem.",
+  "sources.named": "{name}: {what}",
+  "sources.request": "Læs dette: {what}. For hver ting, som samlingen “{name}” ({place}) ikke har endnu, skal du tilføje en række i den med det, der står. Ændr ingen andre rækker.",
+  "sources.fileRequest": "Hvis denne fil er af denne slags: {what}, så tilføj en række for den i samlingen “{name}” ({place}) med det, der står i den. Ændr ingen andre rækker. Hvis ikke, så gør ingenting."
+}

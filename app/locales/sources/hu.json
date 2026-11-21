@@ -1,0 +1,13 @@
+{
+  "sources.head": "Források",
+  "sources.add": "Forrás hozzáadása",
+  "sources.what": "Mit olvasson",
+  "sources.when": "Mikor",
+  "sources.morning": "Minden reggel",
+  "sources.file": "Amikor megosztok egy fájlt",
+  "sources.make": "Hozzáadás",
+  "sources.waits": "A források által hozzáadott sorok itt várnak, amíg el nem fogadod őket.",
+  "sources.named": "{name}: {what}",
+  "sources.request": "Olvasd el ezt: {what}. Minden olyan tételhez, amely még nincs benne a(z) „{name}” gyűjteményben ({place}), adj hozzá egy sort azzal, ami benne áll. Más sort ne módosíts.",
+  "sources.fileRequest": "Ha ez a fájl ilyen fajta: {what}, adj hozzá róla egy sort a(z) „{name}” gyűjteményhez ({place}) azzal, ami benne áll. Más sort ne módosíts. Ha nem ilyen, ne csinálj semmit."
+}

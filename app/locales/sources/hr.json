@@ -1,0 +1,13 @@
+{
+  "sources.head": "Izvori",
+  "sources.add": "Dodaj izvor",
+  "sources.what": "Što čitati",
+  "sources.when": "Kada",
+  "sources.morning": "Svako jutro",
+  "sources.file": "Kad podijelim datoteku",
+  "sources.make": "Dodaj",
+  "sources.waits": "Redci koje doda izvor ovdje čekaju da ih prihvatite.",
+  "sources.named": "{name}: {what}",
+  "sources.request": "Pročitaj ovo: {what}. Za svaku stavku koju zbirka „{name}“ ({place}) još nema, dodaj u nju redak s onim što u stavci piše. Ne mijenjaj nijedan drugi redak.",
+  "sources.fileRequest": "Ako je ova datoteka ove vrste: {what}, dodaj za nju redak u zbirku „{name}“ ({place}) s onim što u njoj piše. Ne mijenjaj nijedan drugi redak. Ako nije, ne čini ništa."
+}

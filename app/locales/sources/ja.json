@@ -1,0 +1,13 @@
+{
+  "sources.head": "情報源",
+  "sources.add": "情報源を追加",
+  "sources.what": "読むもの",
+  "sources.when": "タイミング",
+  "sources.morning": "毎朝",
+  "sources.file": "ファイルを共有したとき",
+  "sources.make": "追加",
+  "sources.waits": "情報源が追加した行は、承認されるまでここで待ちます。",
+  "sources.named": "{name}：{what}",
+  "sources.request": "次のものを読んでください：{what}。コレクション「{name}」（{place}）にまだないものそれぞれについて、その内容で行を追加してください。ほかの行は変更しないでください。",
+  "sources.fileRequest": "このファイルが次の種類のものであれば：{what}、その内容でコレクション「{name}」（{place}）に行を追加してください。ほかの行は変更しないでください。そうでなければ、何もしないでください。"
+}

@@ -1,0 +1,13 @@
+{
+  "sources.head": "Maddoota",
+  "sources.add": "Madda dabali",
+  "sources.what": "Maal dubbisuu",
+  "sources.when": "Yoom",
+  "sources.morning": "Ganama hunda",
+  "sources.file": "Yeroo ani faayilii qoodu",
+  "sources.make": "Dabali",
+  "sources.waits": "Toorotni maddi dabalu hamma ati fudhattutti asitti eegu.",
+  "sources.named": "{name}: {what}",
+  "sources.request": "Kana dubbisi: {what}. Tokkoon tokkoon isaa kan tuutni “{name}” ({place}) ammaaf hin qabneef, waan inni jedhuun toora itti dabali. Toora biraa hin jijjiirin.",
+  "sources.fileRequest": "Faayiliin kun gosa kanaa yoo ta'e: {what}, waan inni jedhuun tuuta “{name}” ({place}) irratti toora isaaf dabali. Toora biraa hin jijjiirin. Yoo hin taane, homaa hin godhin."
+}

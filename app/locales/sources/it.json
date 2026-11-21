@@ -1,0 +1,13 @@
+{
+  "sources.head": "Fonti",
+  "sources.add": "Aggiungi una fonte",
+  "sources.what": "Cosa leggere",
+  "sources.when": "Quando",
+  "sources.morning": "Ogni mattina",
+  "sources.file": "Quando condivido un file",
+  "sources.make": "Aggiungi",
+  "sources.waits": "Le righe aggiunte da una fonte aspettano qui che tu le accetti.",
+  "sources.named": "{name}: {what}",
+  "sources.request": "Leggi questo: {what}. Per ogni elemento che la raccolta «{name}» ({place}) non contiene ancora, aggiungile una riga con quello che dice. Non modificare nessun’altra riga.",
+  "sources.fileRequest": "Se questo file è di questo tipo: {what}, aggiungi una riga per lui alla raccolta «{name}» ({place}) con quello che dice. Non modificare nessun’altra riga. Se non lo è, non fare nulla."
+}

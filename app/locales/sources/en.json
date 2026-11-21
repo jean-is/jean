@@ -1,0 +1,13 @@
+{
+  "sources.head": "Sources",
+  "sources.add": "Add a source",
+  "sources.what": "What to read",
+  "sources.when": "When",
+  "sources.morning": "Each morning",
+  "sources.file": "When I share a file",
+  "sources.make": "Add",
+  "sources.waits": "Rows a source adds wait here for you to accept them.",
+  "sources.named": "{name}: {what}",
+  "sources.request": "Read this: {what}. For each one the collection “{name}” ({place}) doesn’t hold yet, add a row to it with what it says. Change no other row.",
+  "sources.fileRequest": "If this file is of this kind: {what}, add a row for it to the collection “{name}” ({place}) with what it says. Change no other row. If it isn’t, do nothing."
+}

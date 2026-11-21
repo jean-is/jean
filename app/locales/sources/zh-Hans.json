@@ -1,0 +1,13 @@
+{
+  "sources.head": "来源",
+  "sources.add": "添加来源",
+  "sources.what": "要读什么",
+  "sources.when": "什么时候",
+  "sources.morning": "每天早上",
+  "sources.file": "我分享文件时",
+  "sources.make": "添加",
+  "sources.waits": "来源添加的行会在这里等你接受。",
+  "sources.named": "{name}：{what}",
+  "sources.request": "读一下这些：{what}。其中合集“{name}”（{place}）里还没有的，每一项都按其内容在合集里添加一行。不要改动其他行。",
+  "sources.fileRequest": "如果这个文件属于这一类：{what}，就按其内容在合集“{name}”（{place}）里为它添加一行。不要改动其他行。如果不是，就什么都不做。"
+}

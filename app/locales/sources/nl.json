@@ -1,0 +1,13 @@
+{
+  "sources.head": "Bronnen",
+  "sources.add": "Bron toevoegen",
+  "sources.what": "Wat er gelezen moet worden",
+  "sources.when": "Wanneer",
+  "sources.morning": "Elke ochtend",
+  "sources.file": "Wanneer ik een bestand deel",
+  "sources.make": "Toevoegen",
+  "sources.waits": "Rijen die een bron toevoegt, wachten hier tot je ze accepteert.",
+  "sources.named": "{name}: {what}",
+  "sources.request": "Lees dit: {what}. Voeg voor elk item dat nog niet in de verzameling ‘{name}’ ({place}) staat een rij toe met wat erin staat. Verander geen andere rij.",
+  "sources.fileRequest": "Als dit bestand van deze soort is: {what}, voeg er dan een rij voor toe aan de verzameling ‘{name}’ ({place}) met wat erin staat. Verander geen andere rij. Zo niet, doe dan niets."
+}

@@ -1,0 +1,13 @@
+{
+  "sources.head": "Sources",
+  "sources.add": "Ajouter une source",
+  "sources.what": "Quoi lire",
+  "sources.when": "Quand",
+  "sources.morning": "Chaque matin",
+  "sources.file": "Quand je partage un fichier",
+  "sources.make": "Ajouter",
+  "sources.waits": "Les lignes qu’une source ajoute attendent ici que vous les acceptiez.",
+  "sources.named": "{name} : {what}",
+  "sources.request": "Lis ceci : {what}. Pour chaque élément que la collection « {name} » ({place}) ne contient pas encore, ajoutes-y une ligne avec ce qu’il dit. Ne change aucune autre ligne.",
+  "sources.fileRequest": "Si ce fichier est de ce genre : {what}, ajoute pour lui une ligne à la collection « {name} » ({place}) avec ce qu’il dit. Ne change aucune autre ligne. Sinon, ne fais rien."
+}

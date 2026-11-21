@@ -1,0 +1,13 @@
+{
+  "sources.head": "Vyanzo",
+  "sources.add": "Ongeza chanzo",
+  "sources.what": "Cha kusoma",
+  "sources.when": "Lini",
+  "sources.morning": "Kila asubuhi",
+  "sources.file": "Ninaposhiriki faili",
+  "sources.make": "Ongeza",
+  "sources.waits": "Safu zinazoongezwa na chanzo husubiri hapa uzikubali.",
+  "sources.named": "{name}: {what}",
+  "sources.request": "Soma hiki: {what}. Kwa kila kimoja ambacho mkusanyiko “{name}” ({place}) bado hauna, ongeza safu ndani yake yenye kile kinachosema. Usibadilishe safu nyingine yoyote.",
+  "sources.fileRequest": "Ikiwa faili hili ni la aina hii: {what}, liongezee safu kwenye mkusanyiko “{name}” ({place}) yenye kile linachosema. Usibadilishe safu nyingine yoyote. Ikiwa sivyo, usifanye chochote."
+}

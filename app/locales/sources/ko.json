@@ -1,0 +1,13 @@
+{
+  "sources.head": "출처",
+  "sources.add": "출처 추가",
+  "sources.what": "읽을 것",
+  "sources.when": "언제",
+  "sources.morning": "매일 아침",
+  "sources.file": "파일을 공유할 때",
+  "sources.make": "추가",
+  "sources.waits": "출처에서 추가한 행은 수락할 때까지 여기서 기다려요.",
+  "sources.named": "{name}: {what}",
+  "sources.request": "다음을 읽어 줘: {what}. ‘{name}’ 컬렉션({place})에 아직 없는 것마다 그 내용으로 행을 추가해 줘. 다른 행은 바꾸지 마.",
+  "sources.fileRequest": "이 파일이 다음 종류라면: {what}, 그 내용으로 ‘{name}’ 컬렉션({place})에 행을 추가해 줘. 다른 행은 바꾸지 마. 아니라면 아무것도 하지 마."
+}

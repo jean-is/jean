@@ -1,0 +1,13 @@
+{
+  "sources.head": "Surse",
+  "sources.add": "Adăugați o sursă",
+  "sources.what": "Ce să citească",
+  "sources.when": "Când",
+  "sources.morning": "În fiecare dimineață",
+  "sources.file": "Când partajez un fișier",
+  "sources.make": "Adăugați",
+  "sources.waits": "Rândurile adăugate de o sursă așteaptă aici să le acceptați.",
+  "sources.named": "{name}: {what}",
+  "sources.request": "Citește asta: {what}. Pentru fiecare element pe care colecția „{name}” ({place}) nu îl are încă, adaugă-i un rând cu ce spune. Nu schimba niciun alt rând.",
+  "sources.fileRequest": "Dacă acest fișier este de acest fel: {what}, adaugă pentru el un rând în colecția „{name}” ({place}) cu ce spune. Nu schimba niciun alt rând. Dacă nu este, nu face nimic."
+}

@@ -1,0 +1,13 @@
+{
+  "sources.head": "Fonti",
+  "sources.add": "Aghjunghje una fonte",
+  "sources.what": "Chì leghje",
+  "sources.when": "Quandu",
+  "sources.morning": "Ogni mane",
+  "sources.file": "Quandu spartu un schedariu",
+  "sources.make": "Aghjunghje",
+  "sources.waits": "E linee aghjunte da una fonte aspettanu quì chì vo l’accettite.",
+  "sources.named": "{name} : {what}",
+  "sources.request": "Leghji questu : {what}. Per ognunu chì ùn hè ancu in a cullezzione « {name} » ({place}), aghjunghji una linea cù ciò ch’ellu dice. Ùn cambià nisun’altra linea.",
+  "sources.fileRequest": "S’è stu schedariu hè di stu generu : {what}, aghjunghji una linea per ellu à a cullezzione « {name} » ({place}) cù ciò ch’ellu dice. Ùn cambià nisun’altra linea. Osinnò, ùn fà nunda."
+}

@@ -1,0 +1,13 @@
+{
+  "sources.head": "Sumber",
+  "sources.add": "Tambah sumber",
+  "sources.what": "Apa yang perlu dibaca",
+  "sources.when": "Bila",
+  "sources.morning": "Setiap pagi",
+  "sources.file": "Apabila saya berkongsi fail",
+  "sources.make": "Tambah",
+  "sources.waits": "Baris yang ditambah oleh sumber menunggu di sini untuk anda terima.",
+  "sources.named": "{name}: {what}",
+  "sources.request": "Baca ini: {what}. Bagi setiap satu yang belum ada dalam koleksi “{name}” ({place}), tambah satu baris padanya dengan apa yang dinyatakannya. Jangan ubah baris lain.",
+  "sources.fileRequest": "Jika fail ini daripada jenis ini: {what}, tambah satu baris untuknya pada koleksi “{name}” ({place}) dengan apa yang dinyatakannya. Jangan ubah baris lain. Jika tidak, jangan buat apa-apa."
+}

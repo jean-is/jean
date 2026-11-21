@@ -1,0 +1,13 @@
+{
+  "sources.head": "Maɓuɓɓuga",
+  "sources.add": "Ƙara maɓuɓɓuga",
+  "sources.what": "Abin da za a karanta",
+  "sources.when": "Yaushe",
+  "sources.morning": "Kowace safiya",
+  "sources.file": "Idan na raba fayil",
+  "sources.make": "Ƙara",
+  "sources.waits": "Layukan da maɓuɓɓuga ta ƙara suna jira a nan har sai ka karɓe su.",
+  "sources.named": "{name}: {what}",
+  "sources.request": "Karanta wannan: {what}. Ga kowane ɗaya da kundin “{name}” ({place}) bai ƙunsa ba tukuna, ƙara masa layi da abin da ya faɗa. Kada ka canja wani layi daban.",
+  "sources.fileRequest": "Idan wannan fayil na irin wannan ne: {what}, ƙara masa layi a kundin “{name}” ({place}) da abin da ya faɗa. Kada ka canja wani layi daban. Idan ba haka ba, kada ka yi kome."
+}

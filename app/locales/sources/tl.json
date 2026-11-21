@@ -1,0 +1,13 @@
+{
+  "sources.head": "Mga pinagmulan",
+  "sources.add": "Magdagdag ng pinagmulan",
+  "sources.what": "Ano ang babasahin",
+  "sources.when": "Kailan",
+  "sources.morning": "Tuwing umaga",
+  "sources.file": "Kapag nagbahagi ako ng file",
+  "sources.make": "Idagdag",
+  "sources.waits": "Dito naghihintay ang mga row na idinaragdag ng pinagmulan hanggang tanggapin mo ang mga ito.",
+  "sources.named": "{name}: {what}",
+  "sources.request": "Basahin ito: {what}. Para sa bawat isa na wala pa sa koleksiyong “{name}” ({place}), magdagdag dito ng row na may sinasabi nito. Huwag baguhin ang ibang row.",
+  "sources.fileRequest": "Kung ganitong uri ang file na ito: {what}, magdagdag ng row para dito sa koleksiyong “{name}” ({place}) na may sinasabi nito. Huwag baguhin ang ibang row. Kung hindi, huwag gumawa ng anuman."
+}

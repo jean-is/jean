@@ -1,0 +1,13 @@
+{
+  "sources.head": "Sumber",
+  "sources.add": "Tambah sumber",
+  "sources.what": "Yang dibaca",
+  "sources.when": "Kapan",
+  "sources.morning": "Setiap pagi",
+  "sources.file": "Saat saya membagikan file",
+  "sources.make": "Tambah",
+  "sources.waits": "Baris yang ditambahkan sumber menunggu di sini sampai Anda menerimanya.",
+  "sources.named": "{name}: {what}",
+  "sources.request": "Baca ini: {what}. Untuk setiap hal yang belum ada di koleksi “{name}” ({place}), tambahkan satu baris ke koleksi itu berisi apa yang tertulis. Jangan ubah baris lain.",
+  "sources.fileRequest": "Jika file ini termasuk jenis ini: {what}, tambahkan satu baris untuknya ke koleksi “{name}” ({place}) berisi apa yang tertulis. Jangan ubah baris lain. Jika bukan, jangan lakukan apa pun."
+}

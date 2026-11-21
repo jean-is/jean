@@ -1,0 +1,13 @@
+{
+  "sources.head": "Isi mmalite",
+  "sources.add": "Tinye isi mmalite",
+  "sources.what": "Ihe a ga-agụ",
+  "sources.when": "Mgbe",
+  "sources.morning": "Kwa ụtụtụ",
+  "sources.file": "Mgbe m kesara faịlụ",
+  "sources.make": "Tinye",
+  "sources.waits": "Ahịrị isi mmalite tinyere na-echere ebe a ka ị nabata ha.",
+  "sources.named": "{name}: {what}",
+  "sources.request": "Gụọ nke a: {what}. Maka nke ọ bụla nchịkọta “{name}” ({place}) na-enwebeghị, tinye ahịrị na ya nke nwere ihe ọ na-ekwu. Agbanwela ahịrị ọzọ ọ bụla.",
+  "sources.fileRequest": "Ọ bụrụ na faịlụ a bụ ụdị a: {what}, tinye ahịrị maka ya na nchịkọta “{name}” ({place}) nke nwere ihe ọ na-ekwu. Agbanwela ahịrị ọzọ ọ bụla. Ọ bụrụ na ọ bụghị, emela ihe ọ bụla."
+}

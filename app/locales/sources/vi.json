@@ -1,0 +1,13 @@
+{
+  "sources.head": "Nguồn",
+  "sources.add": "Thêm nguồn",
+  "sources.what": "Đọc gì",
+  "sources.when": "Khi nào",
+  "sources.morning": "Mỗi sáng",
+  "sources.file": "Khi tôi chia sẻ một tệp",
+  "sources.make": "Thêm",
+  "sources.waits": "Các hàng do nguồn thêm vào sẽ chờ ở đây để bạn chấp nhận.",
+  "sources.named": "{name}: {what}",
+  "sources.request": "Hãy đọc nội dung này: {what}. Với mỗi mục mà bộ sưu tập “{name}” ({place}) chưa có, hãy thêm một hàng vào đó với nội dung của mục. Không thay đổi hàng nào khác.",
+  "sources.fileRequest": "Nếu tệp này thuộc loại này: {what}, hãy thêm một hàng cho tệp vào bộ sưu tập “{name}” ({place}) với nội dung của tệp. Không thay đổi hàng nào khác. Nếu không phải, đừng làm gì cả."
+}

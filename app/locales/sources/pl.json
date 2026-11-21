@@ -1,0 +1,13 @@
+{
+  "sources.head": "Źródła",
+  "sources.add": "Dodaj źródło",
+  "sources.what": "Co czytać",
+  "sources.when": "Kiedy",
+  "sources.morning": "Każdego ranka",
+  "sources.file": "Gdy udostępnię plik",
+  "sources.make": "Dodaj",
+  "sources.waits": "Wiersze dodane przez źródło czekają tutaj, aż je zaakceptujesz.",
+  "sources.named": "{name}: {what}",
+  "sources.request": "Przeczytaj to: {what}. Dla każdej pozycji, której nie ma jeszcze w kolekcji „{name}” ({place}), dodaj do niej wiersz z tym, co zawiera. Nie zmieniaj żadnego innego wiersza.",
+  "sources.fileRequest": "Jeśli ten plik jest tego rodzaju: {what}, dodaj dla niego wiersz do kolekcji „{name}” ({place}) z tym, co zawiera. Nie zmieniaj żadnego innego wiersza. Jeśli nie, nic nie rób."
+}

@@ -1,0 +1,13 @@
+{
+  "sources.head": "Kaynaklar",
+  "sources.add": "Kaynak ekle",
+  "sources.what": "Ne okunacak",
+  "sources.when": "Ne zaman",
+  "sources.morning": "Her sabah",
+  "sources.file": "Bir dosya paylaştığımda",
+  "sources.make": "Ekle",
+  "sources.waits": "Bir kaynağın eklediği satırlar, sen kabul edene kadar burada bekler.",
+  "sources.named": "{name}: {what}",
+  "sources.request": "Şunu oku: {what}. “{name}” ({place}) koleksiyonunda henüz bulunmayan her biri için, içinde yazanlarla koleksiyona bir satır ekle. Başka hiçbir satırı değiştirme.",
+  "sources.fileRequest": "Bu dosya şu türdense: {what}, içinde yazanlarla “{name}” ({place}) koleksiyonuna onun için bir satır ekle. Başka hiçbir satırı değiştirme. Değilse hiçbir şey yapma."
+}

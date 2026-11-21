@@ -1,0 +1,13 @@
+{
+  "sources.head": "מקורות",
+  "sources.add": "הוספת מקור",
+  "sources.what": "מה לקרוא",
+  "sources.when": "מתי",
+  "sources.morning": "כל בוקר",
+  "sources.file": "כשמשתפים קובץ",
+  "sources.make": "הוספה",
+  "sources.waits": "שורות שמקור מוסיף מחכות כאן עד שיתקבלו.",
+  "sources.named": "{name}: {what}",
+  "sources.request": "קרא את זה: {what}. עבור כל פריט שעדיין אינו באוסף “{name}” ({place}), הוסף לאוסף שורה עם מה שכתוב בו. אל תשנה אף שורה אחרת.",
+  "sources.fileRequest": "אם הקובץ הזה הוא מהסוג הזה: {what}, הוסף עבורו שורה לאוסף “{name}” ({place}) עם מה שכתוב בו. אל תשנה אף שורה אחרת. אם לא, אל תעשה דבר."
+}

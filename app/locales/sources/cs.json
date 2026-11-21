@@ -1,0 +1,13 @@
+{
+  "sources.head": "Zdroje",
+  "sources.add": "Přidat zdroj",
+  "sources.what": "Co číst",
+  "sources.when": "Kdy",
+  "sources.morning": "Každé ráno",
+  "sources.file": "Když sdílím soubor",
+  "sources.make": "Přidat",
+  "sources.waits": "Řádky, které přidá zdroj, tady čekají, až je přijmete.",
+  "sources.named": "{name}: {what}",
+  "sources.request": "Přečti tohle: {what}. Za každou položku, kterou sbírka „{name}“ ({place}) ještě nemá, do ní přidej řádek s tím, co se v ní píše. Žádný jiný řádek neměň.",
+  "sources.fileRequest": "Pokud je tento soubor tohoto druhu: {what}, přidej za něj do sbírky „{name}“ ({place}) řádek s tím, co se v něm píše. Žádný jiný řádek neměň. Pokud ne, nedělej nic."
+}

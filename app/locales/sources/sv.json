@@ -1,0 +1,13 @@
+{
+  "sources.head": "Källor",
+  "sources.add": "Lägg till en källa",
+  "sources.what": "Vad som ska läsas",
+  "sources.when": "När",
+  "sources.morning": "Varje morgon",
+  "sources.file": "När jag delar en fil",
+  "sources.make": "Lägg till",
+  "sources.waits": "Rader som en källa lägger till väntar här tills du godtar dem.",
+  "sources.named": "{name}: {what}",
+  "sources.request": "Läs detta: {what}. För varje sak som samlingen ”{name}” ({place}) inte har ännu, lägg till en rad i den med det som står där. Ändra ingen annan rad.",
+  "sources.fileRequest": "Om den här filen är av det här slaget: {what}, lägg till en rad för den i samlingen ”{name}” ({place}) med det som står i den. Ändra ingen annan rad. Annars gör du ingenting."
+}

@@ -1,0 +1,13 @@
+{
+  "sources.head": "Quellen",
+  "sources.add": "Quelle hinzufügen",
+  "sources.what": "Was gelesen wird",
+  "sources.when": "Wann",
+  "sources.morning": "Jeden Morgen",
+  "sources.file": "Wenn ich eine Datei teile",
+  "sources.make": "Hinzufügen",
+  "sources.waits": "Zeilen, die eine Quelle hinzufügt, warten hier, bis du sie annimmst.",
+  "sources.named": "{name}: {what}",
+  "sources.request": "Lies das: {what}. Füg für alles, was die Sammlung „{name}“ ({place}) noch nicht enthält, eine Zeile mit dem hinzu, was darin steht. Ändere keine andere Zeile.",
+  "sources.fileRequest": "Wenn diese Datei von dieser Art ist: {what}, füg für sie eine Zeile mit ihrem Inhalt zur Sammlung „{name}“ ({place}) hinzu. Ändere keine andere Zeile. Wenn nicht, tu nichts."
+}

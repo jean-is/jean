@@ -1,0 +1,13 @@
+{
+  "sources.head": "Fontes",
+  "sources.add": "Adde fontem",
+  "sources.what": "Quid legendum",
+  "sources.when": "Quando",
+  "sources.morning": "Quoque mane",
+  "sources.file": "Cum fasciculum communico",
+  "sources.make": "Adde",
+  "sources.waits": "Ordines a fonte additi hic exspectant dum eos accipias.",
+  "sources.named": "{name}: {what}",
+  "sources.request": "Lege hoc: {what}. Pro unoquoque quod collectio “{name}” ({place}) nondum continet, adde ei ordinem cum iis quae dicit. Nullum alium ordinem muta.",
+  "sources.fileRequest": "Si hic fasciculus huius generis est: {what}, adde pro eo ordinem collectioni “{name}” ({place}) cum iis quae dicit. Nullum alium ordinem muta. Si non est, nihil fac."
+}

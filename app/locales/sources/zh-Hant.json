@@ -1,0 +1,13 @@
+{
+  "sources.head": "來源",
+  "sources.add": "新增來源",
+  "sources.what": "要讀什麼",
+  "sources.when": "什麼時候",
+  "sources.morning": "每天早上",
+  "sources.file": "我分享檔案時",
+  "sources.make": "新增",
+  "sources.waits": "來源新增的列會在這裡等你接受。",
+  "sources.named": "{name}：{what}",
+  "sources.request": "讀一下這些：{what}。其中合集「{name}」（{place}）裡還沒有的，每一項都依其內容在合集裡新增一列。不要更動其他列。",
+  "sources.fileRequest": "如果這個檔案屬於這一類：{what}，就依其內容在合集「{name}」（{place}）裡為它新增一列。不要更動其他列。如果不是，就什麼都不做。"
+}
