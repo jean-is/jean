@@ -1,6 +1,6 @@
 # Composition
 
-How Jean's creations feed each other: a collection shown in a deck, a document or a site, kept up to date, at a version the consumer chooses, with its provenance checkable. Built in five steps, each shippable alone; this page is the map, then what each step delivered.
+How Jean's creations feed each other: a collection shown in a deck, a document or a site, kept up to date, at a version the consumer chooses, with its provenance checkable. Built in five steps, each shippable alone; this page is the map, then what each step delivered, then a recap: what departs from the plan, the known limits and the decisions left open.
 
 ## The model
 
@@ -59,7 +59,7 @@ One capability, `caps/compose/`, loaded with Tables: pure modules under `node --
 - **A run** (`run()` in `compose.js`): the rows the query keeps (200 at most) under `<rows>`, after the instruction, in one request outside any task, through the `turn.step` hooks a turn's steps go through (so a month's limit holds it back), with a prompt of its own (`PROMPT`) that asks for Markdown alone and no invented fact. Each run is a line of the consumer's results, `composed/<its ULID>.jsonl` (a task's for slides in an answer), appended, never edited: `{ format, key, n, at, read, brain, output | error }`, numbered per reference. `key` is the reference's place, version and recipe, its `refresh` aside; `read` is the source's version (`v2`) or its journal's head.
 - **Cache by source version.** A run whose reference already ran on the same `read` with the same brain is read again, not paid again (`lastRun()`).
 - **Modes**, written as `refresh:` in the reference and chosen from the consumer's menu: *By hand* (the default, nothing written), with *Update now*; *Every 5 minutes* or *Every hour* (`refresh: 5 min`, `60 min`), run by a minute's tick while Jean is open (`due()`); *As the collection changes* (`refresh: auto`), the opt-in propagation. The first time a reference with `ask` shows, it runs once, so that it shows something.
-- **Guards.** Changes that come close together are gathered (`GATHER`, 2 s after the last) into one run; a run that changes a consumer carries on to what uses that consumer, `DEPTH` (3) deep at most; a run that fails is kept as an error line, the last good run stays on show, the menu says the last update failed, and propagation stops there.
+- **Guards.** Changes that come close together are gathered (`GATHER`, 2 s after the last) into one run, and a run asked twice at once (as it first shows and as its source changes) runs once; a run that changes a consumer carries on to what uses that consumer, `DEPTH` (3) deep at most; a run that fails is kept as an error line, the last good run stays on show, the menu says the last update failed, and propagation stops there.
 - **Exit criterion, verified** (`test/compose.spec.js`, against the fake brain): slides that sum up a collection's approved artisans run once as they first show; by hand, an artisan approved changes nothing and runs nothing; *Update now* runs it on the rows as they are, and pressed again with nothing changed reads that run again; once *As the collection changes* is chosen, which writes `refresh: auto` into the slides, an artisan added and approved shows on the slide by itself, the third run.
 
 ### Step 4 — Proof and provenance
@@ -79,3 +79,50 @@ One capability, `caps/compose/`, loaded with Tables: pure modules under `node --
 - **Rate and abuse, at both ends.** The share host already takes a reply only for a site published with replies, 20 KB at most, 30 from a network an hour, 500 waiting, each kept 30 days, sealed in the visitor's browser; the port adds its own hourly cap, the columns it takes, the approval no one else sets, and duplicates dropped.
 - **Sites consume live**: the site's tables are filled from the collection as it is each time the site is read, checked or published (step 2). A published site shows a proposal approved once it is published again, which the pane's *Publish…* says (*1 file changed since it was published*).
 - **Exit criterion, verified** (`test/compose.spec.js`): the owner opens the directory's port; a published site's form sends a neighbour's proposal, with a hidden field that tries to approve it; collected, it is a visitor's row of the directory itself, not approved, in no collection of its own, and neither the site in Jean nor the published one shows it; the menu says one waits; the owner approves it, and the site shows it, in Jean and online once published again; version 1's file is byte for byte what it was, and no version was added.
+
+## Recap
+
+### What each step delivered
+
+| Step | Delivered | Exit criterion |
+| --- | --- | --- |
+| 1 | A slide's ```` ```table ```` block shows a collection live; rights asked at each resolution; loops refused; the pane's *Links with other creations*. | A row changed shows changed on the slide, at once and once reopened. |
+| 2 | Versions (`versions/<n>.json`), published by hand or made by a change of columns; selectors `@published`, `@3`; backward compatibility (old names read, deleted columns readable, breaking kinds refused); documents and sites as consumers. | Slides pinned to version 1 stay as they were after version 2; slides on `@published` follow. |
+| 3 | Recipes: `sort:`, and `ask:` run by a brain (`brain:`), by hand, every 5 minutes or hour, or as the collection changes (opt-in); runs kept consumer-side, cached by source version; gathering, depth, stop on error. | The approved artisans summed up on a slide update by themselves once *As the collection changes* is chosen, and only then. |
+| 4 | Versions and runs certified with a new VC type, `CreationVersion`, sealed by the existing mechanism; ingredients by certificate imprint; the chain checked in Jean and on the check page. | From slides, the provenance is checked back to the collection's version, in Jean and on the check page. |
+| 5 | A collection's port, opened by its owner; a published site's form proposes into it (`data-to`); its columns only, never the approval, 30 an hour, once; only the owner's approval counts. | A directory takes a neighbour's proposal and shows it once approved, in Jean and online, no version changing. |
+
+Each step was committed alone (`:sparkles: composition: étape N — …`), steps 2 to 5 each after a commit of its own raising `loc.app` by what the step measured, at the owner's word. Nothing was added to the first load, the core or Tables' folder; no dependency was added.
+
+### Where this departs from the plan, and why
+
+- **Only collections are sources.** Slides, documents and sites consume; no step needed a document's sections or a deck's slides as a source, so their contracts aren't built. Loops therefore can't form yet: the check runs at each resolution and is tested on a graph where they can.
+- **The journal is the one that exists.** A collection's `changes.jsonl` already says who, what and when for every write; a consumer's runs have their own (`composed/<ULID>.jsonl`). Slides and documents keep no journal of their writes: nothing reads one.
+- **A draft first.** A change of columns makes a version only once the collection has one; before its author publishes, nothing can pin it.
+- **A breaking change is refused as a version, not as a change.** Tables still lets a column change kind (and converts its values for live readers); composition makes no version of it, by hand or by itself, and says why. Refusing the change itself would mean changing Tables, whose code is at its gzip budget.
+- **What costs nothing is resolved, not stored.** A query (`fields`, `where`, `sort`) is worked out at each read; only a brain's run is a stored, numbered result. A live reference drawn again as its collection changes is resolution, not propagation, which is the opt-in re-running of a paid recipe.
+- **A schedule runs while Jean is open.** There is no Jean server; a minute's tick runs what is due.
+- **Sites consume live, not on a schedule.** Their tables are filled each time the site is read or published; showing a change online means publishing again. Publishing on a schedule would put something online without asking each time, which Jean's rules don't allow unasked: left as a decision (below).
+- **A provenance is one file.** The check page reads a JSON array of certificates, which Jean saves, rather than certificates dropped one by one.
+- **Column rights are enforced where they matter.** A port takes only its columns; the approval counts only where its owner set it, read from each cell's author, so a visitor or a person working on the collection together can't approve, whatever they write, while the owner's own ticks from their other devices, which Sync brings, count.
+- **The commits' first lines** are in English after `composition: étape N —`, as the rest of the history is; the docs are in English, as all of Jean's are.
+
+### Known limits
+
+- Slides saved as PowerPoint: a composed table or a run's words weren't checked in the exported file.
+- Versions, runs and ports are plain files of the project: Sync carries them as files, but working on a collection together (D733) sends its lines and its table only, so the others have neither its versions nor its port.
+- The graph is read again from every slides, document and site file of the project (at most once a second, and again after any of them is written): right for tens of creations, not thousands, where an index in `.cache/` would be.
+- A run sends up to 200 rows to the brain it names, the one at hand otherwise, outside any task: through the `turn.step` hooks (a month's limit), but not through the approval rules, the brain being the person's own and the run the person's choice. Rows a visitor proposed reach it too, unless its recipe keeps only approved ones; it has no tools, and what it writes is only shown, but words planted in a proposal could still steer what a slide says.
+- The salts of a version's or a run's digests are kept, but nothing in Jean yet makes a proof that discloses what it holds.
+- The consumer's menu draws its choices as Jean's full-width selects; a denser layout would cost style lines.
+- The check page's introduction still speaks of answers only.
+- The 45 translations of the new strings are Claude's, not a native speaker's.
+- WebKit doesn't run `test/compose.spec.js` (in `CHROMIUM_ONLY`: what it checks is Jean's own JavaScript).
+
+### Decisions left open
+
+1. Publishing a site again on a schedule, or as its collection changes: an outward action, which would need its own approval rule (*Do it / Ask me first*).
+2. Documents' sections and slides as sources, when a need shows.
+3. Whether people working on a collection together get its versions and its port.
+4. Whether Tables itself should refuse a breaking change of kind once a collection has versions.
+5. A proof that discloses what a version or a run holds, from its kept salts.
