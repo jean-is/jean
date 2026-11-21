@@ -7,5 +7,19 @@
   "compose.missing": "Projektet har ingen sådan samling.",
   "compose.shared": "Samlinger vises kun i dette projekts egne opgaver.",
   "compose.loop": "Ikke vist: de ville bruge hinanden i ring.",
-  "compose.denied": "Samlinger er slået fra."
+  "compose.denied": "Samlinger er slået fra.",
+  "compose.published": "Udgivet",
+  "compose.pinned": "Version {n}",
+  "compose.which": "Version der vises",
+  "compose.versions": "Versioner",
+  "compose.publish": "Udgiv version {n}",
+  "compose.journal": "Ændringer uden for en version: {count}",
+  "compose.version": "Version {n}, {date}",
+  "compose.versionSchema": "Version {n}, {date}, da kolonnerne ændrede sig",
+  "compose.breaks": "Der kan ikke laves en version, så længe disse kolonner har en anden type: {columns}. Giv dem deres type tilbage, eller tilføj nye kolonner.",
+  "compose.unpublished": "Samlingen har endnu ingen version.",
+  "compose.noVersion": "Samlingen har ingen version {n}.",
+  "compose.old": "“{old}” hedder nu “{name}”",
+  "compose.done": "Version {n} udgivet.",
+  "compose.recipe": "Ikke vist: filteret nævner en kolonne eller værdi, som samlingen ikke har."
 }

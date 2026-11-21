@@ -7,5 +7,19 @@
   "compose.missing": "Dieses Projekt hat keine solche Sammlung.",
   "compose.shared": "Sammlungen erscheinen nur in den eigenen Aufgaben dieses Projekts.",
   "compose.loop": "Nicht angezeigt: Beide würden einander im Kreis verwenden.",
-  "compose.denied": "Sammlungen sind ausgeschaltet."
+  "compose.denied": "Sammlungen sind ausgeschaltet.",
+  "compose.published": "Veröffentlicht",
+  "compose.pinned": "Version {n}",
+  "compose.which": "Angezeigte Version",
+  "compose.versions": "Versionen",
+  "compose.publish": "Version {n} veröffentlichen",
+  "compose.journal": "Änderungen außerhalb einer Version: {count}",
+  "compose.version": "Version {n}, {date}",
+  "compose.versionSchema": "Version {n}, {date}, weil sich die Spalten geändert haben",
+  "compose.breaks": "Solange diese Spalten eine andere Art haben, ist keine Version möglich: {columns}. Gib ihnen ihre Art zurück oder füge neue Spalten hinzu.",
+  "compose.unpublished": "Diese Sammlung hat noch keine Version.",
+  "compose.noVersion": "Diese Sammlung hat keine Version {n}.",
+  "compose.old": "„{old}“ heißt jetzt „{name}“",
+  "compose.done": "Version {n} veröffentlicht.",
+  "compose.recipe": "Nicht angezeigt: Der Filter nennt eine Spalte oder einen Wert, den diese Sammlung nicht hat."
 }

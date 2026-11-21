@@ -7,5 +7,19 @@
   "compose.missing": "Dit project heeft zo’n verzameling niet.",
   "compose.shared": "Verzamelingen staan alleen in de eigen taken van dit project.",
   "compose.loop": "Niet getoond: ze zouden elkaar in een kringetje gebruiken.",
-  "compose.denied": "Verzamelingen staan uit."
+  "compose.denied": "Verzamelingen staan uit.",
+  "compose.published": "Gepubliceerd",
+  "compose.pinned": "Versie {n}",
+  "compose.which": "Getoonde versie",
+  "compose.versions": "Versies",
+  "compose.publish": "Versie {n} publiceren",
+  "compose.journal": "Wijzigingen buiten een versie: {count}",
+  "compose.version": "Versie {n}, {date}",
+  "compose.versionSchema": "Versie {n}, {date}, omdat de kolommen veranderden",
+  "compose.breaks": "Er kan geen versie worden gemaakt zolang deze kolommen een ander soort hebben: {columns}. Geef ze hun soort terug of voeg nieuwe kolommen toe.",
+  "compose.unpublished": "Deze verzameling heeft nog geen versie.",
+  "compose.noVersion": "Deze verzameling heeft geen versie {n}.",
+  "compose.old": "‘{old}’ heet nu ‘{name}’",
+  "compose.done": "Versie {n} gepubliceerd.",
+  "compose.recipe": "Niet getoond: het filter noemt een kolom of waarde die deze verzameling niet heeft."
 }

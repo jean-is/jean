@@ -7,5 +7,19 @@
   "compose.missing": "Questo progetto non ha questa raccolta.",
   "compose.shared": "Le raccolte si vedono solo nelle attività di questo progetto.",
   "compose.loop": "Non mostrata: ognuna userebbe l’altra, in un giro senza fine.",
-  "compose.denied": "Le raccolte sono disattivate."
+  "compose.denied": "Le raccolte sono disattivate.",
+  "compose.published": "Pubblicata",
+  "compose.pinned": "Versione {n}",
+  "compose.which": "Versione mostrata",
+  "compose.versions": "Versioni",
+  "compose.publish": "Pubblica la versione {n}",
+  "compose.journal": "Modifiche non ancora in una versione: {count}",
+  "compose.version": "Versione {n}, {date}",
+  "compose.versionSchema": "Versione {n}, {date}, perché le colonne sono cambiate",
+  "compose.breaks": "Non si può creare una versione finché queste colonne hanno un altro tipo: {columns}. Ridai loro il tipo o aggiungi colonne nuove.",
+  "compose.unpublished": "Questa raccolta non ha ancora una versione.",
+  "compose.noVersion": "Questa raccolta non ha la versione {n}.",
+  "compose.old": "«{old}» ora è «{name}»",
+  "compose.done": "Versione {n} pubblicata.",
+  "compose.recipe": "Non mostrata: il filtro nomina una colonna o un valore che questa raccolta non ha."
 }

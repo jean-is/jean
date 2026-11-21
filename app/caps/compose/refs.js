@@ -1,23 +1,45 @@
 // SPDX-License-Identifier: MIT
 // Composition (docs/composition.md, D762): a consumer's reference to a collection is the ```table block documents already hold, its first
-// line the collection's place, then the recipe's lines, `key: value`. The graph of who uses whom is read from the consumers' own files, and a
-// reference that would close a loop is refused. Pure, so Node's tests run it.
+// line the collection's place, `@published` or `@<n>` after it to read a version rather than the journal's head, then the recipe's lines,
+// `key: value`; in a site's page, a table whose `data-from` says the same, its recipe in its other `data-` attributes, filled as the page is
+// read. The graph of who uses whom is read from the consumers' own files, and a reference that would close a loop is refused. Pure, so
+// Node's tests run it.
 import { PLACE } from '../tables/table.js'
 import { fill } from '../fill/fill.js'
 
 /** @import { Table } from '../tables/table.js' */
 /** @import { Row } from '../tables/changes.js' */
-/** A reference: the source's place, which of it (`live`, the journal's head), and the recipe's lines by key. @typedef {{ place: string, at: 'live', recipe: Record<string, string> }} Ref */
-/** An edge of the graph: a consumer's place, the source's, and which of it. @typedef {{ from: string, to: string, at: Ref['at'] }} Edge */
+/** A reference: the source's place, which of it (`live`, the journal's head; `published`, its latest version; or a version's number), and the recipe's lines by key. @typedef {{ place: string, at: 'live' | 'published' | number, recipe: Record<string, string> }} Ref */
+/** An edge of the graph: a consumer's place, the source's, which of it, the recipe, and its place among the consumer's references. @typedef {{ from: string, to: string, at: Ref['at'], recipe: Record<string, string>, index: number }} Edge */
+
+const BLOCK = /^(`{3,}|~{3,})table[ \t]*\n([\s\S]*?)^\1[ \t]*$/gm, TABLE = /(<table\b[^>]*\bdata-from="[^"]*"[^>]*>)[\s\S]*?(<\/table>)/gi
+const escaped = (/** @type {string} */ text) => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 
 /** A `table` block's text read; null when its first line names no collection. @param {string} text @returns {Ref | null} */
 export function parseRef(text) {
-  const [place = '', ...lines] = text.trim().split('\n').map((line) => line.trim())
-  return PLACE.test(place) ? { place, at: 'live', recipe: Object.fromEntries(lines.flatMap((line) => ((kv) => (kv ? [[kv[1].toLowerCase(), kv[2].trim()]] : []))(/^(\w+):(.*)$/.exec(line)))) } : null
+  const [first = '', ...lines] = text.trim().split('\n').map((line) => line.trim()), [, place = '', at = 'live'] = /^(.*?)(?:@(live|published|[1-9]\d*))?$/.exec(first) ?? []
+  return PLACE.test(place) && !place.includes('@') ? { place, at: /^\d/.test(at) ? Number(at) : /** @type {'live' | 'published'} */ (at), recipe: Object.fromEntries(lines.flatMap((line) => ((kv) => (kv ? [[kv[1].toLowerCase(), kv[2].trim()]] : []))(/^(\w+):(.*)$/.exec(line)))) } : null
 }
 
-/** The references a consumer's Markdown holds, each `table` block's, in order. @param {string} markdown */
-export const refsIn = (markdown) => [...markdown.matchAll(/^(`{3,}|~{3,})table[ \t]*\n([\s\S]*?)^\1[ \t]*$/gm)].flatMap(([, , text]) => ((ref) => (ref ? [ref] : []))(parseRef(text)))
+/** A reference's first line: its place, and which of it unless it is live. @param {Pick<Ref, 'place' | 'at'>} ref */
+export const placeOf = ({ place, at }) => (at === 'live' ? place : `${place}@${at}`)
+
+/** The references a consumer holds, in order: a Markdown file's `table` blocks, or a page's tables that say `data-from`. @param {string} text */
+export const refsIn = (text) => [...text.matchAll(BLOCK)].map(([, , inner]) => inner).concat([...text.matchAll(TABLE)].map(([, open]) => ((attrs) => [attrs.from, ...Object.entries(attrs).filter(([what]) => what !== 'from').map(([what, value]) => `${what}: ${value}`)].join('\n'))(
+  Object.fromEntries([...open.matchAll(/\bdata-(\w+)="([^"]*)"/g)].map(([, what, value]) => [what.toLowerCase(), value.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')])))))
+  .flatMap((inner) => ((ref) => (ref ? [ref] : []))(parseRef(inner)))
+
+/** A Markdown consumer with its `index`th reference reading another version of its source. @param {string} markdown @param {number} index @param {Ref['at']} at */
+export function withAt(markdown, index, at) {
+  let n = -1
+  return markdown.replace(BLOCK, (all, fence, inner) => ((ref) => (ref && ++n === index ? all.replace(inner, [placeOf({ ...ref, at }), ...inner.split('\n').slice(1)].join('\n')) : all))(parseRef(inner)))
+}
+
+/** A site's page with each table that says `data-from` filled with what it shows, its heads then its rows, those it can't show as written. @param {string} page @param {(string[][] | null)[]} shown each one's, in order */
+export function filledPage(page, shown) {
+  let n = 0
+  return page.replace(TABLE, (all, open, close) => ((rows) => (rows ? `${open}<thead><tr>${rows[0].map((head) => `<th>${escaped(head)}</th>`).join('')}</tr></thead><tbody>${rows.slice(1).map((row) => `<tr>${row.map((cell) => `<td>${escaped(cell)}</td>`).join('')}</tr>`).join('')}</tbody>${close}` : all))(shown[n++] ?? null))
+}
 
 /** Whether a reference from `from` to `to` closes a loop: whether `from` is reached from `to`. @param {Edge[]} edges @param {string} from @param {string} to */
 export function loops(edges, from, to) {
@@ -35,6 +57,8 @@ export function loops(edges, from, to) {
  * @param {{ denied?: boolean, shared?: boolean, loop?: boolean, found?: boolean }} at @returns {'' | 'denied' | 'shared' | 'loop' | 'missing'}
  */
 export const refused = ({ denied, shared, loop, found }) => (denied ? 'denied' : shared ? 'shared' : loop ? 'loop' : found ? '' : 'missing')
+/** Why a reference reads no version: its collection has none yet, or not that one. @param {Ref['at']} at */
+export const versionless = (at) => (at === 'published' ? 'unpublished' : 'noVersion')
 
 /**
  * What a reference shows of a collection: its heads, then at most `most` rows, of the columns its recipe's `fields` names and the rows its

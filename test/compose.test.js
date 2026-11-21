@@ -3,7 +3,8 @@
 // asked at each resolution, and what a reference shows of a collection, read again from its journal.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { parseRef, refsIn, loops, refused, tableOf } from '../app/caps/compose/refs.js'
+import { parseRef, placeOf, refsIn, withAt, filledPage, loops, refused, versionless, tableOf } from '../app/caps/compose/refs.js'
+import { versionOf, loadedOf, headOf, reshaped, breaks, current } from '../app/caps/compose/versions.js'
 import { createTable } from '../app/caps/tables/table.js'
 import { stringifyChanges, reading } from '../app/caps/tables/changes.js'
 
@@ -52,4 +53,55 @@ test('a reference shows the rows of its collection as its journal’s head has t
   assert.deepEqual(tableOf(after, {}, how), [['Name', 'Trade', 'Checked'], ['Ana', 'Potter', '✓']])
   assert.deepEqual(tableOf(after, { fields: 'Trade', where: 'Checked is no' }, how), [['Trade']])
   assert.equal(tableOf(collection(Array.from({ length: 20 }, (_, i) => ({ ...made, row: `01JX00000000000000000000${String(i).padStart(2, '0')}` }))), {}, how).length, 13, 'a slide shows twelve rows at most')
+})
+
+test('a reference reads the journal’s head, its collection’s latest version or one version, said after its place', () => {
+  assert.deepEqual([parseRef(`${PLACE}@published`)?.at, parseRef(`${PLACE}@2\nwhere: Checked is yes`)?.at, parseRef(`${PLACE}@live`)?.at, parseRef(`${PLACE}@0`)], ['published', 2, 'live', null])
+  assert.deepEqual([placeOf({ place: PLACE, at: 'live' }), placeOf({ place: PLACE, at: 3 })], [PLACE, `${PLACE}@3`])
+  assert.deepEqual([versionless('published'), versionless(4)], ['unpublished', 'noVersion'])
+  const markdown = `\`\`\`table\nnot one\n\`\`\`\n\n\`\`\`table\n${PLACE}\n\`\`\`\n\n\`\`\`table\n${PLACE}@published\nfields: Name\n\`\`\``
+  assert.equal(withAt(markdown, 1, 1), markdown.replace(`${PLACE}@published\n`, `${PLACE}@1\n`), 'the second reference, the first block naming none')
+  assert.equal(withAt(markdown, 0, 'published'), markdown.replace(`${PLACE}\n\`\`\`\n\n`, `${PLACE}@published\n\`\`\`\n\n`))
+})
+
+test('a site’s page refers with a table that says data-from, filled as the page is read, its words escaped, one it can’t show as written', () => {
+  const page = `<main><table class="t" data-from="${PLACE}@published" data-where="Checked is yes" data-fields="Name &amp; Trade"><tr><td>old</td></tr></table><table data-from="${PLACE}"></table></main>`
+  assert.deepEqual(refsIn(page).map(({ at, recipe }) => [at, recipe]), [['published', { where: 'Checked is yes', fields: 'Name & Trade' }], ['live', {}]])
+  assert.equal(filledPage(page, [[['Name'], ['Ana <3']], null]), `<main><table class="t" data-from="${PLACE}@published" data-where="Checked is yes" data-fields="Name &amp; Trade"><thead><tr><th>Name</th></tr></thead><tbody><tr><td>Ana &lt;3</td></tr></tbody></table><table data-from="${PLACE}"></table></main>`)
+})
+
+test('a version freezes a collection: its columns, its rows and the journal’s head, and reads as the collection did then', () => {
+  const made = { row: '01JX0000000000000000000001', set: { name: 'Ana', trade: 'Baker', checked: true }, at: '2026-11-21T10:01:00.000Z', by: 'user' }
+  const one = { ...collection([made, { ...made, set: { trade: 'Potter' }, at: '2026-11-21T10:02:00.000Z' }]), lines: [made, { ...made, at: '2026-11-21T10:02:00.000Z' }] }
+  const version = versionOf(one, { n: 1, at: '2026-11-21T11:00:00.000Z', by: 'user', why: 'published' })
+  assert.equal(version.head, '2026-11-21T10:02:00.000Z')
+  assert.equal(headOf([]), '')
+  assert.deepEqual(JSON.parse(JSON.stringify(version)).rows[0].cells, { name: 'Ana', trade: 'Potter', checked: true })
+  assert.deepEqual(tableOf(loadedOf(JSON.parse(JSON.stringify(version))), {}, how), [['Name', 'Trade', 'Checked'], ['Ana', 'Potter', '✓']])
+  assert.equal(reshaped(version, one.table), false, 'rows changed, columns not')
+  const renamed = { ...one.table, properties: one.table.properties.map((p) => (p.id === 'trade' ? { ...p, name: 'Craft' } : p)) }
+  assert.equal(reshaped(version, renamed), true)
+})
+
+test('what breaks a version: a column gone, or turned into a kind whose values read otherwise; a rename, a deletion or a like kind don’t', () => {
+  const table = collection([]).table, other = (/** @type {object} */ change, id = 'trade') => ({ properties: table.properties.map((p) => (p.id === id ? { ...p, ...change } : p)) })
+  assert.deepEqual(breaks(table, table), [])
+  assert.deepEqual(breaks(table, other({ name: 'Craft' })), [])
+  assert.deepEqual(breaks(table, other({ deleted: true })), [])
+  assert.deepEqual(breaks(table, other({ type: 'email' })), [])
+  assert.deepEqual(breaks(table, other({ type: 'number' })), ['Trade'])
+  assert.deepEqual(breaks(table, { properties: table.properties.filter((p) => p.id !== 'checked') }), ['Checked'])
+})
+
+test('a recipe reads a column by the name it had in an earlier version, said as old, and a deleted column it names, which the default columns leave out', () => {
+  const one = collection([{ row: '01JX0000000000000000000001', set: { name: 'Ana', trade: 'Baker', checked: true }, at: '2026-11-21T10:01:00.000Z', by: 'user' }])
+  const v1 = versionOf({ ...one, lines: [] }, { n: 1, at: '2026-11-21T11:00:00.000Z', by: 'user', why: 'published' })
+  const now = { ...one.table, properties: one.table.properties.map((p) => (p.id === 'trade' ? { ...p, name: 'Craft' } : p.id === 'checked' ? { ...p, deleted: true } : p)) }
+  const read = current(now, [v1], { fields: 'Name | trade', where: 'Trade is Baker and Checked is yes' })
+  assert.deepEqual(read.recipe, { fields: 'Name | Craft', where: 'Craft is Baker and Checked is yes' })
+  assert.deepEqual(read.old, [['trade', 'Craft'], ['Trade', 'Craft']])
+  assert.deepEqual(tableOf({ ...one, table: read.table }, read.recipe, how), [['Name', 'Craft'], ['Ana', 'Baker']])
+  const plain = current(now, [v1], { where: 'Checked is yes' })
+  assert.deepEqual(tableOf({ ...one, table: plain.table }, plain.recipe, how), [['Name', 'Craft'], ['Ana', 'Baker']], 'the deleted column filters, and isn’t shown')
+  assert.deepEqual(current(one.table, [v1], {}), { table: one.table, recipe: {}, old: [] })
 })

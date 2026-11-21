@@ -7,5 +7,19 @@
   "compose.missing": "Mradi huu hauna mkusanyiko kama huo.",
   "compose.shared": "Mikusanyiko inaonekana tu katika kazi za mradi huu.",
   "compose.loop": "Haikuonyeshwa: kila kimoja kingetumia kingine, kwa mzunguko.",
-  "compose.denied": "Mikusanyiko imezimwa."
+  "compose.denied": "Mikusanyiko imezimwa.",
+  "compose.published": "Imechapishwa",
+  "compose.pinned": "Toleo la {n}",
+  "compose.which": "Toleo linaloonyeshwa",
+  "compose.versions": "Matoleo",
+  "compose.publish": "Chapisha toleo la {n}",
+  "compose.journal": "Mabadiliko yasiyo katika toleo bado: {count}",
+  "compose.version": "Toleo la {n}, {date}",
+  "compose.versionSchema": "Toleo la {n}, {date}, kwa kuwa safu zake zilibadilika",
+  "compose.breaks": "Toleo haliwezi kuundwa wakati safu hizi zina aina nyingine: {columns}. Zirudishie aina yake, au ongeza safu mpya.",
+  "compose.unpublished": "Mkusanyiko huu bado hauna toleo.",
+  "compose.noVersion": "Mkusanyiko huu hauna toleo la {n}.",
+  "compose.old": "“{old}” sasa ni “{name}”",
+  "compose.done": "Toleo la {n} limechapishwa.",
+  "compose.recipe": "Haikuonyeshwa: kichujio chake kinataja safu au thamani ambayo mkusanyiko huu hauna."
 }

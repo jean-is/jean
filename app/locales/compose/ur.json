@@ -7,5 +7,19 @@
   "compose.missing": "اس پروجیکٹ میں ایسا کوئی مجموعہ نہیں۔",
   "compose.shared": "مجموعے صرف اسی پروجیکٹ کے اپنے کاموں میں دکھتے ہیں۔",
   "compose.loop": "نہیں دکھایا: ہر ایک دوسرے کو چکر میں استعمال کرتا۔",
-  "compose.denied": "مجموعے بند ہیں۔"
+  "compose.denied": "مجموعے بند ہیں۔",
+  "compose.published": "شائع شدہ",
+  "compose.pinned": "ورژن {n}",
+  "compose.which": "دکھایا جانے والا ورژن",
+  "compose.versions": "ورژن",
+  "compose.publish": "ورژن {n} شائع کریں",
+  "compose.journal": "کسی ورژن سے باہر تبدیلیاں: {count}",
+  "compose.version": "ورژن {n}، {date}",
+  "compose.versionSchema": "ورژن {n}، {date}، کالم بدلنے کی وجہ سے",
+  "compose.breaks": "جب تک ان کالموں کی قسم بدلی ہوئی ہے، ورژن نہیں بن سکتا: {columns}۔ ان کی قسم واپس کریں، یا نئے کالم شامل کریں۔",
+  "compose.unpublished": "اس مجموعے کا ابھی کوئی ورژن نہیں۔",
+  "compose.noVersion": "اس مجموعے کا ورژن {n} نہیں۔",
+  "compose.old": "“{old}” اب “{name}” ہے",
+  "compose.done": "ورژن {n} شائع ہو گیا۔",
+  "compose.recipe": "نہیں دکھایا: اس کا فلٹر ایسے کالم یا قدر کا نام لیتا ہے جو اس مجموعے میں نہیں۔"
 }

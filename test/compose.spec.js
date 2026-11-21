@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
 // Composition (docs/composition.md, D762): a slide's ```table block shows a collection of the project live, its rows as the journal's head
 // has them, read again as the slides are drawn again and while it changes; the pane's head lists what each creation uses and what uses it.
-// In Arabic and Japanese too.
+// A collection's versions: published by its author, made as its columns change, refused while one would break; slides pinned to one stay
+// as they were while slides that read the published one follow it; a document and a site read them too. In Arabic and Japanese too.
 import { test, expect } from '@playwright/test'
 import { start } from './helpers.js'
 
@@ -80,3 +81,84 @@ for (const [lang, live, missing] of [['ar', 'مباشر', 'لا توجد مجم�
     await expect(page.locator('.menu:popover-open')).toContainText(live)
   })
 }
+
+/** Slides that read the collection's version `at`, by their name. @param {import('@playwright/test').Page} page @param {string} name @param {string} at */
+const slides = (page, name, at) => page.evaluate(async ({ COLLECTION, name, at }) => {
+  const { app } = await import('/ui/state.js'), path = `decks/01K85Z1T00000000000000000${name[0]}-${name.toLowerCase()}.deck.html`
+  await (await import('/caps/skills/decks.js')).rewrite(path, `# ${name}\n\n---\n\n## Who makes what\n\n\`\`\`table\n${COLLECTION}${at}\n\`\`\`\n`, name, app.projectDir)
+  return path
+}, { COLLECTION, name, at })
+/** Something opened beside the task, again. @param {import('@playwright/test').Page} page @param {string} uri @param {string} name */
+const show = (page, uri, name) => page.evaluate(async ({ uri, name }) => {
+  const { preview, unshow } = await import('/ui/preview.js')
+  unshow(uri)
+  await new Promise((resolve) => setTimeout(resolve, 50))
+  preview({ uri, name, title: name, mimeType: uri.endsWith('.md') ? 'text/markdown' : 'text/html' })
+}, { uri, name })
+/** The collection's columns written as Tables would after a change of its columns. @param {import('@playwright/test').Page} page @param {object} trade */
+const retype = (page, trade) => page.evaluate(async ({ COLLECTION, trade }) => {
+  const { app } = await import('/ui/state.js'), at = `${app.projectDir}/${COLLECTION}/collection.json`, table = JSON.parse(String(await app.fs.read(at)))
+  table.properties = table.properties.map((/** @type {any} */ p) => (p.id === 'trade' ? { ...p, ...trade } : p))
+  await app.fs.write(at, JSON.stringify(table))
+}, { COLLECTION, trade })
+
+test('slides pinned to version 1 stay as they were once version 2 is published, while slides that read the published one follow it; a document and a site read them too', async ({ page }) => {
+  await start(page)
+  await seed(page)
+  const [pinned, published] = [await slides(page, 'Pinned', '@1'), await slides(page, 'Published', '@published')]
+  const cells = page.locator('app-preview .deck-slide .deck-table')
+  await show(page, published, 'Published')
+  await expect(cells.locator('p').first()).toHaveText('This collection has no version yet.')
+  // Version 1, published from the collection's pane.
+  await show(page, COLLECTION, 'Artisans')
+  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  const menu = page.locator('.menu:popover-open'), versions = menu.getByRole('group', { name: 'Versions' })
+  await expect(versions.getByRole('status')).toHaveText('Changes not in a version yet: 1')
+  await versions.getByRole('button', { name: 'Publish version 1' }).click()
+  await expect(page.locator('.toast').last()).toContainText('Version 1 published.')
+  // A row changed is no version: version 2 is published from the code a press runs.
+  await change(page, 'Potter')
+  expect(await page.evaluate(async (COLLECTION) => (await (await import('/caps/compose/compose.js')).publish(COLLECTION))?.version?.n, COLLECTION)).toBe(2)
+  await show(page, pinned, 'Pinned')
+  await expect(cells.locator('tbody td').first()).toHaveText('Ana')
+  await expect(cells.locator('tbody td').nth(1)).toHaveText('Baker')
+  await show(page, published, 'Published')
+  await expect(cells.locator('tbody td').nth(1)).toHaveText('Potter')
+  // The pinned slides, told to read the published version from their pane's head: written so, they follow it.
+  await show(page, pinned, 'Pinned')
+  await expect(cells.locator('tbody td').nth(1)).toHaveText('Baker')
+  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  await page.locator('.menu:popover-open').getByTitle('Which version it shows').selectOption('published')
+  await expect.poll(() => page.evaluate(async (pinned) => (await (await import('/caps/skills/decks.js')).load(pinned))?.source, pinned)).toContain('-artisans@published')
+  // A document pinned to version 1, and a site that reads the published one.
+  await page.evaluate(async ({ COLLECTION }) => {
+    const [{ app }, { unlock }] = await Promise.all([import('/ui/state.js'), import('/ui/caps.js')]), at = '2026-11-21T10:00:00.000Z'
+    await Promise.all([unlock('documents'), unlock('sites')])
+    await app.fs.write(`${app.projectDir}/documents/01K85Z1T00000000000000000N-notes.md`, `---\nformat: 1\nname: Notes\nauthor: user\ncreated: ${at}\nchanged: ${at}\n---\n# Notes\n\n\`\`\`table\n${COLLECTION}@1\nfields: Trade\n\`\`\`\n`)
+    await app.fs.write(`${app.projectDir}/sites/01K85Z1T00000000000000000S-directory/site.json`, JSON.stringify({ format: 1, name: 'Directory', author: 'user', created: at, changed: at, source: '', files: ['index.html'] }))
+    await app.fs.write(`${app.projectDir}/sites/01K85Z1T00000000000000000S-directory/index.html`, `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Directory</title></head><body><main><h1>Directory</h1><table data-from="${COLLECTION}@published" data-fields="Name | Trade"></table></main></body></html>`)
+  }, { COLLECTION })
+  await show(page, 'documents/01K85Z1T00000000000000000N-notes.md', 'Notes')
+  await expect(page.locator('app-preview app-composed tbody td')).toHaveText('Baker')
+  await show(page, 'sites/01K85Z1T00000000000000000S-directory', 'Directory')
+  await expect(page.frameLocator('app-preview app-site iframe').locator('tbody td')).toHaveText(['Ana', 'Potter'])
+  // Its columns changed: a version of its own, its old name still read and said; a kind whose values read otherwise: none, and why.
+  await retype(page, { name: 'Craft' })
+  await show(page, COLLECTION, 'Artisans')
+  await expect.poll(() => page.evaluate(async ({ COLLECTION }) => { const { app } = await import('/ui/state.js'); return (await app.fs.list(`${app.projectDir}/${COLLECTION}/versions`)).length }, { COLLECTION })).toBe(3)
+  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  await expect(page.locator('.menu:popover-open').getByRole('group', { name: 'Versions' })).toContainText(/Version 3, .*, as its columns changed/)
+  await page.keyboard.press('Escape')
+  await show(page, 'documents/01K85Z1T00000000000000000N-notes.md', 'Notes')
+  await expect(page.locator('app-preview app-composed th')).toHaveText('Trade')
+  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  await expect(page.locator('.menu:popover-open')).toContainText('“Trade” is now “Craft”')
+  await page.keyboard.press('Escape')
+  await retype(page, { type: 'number' })
+  await show(page, COLLECTION, 'Artisans')
+  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  const now = page.locator('.menu:popover-open').getByRole('group', { name: 'Versions' })
+  await expect(now.getByRole('alert')).toHaveText('No version can be made while these columns have another kind: Craft. Give them back their kind, or add new columns.')
+  await expect(now.getByRole('button', { name: 'Publish version 4' })).toBeDisabled()
+  expect(await page.evaluate(async ({ COLLECTION }) => { const { app } = await import('/ui/state.js'); return (await app.fs.list(`${app.projectDir}/${COLLECTION}/versions`)).length }, { COLLECTION })).toBe(3)
+})

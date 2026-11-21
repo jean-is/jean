@@ -7,5 +7,19 @@
   "compose.missing": "This project has no such collection.",
   "compose.shared": "Collections show only in this project’s own tasks.",
   "compose.loop": "Not shown: each would use the other, in a loop.",
-  "compose.denied": "Collections are turned off."
+  "compose.denied": "Collections are turned off.",
+  "compose.published": "Published",
+  "compose.pinned": "Version {n}",
+  "compose.which": "Which version it shows",
+  "compose.versions": "Versions",
+  "compose.publish": "Publish version {n}",
+  "compose.journal": "Changes not in a version yet: {count}",
+  "compose.version": "Version {n}, {date}",
+  "compose.versionSchema": "Version {n}, {date}, as its columns changed",
+  "compose.breaks": "No version can be made while these columns have another kind: {columns}. Give them back their kind, or add new columns.",
+  "compose.unpublished": "This collection has no version yet.",
+  "compose.noVersion": "This collection has no version {n}.",
+  "compose.old": "“{old}” is now “{name}”",
+  "compose.done": "Version {n} published.",
+  "compose.recipe": "Not shown: what it keeps names a column or a value this collection hasn’t."
 }

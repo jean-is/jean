@@ -7,5 +7,19 @@
   "compose.missing": "Tässä projektissa ei ole tällaista kokoelmaa.",
   "compose.shared": "Kokoelmat näkyvät vain tämän projektin omissa tehtävissä.",
   "compose.loop": "Ei näytetty: kumpikin käyttäisi toista kehässä.",
-  "compose.denied": "Kokoelmat ovat pois päältä."
+  "compose.denied": "Kokoelmat ovat pois päältä.",
+  "compose.published": "Julkaistu",
+  "compose.pinned": "Versio {n}",
+  "compose.which": "Näytettävä versio",
+  "compose.versions": "Versiot",
+  "compose.publish": "Julkaise versio {n}",
+  "compose.journal": "Muutokset, jotka eivät ole versiossa: {count}",
+  "compose.version": "Versio {n}, {date}",
+  "compose.versionSchema": "Versio {n}, {date}, sarakkeiden muututtua",
+  "compose.breaks": "Versiota ei voi tehdä, kun näiden sarakkeiden laji on muuttunut: {columns}. Palauta laji tai lisää uusia sarakkeita.",
+  "compose.unpublished": "Tällä kokoelmalla ei ole vielä versiota.",
+  "compose.noVersion": "Tällä kokoelmalla ei ole versiota {n}.",
+  "compose.old": "”{old}” on nyt ”{name}”",
+  "compose.done": "Versio {n} julkaistu.",
+  "compose.recipe": "Ei näytetty: suodatin mainitsee sarakkeen tai arvon, jota kokoelmassa ei ole."
 }

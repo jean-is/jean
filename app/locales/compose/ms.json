@@ -7,5 +7,19 @@
   "compose.missing": "Projek ini tiada koleksi sedemikian.",
   "compose.shared": "Koleksi hanya dipaparkan dalam tugas projek ini sendiri.",
   "compose.loop": "Tidak dipaparkan: setiap satu akan menggunakan yang lain, berpusing.",
-  "compose.denied": "Koleksi dimatikan."
+  "compose.denied": "Koleksi dimatikan.",
+  "compose.published": "Diterbitkan",
+  "compose.pinned": "Versi {n}",
+  "compose.which": "Versi yang dipaparkan",
+  "compose.versions": "Versi",
+  "compose.publish": "Terbitkan versi {n}",
+  "compose.journal": "Perubahan di luar versi: {count}",
+  "compose.version": "Versi {n}, {date}",
+  "compose.versionSchema": "Versi {n}, {date}, kerana lajurnya berubah",
+  "compose.breaks": "Versi tidak boleh dibuat selagi lajur ini berjenis lain: {columns}. Kembalikan jenisnya atau tambah lajur baharu.",
+  "compose.unpublished": "Koleksi ini belum ada versi.",
+  "compose.noVersion": "Koleksi ini tiada versi {n}.",
+  "compose.old": "“{old}” kini “{name}”",
+  "compose.done": "Versi {n} diterbitkan.",
+  "compose.recipe": "Tidak dipaparkan: penapisnya menyebut lajur atau nilai yang tiada dalam koleksi ini."
 }

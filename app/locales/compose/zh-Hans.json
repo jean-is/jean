@@ -7,5 +7,19 @@
   "compose.missing": "此项目中没有这个合集。",
   "compose.shared": "合集只会显示在此项目自己的任务中。",
   "compose.loop": "未显示：两者会相互使用，形成循环。",
-  "compose.denied": "合集已关闭。"
+  "compose.denied": "合集已关闭。",
+  "compose.published": "已发布",
+  "compose.pinned": "版本 {n}",
+  "compose.which": "显示的版本",
+  "compose.versions": "版本",
+  "compose.publish": "发布版本 {n}",
+  "compose.journal": "尚未纳入版本的更改：{count}",
+  "compose.version": "版本 {n}，{date}",
+  "compose.versionSchema": "版本 {n}，{date}，因列已更改",
+  "compose.breaks": "在这些列的类型改变期间无法创建版本：{columns}。请恢复其类型，或添加新列。",
+  "compose.unpublished": "此合集还没有版本。",
+  "compose.noVersion": "此合集没有版本 {n}。",
+  "compose.old": "“{old}”现在是“{name}”",
+  "compose.done": "已发布版本 {n}。",
+  "compose.recipe": "未显示：筛选条件指向此合集中没有的列或值。"
 }

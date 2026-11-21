@@ -7,5 +7,19 @@
   "compose.missing": "N’eus ket eus an dastumad-se er raktres-mañ.",
   "compose.shared": "Ne ziskouezer an dastumadoù nemet e trevelloù ar raktres-mañ.",
   "compose.loop": "N’eo ket diskouezet: pep hini a implijfe egile, en ur c’helc’h.",
-  "compose.denied": "Lazhet eo an dastumadoù."
+  "compose.denied": "Lazhet eo an dastumadoù.",
+  "compose.published": "Embannet",
+  "compose.pinned": "Stumm {n}",
+  "compose.which": "Stumm diskouezet",
+  "compose.versions": "Stummoù",
+  "compose.publish": "Embann ar stumm {n}",
+  "compose.journal": "Kemmoù e-maez ur stumm: {count}",
+  "compose.version": "Stumm {n}, {date}",
+  "compose.versionSchema": "Stumm {n}, {date}, rak cheñchet eo e bannoù",
+  "compose.breaks": "N’haller ober stumm ebet keit ha m’en deus ar bannoù-mañ ur rizh all: {columns}. Roit dezho o rizh en-dro, pe ouzhpennit bannoù nevez.",
+  "compose.unpublished": "N’en deus an dastumad-mañ stumm ebet c’hoazh.",
+  "compose.noVersion": "N’en deus ket an dastumad-mañ ur stumm {n}.",
+  "compose.old": "“{old}” a zo “{name}” bremañ",
+  "compose.done": "Embannet eo ar stumm {n}.",
+  "compose.recipe": "N’eo ket diskouezet: ar sil a envel ur bann pe un dalvoudegezh n’emañ ket en dastumad."
 }

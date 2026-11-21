@@ -7,5 +7,19 @@
   "compose.missing": "אין אוסף כזה בפרויקט הזה.",
   "compose.shared": "אוספים מוצגים רק במשימות של הפרויקט הזה עצמו.",
   "compose.loop": "לא מוצג: כל אחד ישתמש בשני, במעגל.",
-  "compose.denied": "האוספים כבויים."
+  "compose.denied": "האוספים כבויים.",
+  "compose.published": "פורסמה",
+  "compose.pinned": "גרסה {n}",
+  "compose.which": "הגרסה המוצגת",
+  "compose.versions": "גרסאות",
+  "compose.publish": "פרסום גרסה {n}",
+  "compose.journal": "שינויים שאינם בגרסה: {count}",
+  "compose.version": "גרסה {n}, {date}",
+  "compose.versionSchema": "גרסה {n}, {date}, כי העמודות השתנו",
+  "compose.breaks": "אי אפשר ליצור גרסה כל עוד לעמודות האלה יש סוג אחר: {columns}. החזירו להן את הסוג, או הוסיפו עמודות חדשות.",
+  "compose.unpublished": "לאוסף הזה אין עדיין גרסה.",
+  "compose.noVersion": "לאוסף הזה אין גרסה {n}.",
+  "compose.old": "„{old}” הוא עכשיו „{name}”",
+  "compose.done": "גרסה {n} פורסמה.",
+  "compose.recipe": "לא מוצג: המסנן מזכיר עמודה או ערך שאין באוסף הזה."
 }

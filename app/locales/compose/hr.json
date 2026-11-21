@@ -7,5 +7,19 @@
   "compose.missing": "Ovaj projekt nema takvu zbirku.",
   "compose.shared": "Zbirke se prikazuju samo u zadacima ovog projekta.",
   "compose.loop": "Nije prikazano: jedno bi koristilo drugo, u krug.",
-  "compose.denied": "Zbirke su isključene."
+  "compose.denied": "Zbirke su isključene.",
+  "compose.published": "Objavljena",
+  "compose.pinned": "Verzija {n}",
+  "compose.which": "Prikazana verzija",
+  "compose.versions": "Verzije",
+  "compose.publish": "Objavi verziju {n}",
+  "compose.journal": "Promjene izvan verzije: {count}",
+  "compose.version": "Verzija {n}, {date}",
+  "compose.versionSchema": "Verzija {n}, {date}, jer su se stupci promijenili",
+  "compose.breaks": "Verzija se ne može napraviti dok ovi stupci imaju drugu vrstu: {columns}. Vratite im vrstu ili dodajte nove stupce.",
+  "compose.unpublished": "Ova zbirka još nema verziju.",
+  "compose.noVersion": "Ova zbirka nema verziju {n}.",
+  "compose.old": "„{old}” je sada „{name}”",
+  "compose.done": "Verzija {n} objavljena.",
+  "compose.recipe": "Nije prikazano: filtar navodi stupac ili vrijednost koje ova zbirka nema."
 }

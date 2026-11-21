@@ -7,5 +7,19 @@
   "compose.missing": "Ten projekt nie ma takiej kolekcji.",
   "compose.shared": "Kolekcje widać tylko w zadaniach tego projektu.",
   "compose.loop": "Nie pokazano: jedno używałoby drugiego w kółko.",
-  "compose.denied": "Kolekcje są wyłączone."
+  "compose.denied": "Kolekcje są wyłączone.",
+  "compose.published": "Opublikowana",
+  "compose.pinned": "Wersja {n}",
+  "compose.which": "Pokazywana wersja",
+  "compose.versions": "Wersje",
+  "compose.publish": "Opublikuj wersję {n}",
+  "compose.journal": "Zmiany spoza wersji: {count}",
+  "compose.version": "Wersja {n}, {date}",
+  "compose.versionSchema": "Wersja {n}, {date}, po zmianie kolumn",
+  "compose.breaks": "Nie można utworzyć wersji, dopóki te kolumny mają inny rodzaj: {columns}. Przywróć im rodzaj albo dodaj nowe kolumny.",
+  "compose.unpublished": "Ta kolekcja nie ma jeszcze żadnej wersji.",
+  "compose.noVersion": "Ta kolekcja nie ma wersji {n}.",
+  "compose.old": "„{old}” to teraz „{name}”",
+  "compose.done": "Opublikowano wersję {n}.",
+  "compose.recipe": "Nie pokazano: filtr wymienia kolumnę lub wartość, której ta kolekcja nie ma."
 }

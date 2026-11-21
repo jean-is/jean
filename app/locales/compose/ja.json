@@ -7,5 +7,19 @@
   "compose.missing": "このプロジェクトにはそのコレクションがありません。",
   "compose.shared": "コレクションは、このプロジェクト自身のタスクでのみ表示されます。",
   "compose.loop": "表示していません：互いに使い合って循環してしまいます。",
-  "compose.denied": "コレクションはオフになっています。"
+  "compose.denied": "コレクションはオフになっています。",
+  "compose.published": "公開版",
+  "compose.pinned": "バージョン {n}",
+  "compose.which": "表示するバージョン",
+  "compose.versions": "バージョン",
+  "compose.publish": "バージョン {n} を公開",
+  "compose.journal": "まだバージョンに含まれていない変更：{count}",
+  "compose.version": "バージョン {n}（{date}）",
+  "compose.versionSchema": "バージョン {n}（{date}、列の変更による）",
+  "compose.breaks": "次の列の種類が変わっている間はバージョンを作れません：{columns}。種類を元に戻すか、新しい列を追加してください。",
+  "compose.unpublished": "このコレクションにはまだバージョンがありません。",
+  "compose.noVersion": "このコレクションにはバージョン {n} がありません。",
+  "compose.old": "「{old}」は「{name}」になりました",
+  "compose.done": "バージョン {n} を公開しました。",
+  "compose.recipe": "表示していません：このコレクションにない列や値を絞り込みで指定しています。"
 }

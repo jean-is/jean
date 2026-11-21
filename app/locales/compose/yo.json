@@ -7,5 +7,19 @@
   "compose.missing": "Iṣẹ́ àkànṣe yìí kò ní irú àkójọpọ̀ bẹ́ẹ̀.",
   "compose.shared": "Àwọn àkójọpọ̀ ń hàn nínú àwọn iṣẹ́ iṣẹ́ àkànṣe yìí nìkan.",
   "compose.loop": "A kò fi hàn: ọ̀kọ̀ọ̀kan yóò máa lo èkejì, ní àyíká.",
-  "compose.denied": "Àwọn àkójọpọ̀ wà ní pípa."
+  "compose.denied": "Àwọn àkójọpọ̀ wà ní pípa.",
+  "compose.published": "A ti tẹ̀ ẹ́ jáde",
+  "compose.pinned": "Ẹ̀dà {n}",
+  "compose.which": "Ẹ̀dà tí ó ń fi hàn",
+  "compose.versions": "Àwọn ẹ̀dà",
+  "compose.publish": "Tẹ ẹ̀dà {n} jáde",
+  "compose.journal": "Àwọn àyípadà tí kò tíì wọ ẹ̀dà kankan: {count}",
+  "compose.version": "Ẹ̀dà {n}, {date}",
+  "compose.versionSchema": "Ẹ̀dà {n}, {date}, nítorí àwọn òpó rẹ̀ yípadà",
+  "compose.breaks": "A kò lè ṣe ẹ̀dà níwọ̀n ìgbà tí àwọn òpó wọ̀nyí ní irú mìíràn: {columns}. Dá irú wọn padà, tàbí fi òpó tuntun kún un.",
+  "compose.unpublished": "Àkójọpọ̀ yìí kò tíì ní ẹ̀dà kankan.",
+  "compose.noVersion": "Àkójọpọ̀ yìí kò ní ẹ̀dà {n}.",
+  "compose.old": "“{old}” ti di “{name}” báyìí",
+  "compose.done": "A ti tẹ ẹ̀dà {n} jáde.",
+  "compose.recipe": "A kò fi hàn: àlẹ̀mọ́ rẹ̀ dárúkọ òpó tàbí iye tí àkójọpọ̀ yìí kò ní."
 }

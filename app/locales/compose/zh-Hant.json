@@ -7,5 +7,19 @@
   "compose.missing": "此專案中沒有這個合集。",
   "compose.shared": "合集只會顯示在此專案自己的任務中。",
   "compose.loop": "未顯示：兩者會互相使用，形成循環。",
-  "compose.denied": "合集已關閉。"
+  "compose.denied": "合集已關閉。",
+  "compose.published": "已發布",
+  "compose.pinned": "版本 {n}",
+  "compose.which": "顯示的版本",
+  "compose.versions": "版本",
+  "compose.publish": "發布版本 {n}",
+  "compose.journal": "尚未納入版本的變更：{count}",
+  "compose.version": "版本 {n}，{date}",
+  "compose.versionSchema": "版本 {n}，{date}，因欄位已變更",
+  "compose.breaks": "在這些欄位的類型改變期間無法建立版本：{columns}。請恢復其類型，或新增欄位。",
+  "compose.unpublished": "此合集還沒有版本。",
+  "compose.noVersion": "此合集沒有版本 {n}。",
+  "compose.old": "「{old}」現在是「{name}」",
+  "compose.done": "已發布版本 {n}。",
+  "compose.recipe": "未顯示：篩選條件指向此合集中沒有的欄位或值。"
 }

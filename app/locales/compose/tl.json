@@ -7,5 +7,19 @@
   "compose.missing": "Walang ganoong koleksiyon ang proyektong ito.",
   "compose.shared": "Lumalabas lang ang mga koleksiyon sa sariling mga gawain ng proyektong ito.",
   "compose.loop": "Hindi ipinakita: gagamitin ng bawat isa ang isa pa, paikot-ikot.",
-  "compose.denied": "Nakapatay ang mga koleksiyon."
+  "compose.denied": "Nakapatay ang mga koleksiyon.",
+  "compose.published": "Nailathala",
+  "compose.pinned": "Bersyon {n}",
+  "compose.which": "Bersyong ipinapakita",
+  "compose.versions": "Mga bersyon",
+  "compose.publish": "Ilathala ang bersyon {n}",
+  "compose.journal": "Mga pagbabagong wala pa sa bersyon: {count}",
+  "compose.version": "Bersyon {n}, {date}",
+  "compose.versionSchema": "Bersyon {n}, {date}, dahil nagbago ang mga kolum",
+  "compose.breaks": "Hindi makagagawa ng bersyon habang iba ang uri ng mga kolum na ito: {columns}. Ibalik ang uri nila, o magdagdag ng mga bagong kolum.",
+  "compose.unpublished": "Wala pang bersyon ang koleksiyong ito.",
+  "compose.noVersion": "Walang bersyon {n} ang koleksiyong ito.",
+  "compose.old": "Ang “{old}” ay “{name}” na ngayon",
+  "compose.done": "Nailathala ang bersyon {n}.",
+  "compose.recipe": "Hindi ipinakita: may binabanggit ang filter na kolum o halagang wala sa koleksiyong ito."
 }
