@@ -1,0 +1,14 @@
+{
+  "soon.title": "Tulossa",
+  "soon.late": "Myöhässä",
+  "soon.chase": "Muistuta",
+  "soon.draft": "Kirjoita lyhyt viesti, jolla muistutetaan asiasta ”{name}”, jonka eräpäivä oli {date}: ",
+  "soon.by": "Päivämäärä",
+  "soon.tell": "Ilmoita minulle",
+  "soon.never": "Ei koskaan",
+  "soon.day": "Samana päivänä",
+  "soon.before": "Edellisenä päivänä",
+  "soon.week": "Viikkoa ennen",
+  "soon.says": "Ilmoitus kertoo rivin nimen ja päivän, ei muuta. Se tulee, kun {app} on auki.",
+  "soon.notice": "{name}, {when}"
+}

@@ -1,0 +1,14 @@
+{
+  "soon.title": "Közelgő",
+  "soon.late": "Késik",
+  "soon.chase": "Sürgetés",
+  "soon.draft": "Írj egy rövid üzenetet, amely megsürgeti ezt: „{name}”, a határideje {date} volt: ",
+  "soon.by": "Dátum",
+  "soon.tell": "Szólj nekem",
+  "soon.never": "Soha",
+  "soon.day": "Aznap",
+  "soon.before": "Előző nap",
+  "soon.week": "Egy héttel előtte",
+  "soon.says": "Az értesítés a sor nevét és napját mondja meg, semmi mást. Akkor érkezik, amikor a(z) {app} nyitva van.",
+  "soon.notice": "{name}, {when}"
+}

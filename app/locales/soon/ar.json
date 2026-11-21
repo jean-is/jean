@@ -1,0 +1,14 @@
+{
+  "soon.title": "قادم قريبًا",
+  "soon.late": "متأخر",
+  "soon.chase": "ذكِّر به",
+  "soon.draft": "اكتب رسالة قصيرة للتذكير بـ«{name}»، وكان الموعد {date}: ",
+  "soon.by": "تاريخ",
+  "soon.tell": "أخبرني",
+  "soon.never": "أبدًا",
+  "soon.day": "في اليوم نفسه",
+  "soon.before": "قبله بيوم",
+  "soon.week": "قبله بأسبوع",
+  "soon.says": "الإشعار يذكر اسم الصف ويومه، لا غير. يصل ما دام تطبيق {app} مفتوحًا.",
+  "soon.notice": "{name}، {when}"
+}

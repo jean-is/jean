@@ -1,0 +1,14 @@
+{
+  "soon.title": "もうすぐ",
+  "soon.late": "期限切れ",
+  "soon.chase": "催促する",
+  "soon.draft": "期限が{date}だった「{name}」について、催促の短いメッセージを書いてください：",
+  "soon.by": "日付",
+  "soon.tell": "知らせる",
+  "soon.never": "しない",
+  "soon.day": "当日",
+  "soon.before": "前日",
+  "soon.week": "1週間前",
+  "soon.says": "通知に出るのは行の名前と日付だけです。{app}を開いている間に届きます。",
+  "soon.notice": "{name}、{when}"
+}

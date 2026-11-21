@@ -1,0 +1,14 @@
+{
+  "soon.title": "Paparating",
+  "soon.late": "Huli na",
+  "soon.chase": "I-follow up",
+  "soon.draft": "Sumulat ng maikling mensahe para i-follow up ang “{name}”, na dapat natapos noong {date}: ",
+  "soon.by": "Petsa",
+  "soon.tell": "Sabihan ako",
+  "soon.never": "Hindi kailanman",
+  "soon.day": "Sa mismong araw",
+  "soon.before": "Isang araw bago",
+  "soon.week": "Isang linggo bago",
+  "soon.says": "Pangalan ng row at araw nito lang ang sinasabi ng abiso, wala nang iba. Dumarating ito habang bukas ang {app}.",
+  "soon.notice": "{name}, {when}"
+}

@@ -1,0 +1,14 @@
+{
+  "soon.title": "Zinazokuja",
+  "soon.late": "Imechelewa",
+  "soon.chase": "Fuatilia",
+  "soon.draft": "Andika ujumbe mfupi wa kufuatilia “{name}”, ambayo ilipaswa kukamilika tarehe {date}: ",
+  "soon.by": "Tarehe",
+  "soon.tell": "Niambie",
+  "soon.never": "Kamwe",
+  "soon.day": "Siku yenyewe",
+  "soon.before": "Siku moja kabla",
+  "soon.week": "Wiki moja kabla",
+  "soon.says": "Arifa hutaja jina la safu na siku yake tu, si kingine. Huja ukiwa umefungua {app}.",
+  "soon.notice": "{name}, {when}"
+}

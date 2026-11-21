@@ -1,0 +1,14 @@
+{
+  "soon.title": "다가오는 일",
+  "soon.late": "늦음",
+  "soon.chase": "재촉하기",
+  "soon.draft": "기한이 {date}였던 ‘{name}’ 건을 재촉하는 짧은 메시지를 써 줘: ",
+  "soon.by": "날짜",
+  "soon.tell": "알림 받기",
+  "soon.never": "안 함",
+  "soon.day": "당일",
+  "soon.before": "하루 전",
+  "soon.week": "일주일 전",
+  "soon.says": "알림에는 행 이름과 날짜만 나와요. {app} 창이 열려 있는 동안에 와요.",
+  "soon.notice": "{name}, {when}"
+}

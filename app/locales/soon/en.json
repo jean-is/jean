@@ -1,0 +1,14 @@
+{
+  "soon.title": "Coming up",
+  "soon.late": "Late",
+  "soon.chase": "Chase it",
+  "soon.draft": "Write a short message to chase “{name}”, which was due on {date}: ",
+  "soon.by": "Date",
+  "soon.tell": "Tell me",
+  "soon.never": "Never",
+  "soon.day": "On the day",
+  "soon.before": "The day before",
+  "soon.week": "A week before",
+  "soon.says": "A notice says the row’s name and its day, nothing else. It comes while {app} is open.",
+  "soon.notice": "{name}, {when}"
+}

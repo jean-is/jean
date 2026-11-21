@@ -1,0 +1,14 @@
+{
+  "soon.title": "Próximamente",
+  "soon.late": "Con retraso",
+  "soon.chase": "Reclamar",
+  "soon.draft": "Escribe un mensaje corto para reclamar «{name}», que vencía el {date}: ",
+  "soon.by": "Fecha",
+  "soon.tell": "Avisarme",
+  "soon.never": "Nunca",
+  "soon.day": "El mismo día",
+  "soon.before": "El día anterior",
+  "soon.week": "Una semana antes",
+  "soon.says": "La notificación dice el nombre de la fila y su día, nada más. Llega mientras no cierres {app}.",
+  "soon.notice": "{name}, {when}"
+}

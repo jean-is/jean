@@ -1,0 +1,14 @@
+{
+  "soon.title": "À venir",
+  "soon.late": "En retard",
+  "soon.chase": "Relancer",
+  "soon.draft": "Écris un court message pour relancer « {name} », dont l’échéance était le {date} : ",
+  "soon.by": "Date",
+  "soon.tell": "Me prévenir",
+  "soon.never": "Jamais",
+  "soon.day": "Le jour même",
+  "soon.before": "La veille",
+  "soon.week": "Une semaine avant",
+  "soon.says": "Une notification dit le nom de la ligne et son jour, rien d’autre. Elle arrive tant que vous n’avez pas fermé {app}.",
+  "soon.notice": "{name}, {when}"
+}

@@ -1,0 +1,14 @@
+{
+  "soon.title": "În curând",
+  "soon.late": "Întârziat",
+  "soon.chase": "Reamintiți",
+  "soon.draft": "Scrie un mesaj scurt de reamintire pentru „{name}”, care avea termen pe {date}: ",
+  "soon.by": "Dată",
+  "soon.tell": "Anunțați-mă",
+  "soon.never": "Niciodată",
+  "soon.day": "În ziua respectivă",
+  "soon.before": "Cu o zi înainte",
+  "soon.week": "Cu o săptămână înainte",
+  "soon.says": "O notificare spune numele rândului și ziua lui, nimic altceva. Vine cât timp aplicația {app} este deschisă.",
+  "soon.notice": "{name}, {when}"
+}

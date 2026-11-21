@@ -1,0 +1,14 @@
+{
+  "soon.title": "Čoskoro",
+  "soon.late": "Po termíne",
+  "soon.chase": "Pripomenúť",
+  "soon.draft": "Napíš krátku správu s pripomienkou k „{name}“, termín bol {date}: ",
+  "soon.by": "Dátum",
+  "soon.tell": "Upozorniť ma",
+  "soon.never": "Nikdy",
+  "soon.day": "V daný deň",
+  "soon.before": "Deň vopred",
+  "soon.week": "Týždeň vopred",
+  "soon.says": "Upozornenie uvádza názov riadka a jeho deň, nič iné. Príde, kým je aplikácia {app} otvorená.",
+  "soon.notice": "{name}, {when}"
+}

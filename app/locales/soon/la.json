@@ -1,0 +1,14 @@
+{
+  "soon.title": "Mox ventura",
+  "soon.late": "Sero",
+  "soon.chase": "Admone",
+  "soon.draft": "Scribe nuntium brevem ad admonendum de “{name}”, cuius dies erat {date}: ",
+  "soon.by": "Dies",
+  "soon.tell": "Mone me",
+  "soon.never": "Numquam",
+  "soon.day": "Ipso die",
+  "soon.before": "Pridie",
+  "soon.week": "Septem diebus ante",
+  "soon.says": "Nuntius nomen ordinis eiusque diem dicit, nihil aliud. Venit dum applicatio {app} aperta est.",
+  "soon.notice": "{name}, {when}"
+}

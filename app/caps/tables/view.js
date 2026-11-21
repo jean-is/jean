@@ -98,9 +98,9 @@ export function view(holds, source = shown, beside = false) {
   const way = beside ? wayOf(source.peek()?.folder ?? '') : { as: signal(''), find: signal('') }
   /** @type {State} */
   const state = { box, beside, as: way.as, naming: signal(''), kinds: signal(''), relating: signal(false), collections: signal(/** @type {{ folder: string, name: string }[]} */ ([])), list: () => {}, id: `table-${++drawn}`, search: way.find, formula: signal(''), wrong: signal(false), refused: signal(new Map()), folded: signal(new Set()), open: signal(''), choosing: signal(''), month: signal(''), titling: signal(false), narrow: signal(innerWidth < 480), grid: signal(false), now: () => source.peek(),
-    // A row open as a sheet, over the page, drawn by a folder of its own (caps/row), its first field taking the keyboard.
+    // A row open as a sheet, drawn by caps/row, its first field taking the keyboard.
     openRow: (id) => { state.open.value = id; Promise.all([LAYOUTS.row(), import('../../ui/dialogs.js')]).then(() => requestAnimationFrame(() => { const sheet = /** @type {HTMLDialogElement | null} */ (box.querySelector('dialog.table-row')); if (sheet && !sheet.open) sheet.showModal(), /** @type {HTMLElement | null} */ (sheet.querySelector('dd :is(input, select)'))?.focus() })) } }
-  // Beside the task, how it shows is in the address until its pane closes.
+  // Beside the task, how it shows is in the address.
   if (beside) holds.push(() => { way.as.value = way.find.value = '' })
   state.list = () => { const dir = source.peek()?.dir; if (dir) collections(dir).then((all) => { state.collections.value = all }) }
   state.list()
@@ -357,6 +357,7 @@ function draw(one, state, go) {
     ${chips.length ? html`<ul class="table-chips" aria-label=${t('tables.arranged')}>${chips}</ul>` : nothing}
     <div class=${mine ? 'table-yours' : 'table-yours is-quiet'}><span role="status">${mine ? (offered ? t('tool.offer', { name: settings.name ?? '' }) : t('tables.onlyYou')) : nothing}</span>${mine ? html`<button type="button" class="table-keep" @click=${() => keep()}>${t('tables.keep')}</button><button type="button" class="table-keep"
       @click=${() => { if (offered) as.value = ''; alone(one, at) }}>${t(offered ? 'offer.no' : 'tables.reset')}</button>` : nothing}</div>
+    ${dated && !whiteboard ? laid('soon', { one, open: state.openRow }) : nothing}
     ${lacks ? nothing : way ? laid(way, { ...given, ...dated, pick: (/** @type {{ date?: string, until?: string }} */ calendar) => shape(one, { calendar }) })
       : grid(one, columns, columns.filter((property) => !hidden.includes(property.id)), rows, calculate, fresh, state, said)}${columns.filter(({ type }) => type === 'select' || type === 'person').map((property) => html`<datalist id=${listOf(one, property)}>${(property.type === 'person' ? people : (property.options ?? []).map((option) => option.name)).map((name) => html`<option value=${name}></option>`)}</datalist>`)}
     ${people.length ? html`<datalist id=${`${id}-me`}>${[t('tables.me'), ...people].map((name) => html`<option value=${name}></option>`)}</datalist>` : nothing}
@@ -571,7 +572,7 @@ function grid(one, columns, shown, rows, calculate, fresh, state, words) {
     field.focus()
     try { field?.setSelectionRange(field.value.length, field.value.length) } catch {}
   }
-  /** A Formula's dialog, over the page, drawn by a folder of its own (caps/formula), fetched as one is first opened. @param {string} id */
+  /** A Formula's dialog, drawn by caps/formula, fetched as first opened. @param {string} id */
   const open = (id) => { state.formula.value = id; state.wrong.value = false }
   const editing = columns.find((property) => property.type === 'formula' && property.id === state.formula.value)
   /**
@@ -847,11 +848,11 @@ const added = (one, set, state) => change(one, [{ set }], 'user').then(([id]) =>
 /** What the layouts, their cards and a row's sheet are drawn with, the view's own. */
 export const parts = { cell, decide, totalOf, edit, pictured, added, pill, face, said, option, listed, rid, ask, leaving, glyphs: GLYPHS, reads: READS }
 
-/** The layouts and a row's sheet, in folders of their own, each fetched as one is first shown, and those that have come. @type {Record<string, () => Promise<{ default: (given: any) => unknown }>>} */
-const LAYOUTS = { board: () => import('../board/board.js'), gallery: () => import('../gallery/gallery.js'), calendar: () => import('../calendar/calendar.js'), timeline: () => import('../timeline/timeline.js'), list: () => import('../list/list.js'), row: () => import('../row/row.js'), formula: () => import('../formula/formula.js') }
+/** The layouts, a row's sheet and what is coming up (caps/soon), each fetched as first shown, and those that have come. @type {Record<string, () => Promise<{ default: (given: any) => unknown }>>} */
+const LAYOUTS = { soon: () => import('../soon/soon.js'), board: () => import('../board/board.js'), gallery: () => import('../gallery/gallery.js'), calendar: () => import('../calendar/calendar.js'), timeline: () => import('../timeline/timeline.js'), list: () => import('../list/list.js'), row: () => import('../row/row.js'), formula: () => import('../formula/formula.js') }
 const layouts = signal(/** @type {Record<string, (given: any) => unknown>} */ ({}))
 /**
- * A board, a gallery, a calendar, a timeline, a list or a row's sheet, drawn by its own folder (caps/board, gallery, calendar, timeline, list, row) with what the view gives it: the collection,
+ * A layout or a row's sheet, drawn by its own folder (caps/board, gallery, calendar, timeline, list, row) with what the view gives it: the collection,
  * its columns, the rows the view keeps, those Jean changed, the cards' parts and Tables' words; nothing until it has come. @param {string} way @param {object} given
  */
 function laid(way, given) {

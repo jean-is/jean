@@ -1,0 +1,14 @@
+{
+  "soon.title": "Sắp tới",
+  "soon.late": "Trễ hạn",
+  "soon.chase": "Nhắc lại",
+  "soon.draft": "Viết một tin nhắn ngắn để nhắc về “{name}”, vốn đến hạn vào {date}: ",
+  "soon.by": "Ngày",
+  "soon.tell": "Báo cho tôi",
+  "soon.never": "Không bao giờ",
+  "soon.day": "Vào đúng ngày",
+  "soon.before": "Trước một ngày",
+  "soon.week": "Trước một tuần",
+  "soon.says": "Thông báo chỉ nêu tên hàng và ngày của hàng đó, không có gì khác. Thông báo đến khi {app} đang mở.",
+  "soon.notice": "{name}, {when}"
+}

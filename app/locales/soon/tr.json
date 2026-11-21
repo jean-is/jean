@@ -1,0 +1,14 @@
+{
+  "soon.title": "Yaklaşanlar",
+  "soon.late": "Gecikti",
+  "soon.chase": "Hatırlat",
+  "soon.draft": "“{name}” için kısa bir hatırlatma mesajı yaz, son günü {date} idi: ",
+  "soon.by": "Tarih",
+  "soon.tell": "Bana haber ver",
+  "soon.never": "Hiçbir zaman",
+  "soon.day": "O gün",
+  "soon.before": "Bir gün önce",
+  "soon.week": "Bir hafta önce",
+  "soon.says": "Bildirim yalnızca satırın adını ve gününü söyler, başka bir şey söylemez. {app} açıkken gelir.",
+  "soon.notice": "{name}, {when}"
+}

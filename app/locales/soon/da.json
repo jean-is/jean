@@ -1,0 +1,14 @@
+{
+  "soon.title": "På vej",
+  "soon.late": "Forsinket",
+  "soon.chase": "Følg op",
+  "soon.draft": "Skriv en kort besked for at følge op på “{name}”, som havde frist den {date}: ",
+  "soon.by": "Dato",
+  "soon.tell": "Giv mig besked",
+  "soon.never": "Aldrig",
+  "soon.day": "På dagen",
+  "soon.before": "Dagen før",
+  "soon.week": "En uge før",
+  "soon.says": "En notifikation siger rækkens navn og dens dag, intet andet. Den kommer, så længe du ikke har lukket {app}.",
+  "soon.notice": "{name}, {when}"
+}

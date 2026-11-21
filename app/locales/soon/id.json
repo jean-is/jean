@@ -1,0 +1,14 @@
+{
+  "soon.title": "Akan datang",
+  "soon.late": "Terlambat",
+  "soon.chase": "Tindak lanjuti",
+  "soon.draft": "Tulis pesan singkat untuk menindaklanjuti “{name}”, yang jatuh tempo pada {date}: ",
+  "soon.by": "Tanggal",
+  "soon.tell": "Beri tahu saya",
+  "soon.never": "Tidak pernah",
+  "soon.day": "Pada harinya",
+  "soon.before": "Sehari sebelumnya",
+  "soon.week": "Seminggu sebelumnya",
+  "soon.says": "Notifikasi menyebutkan nama baris dan harinya, tidak ada yang lain. Notifikasi muncul selama {app} terbuka.",
+  "soon.notice": "{name}, {when}"
+}

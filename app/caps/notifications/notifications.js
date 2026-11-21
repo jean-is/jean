@@ -7,7 +7,7 @@
 import { html, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal, effect } from '@preact/signals-core'
-import { register } from '../../ui/caps.js'
+import { register, loaded } from '../../ui/caps.js'
 import { app, updateSettings, turnPage, openConversation } from '../../ui/state.js'
 import { away } from '../../ui/discovery.js'
 import { hashFor } from '../../ui/router.js'
@@ -16,6 +16,8 @@ import { BRAND } from '../../brand.js'
 import { t, useStrings, locale, dir } from '../../core/i18n.js'
 
 await useStrings('notifications')
+// What is coming up in the project's collections is told too (caps/soon), once Tables is found.
+effect(() => { if (loaded.value.has('tables')) import('../soon/tell.js').catch(console.warn) })
 
 /** What the browser allows this site, drawn again once the user answers it. */
 const allowed = signal(Notification.permission)

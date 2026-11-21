@@ -1,0 +1,14 @@
+{
+  "soon.title": "Okuzayo",
+  "soon.late": "Sekwephuzile",
+  "soon.chase": "Landelela",
+  "soon.draft": "Bhala umlayezo omfushane wokulandelela “{name}”, obekufanele kwenziwe ngo-{date}: ",
+  "soon.by": "Usuku",
+  "soon.tell": "Ngitshele",
+  "soon.never": "Neze",
+  "soon.day": "Ngalolo suku",
+  "soon.before": "Ngosuku olwandulele",
+  "soon.week": "Isonto ngaphambili",
+  "soon.says": "Isaziso sisho igama lomugqa nosuku lwawo, akukho okunye. Sifika ngenkathi umsizi {app} uvuliwe.",
+  "soon.notice": "{name}, {when}"
+}

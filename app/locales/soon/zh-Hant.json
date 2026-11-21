@@ -1,0 +1,14 @@
+{
+  "soon.title": "即將到來",
+  "soon.late": "逾期",
+  "soon.chase": "催一下",
+  "soon.draft": "寫一則簡短的訊息，催一下「{name}」，它原定於{date}到期：",
+  "soon.by": "日期",
+  "soon.tell": "通知我",
+  "soon.never": "永不",
+  "soon.day": "當天",
+  "soon.before": "提前一天",
+  "soon.week": "提前一週",
+  "soon.says": "通知只顯示列的名稱和日期，沒有別的。{app} 開著時才會收到。",
+  "soon.notice": "{name}，{when}"
+}

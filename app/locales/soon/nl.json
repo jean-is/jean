@@ -1,0 +1,14 @@
+{
+  "soon.title": "Binnenkort",
+  "soon.late": "Te laat",
+  "soon.chase": "Erachteraan gaan",
+  "soon.draft": "Schrijf een kort bericht om achter ‘{name}’ aan te gaan, dat op {date} klaar had moeten zijn: ",
+  "soon.by": "Datum",
+  "soon.tell": "Laat het me weten",
+  "soon.never": "Nooit",
+  "soon.day": "Op de dag zelf",
+  "soon.before": "De dag ervoor",
+  "soon.week": "Een week ervoor",
+  "soon.says": "Een melding noemt de naam van de rij en de dag, verder niets. Je krijgt ze terwijl {app} open is.",
+  "soon.notice": "{name}, {when}"
+}

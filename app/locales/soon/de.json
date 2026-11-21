@@ -1,0 +1,14 @@
+{
+  "soon.title": "Demnächst",
+  "soon.late": "Überfällig",
+  "soon.chase": "Nachhaken",
+  "soon.draft": "Schreib eine kurze Nachricht, um bei „{name}“ nachzuhaken, fällig am {date}: ",
+  "soon.by": "Datum",
+  "soon.tell": "Bescheid geben",
+  "soon.never": "Nie",
+  "soon.day": "Am Tag selbst",
+  "soon.before": "Am Tag davor",
+  "soon.week": "Eine Woche davor",
+  "soon.says": "Eine Benachrichtigung nennt den Namen der Zeile und ihren Tag, sonst nichts. Sie kommt, solange {app} geöffnet ist.",
+  "soon.notice": "{name}, {when}"
+}

@@ -1,0 +1,14 @@
+{
+  "soon.title": "Uskoro",
+  "soon.late": "Kasni",
+  "soon.chase": "Podsjeti",
+  "soon.draft": "Napiši kratku poruku kao podsjetnik za „{name}“, s rokom {date}: ",
+  "soon.by": "Datum",
+  "soon.tell": "Obavijesti me",
+  "soon.never": "Nikad",
+  "soon.day": "Na sam dan",
+  "soon.before": "Dan prije",
+  "soon.week": "Tjedan dana prije",
+  "soon.says": "Obavijest navodi naziv retka i njegov dan, ništa drugo. Stiže dok je aplikacija {app} otvorena.",
+  "soon.notice": "{name}, {when}"
+}

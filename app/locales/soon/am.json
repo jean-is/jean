@@ -1,0 +1,14 @@
+{
+  "soon.title": "በቅርቡ የሚመጡ",
+  "soon.late": "ዘግይቷል",
+  "soon.chase": "ተከታተል",
+  "soon.draft": "“{name}”ን ለመከታተል አጭር መልእክት ጻፍ፤ ቀኑ {date} ነበር፦ ",
+  "soon.by": "ቀን",
+  "soon.tell": "አሳውቀኝ",
+  "soon.never": "በጭራሽ",
+  "soon.day": "በዕለቱ",
+  "soon.before": "ከአንድ ቀን በፊት",
+  "soon.week": "ከአንድ ሳምንት በፊት",
+  "soon.says": "ማሳወቂያው የረድፉን ስም እና ቀኑን ብቻ ይናገራል፣ ሌላ ምንም የለም። መተግበሪያው {app} ክፍት ሆኖ ሳለ ይመጣል።",
+  "soon.notice": "{name}፣ {when}"
+}

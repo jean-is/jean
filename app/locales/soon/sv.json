@@ -1,0 +1,14 @@
+{
+  "soon.title": "På gång",
+  "soon.late": "Försenad",
+  "soon.chase": "Påminn",
+  "soon.draft": "Skriv ett kort meddelande som påminner om ”{name}”, med sista dag {date}: ",
+  "soon.by": "Datum",
+  "soon.tell": "Säg till mig",
+  "soon.never": "Aldrig",
+  "soon.day": "Samma dag",
+  "soon.before": "Dagen innan",
+  "soon.week": "En vecka innan",
+  "soon.says": "En avisering säger radens namn och dag, inget annat. Den kommer medan {app} är igång.",
+  "soon.notice": "{name}, {when}"
+}
