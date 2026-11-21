@@ -81,7 +81,7 @@ const [up, down] = [icon(svg`<path d="M5 5h14M12 19V9m-4 4 4-4 4 4"/>`), icon(sv
 /** A menu's rows, a list for each group of them, a line between. @param {...unknown[]} groups */
 const listed = (...groups) => groups.map((rows, i) => html`${i ? html`<hr>` : nothing}<ul>${rows.map((row) => html`<li>${row}</li>`)}</ul>`)
 /** A row of a menu, by its id, that acts and closes it, greyed where it can't. @param {string} menu @param {unknown} glyph @param {unknown} label @param {() => unknown} act @param {boolean} [off] @param {string} [kind] */
-const option = (menu, glyph, label, act, off = false, kind = '') => html`<button type="button" class=${kind || nothing} popovertarget=${menu} popovertargetaction="hide" ?disabled=${off} @click=${act}>${glyph}${label}</button>`
+const option = (menu, glyph, label, act, off = false, kind = '') => html`<button type="button" class=${kind || nothing} popovertarget=${menu} popovertargetaction="hide" ?disabled=${off} @click=${() => { act(); document.getElementById(menu)?.hidePopover?.() }}>${glyph}${label}</button>`
 /** The views drawn so far, whose menus' ids each start with its own number. */
 let drawn = 0
 /** What a column refuses, said beside its cell, brought into view once drawn. @param {Element | undefined} said */
@@ -483,7 +483,7 @@ function grid(one, columns, shown, rows, calculate, fresh, state, words) {
   }
 
   /** A column's menu showing its choices, each with the seven colours to pick its own from, or its actions again; the keyboard on the page's first row. @param {string} id @param {string} [column] */
-  const choose = (id, column = '') => { state.choosing.value = column; requestAnimationFrame(() => /** @type {HTMLElement | null} */ (box.querySelector(`#${id} button`))?.focus()) }
+  const choose = (id, column = '') => { state.choosing.value = column; focus(`#${id} button`) }
   /** A column's head, its menu under it, opened by a click or a right click, which Escape closes, leaving the pane; its name, which a long one cuts short on screen, whole in its tip. @param {Property} property @param {number} i */
   const heading = (property, i) => {
     const menu = `${state.id}-${i}`, place = one.table.properties.indexOf(property)
