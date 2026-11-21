@@ -40,7 +40,5 @@
   "compose.ports": "ሀሳቦች",
   "compose.open": "ከድረ ገጽ ሀሳቦችን ተቀበል",
   "compose.close": "ሀሳቦችን መቀበል አቁም",
-  "compose.port": "የድረ ገጽ ቅጽ {columns} መሙላት ይችላል፤ የሚያጸድቁት እርስዎ ብቻ ነዎት፣ በ“{approval}”።",
-  "compose.waiting": "ፈቃድዎን የሚጠብቁ፦ {count}",
-  "compose.approved": "የጸደቀ"
+  "compose.port": "የድረ ገጽ ቅጽ {columns} መሙላት ይችላል።"
 }

@@ -40,7 +40,5 @@
   "compose.ports": "提議",
   "compose.open": "接受來自網站的提議",
   "compose.close": "停止接受提議",
-  "compose.port": "網站的表單可以填寫 {columns}；只有你能在「{approval}」中核准。",
-  "compose.waiting": "等待你核准：{count}",
-  "compose.approved": "已核准"
+  "compose.port": "網站的表單可以填寫 {columns}。"
 }

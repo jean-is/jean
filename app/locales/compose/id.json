@@ -40,7 +40,5 @@
   "compose.ports": "Usulan",
   "compose.open": "Terima usulan dari situs",
   "compose.close": "Berhenti menerima usulan",
-  "compose.port": "Formulir situs dapat mengisi {columns}; hanya Anda yang menyetujui, di “{approval}”.",
-  "compose.waiting": "Menunggu persetujuan Anda: {count}",
-  "compose.approved": "Disetujui"
+  "compose.port": "Formulir situs dapat mengisi {columns}."
 }

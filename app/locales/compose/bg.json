@@ -40,7 +40,5 @@
   "compose.ports": "Предложения",
   "compose.open": "Приемане на предложения от сайт",
   "compose.close": "Спиране на приемането на предложения",
-  "compose.port": "Формуляр на сайт може да попълва {columns}; само вие одобрявате, в „{approval}“.",
-  "compose.waiting": "Чакат вашето одобрение: {count}",
-  "compose.approved": "Одобрено"
+  "compose.port": "Формуляр на сайт може да попълва {columns}."
 }

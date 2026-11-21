@@ -40,7 +40,5 @@
   "compose.ports": "Javaslatok",
   "compose.open": "Javaslatok fogadása webhelyről",
   "compose.close": "Javaslatok fogadásának leállítása",
-  "compose.port": "Egy webhely űrlapja kitöltheti ezeket: {columns}; csak Ön hagy jóvá, itt: „{approval}”.",
-  "compose.waiting": "Jóváhagyásra vár: {count}",
-  "compose.approved": "Jóváhagyva"
+  "compose.port": "Egy webhely űrlapja kitöltheti ezeket: {columns}."
 }

@@ -7,7 +7,7 @@
 // changed since the last. A reference's `ask` is run by a brain (./recipes.js) the first time it shows, then by hand, every so many minutes or
 // as its source changes, as its user chose, each run kept on the consumer's side. Each version and each run is certified (./proof.js), as an
 // answer is, and the consumer's menu checks the chain back to the collection's version. What people outside propose comes in through the
-// collection's port alone (./ports.js), into its journal, and shows only once its owner approves it. Loaded with Tables.
+// collection's port alone (./ports.js), into its journal; what shows of it is each consumer's own criteria. Loaded with Tables.
 import { html, render, nothing } from 'lit-html'
 import { keyed } from 'lit-html/directives/keyed.js'
 import { signal, effect } from '@preact/signals-core'
@@ -23,7 +23,7 @@ import { parseRef, refsIn, loops, refused, versionless, tableOf, withRef, filled
 import { versionOf, loadedOf, reshaped, breaks, current, headOf } from './versions.js'
 import { keyOf, paceOf, askOf, lastRun, due, PROMPT, DEPTH, GATHER } from './recipes.js'
 import { credentialOf, chainOf, holds } from './proof.js'
-import { admitted, owned, waiting, portOf as portFor } from './ports.js'
+import { admitted, portOf as portFor } from './ports.js'
 import { imprint } from '../receipt/certificate.js'
 
 await useStrings('compose')
@@ -68,8 +68,7 @@ const portOf = async (dir, folder) => { try { return JSON.parse((await app.fs.re
 async function resolved(ref, live, dir, most = 12) {
   const versions = await versionsOf(dir, ref.place), version = ref.at === 'published' ? versions.at(-1) : versions.find((one) => one.n === ref.at)
   if (ref.at !== 'live' && !version) return { why: versionless(ref.at) }
-  // The journal's head, its approval column holding only what its owner set; a version was frozen so.
-  const base = version ? loadedOf(version) : owned(live, await portOf(dir, ref.place)), { table, recipe, old } = current(base.table, versions, ref.recipe)
+  const base = version ? loadedOf(version) : live, { table, recipe, old } = current(base.table, versions, ref.recipe)
   try { return { rows: tableOf({ ...base, table }, recipe, HOW(), most), read: version ? `v${version.n}` : headOf(live.lines), old, certificate: version?.certificate } } catch { return { why: 'recipe' } }
 }
 
@@ -165,7 +164,7 @@ export async function publish(folder, why = 'published', dir = app.projectDir) {
   if (!one || (why === 'schema' && (!last || !reshaped(last, one.table)))) return null
   const broken = last ? breaks(last.table, one.table) : []
   if (broken.length) return { broken }
-  const version = versionOf(owned(one, await portOf(dir, folder)), { n: (last?.n ?? 0) + 1, at: new Date().toISOString(), by: 'user', why })
+  const version = versionOf(one, { n: (last?.n ?? 0) + 1, at: new Date().toISOString(), by: 'user', why })
   Object.assign(version, await certified({ kind: 'collection', creation: folder.slice(12, 38), n: version.n, at: version.at, by: version.by, content: JSON.stringify(version) }))
   await app.fs.write(`${dir}/${folder}/versions/${version.n}.json`, `${JSON.stringify(version, null, 1)}\n`)
   await tables.reread(one)
@@ -206,10 +205,10 @@ export async function contribute(place, proposals, dir = app.projectDir) {
   if (edits.length) await tables.change(one, edits, 'visitor', undefined, false, false)
   return edits.length
 }
-/** A collection's port opened by its owner: every column a form fills, approved in its first box, or in one made for it. @param {string} folder */
+/** A collection's port opened by its owner: every column a form fills. @param {string} folder */
 async function openPort(folder) {
-  const dir = app.projectDir, tables = await import('../tables/tables.js'), one = await tables.load(folder, dir), box = (/** @type {Loaded} */ one) => one?.table.properties.find((p) => !p.deleted && p.type === 'checkbox'), now = one && !box(one) ? (await tables.reshapeTable(one, { add: { name: t('compose.approved'), type: 'checkbox' } }), await tables.load(folder, dir)) : one, approval = box(now)
-  if (now && approval) await app.fs.write(`${dir}/${folder}/port.json`, `${JSON.stringify(portFor(now.table, approval.id, new Date().toISOString()), null, 1)}\n`)
+  const dir = app.projectDir, one = await (await import('../tables/tables.js')).load(folder, dir)
+  if (one) await app.fs.write(`${dir}/${folder}/port.json`, `${JSON.stringify(portFor(one.table, new Date().toISOString()), null, 1)}\n`)
 }
 
 /** Which version a reference reads, in words. @param {Edge['at']} at */
@@ -223,7 +222,7 @@ async function choose(from, index, change) {
 }
 /** When a reference's `ask` runs again, each choice by its `refresh`: by hand, every five minutes, every hour, or as its source changes. */
 const PACES = [['', 'compose.byHand'], ['5 min', 'compose.every5'], ['60 min', 'compose.hourly'], ['auto', 'compose.auto']]
-/** What the pane's head lists for each place, once read: `source`, a collection, not a whiteboard; `runs`, each `ask`'s last run; `proofs`, the certificates of what each shows, checked. @typedef {{ source: boolean, uses: Edge[], usedIn: Edge[], names: Map<string, string>, versions: Map<string, Version[]>, old: Map<Edge, [string, string][]>, runs: Map<Edge, Run | undefined>, proofs: Map<Edge, { chain: import('../receipt/certificate.js').Sealed[], holds: boolean, n?: number } | null>, changes: number, broken: string[], port?: { columns: string, approval: string, waiting: number } | null }} Links */
+/** What the pane's head lists for each place, once read: `source`, a collection, not a whiteboard; `runs`, each `ask`'s last run; `proofs`, the certificates of what each shows, checked. @typedef {{ source: boolean, uses: Edge[], usedIn: Edge[], names: Map<string, string>, versions: Map<string, Version[]>, old: Map<Edge, [string, string][]>, runs: Map<Edge, Run | undefined>, proofs: Map<Edge, { chain: import('../receipt/certificate.js').Sealed[], holds: boolean, n?: number } | null>, changes: number, broken: string[], port?: { columns: string } | null }} Links */
 const links = signal(/** @type {Map<string, Links>} */ (new Map()))
 /** Each place's links, read as its menu opens. @param {string} uri */
 async function linksOf(uri) {
@@ -240,7 +239,7 @@ async function linksOf(uri) {
   }
   links.value = new Map(links.peek()).set(uri, { source: Boolean(own), uses, usedIn: edges.filter((edge) => edge.to === uri), names, versions, old, proofs, runs: new Map(uses.map((edge) => [edge, lastOf(edge)])), broken: own && last ? breaks(last.table, own.table) : [],
     changes: own ? own.lines.filter((line) => 'at' in line && line.at > (last?.head ?? '')).length : 0,
-    port: own && port ? { columns: new Intl.ListFormat(intlLocales(locale.peek())).format(port.columns.map(named)), approval: named(port.approval), waiting: waiting(own, port) } : null })
+    port: own && port ? { columns: new Intl.ListFormat(intlLocales(locale.peek())).format(port.columns.map(named)) } : null })
 }
 
 /** The pane's head, for a collection, slides or a document: a button whose menu lists what it uses and what uses it, each opening it; for a collection, its versions. @param {{ uri: string }} file */
@@ -264,8 +263,7 @@ function head({ uri }) {
     <p class="menu-heading" role="status">${t('compose.journal', { count: these.changes })}</p>${these.broken.length ? html`<p class="menu-heading" role="alert">${t('compose.breaks', { columns: new Intl.ListFormat(intlLocales(locale.value)).format(these.broken) })}</p>` : nothing}
     <ul><li><button type="button" ?disabled=${these.broken.length > 0 || (!these.changes && Boolean(these.versions.get(uri)?.length))} @click=${async () => { const made = await publish(uri); if (made?.version) notify(t('compose.done', { n: made.version.n })); await linksOf(uri) }}>${icons.upload}<span>${t('compose.publish', { n: (these.versions.get(uri)?.at(-1)?.n ?? 0) + 1 })}</span></button></li>
     ${[...these.versions.get(uri) ?? []].reverse().slice(0, 5).map((version) => html`<li><p class="menu-heading">${t(version.why === 'schema' ? 'compose.versionSchema' : 'compose.version', { n: version.n, date: date.format(new Date(version.at)) })}</p></li>`)}</ul></div>
-    <div role="group" aria-label=${t('compose.ports')}><p class="menu-heading" aria-hidden="true">${t('compose.ports')}</p>${these.port ? html`<p class="menu-heading">${t('compose.port', these.port)}</p>
-      <p class="menu-heading" role="status">${t('compose.waiting', { count: these.port.waiting })}</p>` : nothing}<ul><li><button type="button" @click=${async () => { await (these.port ? app.fs.remove(`${app.projectDir}/${uri}/port.json`) : openPort(uri)); await linksOf(uri) }}>
+    <div role="group" aria-label=${t('compose.ports')}><p class="menu-heading" aria-hidden="true">${t('compose.ports')}</p>${these.port ? html`<p class="menu-heading">${t('compose.port', these.port)}</p>` : nothing}<ul><li><button type="button" @click=${async () => { await (these.port ? app.fs.remove(`${app.projectDir}/${uri}/port.json`) : openPort(uri)); await linksOf(uri) }}>
       ${icons[these.port ? 'close' : 'plug']}<span>${t(these.port ? 'compose.close' : 'compose.open')}</span></button></li></ul></div>` : nothing
   // Keyed by its place: a pane that shows another creation draws its menu anew, closed.
   return keyed(uri, html`<button class="icon-button" popovertarget=${id} aria-label=${t('compose.links')}>${icons.layers}</button>

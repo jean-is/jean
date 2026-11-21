@@ -40,7 +40,5 @@
   "compose.ports": "Förslag",
   "compose.open": "Ta emot förslag från en webbplats",
   "compose.close": "Sluta ta emot förslag",
-  "compose.port": "Ett formulär på en webbplats kan fylla i {columns}; bara du godkänner, i ”{approval}”.",
-  "compose.waiting": "Väntar på ditt godkännande: {count}",
-  "compose.approved": "Godkänd"
+  "compose.port": "Ett formulär på en webbplats kan fylla i {columns}."
 }

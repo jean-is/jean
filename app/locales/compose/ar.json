@@ -40,7 +40,5 @@
   "compose.ports": "المقترحات",
   "compose.open": "قبول مقترحات من موقع",
   "compose.close": "إيقاف قبول المقترحات",
-  "compose.port": "يمكن لنموذج موقع أن يملأ {columns}؛ وأنت وحدك توافق، في «{approval}».",
-  "compose.waiting": "بانتظار موافقتك: {count}",
-  "compose.approved": "موافَق عليه"
+  "compose.port": "يمكن لنموذج موقع أن يملأ {columns}."
 }

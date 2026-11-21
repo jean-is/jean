@@ -40,7 +40,5 @@
   "compose.ports": "প্রস্তাব",
   "compose.open": "কোনো সাইট থেকে প্রস্তাব গ্রহণ করুন",
   "compose.close": "প্রস্তাব গ্রহণ বন্ধ করুন",
-  "compose.port": "সাইটের একটি ফর্ম {columns} পূরণ করতে পারে; অনুমোদন করেন শুধু আপনি, “{approval}”-এ।",
-  "compose.waiting": "আপনার অনুমোদনের অপেক্ষায়: {count}",
-  "compose.approved": "অনুমোদিত"
+  "compose.port": "সাইটের একটি ফর্ম {columns} পূরণ করতে পারে।"
 }

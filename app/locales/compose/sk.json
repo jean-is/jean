@@ -40,7 +40,5 @@
   "compose.ports": "Návrhy",
   "compose.open": "Prijímať návrhy z webu",
   "compose.close": "Prestať prijímať návrhy",
-  "compose.port": "Formulár webu môže vyplniť {columns}; schvaľujete len vy, v stĺpci „{approval}“.",
-  "compose.waiting": "Čaká na vaše schválenie: {count}",
-  "compose.approved": "Schválené"
+  "compose.port": "Formulár webu môže vyplniť {columns}."
 }

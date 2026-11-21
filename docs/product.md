@@ -53,7 +53,7 @@ The UI never says "agent", "model", "MCP" or "token".
 | MCP server / connector | Connection |
 | Artifact kept in the project (a document, a table, a picture, a score…) | Creation: Creations (D497) |
 | A table Jean keeps (Tables), its rows and typed columns | Collection, shown as a table, a board, a gallery, a calendar or a timeline (D758), or a list, the one a narrow pane starts in (D757); "table" is only a grid (D507) |
-| What a creation uses of another, its frozen states, and what people outside propose to a collection (composition) | Links with other creations; a version, Publish version, Live, Published, Version N; Update now; Proposals, Approved; never "artifact", "dependency", "snapshot" or "pipeline" (D762) |
+| What a creation uses of another, its frozen states, and what people outside propose to a collection (composition) | Links with other creations; a version, Publish version, Live, Published, Version N; Update now; Proposals; never "artifact", "dependency", "snapshot" or "pipeline" (D762) |
 | What a collection shows, arranged and kept under a name | View; All rows is the collection itself (D753) |
 | Something laid out to print, post or send (Designs): an invitation, a poster, a flyer, a post | Design, Visuel in French; its three layouts are takes, its fonts voices (D572) |
 | An original game made to play here (Games), its skill and its kind among the creations | Game, Jeu in French; what it is, how it plays and how it grows is its design card (D648) |

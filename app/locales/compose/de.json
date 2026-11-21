@@ -40,7 +40,5 @@
   "compose.ports": "Vorschläge",
   "compose.open": "Vorschläge von einer Website annehmen",
   "compose.close": "Keine Vorschläge mehr annehmen",
-  "compose.port": "Ein Formular einer Website kann {columns} ausfüllen; nur du gibst frei, in „{approval}“.",
-  "compose.waiting": "Warten auf deine Freigabe: {count}",
-  "compose.approved": "Freigegeben"
+  "compose.port": "Ein Formular einer Website kann {columns} ausfüllen."
 }

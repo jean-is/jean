@@ -40,7 +40,5 @@
   "compose.ports": "Предложения",
   "compose.open": "Принимать предложения с сайта",
   "compose.close": "Больше не принимать предложения",
-  "compose.port": "Форма сайта может заполнять {columns}; одобряете только вы, в столбце «{approval}».",
-  "compose.waiting": "Ждут вашего одобрения: {count}",
-  "compose.approved": "Одобрено"
+  "compose.port": "Форма сайта может заполнять {columns}."
 }

@@ -40,7 +40,5 @@
   "compose.ports": "Proposte",
   "compose.open": "Accetta proposte da un sito",
   "compose.close": "Smetti di accettare proposte",
-  "compose.port": "Un modulo di un sito può compilare {columns}; solo tu approvi, in «{approval}».",
-  "compose.waiting": "In attesa della tua approvazione: {count}",
-  "compose.approved": "Approvato"
+  "compose.port": "Un modulo di un sito può compilare {columns}."
 }

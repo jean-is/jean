@@ -40,7 +40,5 @@
   "compose.ports": "ప్రతిపాదనలు",
   "compose.open": "సైట్ నుండి ప్రతిపాదనలను అంగీకరించు",
   "compose.close": "ప్రతిపాదనలను అంగీకరించడం ఆపు",
-  "compose.port": "సైట్ ఫారం {columns} నింపగలదు; ఆమోదం మీరు మాత్రమే, “{approval}”లో.",
-  "compose.waiting": "మీ ఆమోదం కోసం వేచి ఉన్నవి: {count}",
-  "compose.approved": "ఆమోదించబడింది"
+  "compose.port": "సైట్ ఫారం {columns} నింపగలదు."
 }

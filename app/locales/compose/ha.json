@@ -40,7 +40,5 @@
   "compose.ports": "Shawarwari",
   "compose.open": "Karɓi shawarwari daga wani shafi",
   "compose.close": "Daina karɓar shawarwari",
-  "compose.port": "Fom na shafi zai iya cike {columns}; kai kaɗai ke amincewa, a cikin “{approval}”.",
-  "compose.waiting": "Suna jiran amincewarka: {count}",
-  "compose.approved": "An amince"
+  "compose.port": "Fom na shafi zai iya cike {columns}."
 }

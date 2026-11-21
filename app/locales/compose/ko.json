@@ -40,7 +40,5 @@
   "compose.ports": "제안",
   "compose.open": "사이트에서 제안 받기",
   "compose.close": "제안 받기 중단",
-  "compose.port": "사이트의 양식은 {columns}을(를) 채울 수 있습니다. 승인은 “{approval}”에서 본인만 할 수 있습니다.",
-  "compose.waiting": "승인 대기 중: {count}",
-  "compose.approved": "승인됨"
+  "compose.port": "사이트의 양식은 {columns}을(를) 채울 수 있습니다."
 }

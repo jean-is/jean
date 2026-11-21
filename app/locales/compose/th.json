@@ -40,7 +40,5 @@
   "compose.ports": "ข้อเสนอ",
   "compose.open": "รับข้อเสนอจากเว็บไซต์",
   "compose.close": "หยุดรับข้อเสนอ",
-  "compose.port": "ฟอร์มของเว็บไซต์กรอก {columns} ได้ คุณเท่านั้นที่อนุมัติ ใน “{approval}”",
-  "compose.waiting": "รอการอนุมัติของคุณ: {count}",
-  "compose.approved": "อนุมัติแล้ว"
+  "compose.port": "ฟอร์มของเว็บไซต์กรอก {columns} ได้"
 }

@@ -40,7 +40,5 @@
   "compose.ports": "Cadangan",
   "compose.open": "Terima cadangan daripada laman",
   "compose.close": "Berhenti menerima cadangan",
-  "compose.port": "Borang laman boleh mengisi {columns}; hanya anda yang meluluskan, dalam “{approval}”.",
-  "compose.waiting": "Menunggu kelulusan anda: {count}",
-  "compose.approved": "Diluluskan"
+  "compose.port": "Borang laman boleh mengisi {columns}."
 }
