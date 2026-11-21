@@ -269,7 +269,7 @@ function head({ uri }) {
       ${icons[these.port ? 'close' : 'plug']}<span>${t(these.port ? 'compose.close' : 'compose.open')}</span></button></li></ul></div>` : nothing
   // Keyed by its place: a pane that shows another creation draws its menu anew, closed.
   return keyed(uri, html`<button class="icon-button" popovertarget=${id} aria-label=${t('compose.links')}>${icons.layers}</button>
-    <div id=${id} class="menu out-menu" popover @toggle=${(/** @type {ToggleEvent} */ event) => event.newState === 'open' && linksOf(uri)}>${these ? html`${versions}${group('compose.uses', uses)}
+    <div id=${id} class="menu links-menu" popover @toggle=${(/** @type {ToggleEvent} */ event) => event.newState === 'open' && linksOf(uri)}>${these ? html`${versions}${group('compose.uses', uses)}
       ${group('compose.usedIn', these.usedIn.map((edge) => html`<li>${open(edge.from, html`<span class="menu-value">${which(edge.at)}</span>`)}</li>`))}${these.uses.length + these.usedIn.length || versions !== nothing ? nothing : html`<p class="menu-heading">${t('compose.none')}</p>`}` : nothing}</div>`)
 }
 
