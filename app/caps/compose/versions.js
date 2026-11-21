@@ -53,7 +53,7 @@ export function current(table, versions, recipe) {
     if (old.has(name)) said.push([part.slice(0, name.length), one.name]); else revived.add(one.id)
     return `${one.name}${part.slice(name.length)}`
   }).join('')
-  const shown = Object.fromEntries(Object.entries(recipe).map(([what, text]) => [what, /^(fields|where|sort)$/.test(what) ? named(text) : text]))
+  const shown = Object.fromEntries(Object.entries(recipe).map(([what, text]) => [what, /^(fields|where|sort|by|sum|column)$/.test(what) ? named(text) : text]))
   const fields = shown.fields ?? (revived.size ? table.properties.filter((one) => !one.deleted).map((one) => one.name).join(' | ') : undefined)
   return { table: { ...table, properties: table.properties.map((one) => (revived.has(one.id) ? { ...one, deleted: undefined } : one)) }, recipe: { ...shown, ...(fields ? { fields } : {}) }, old: said }
 }

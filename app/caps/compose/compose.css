@@ -2,3 +2,7 @@
 /* The menu of Links with other creations in a pane's head, placed as its way out is (ui/preview.css's .out-menu), loaded with composition, off the first screen. */
 .links-menu { position-anchor: auto; position-area: block-end span-inline-start; position-try-fallbacks: flip-block, flip-inline; margin: 0.25rem 0; max-inline-size: min(22rem, 92vw); max-block-size: calc(100dvh - 5rem); overflow-y: auto; }
 .links-menu button { white-space: normal; } .links-menu button > :first-child { flex: none; }
+/* A choice in a composed table, a slide's or a document's, a pill as Tables draws it (its step's shape too), in the colour Tables gives it, tinting whatever paper it is on. */
+.composed-pill { display: inline-block; white-space: nowrap; } .composed-pill[data-hue] { background: color-mix(in oklab, var(--hue) 30%, transparent); } .composed-pill + .composed-pill { margin-inline-start: 0.25em; }
+/* A figure in a slide's words, worked out: as the words around it are, its formula as code again while they are edited. */
+.deck-slide code[data-formula] { padding: 0; background: none; font: inherit; } .deck-slide [contenteditable='true'] code[data-formula] { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.85em; }

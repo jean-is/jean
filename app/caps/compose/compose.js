@@ -22,7 +22,8 @@ import { t, useStrings, locale, intlLocales } from '../../core/i18n.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { PLACE } from '../tables/table.js'
 import '../tables/tables.js'
-import { parseRef, refsIn, loops, refused, versionless, tableOf, withRef, filledPage } from './refs.js'
+import { parseRef, parseFigure, refsIn, loops, refused, versionless, tableOf, chartOf, choiceIn, choicesIn, tinted, withRef, filledPage } from './refs.js'
+import { option } from '../interactive/parts.js'
 import { versionOf, loadedOf, reshaped, breaks, current, headOf } from './versions.js'
 import { keyOf, paceOf, askOf, lastRun, due, PROMPT, DEPTH, GATHER } from './recipes.js'
 import { credentialOf, chainOf, holds } from './proof.js'
@@ -66,13 +67,13 @@ const portOf = async (dir, folder) => { try { return JSON.parse((await app.fs.re
 
 /**
  * What a reference shows of a collection loaded, at the version it reads (`read`), its recipe's old names read as the columns are named now; or
- * why it shows nothing. @param {Ref} ref @param {NonNullable<Loaded>} live @param {string} dir @returns {Promise<{ why?: string, rows?: string[][], read?: string, old?: [string, string][], certificate?: import('../receipt/certificate.js').Sealed }>}
+ * why it shows nothing; its columns as it reads them (`table`). @param {Ref} ref @param {NonNullable<Loaded>} live @param {string} dir @returns {Promise<{ why?: string, rows?: string[][], read?: string, old?: [string, string][], certificate?: import('../receipt/certificate.js').Sealed, table?: import('../tables/table.js').Table }>}
  */
 async function resolved(ref, live, dir, most = 12) {
   const versions = await versionsOf(dir, ref.place), version = ref.at === 'published' ? versions.at(-1) : versions.find((one) => one.n === ref.at)
   if (ref.at !== 'live' && !version) return { why: versionless(ref.at) }
   const base = version ? loadedOf(version) : live, { table, recipe, old } = current(base.table, versions, ref.recipe)
-  try { return { rows: tableOf({ ...base, table }, recipe, HOW(), most), read: version ? `v${version.n}` : headOf(live.lines), old, certificate: version?.certificate } } catch { return { why: 'recipe' } }
+  try { return { rows: tableOf({ ...base, table }, recipe, HOW(), most), read: version ? `v${version.n}` : headOf(live.lines), old, certificate: version?.certificate, table } } catch { return { why: 'recipe' } }
 }
 
 /** Where a consumer's runs are kept, by its ULID, or its task's for slides in an answer: composed/<ulid>.jsonl, appended, never edited. @param {string} dir @param {string} from */
@@ -125,17 +126,33 @@ async function asked(brain, text, task) {
 /** The run a reference's block shows: its last good one, else one made now, the first time it shows. @param {Ref} ref @param {string} from @param {string} dir */
 const shownRun = async (ref, from, dir) => ((last) => (last ? { output: last.output } : run(ref, from, dir).then((line) => (line?.output !== undefined ? { output: line.output } : { why: 'unasked' }))))(lastRun(await runsOf(runsAt(dir, from)), keyOf(ref)))
 
+/** A choice's colour as a chart draws it, in sRGB for its SVG and PowerPoint's writer: as Tables shows it, its hue, else a step's group (under way
+ * the flame, done the ink's soft), else the line's, as a card's edge is, read from the page's own style, over the paper it is drawn on. @param {{ hue?: number, group?: string }} shade @param {Element} box */
+function painted({ hue, group }, box, probe = Object.assign(document.createElement('i'), { hidden: true }), paper = /** @type {CanvasRenderingContext2D} */ (document.createElement('canvas').getContext('2d', { willReadFrequently: true }))) {
+  document.body.append(probe), hue === undefined || (probe.dataset.hue = String(hue)), probe.style.color = hue !== undefined ? 'var(--hue)' : `var(${group === 'doing' ? '--flame' : group === 'done' ? '--ink-soft' : '--line-strong'})`
+  for (const colour of [getComputedStyle(box).getPropertyValue('--deck-paper').trim() || getComputedStyle(document.body).backgroundColor, getComputedStyle(probe).color]) paper.fillStyle = colour, paper.fillRect(0, 0, 1, 1)
+  return probe.remove(), `#${[...paper.getImageData(0, 0, 1, 1).data.slice(0, 3)].map((n) => n.toString(16).padStart(2, '0')).join('')}`
+}
+
 /**
  * A consumer's `table` block drawn, a slide's (Slides' `BLOCKS`) or a document's (`<app-composed>`): the collection it names, read now and as
- * it changes while the block shows, at the version it reads, as its recipe shows it, or why it can't be shown here. @param {HTMLElement} box @param {string} source
+ * it changes while the block shows, at the version it reads, as its recipe shows it (a chart, Charts' own, where it says `chart` and Charts
+ * can come), or why it can't be shown here. On a slide, its chart is drawn in SVG, in the deck's colours (`dress`), its box an `echarts` block's. @param {HTMLElement} box @param {string} source
+ * @param {(option: Record<string, any>) => Record<string, any>} [dress]
  */
-export async function drawn(box, source) {
+export async function drawn(box, source, dress) {
   const ref = parseRef(source), pane = /** @type {any} */ (box.closest('app-preview')), from = String(pane?.file?.peek()?.uri ?? ''), dir = app.projectDir
   const shared = !pane && Boolean(app.current.peek()?.records.some(({ update }) => update?.sessionUpdate === '_system_note' && update.data?.kind === 'shared'))
   const tables = ref && !isDenied('tables') && !shared ? await import('../tables/tables.js') : null, live = ref && tables && await tables.load(ref.place, dir).catch(() => null)
   const why = refused({ denied: isDenied('tables'), shared, loop: Boolean(ref && from && loops((await graph(dir)).edges, from, ref.place)), found: Boolean(live) })
-  const show = (/** @type {{ why?: string, rows?: string[][], output?: string }} */ { why, rows: [heads = [], ...rows] = [], output }) => render(why ? html`<p class="deck-words">${t(`compose.${why}`)}</p>` : output !== undefined ? html`<div dir="auto">${markdown(output)}</div>`
-    : html`<table><thead><tr>${heads.map((head) => html`<th dir="auto">${head}</th>`)}</tr></thead><tbody>${rows.map((row) => html`<tr>${row.map((cell) => html`<td dir="auto">${cell}</td>`)}</tr>`)}</tbody></table>`, box)
+  const chart = Boolean(ref?.recipe.chart && !ref.recipe.ask) && await unlock('charts')
+  // A chart's box, as an `echarts` block's is: the chart its own for the printer and PowerPoint's writer, which makes it a chart of its own.
+  if (chart) box.classList.replace('deck-table', 'deck-echarts'), Object.defineProperty(box, 'chart', { get: () => /** @type {any} */ (box.querySelector('app-chart'))?.chart ?? null, configurable: true })
+  // A choice, in a cell or as a bar, in the colour Tables gives it.
+  const pills = (/** @type {ReturnType<typeof choiceIn>} */ property, /** @type {string} */ cell) => (property ? choicesIn(property, cell).map(({ name, hue, group }) => html`<span class="table-pill composed-pill" dir="auto" data-hue=${hue ?? nothing} data-group=${group ?? nothing}>${name}</span>`) : cell)
+  const show = (/** @type {{ why?: string, rows?: string[][], output?: string, table?: import('../tables/table.js').Table }} */ { why, rows: all = [], output, table }, [heads = [], ...rows] = all, by = table && choiceIn(table, heads[0])) => render(why ? html`<p class="deck-words">${t(`compose.${why}`)}</p>` : output !== undefined ? html`<div dir="auto">${markdown(output)}</div>`
+    : chart ? html`<app-chart live ?svg=${Boolean(dress)} source=${JSON.stringify(((drawing) => (dress ? dress(drawing) : drawing))(tinted(option(chartOf(all, ref?.recipe.chart)), rows.map(([label]) => (by ? painted(choicesIn(by, label)[0], box) : undefined)))))}></app-chart>`
+    : ((columns) => html`<table><thead><tr>${heads.map((head) => html`<th dir="auto">${head}</th>`)}</tr></thead><tbody>${rows.map((row) => html`<tr>${row.map((cell, i) => html`<td dir="auto">${pills(columns[i], cell)}</td>`)}</tr>`)}</tbody></table>`)(heads.map((head) => (table ? choiceIn(table, head) : null))), box)
   if (why || !ref || !live || !tables) return void show({ why: why || 'missing' })
   const where = signal(/** @type {Loaded} */ (live)), holds = /** @type {(() => void)[]} */ ([])
   tables.watched(where, holds)
@@ -144,6 +161,32 @@ export async function drawn(box, source) {
     if (!box.isConnected && box.firstElementChild?.nextSibling) return void (stop?.(), holds.forEach((hold) => hold()))
     if (now) (ref.recipe.ask ? shownRun(ref, from, dir) : resolved(ref, now, dir)).then(show)
   })
+}
+/**
+ * The figures a deck's words hold (inline code that starts with `=`, ./refs.js), each shown worked out from its collection, as it is now or at the
+ * version it names, again as it changes, the deck fitted to them; else —, its title saying why. Its words made editable by a double click show its
+ * formula again, so that the formula is what the deck keeps. @param {HTMLElement} root @param {() => void} [refit]
+ */
+export function liven(root, refit) {
+  const pane = /** @type {any} */ (root.closest('app-preview')), from = String(pane?.file?.peek()?.uri ?? ''), dir = app.projectDir, holds = /** @type {(() => void)[]} */ ([]), read = /** @type {Map<string, Promise<any>>} */ (new Map()), shown = /** @type {WeakMap<HTMLElement, string>} */ (new WeakMap())
+  const shared = !pane && Boolean(app.current.peek()?.records.some(({ update }) => update?.sessionUpdate === '_system_note' && update.data?.kind === 'shared')), filled = /** @type {Promise<unknown>[]} */ ([])
+  // A collection read once, then as it changes, for all its figures.
+  const source = (/** @type {string} */ place) => read.get(place) ?? read.set(place, import('../tables/tables.js').then(async (tables) => ((live) => live && (tables.watched(live, holds), live))(((one) => one && signal(one))(await tables.load(place, dir).catch(() => null))))).get(place)
+  const show = async (/** @type {HTMLElement} */ code, /** @type {Ref} */ ref) => {
+    const why = refused({ denied: isDenied('tables'), shared, loop: Boolean(from && loops((await graph(dir)).edges, from, ref.place)), found: true }), live = why ? null : await source(ref.place)
+    const put = (/** @type {{ why?: string, rows?: string[][] }} */ { why, rows }) => code.closest('[contenteditable="true"]') || (code.textContent = rows?.[0]?.[0] ?? '—', code.title = why ? t(`compose.${why}`) : '', refit?.())
+    // Worked out again as the collection changes, until the deck draws that slide anew.
+    return live ? new Promise((resolve) => { const stop = effect(() => void (code.isConnected ? resolved(ref, live.value, dir).then(put).then(resolve) : (stop?.(), resolve(null)))); holds.push(stop) }) : put({ why: why || 'missing' })
+  }
+  const scan = () => root.querySelectorAll('.deck-slide code:not([data-formula])').forEach((code) => ((ref) => ref && (Object.assign(/** @type {HTMLElement} */ (code).dataset, { formula: code.textContent }), filled.push(show(/** @type {HTMLElement} */ (code), ref))))(parseFigure(code.textContent ?? '')))
+  // Before the deck reads them (capture), each formula back in the words double-clicked; the figures again if the deck didn't make them editable.
+  const watch = new MutationObserver(scan), again = (/** @type {Event} */ event) => {
+    const words = /** @type {HTMLElement | null} */ (/** @type {Element} */ (event.target).closest('[data-edit]')), codes = /** @type {HTMLElement[]} */ ([...words?.querySelectorAll('[data-formula]') ?? []])
+    for (const code of codes) shown.set(code, code.textContent ?? ''), code.textContent = code.dataset.formula ?? ''
+    setTimeout(() => words?.isContentEditable || codes.forEach((code) => { code.textContent = shown.get(code) ?? '' }))
+  }
+  scan(), watch.observe(root, { childList: true, subtree: true }), root.addEventListener('dblclick', again, true)
+  return { ready: Promise.all(filled), stop: () => (watch.disconnect(), root.removeEventListener('dblclick', again, true), holds.forEach((hold) => hold())) }
 }
 customElements.define('app-composed', class extends HTMLElement { connectedCallback() { void drawn(this, this.getAttribute('source') ?? '') } })
 

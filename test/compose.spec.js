@@ -74,6 +74,98 @@ test('a slide shows a collection live: a row changed shows changed, at once and 
   await expect(page.locator('.menu:popover-open').getByRole('group', { name: 'Used in' })).toContainText('Neighbourhood')
 })
 
+test('a chart on a slide follows its collection: a row changed moves its bars at once, in the deck’s colours, the chart the box’s for PowerPoint', async ({ page }) => {
+  await start(page)
+  await seed(page)
+  await page.evaluate(async ({ COLLECTION, DECK }) => {
+    const { app } = await import('/ui/state.js')
+    await (await import('/caps/skills/decks.js')).rewrite(DECK, `# The neighbourhood\n\n---\n\n## Trades\n\n\`\`\`table\n${COLLECTION}\nchart: bar\nby: Trade\n\`\`\`\n`, 'Neighbourhood', app.projectDir)
+  }, { COLLECTION, DECK })
+  await open(page)
+  const box = page.locator('app-preview app-slides.beside .deck-slide .deck-block:has(> app-chart)').first()
+  /** The bars' categories and values as the box's chart, which PowerPoint's writer reads, draws them, in SVG and the deck's colours. */
+  const drawn = () => box.evaluate((one) => ((option) => option && { labels: option.xAxis[0].data, values: option.series[0].data, svg: Boolean(one.querySelector('app-chart[svg] svg')),
+    coloured: option.color[0] === getComputedStyle(one).getPropertyValue('--deck-series-1').trim() })(/** @type {any} */ (one).chart?.getOption()))
+  await expect.poll(drawn).toEqual({ labels: ['Baker'], values: [1], svg: true, coloured: true })
+  await change(page, 'Potter')
+  await expect.poll(drawn).toEqual({ labels: ['Potter'], values: [1], svg: true, coloured: true })
+})
+
+test('a choice keeps the colour its collection gives it on a slide: each bar its choice’s, each cell a pill of it', async ({ page }) => {
+  await start(page)
+  await seed(page)
+  await page.evaluate(async ({ COLLECTION, DECK, ROW }) => {
+    const { app } = await import('/ui/state.js'), at = '2026-11-21T10:00:00.000Z'
+    await app.fs.write(`${app.projectDir}/${COLLECTION}/collection.json`, JSON.stringify({ format: 1, id: COLLECTION.slice(12, 38), name: 'Artisans', author: 'user', created: at, changed: at, views: [{ id: 'table', type: 'table' }],
+      properties: [{ id: 'name', name: 'Name', type: 'text' }, { id: 'trade', name: 'Trade', type: 'select', options: [{ name: 'Baker' }, { name: 'Potter', hue: 4 }] }] }))
+    await app.fs.write(`${app.projectDir}/${COLLECTION}/changes.jsonl`, [{ row: ROW, set: { name: 'Ana', trade: 'Baker' }, at, by: 'user' }, { row: `${ROW.slice(0, -1)}B`, set: { name: 'Bea', trade: 'Potter' }, at, by: 'user' }].map((line) => `${JSON.stringify(line)}\n`).join(''))
+    await (await import('/caps/skills/decks.js')).rewrite(DECK, `# The neighbourhood\n\n---\n\n## Trades\n\n\`\`\`table\n${COLLECTION}\nchart: bar\nby: Trade\n\`\`\`\n\n---\n\n## Who\n\n\`\`\`table\n${COLLECTION}\n\`\`\`\n`, 'Neighbourhood', app.projectDir)
+  }, { COLLECTION, DECK, ROW })
+  await open(page)
+  const slides = page.locator('app-preview app-slides.beside'), box = slides.locator('.deck-block:has(> app-chart)').first()
+  // The colour Tables shows each choice in, as a dot of its view would.
+  const hues = await page.evaluate(() => [0, 4].map((hue) => { const dot = document.body.appendChild(Object.assign(document.createElement('i'), { className: 'table-dot' })); dot.dataset.hue = String(hue); const css = getComputedStyle(dot).backgroundColor; dot.remove(); return css }))
+  // Each bar's colour, as the pixel it paints, matched to those hues.
+  const bars = () => box.evaluate((one, hues) => { const paper = /** @type {CanvasRenderingContext2D} */ (document.createElement('canvas').getContext('2d', { willReadFrequently: true })), at = (/** @type {string} */ css) => (paper.clearRect(0, 0, 1, 1), paper.fillStyle = css, paper.fillRect(0, 0, 1, 1), [...paper.getImageData(0, 0, 1, 1).data])
+    return /** @type {any} */ (one).chart?.getOption().series[0].data.map((/** @type {any} */ bar) => hues.findIndex((hue) => at(hue).every((n, i) => Math.abs(n - at(bar.itemStyle?.color ?? 'transparent')[i]) <= 2))) }, hues)
+  await expect.poll(bars).toEqual([0, 1])
+  const pills = slides.locator('.deck-table:not(:has(app-chart)) .composed-pill')
+  await expect(pills).toHaveText(['Baker', 'Potter'])
+  await expect(pills.nth(1)).toHaveAttribute('data-hue', '4')
+  await expect(pills.nth(1)).toHaveAttribute('dir', 'auto')
+  // Saved as PowerPoint: the chart a native one, each bar in its choice's colour; the table a table.
+  await page.locator('app-preview .pane-head .icon-group > [popovertarget^="out-"]').click()
+  const [pptx] = await Promise.all([page.waitForEvent('download'), page.locator('.out-menu').getByRole('button', { name: /^PowerPoint/ }).click()])
+  const { unzipSync, strFromU8 } = await import('fflate'), parts = unzipSync(await readFile(String(await pptx.path()))), chart = Object.keys(parts).find((name) => /^ppt\/charts\/chart\d+\.xml$/.test(name))
+  expect(chart).toBeTruthy()
+  expect(strFromU8(parts[String(chart)])).toContain('Potter')
+  expect(strFromU8(parts[String(chart)]).match(/<c:dPt>[\s\S]*?<a:srgbClr val="(\w+)"/g)?.map((one) => one.slice(-7, -1).toLowerCase()), 'each bar its choice’s colour').toEqual(await box.evaluate((one) => /** @type {any} */ (one).chart.getOption().series[0].data.map((/** @type {any} */ bar) => bar.itemStyle.color.slice(1))))
+  expect(Object.keys(parts).filter((name) => /^ppt\/slides\/slide\d+\.xml$/.test(name)).some((name) => strFromU8(parts[name]).includes('<a:tbl>'))).toBe(true)
+})
+
+test('a slide’s key figures worked out from a collection follow it as it changes; its formula comes back to be edited, and stays in the deck, in PowerPoint the figures', async ({ page }) => {
+  await start(page)
+  await seed(page)
+  const deck = `# The neighbourhood\n\n---\nlayout: metrics\n---\n\n## In figures\n\n- **\`=${COLLECTION} count\`** artisans\n- **\`=${COLLECTION} count where Trade is Baker\`** bakers\n- **\`=${COLLECTION} sum Colour\`** colours\n`
+  await page.evaluate(async ({ DECK, deck }) => (await import('/caps/skills/decks.js')).rewrite(DECK, deck, 'Neighbourhood', (await import('/ui/state.js')).app.projectDir), { DECK, deck })
+  await open(page)
+  const slides = page.locator('app-preview app-slides.beside')
+  // While the project's new look waits to be accepted, on the slide it changes, its words can't be typed on: a double click leaves the figure.
+  const leads = slides.locator('.deck-slide.is-shown .deck-metric .deck-lead')
+  await expect(leads).toHaveText(['1', '1', '—'])
+  await leads.first().dblclick()
+  await expect(leads.first()).toHaveText('1')
+  await slides.getByRole('button', { name: 'Accept' }).click()
+  await slides.getByRole('button', { name: 'Next slide' }).click()
+  await expect(leads).toHaveText(['1', '1', '—'])
+  await expect(leads.nth(2).locator('code'), 'one that names a column the collection hasn’t says why').toHaveAttribute('title', 'Not shown: what it keeps names a column or a value this collection hasn’t.')
+  // Changed while it shows: worked out again at once.
+  await change(page, 'Potter')
+  await expect(leads).toHaveText(['1', '0', '—'])
+  // A double click brings the formula back to be edited; Escape shows the figure again.
+  await leads.nth(1).dblclick()
+  await expect(leads.nth(1)).toHaveText(`=${COLLECTION} count where Trade is Baker`)
+  await page.keyboard.press('Escape')
+  await expect(leads.nth(1)).toHaveText('0')
+  // Kept as it was: the deck still holds the formula, not the figure.
+  await leads.nth(1).dblclick()
+  await page.keyboard.press('Enter')
+  await expect(leads.nth(1)).toHaveText('0')
+  expect(await page.evaluate(async (DECK) => (await (await import('/caps/skills/decks.js')).load(DECK, (await import('/ui/state.js')).app.projectDir))?.source, DECK)).toContain(`**\`=${COLLECTION} count where Trade is Baker\`** bakers`)
+  await change(page, 'Baker')
+  await expect(leads).toHaveText(['1', '1', '—'])
+  // The slides use the collection, as the links menu says.
+  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  await expect(page.locator('.menu:popover-open').getByRole('group', { name: 'Uses' }).getByRole('listitem')).toHaveCount(3)
+  await page.keyboard.press('Escape')
+  // Saved as PowerPoint: the figures, never their formulas.
+  await page.locator('app-preview .pane-head .icon-group > [popovertarget^="out-"]').click()
+  const [pptx] = await Promise.all([page.waitForEvent('download'), page.locator('.out-menu').getByRole('button', { name: /^PowerPoint/ }).click()])
+  const { unzipSync, strFromU8 } = await import('fflate'), parts = unzipSync(await readFile(String(await pptx.path()))), slide = strFromU8(parts['ppt/slides/slide2.xml'])
+  expect(slide).toContain('bakers')
+  expect(slide).not.toContain('=collections')
+})
+
 for (const [lang, live, missing] of [['ar', 'مباشر', 'لا توجد مجموعة كهذه في هذا المشروع.'], ['ja', '最新', 'このプロジェクトにはそのコレクションがありません。']]) {
   test(`a slide shows a collection, and the pane says who it uses, in ${lang}`, async ({ page }) => {
     await start(page, lang)

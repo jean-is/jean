@@ -3,7 +3,7 @@
 // asked at each resolution, and what a reference shows of a collection, read again from its journal.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { parseRef, placeOf, refsIn, withRef, filledPage, bare, formsTo, loops, refused, versionless, tableOf } from '../app/caps/compose/refs.js'
+import { parseRef, placeOf, refsIn, withRef, filledPage, bare, formsTo, loops, refused, versionless, tableOf, chartOf, choiceIn, choicesIn, tinted, parseFigure, figureOf } from '../app/caps/compose/refs.js'
 import { versionOf, loadedOf, headOf, reshaped, breaks, current } from '../app/caps/compose/versions.js'
 import { keyOf, paceOf, sorted, askOf, lastRun, due } from '../app/caps/compose/recipes.js'
 import { credentialOf, chainOf, holds, sriOf } from '../app/caps/compose/proof.js'
@@ -111,6 +111,62 @@ test('a recipe reads a column by the name it had in an earlier version, said as 
   const plain = current(now, [v1], { where: 'Checked is yes' })
   assert.deepEqual(tableOf({ ...one, table: plain.table }, plain.recipe, how), [['Name', 'Craft'], ['Ana', 'Baker']], 'the deleted column filters, and isn’t shown')
   assert.deepEqual(current(one.table, [v1], {}), { table: one.table, recipe: {}, old: [] })
+})
+
+test('a recipe that says `chart` shows a chart’s figures, its rows counted or added up by a column’s values, at a column’s old name too', () => {
+  const lines = [['Ana', 'Baker', true], ['Bea', 'Potter', true], ['Cy', 'Baker', false]].map(([name, trade, checked], i) => ({ row: `01JX000000000000000000000${i}`, set: { name, trade, checked }, at: `2026-11-21T10:0${i}:00.000Z`, by: 'user' }))
+  const one = collection(lines)
+  const counted = tableOf(one, { chart: 'bar', by: 'Trade' }, how)
+  assert.deepEqual(counted, [['Trade', 'Artisans'], ['Baker', '2'], ['Potter', '1']])
+  assert.deepEqual(tableOf(one, { chart: 'pie', by: 'trade', where: 'Checked is yes' }, how), [['Trade', 'Artisans'], ['Baker', '1'], ['Potter', '1']], 'its `where` keeps some rows')
+  assert.deepEqual(tableOf(one, { chart: 'bar', by: 'Trade', where: 'Name is Nobody' }, how), [['Trade', 'Artisans']], 'no row kept, no bar')
+  assert.throws(() => tableOf(one, { chart: 'bar', by: 'Colour' }, how), 'a column it hasn’t is the recipe’s fault, said so')
+  assert.deepEqual(chartOf(counted, 'Pie '), { kind: 'pie', labels: ['Baker', 'Potter'], series: [{ name: 'Artisans', data: [2, 1] }] })
+  assert.equal(chartOf(counted, 'radar').kind, 'bar', 'a kind it doesn’t draw is bars')
+  const v1 = versionOf({ ...one, lines: [] }, { n: 1, at: '2026-11-21T11:00:00.000Z', by: 'user', why: 'published' })
+  const now = { ...one.table, properties: one.table.properties.map((p) => (p.id === 'trade' ? { ...p, name: 'Craft' } : p)) }, read = current(now, [v1], { chart: 'bar', by: 'Trade' })
+  assert.deepEqual([read.recipe.by, read.old], ['Craft', [['Trade', 'Craft']]])
+  assert.deepEqual(tableOf({ ...one, table: read.table }, read.recipe, how)[0], ['Craft', 'Artisans'])
+})
+
+test('a choice shows in the colour Tables gives it, in a cell or as a bar: its hue, else a step’s group; lines and other kinds keep theirs', () => {
+  const table = createTable({ name: 'Jobs', columns: [{ name: 'Name', type: 'text' }, { name: 'Trade', type: 'select', options: ['Baker', 'Potter', { name: 'Weaver', hue: 5 }] }, { name: 'Tags', type: 'multi-select', options: ['Bread', 'Clay'] },
+    { name: 'Stage', type: 'status', options: ['To do', 'Doing', 'Done'] }] }, { id: '01JX0000000000000000000000', author: 'user', at: '2026-11-21T10:00:00.000Z' })
+  assert.equal(choiceIn(table, 'Name'), null)
+  assert.equal(choiceIn(table, ' trade ')?.id, 'trade')
+  const trade = /** @type {any} */ (choiceIn(table, 'Trade')), tags = /** @type {any} */ (choiceIn(table, 'Tags')), stage = /** @type {any} */ (choiceIn(table, 'Stage'))
+  assert.deepEqual(choicesIn(trade, 'Potter'), [{ name: 'Potter', hue: 1, group: undefined }])
+  assert.deepEqual(choicesIn(trade, 'Weaver')[0].hue, 5, 'the colour its user picked')
+  assert.deepEqual(choicesIn(tags, 'Bread, Clay').map((one) => one.hue), [0, 1], 'each of a cell’s choices')
+  assert.deepEqual(choicesIn(trade, 'Smith'), [{ name: 'Smith', hue: undefined, group: undefined }], 'a value no choice holds, as it is')
+  assert.deepEqual(choicesIn(stage, 'Doing'), [{ name: 'Doing', hue: undefined, group: 'doing' }], 'a step, by its group until a colour is picked')
+  const bars = { series: [{ type: 'bar', data: [2, 1] }] }, pie = { series: [{ type: 'pie', data: [{ name: 'Baker', value: 2 }, { name: 'Potter', value: 1 }] }] }
+  assert.deepEqual(tinted(bars, ['#112233', undefined]), { series: [{ type: 'bar', data: [{ value: 2, itemStyle: { color: '#112233' } }, 1] }] }, 'its colours left alone while one bar has none')
+  assert.deepEqual(tinted(bars, ['#112233', '#445566']).color, ['#112233', '#445566'])
+  assert.deepEqual(tinted(pie, ['#112233', '#445566']).series[0].data[1], { name: 'Potter', value: 1, itemStyle: { color: '#445566' } })
+  assert.deepEqual(tinted({ series: [{ type: 'line', data: [2, 1] }] }, ['#112233']), { series: [{ type: 'line', data: [2, 1] }] })
+})
+
+test('a figure in a slide’s words is inline code that starts with `=`: a collection’s place, then what it works out of which rows, worked out from them', () => {
+  assert.deepEqual(parseFigure(`=${PLACE} count`), { place: PLACE, at: 'live', recipe: { total: 'count' } })
+  assert.deepEqual(parseFigure(` = ${PLACE}@published SUM Hours where Trade is Baker `), { place: PLACE, at: 'published', recipe: { total: 'sum', column: 'Hours', where: 'Trade is Baker' } })
+  assert.deepEqual(parseFigure(`=${PLACE}@2 percent Checked`), { place: PLACE, at: 2, recipe: { total: 'percent', column: 'Checked' } })
+  for (const text of [`${PLACE} count`, `=${PLACE}`, `=${PLACE} median Hours`, '=collections/nope count', '=1+1']) assert.equal(parseFigure(text), null, text)
+  const table = createTable({ name: 'Jobs', columns: [{ name: 'Name', type: 'text' }, { name: 'Trade', type: 'text' }, { name: 'Hours', type: 'number' }, { name: 'Paid', type: 'number', format: 'money', currency: 'EUR' }, { name: 'Checked', type: 'checkbox' }] },
+    { id: '01JX0000000000000000000000', author: 'user', at: '2026-11-21T10:00:00.000Z' })
+  const lines = [['Ana', 'Baker', 4, 1200.5, true], ['Bea', 'Potter', 1.5, 300, false], ['Cy', 'Baker', 2, 4000, true]].map(([name, trade, hours, paid, checked], i) => ({ row: `01JX000000000000000000000${i}`, set: { name, trade, hours, paid, checked }, at: `2026-11-21T10:0${i}:00.000Z`, by: 'user' }))
+  const one = { table, rows: reading(PLACE, stringifyChanges(/** @type {any} */ (lines))).rows() }, of = (/** @type {string} */ text, /** @type {any} */ at = how) => figureOf(one, /** @type {any} */ (parseFigure(`=${PLACE} ${text}`)).recipe, at)
+  assert.deepEqual(['count', 'count where Trade is Baker', 'sum Hours', 'average Hours where Trade is Baker', 'min Hours', 'max hours', 'percent Checked'].map((text) => of(text)), ['3', '2', '7.5', '3', '1.5', '4', '66.7%'])
+  assert.equal(of('sum Paid'), '€5,500.50', 'an amount as its column writes it')
+  assert.equal(of('sum Paid', { ...how, locales: ['fr'] }).replace(/\s/g, ' '), '5 500,50 €', 'in the language’s digits')
+  assert.equal(of('average Hours where Trade is Smith'), '—', 'no number, no average')
+  assert.throws(() => of('sum Colour'))
+  assert.throws(() => of('sum'), 'a sum of no column')
+  assert.deepEqual(tableOf(one, { total: 'count', where: 'Checked is yes' }, how), [['2']], 'resolved as a reference is, versions and old names too')
+  const deck = `# Figures\n\n- **\`=${PLACE} count\`** artisans\n- **\`=${PLACE}@published sum Hours\`** hours\n\n\`\`\`table\n${PLACE}\n\`\`\`\n`
+  assert.deepEqual(refsIn(deck).map((ref) => [ref.at, ref.recipe.total]), [['live', undefined], ['live', 'count'], ['published', 'sum']], 'its blocks, then its figures')
+  assert.equal(withRef(deck, 2, (ref) => ({ ...ref, at: 1 })), deck.replace(`${PLACE}@published sum`, `${PLACE}@1 sum`))
+  assert.equal(withRef(deck, 1, (ref) => ({ ...ref, at: 'published' })), deck.replace(`=${PLACE} count`, `=${PLACE}@published count`))
 })
 
 test('a recipe sorts, and its reference is rewritten whole with its lines as the menu changes them', () => {

@@ -9,6 +9,7 @@ import { save, printAlone, copyDrawing } from '../../ui/save.js'
 import { icons } from '../../ui/menu-icons.js'
 import { t } from '../../core/i18n.js'
 import { BLOCKS, lex } from './slides.js'
+import { unlock } from '../../ui/caps.js'
 
 /** The deck in a pane. @param {Element} pane */
 const here = (pane) => /** @type {(HTMLElement & { view: ReturnType<typeof import('@codename/deck').createDeck>, resolve: (src: string) => string | null, picture: () => Promise<Blob> }) | null} */ (pane.querySelector('app-slides.beside'))
@@ -20,10 +21,13 @@ async function print(view, resolve) {
   for (const slide of printed.slides()) slide.querySelectorAll('.deck-step').forEach((step) => step.classList.add('is-on'))
   // Its pictures, which deck reads when they come near the screen, read now, out of sight as they are.
   for (const picture of holder.querySelectorAll('img')) picture.loading = 'eager'
+  // Its figures worked out from the project's collections, as on show (caps/compose).
+  const figures = /`=\s*collections\//.test(view.source) && (await unlock('tables')) ? (await import('../compose/compose.js')).liven(holder, () => printed.fitAll()) : null
+  await figures?.ready
   // Its charts drawn and still, its diagrams and pictures in, its faces too.
   const blocks = () => [...holder.querySelectorAll('.deck-block, .deck-picture')]
   await printAlone(holder, 'is-printing-deck', { page: '@page { size: 13.333in 7.5in; margin: 0 }', drawing: () => blocks().some((box) => !(/** @type {{ chart?: import('echarts').ECharts | null }} */ (box).chart || box.querySelector('img')?.complete || box.classList.contains('is-failed'))),
-    ready: () => { for (const box of blocks()) /** @type {{ chart?: import('echarts').ECharts | null }} */ (box).chart?.setOption({ animation: false }); printed.fitAll() }, gone: () => printed.destroy() })
+    ready: () => { for (const box of blocks()) /** @type {{ chart?: import('echarts').ECharts | null }} */ (box).chart?.setOption({ animation: false }); printed.fitAll() }, gone: () => (figures?.stop(), printed.destroy()) })
 }
 
 /** What a deck can do (ui/out.js): the one in this pane, as it is on show when pressed. @param {{ uri: string, name: string }} file @param {Element} pane @returns {import('../../ui/out.js').Ways | null} */

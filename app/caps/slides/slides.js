@@ -60,15 +60,9 @@ export const BLOCKS = {
   // Charts' own element, in SVG, the chart it draws being what PowerPoint's writer reads (`box.chart`); in the deck's colours, unless it names its own.
   echarts: async (box, source) => {
     await unlock('charts')
-    const chart = document.createElement('app-chart'), look = getComputedStyle(box), series = [1, 2, 3, 4, 5, 6].map((n) => look.getPropertyValue(`--deck-series-${n}`).trim())
-    const option = (() => { try { return JSON.parse(source) } catch { return null } })()
-    // Read the way the deck reads: in a language written from the right, its categories start there and its values stand on the right.
-    const mirrored = (/** @type {any} */ axes, /** @type {object} */ turn) => (look.direction === 'rtl' && axes ? [axes].flat().map((axis) => ({ ...axis, ...turn })) : axes)
-    chart.setAttribute('source', option && typeof option === 'object' ? JSON.stringify({ ...(series[0] && !option.color && { color: series }), ...option,
-      xAxis: mirrored(option.xAxis, { inverse: true }), yAxis: mirrored(option.yAxis, { position: 'right' }) }) : source)
-    chart.setAttribute('svg', '')
-    Object.defineProperty(box, 'chart', { get: () => /** @type {any} */ (chart).chart, configurable: true })
-    box.append(chart)
+    const chart = document.createElement('app-chart'), option = (() => { try { return JSON.parse(source) } catch { return null } })()
+    chart.setAttribute('source', option && typeof option === 'object' ? JSON.stringify(onSlide(box, option)) : source), chart.setAttribute('svg', '')
+    box.append(Object.defineProperty(box, 'chart', { get: () => /** @type {any} */ (chart).chart, configurable: true }) && chart)
   },
   // Its options as Slidev writes them (```mermaid {scale: 0.8}): `scale` the share of its box it takes, the rest Pele's settings, `theme` aside as its colours are the deck's.
   mermaid: async (box, source, { scale, theme, ...config } = {}) => {
@@ -80,8 +74,13 @@ export const BLOCKS = {
     box.append(wordsBelow(words))
     colour(picture, drawn)
   },
-  // A collection of the project's, read live through composition (caps/compose, D763); its source as it is where that is turned off.
-  table: async (box, source) => ((await unlock('tables')) ? (await import('../compose/compose.js')).drawn(box, source) : box.classList.add('is-failed')),
+  // A collection of the project's, read live through composition (caps/compose, D763), as a chart in the deck's colours where its recipe says `chart`; its source as it is where that is turned off.
+  table: async (box, source) => ((await unlock('tables')) ? (await import('../compose/compose.js')).drawn(box, source, (option) => onSlide(box, option)) : box.classList.add('is-failed')),
+}
+/** A chart's option as a slide shows it: in the deck's colours unless it names its own; read the way the deck reads, in a language written from the right its categories starting there and its values standing on the right. @param {HTMLElement} box @param {Record<string, any>} option */
+function onSlide(box, option, look = getComputedStyle(box), series = [1, 2, 3, 4, 5, 6].map((n) => look.getPropertyValue(`--deck-series-${n}`).trim())) {
+  const mirrored = (/** @type {any} */ axes, /** @type {object} */ turn) => (look.direction === 'rtl' && axes ? [axes].flat().map((axis) => ({ ...axis, ...turn })) : axes)
+  return { ...(series[0] && !option.color && { color: series }), ...option, xAxis: mirrored(option.xAxis, { inverse: true }), yAxis: mirrored(option.yAxis, { position: 'right' }) }
 }
 /** The slide of Jean's version a change shows on: its first, or for slides taken away, the one before where they were. @param {{ theirs: [number, number] }} change */
 const placeOf = ({ theirs: [from, to] }) => (from === to ? Math.max(0, from - 1) : from)
@@ -105,6 +104,8 @@ class AppSlides extends HTMLElement {
   timer = 0
   /** @type {(() => void) | undefined} */
   unwatch
+  /** Its figures, live while it shows (caps/compose). @type {Promise<{ stop: () => void } | null> | undefined} */
+  figures
   /** The pictures it names, each read once from the project, by the place or name the deck gives it. @type {Map<string, string>} */
   urls = new Map()
   /** A picture's address as the page loads it: one of the project's, read; the web's or one held inside, as it is; no other. @param {string} src */
@@ -122,7 +123,7 @@ class AppSlides extends HTMLElement {
   }
 
   disconnectedCallback() {
-    this.unwatch?.()
+    this.unwatch?.(), this.figures?.then((figures) => figures?.stop()), this.figures = undefined
     this.view?.destroy()
     this.view = null
     this.made = ''
@@ -174,6 +175,8 @@ class AppSlides extends HTMLElement {
       const bar = /** @type {HTMLElement} */ (root.querySelector('.deck-bar')), act = (/** @type {string} */ name) => /** @type {HTMLElement | DocumentFragment} */ (bar.querySelector(`[data-act='${name}']`) ?? new DocumentFragment()), present = act('present')
       bar.append(present, act('presenter'), act('grid'), more, act('edit')); present.replaceChildren(); render(icons.play, present)
     }
+    // Its figures worked out from the project's collections (caps/compose), once it holds one.
+    this.figures ??= /`=\s*collections\//.test(this.source) ? unlock('tables').then(async (come) => (come && this.isConnected ? (await import('../compose/compose.js')).liven(this, () => this.view?.fitAll()) : null)) : undefined
     if (!this.paged) this.view.go(this.hasAttribute('open') ? this.view.deck.slides.length - 1 : this.file?.theirs ? this.firstChange() : 0)
     this.speak()
     this.paint()
