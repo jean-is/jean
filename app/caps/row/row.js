@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // A row open as a sheet, over the page (caps/tables/view.js fetches this folder as a row is first opened): its first picture at its head, its name,
-// large, in its own cell, then every other column, those the table hides too, its name beside its cell, changed there as in the table, a cell Jean changed marked; then its
-// changes, the last first, each by what it set, the value before it where there was one, who made it, when and, for Jean's, what it came from.
+// large, in its own cell, then every other column, those the table hides too, its name beside its cell, changed there as in the table, a cell Jean changed marked; then
+// the rows of other collections that relate to it (./related.js), then its changes, the last first, each by what it set, the value before it where there was one, who made it, when and, for Jean's, what it came from.
 // Its head goes to the row before or after it among those the view keeps, each button named by the row it opens, as a swipe across it does, and ⌘ with
 // the arrow up or down, Ctrl outside Apple's systems, the keyboard staying in the cell it is in; it says its place among them, and holds its menu: asked
 // about, in the box, or deleted. Escape closes it alone, as a press outside it does. The cells' parts and Tables' words come from the view, whose they are.
@@ -12,6 +12,7 @@ import { icons } from '../../ui/menu-icons.js'
 import { titleOf, filesOf } from '../tables/table.js'
 import { query, valueOf } from '../tables/query.js'
 import { textOf, format } from '../tables/export.js'
+import { related } from './related.js'
 
 /** @import { Property } from '../tables/table.js' */
 /** @import { Row, Change } from '../tables/changes.js' */
@@ -69,6 +70,7 @@ export default function sheet({ one, row, rows: kept, columns, covers, by, fresh
     ${cover ? html`<div class="table-cover">${parts.pictured(one, cover)}</div>` : nothing}
     <dl class="table-fields">${[title, ...columns.filter((property) => property !== title)].map((property) => html`<div class=${property === title ? 'table-title' : nothing}><dt>${parts.glyphs[property.type]}<span dir="auto">${property.name}</span></dt>
       <dd class=${`${fresh.has(`${row.id} ${property.id}`) ? 'is-jean ' : ''}${parts.reads.test(property.type) ? 'is-read' : ''}`}>${parts.cell(one, row, property, state, pick)}</dd></div>`)}</dl>
+    ${related(one, row)}
     ${last.length ? html`<h3>${words.last}</h3><ul class="table-last">${last.map(({ line, was }) => { const who = line.by === 'jean' ? assistantName() : line.by === 'user' ? words.me : line.by, set = columns.filter(({ id }) => id in /** @type {object} */ (line.set)); return html`<li>
       ${line.by === 'jean' ? icons.brain : parts.face(who)}<dl>${set.map((property) => html`<div><dt class="muted" dir="auto">${property.name}</dt><dd dir="auto">${property.id in was && was[property.id] !== null && was[property.id] !== '' && read(property, was[property.id]) !== read(property, line.set?.[property.id]) ? html`<s>${read(property, was[property.id])}</s>${icons.arrow}` : nothing}<b>${read(property, line.set?.[property.id])}</b></dd></div>`)}</dl>
       <p class="muted"><span dir="auto">${who}</span> <time datetime=${line.at}>${format('DateTimeFormat', intlLocales(), { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(line.at))}</time>${line.why ? html` <q dir="auto">${line.why}</q>` : nothing}</p></li>` })}</ul>` : nothing}

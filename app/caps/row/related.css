@@ -1,0 +1,6 @@
+/* SPDX-License-Identifier: MIT */
+/* The rows that relate to a row, in its sheet (./related.js): their totals as label and value, then their names, a line each. */
+.row-sums { display: grid; gap: 0.2rem; margin: 0 0 0.4rem; padding: 0.5rem 0.75rem; border-radius: 0.75rem; background: var(--room-2, var(--line)); }
+.row-sums div { display: flex; justify-content: space-between; gap: 1rem; } .row-sums dt { color: var(--ink-soft); } .row-sums dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+.row-related { margin: 0 0 0.5rem; padding: 0; list-style: none; } .row-related li { padding-block: 0.35rem; border-block-start: 1px solid var(--line); overflow-wrap: anywhere; }
+.row-open { justify-self: start; }
