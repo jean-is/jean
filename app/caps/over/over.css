@@ -14,3 +14,7 @@
 .look { border-color: var(--wait-line, var(--line-strong)); background: var(--wait, var(--room-2)); }
 .look-dot { inline-size: 0.55rem; block-size: 0.55rem; border-radius: 50%; background: var(--flame); }
 @media (forced-colors: active) { .look-dot { forced-color-adjust: none; background: CanvasText; } }
+.sum-figure { display: grid; justify-items: end; font-variant-numeric: tabular-nums; line-height: 1.2; } .sum-figure small { color: var(--ink-soft); font-weight: 400; }
+.sum h4 { margin: 0; padding-block: 0.6rem 0.2rem; border-block-start: 1px solid var(--line); color: var(--ink-soft); font-size: 0.8rem; font-weight: 600; }
+.over-band .sum-bars li { display: grid; grid-template-columns: minmax(4rem, 9rem) minmax(2rem, 1fr) auto; padding-block: 0.25rem; border: 0; font-size: 0.9rem; }
+.sum-bars meter { inline-size: 100%; block-size: 0.6rem; } .sum-worth { font-variant-numeric: tabular-nums; }

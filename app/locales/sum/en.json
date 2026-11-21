@@ -1,0 +1,6 @@
+{
+  "sum.title": "Summary",
+  "sum.rows": "Rows",
+  "sum.total": "{column}, total",
+  "sum.none": "Empty"
+}
