@@ -121,6 +121,9 @@ test('slides pinned to version 1 stay as they were once version 2 is published, 
   await expect(versions.getByRole('status')).toHaveText('Changes not in a version yet: 1')
   await versions.getByRole('button', { name: 'Publish version 1' }).click()
   await expect(page.locator('.toast').last()).toContainText('Version 1 published.')
+  // Nothing changed since: nothing to publish.
+  await expect(versions.getByRole('button', { name: 'Publish version 2' })).toBeDisabled()
+  await expect(versions.getByRole('status')).toHaveText('Changes not in a version yet: 0')
   // A row changed is no version: version 2 is published from the code a press runs.
   await change(page, 'Potter')
   expect(await page.evaluate(async (COLLECTION) => (await (await import('/caps/compose/compose.js')).publish(COLLECTION))?.version?.n, COLLECTION)).toBe(2)
@@ -355,4 +358,6 @@ test('a neighbourhood’s directory takes a proposal from its published site and
   await visit.goto(`${address}?again`)
   await expect(visit.locator('tbody td')).toHaveText(['Ana', 'Baker', 'Bob', 'Potter'])
   expect(await version()).toEqual(before)
+  // The site's own file keeps its table empty: the rows are the collection's, filled as the site is read.
+  expect(await page.evaluate(async () => { const { app } = await import('/ui/state.js'), site = (await app.fs.list(`${app.projectDir}/sites`))[0].name; return String(await app.fs.read(`${app.projectDir}/sites/${site}/index.html`)) })).toMatch(/data-where="Approved is yes"><\/table>/)
 })

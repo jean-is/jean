@@ -75,7 +75,9 @@ export function folderKind(kind) {
   }
   /** One written: its files, those it had and no longer has taken away, then its record. @param {One} one @param {string[]} [before] */
   async function write(one, before = []) {
-    for (const [file, bytes] of one.files) await app.fs.writeBytes(`${one.dir}/${one.path}/${file}`, bytes)
+    // A table that says data-from is kept empty: the rows it showed as it was read stay the collection's (caps/compose, D762).
+    const bare = [...one.files].some(([file, bytes]) => file.endsWith('.html') && new TextDecoder().decode(bytes).includes(' data-from=')) && (await import('../compose/refs.js')).bare
+    for (const [file, bytes] of one.files) await app.fs.writeBytes(`${one.dir}/${one.path}/${file}`, bare && file.endsWith('.html') ? new TextEncoder().encode(bare(new TextDecoder().decode(bytes))) : bytes)
     for (const file of before) if (!one.files.has(file)) await app.fs.remove(`${one.dir}/${one.path}/${file}`)
     await app.fs.write(`${one.dir}/${one.path}/${RECORD}`, JSON.stringify({ ...one.record, files: [...one.files.keys()] }, null, 1))
   }
