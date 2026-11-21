@@ -30,10 +30,18 @@ describe('release', () => {
     // The update script's own readers, as install.sh writes them.
     const install = await readFile('deploy/company/install.sh', 'utf8')
     const readers = ['image ()', 'version ()'].map((name) => install.split('\n').find((line) => line.startsWith(name))).join('\n')
-    const read = (/** @type {string} */ call) => execFileSync('sh', ['-c', `${readers}\n${call} /dev/stdin`], { input: text, encoding: 'utf8' }).trim()
-    assert.equal(read('image JEAN_IMAGE'), jean)
-    assert.equal(read('image GATEWAY_IMAGE'), gateway)
-    assert.equal(read('version'), '0.12.3')
+    // A file, as the script reads: Linux can't open /dev/stdin when Node's pipe to it is a socket.
+    const folder = await mkdtemp(join(tmpdir(), 'jean-release-test-'))
+    try {
+      const file = join(folder, 'server.env')
+      await writeFile(file, text)
+      const read = (/** @type {string} */ call) => execFileSync('sh', ['-c', `${readers}\n${call} "$0"`, file], { encoding: 'utf8' }).trim()
+      assert.equal(read('image JEAN_IMAGE'), jean)
+      assert.equal(read('image GATEWAY_IMAGE'), gateway)
+      assert.equal(read('version'), '0.12.3')
+    } finally {
+      await rm(folder, { recursive: true, force: true })
+    }
   })
 
   it('finds an image’s digest at a tag, through the token a registry’s challenge names', async () => {

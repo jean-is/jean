@@ -48,7 +48,8 @@ test('a file: its columns with the kind guessed for each, a kind that would leav
   await expect(dialog.getByRole('alert')).toHaveText('This file couldn’t be read. Try a CSV file or an Excel workbook.')
   await input.setInputFiles({ name: 'invoices-2026.csv', mimeType: 'text/csv', buffer: Buffer.from(CSV) })
   await expect(dialog.getByRole('alert')).toHaveText('')
-  await expect(dialog.getByRole('status')).toHaveText('Rows: 4. Check each column’s kind.')
+  // Its own region: the toasts' is in the dialog too while it is open (ui/shell.js).
+  await expect(dialog.locator('.begin-file').getByRole('status')).toHaveText('Rows: 4. Check each column’s kind.')
   await expect(dialog.locator('.begin-columns tbody th')).toHaveText(['Invoice', 'Client', 'Amount', 'Due', 'Paid'])
   // One cell that says "partly" keeps Paid as words, so nothing is lost; made a box, it says the cell it would leave empty.
   expect(await kinds.evaluateAll((all) => all.map((one) => /** @type {HTMLSelectElement} */ (one).value))).toEqual(['text', 'select', 'number', 'date', 'text'])
