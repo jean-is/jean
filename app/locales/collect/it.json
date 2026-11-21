@@ -1,0 +1,14 @@
+{
+  "collect.tab": "Raccogli risposte",
+  "collect.says": "Un modulo di questa raccolta, online, che chiunque abbia il suo link può compilare. Ogni risposta arriva qui come una riga.",
+  "collect.asks": "Che cosa chiede il modulo",
+  "collect.hint": "Un campo per ogni colonna che spunti. Le altre restano solo tue.",
+  "collect.always": "Sempre richiesta",
+  "collect.sees": "Che cosa vedono le persone",
+  "collect.pick": "Scegli",
+  "collect.send": "Invia",
+  "collect.sent": "Grazie. La tua risposta è stata inviata.",
+  "collect.unsent": "Non è stato possibile inviarla. Riprova.",
+  "collect.sealed": "Ogni risposta viene sigillata nel browser del visitatore, quindi l’host non può leggerla.",
+  "collect.online": "Metti il modulo online"
+}

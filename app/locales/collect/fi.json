@@ -1,0 +1,14 @@
+{
+  "collect.tab": "Kerää vastauksia",
+  "collect.says": "Tämän kokoelman lomake verkossa, jonka kuka tahansa linkin haltija voi täyttää. Jokainen vastaus tulee tänne rivinä.",
+  "collect.asks": "Mitä lomake kysyy",
+  "collect.hint": "Kenttä jokaiselle valitsemallesi sarakkeelle. Muut pysyvät vain sinulla.",
+  "collect.always": "Kysytään aina",
+  "collect.sees": "Mitä ihmiset näkevät",
+  "collect.pick": "Valitse",
+  "collect.send": "Lähetä",
+  "collect.sent": "Kiitos. Vastauksesi on lähetetty.",
+  "collect.unsent": "Lähetys ei onnistunut. Yritä uudelleen.",
+  "collect.sealed": "Vastaus sinetöidään kävijän selaimessa, joten palvelin ei voi lukea sitä.",
+  "collect.online": "Vie lomake verkkoon"
+}

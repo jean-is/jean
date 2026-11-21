@@ -1,0 +1,14 @@
+{
+  "collect.tab": "Qoqa izimpendulo",
+  "collect.says": "Ifomu laleli qoqo, ku-inthanethi, elingagcwaliswa yinoma ubani onesixhumanisi salo. Impendulo ngayinye iza lapha njengomugqa.",
+  "collect.asks": "Lokho ifomu elikubuzayo",
+  "collect.hint": "Inkambu eyodwa yekholomu ngayinye oyimakayo. Ezinye zihlala zingezakho.",
+  "collect.always": "Ibuzwa njalo",
+  "collect.sees": "Lokho abantu abakubonayo",
+  "collect.pick": "Khetha",
+  "collect.send": "Thumela",
+  "collect.sent": "Ngiyabonga. Impendulo yakho ithunyelwe.",
+  "collect.unsent": "Ayikwazanga ukuthunyelwa. Zama futhi.",
+  "collect.sealed": "Impendulo ivikelwa isesipheqululini sesivakashi, ngakho umsingathi akakwazi ukuyifunda.",
+  "collect.online": "Faka ifomu ku-inthanethi"
+}

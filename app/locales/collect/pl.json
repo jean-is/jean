@@ -1,0 +1,14 @@
+{
+  "collect.tab": "Zbieraj odpowiedzi",
+  "collect.says": "Formularz tej kolekcji, online, do wypełnienia przez każdego, kto ma link. Każda odpowiedź trafia tutaj jako wiersz.",
+  "collect.asks": "O co pyta formularz",
+  "collect.hint": "Pole dla każdej kolumny, którą zaznaczysz. Pozostałe zostają u ciebie.",
+  "collect.always": "Zawsze w formularzu",
+  "collect.sees": "Co widzą ludzie",
+  "collect.pick": "Wybierz",
+  "collect.send": "Wyślij",
+  "collect.sent": "Dziękujemy. Twoja odpowiedź została wysłana.",
+  "collect.unsent": "Nie udało się wysłać. Spróbuj ponownie.",
+  "collect.sealed": "Odpowiedź jest pieczętowana w przeglądarce odwiedzającego, więc host nie może jej przeczytać.",
+  "collect.online": "Umieść formularz online"
+}

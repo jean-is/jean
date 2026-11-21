@@ -1,0 +1,14 @@
+{
+  "collect.tab": "Kumpul balasan",
+  "collect.says": "Borang bagi koleksi ini, dalam talian, untuk diisi oleh sesiapa yang ada pautannya. Setiap balasan sampai ke sini sebagai satu baris.",
+  "collect.asks": "Apa yang ditanya oleh borang",
+  "collect.hint": "Satu ruangan bagi setiap lajur yang anda tandakan. Yang lain kekal milik anda.",
+  "collect.always": "Sentiasa ditanya",
+  "collect.sees": "Apa yang orang lihat",
+  "collect.pick": "Pilih",
+  "collect.send": "Hantar",
+  "collect.sent": "Terima kasih. Balasan anda telah dihantar.",
+  "collect.unsent": "Tidak dapat dihantar. Cuba lagi.",
+  "collect.sealed": "Balasan dimeterai dalam pelayar pelawat, jadi hos tidak dapat membacanya.",
+  "collect.online": "Letakkan borang dalam talian"
+}

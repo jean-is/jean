@@ -1,0 +1,14 @@
+{
+  "collect.tab": "Kumpulkan balasan",
+  "collect.says": "Formulir dari koleksi ini, online, untuk diisi siapa pun yang punya tautannya. Setiap balasan masuk ke sini sebagai satu baris.",
+  "collect.asks": "Yang ditanyakan formulir",
+  "collect.hint": "Satu isian untuk tiap kolom yang Anda centang. Yang lain tetap milik Anda.",
+  "collect.always": "Selalu ditanyakan",
+  "collect.sees": "Yang dilihat orang",
+  "collect.pick": "Pilih",
+  "collect.send": "Kirim",
+  "collect.sent": "Terima kasih. Balasan Anda sudah terkirim.",
+  "collect.unsent": "Tidak bisa dikirim. Coba lagi.",
+  "collect.sealed": "Balasan disegel di browser pengunjung, jadi host tidak bisa membacanya.",
+  "collect.online": "Jadikan formulir online"
+}

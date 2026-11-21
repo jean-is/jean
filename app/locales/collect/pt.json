@@ -1,0 +1,14 @@
+{
+  "collect.tab": "Recolher respostas",
+  "collect.says": "Um formulário desta coleção, online, que qualquer pessoa com a ligação pode preencher. Cada resposta chega aqui como uma linha.",
+  "collect.asks": "O que o formulário pergunta",
+  "collect.hint": "Um campo para cada coluna que assinalares. As outras ficam só contigo.",
+  "collect.always": "Pergunta-se sempre",
+  "collect.sees": "O que as pessoas veem",
+  "collect.pick": "Escolher",
+  "collect.send": "Enviar",
+  "collect.sent": "Obrigado. A tua resposta foi enviada.",
+  "collect.unsent": "Não foi possível enviar. Tenta de novo.",
+  "collect.sealed": "A resposta é selada no navegador do visitante, por isso o servidor não a consegue ler.",
+  "collect.online": "Pôr o formulário online"
+}

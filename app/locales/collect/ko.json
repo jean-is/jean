@@ -1,0 +1,14 @@
+{
+  "collect.tab": "답장 모으기",
+  "collect.says": "이 컬렉션의 양식을 온라인에 올려, 링크가 있는 사람은 누구나 작성할 수 있어요. 답장은 하나씩 행으로 여기에 들어와요.",
+  "collect.asks": "양식에서 묻는 것",
+  "collect.hint": "체크한 열마다 입력란이 하나씩 생겨요. 나머지는 나만 볼 수 있어요.",
+  "collect.always": "항상 물어요",
+  "collect.sees": "사람들에게 보이는 모습",
+  "collect.pick": "선택",
+  "collect.send": "보내기",
+  "collect.sent": "감사합니다. 답장을 보냈어요.",
+  "collect.unsent": "보내지 못했어요. 다시 시도해 주세요.",
+  "collect.sealed": "답장은 방문자의 브라우저에서 봉인되므로 호스트가 읽을 수 없어요.",
+  "collect.online": "양식을 온라인에 올리기"
+}

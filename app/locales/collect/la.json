@@ -1,0 +1,14 @@
+{
+  "collect.tab": "Responsa collige",
+  "collect.says": "Formula huius collectionis, in linea, quam quivis cum nexu eius implere potest. Quodque responsum huc venit ut ordo.",
+  "collect.asks": "Quae formula rogat",
+  "collect.hint": "Campus pro quaque columna quam notas. Ceterae tuae manent.",
+  "collect.always": "Semper rogatur",
+  "collect.sees": "Quae homines vident",
+  "collect.pick": "Elige",
+  "collect.send": "Mitte",
+  "collect.sent": "Gratias agimus. Responsum tuum missum est.",
+  "collect.unsent": "Mitti non potuit. Iterum tempta.",
+  "collect.sealed": "Responsum in navigatro visitatoris obsignatur, itaque servitor id legere non potest.",
+  "collect.online": "Formulam in linea pone"
+}

@@ -82,12 +82,14 @@ async function gather(path, dir) {
   const collections = { ...kept.collections }
   if (came.length) {
     const [tables, { propertyOf, converted }] = await Promise.all([import('../tables/tables.js'), import('../tables/table.js')]), sent = t('sites.sentAt')
+    // A collection's own form (caps/collect) is a site whose page is that collection: its replies are rows there, and add no column to it.
+    const own = /^collections\//.test(record.page ?? '') ? String(record.page) : ''
     for (const form of new Set(came.map((one) => one.form))) {
-      const rows = came.filter((one) => one.form === form)
-      let one = (collections[form] && await tables.load(collections[form], dir).catch(() => null)) || await tables.load(await tables.makeTable({ name: t('sites.repliesOf', { form, site: record.name }), columns: [{ name: sent, type: 'date' }] }, dir), dir)
-      for (const field of rows.flatMap((reply) => reply.fields)) if (one && !propertyOf(one.table, field.label)) one = (await tables.reshapeTable(one, { add: { name: field.label, type: field.choice ? 'select' : 'text' } }, false), await tables.load(one.folder, dir))
+      const rows = came.filter((one) => one.form === form), at = collections[form] ?? own
+      let one = (at && await tables.load(at, dir).catch(() => null)) || await tables.load(await tables.makeTable({ name: t('sites.repliesOf', { form, site: record.name }), columns: [{ name: sent, type: 'date' }] }, dir), dir)
+      for (const field of rows.flatMap((reply) => reply.fields)) if (one && one.folder !== own && !propertyOf(one.table, field.label)) one = (await tables.reshapeTable(one, { add: { name: field.label, type: field.choice ? 'select' : 'text' } }, false), await tables.load(one.folder, dir))
       if (!one) continue
-      const table = one.table, cell = (/** @type {string} */ label, /** @type {string} */ value) => ((property) => ((fit) => (property && fit !== undefined ? [[property.id, fit]] : []))(property && converted(property, value)))(propertyOf(table, label))
+      const table = one.table, cell = (/** @type {string} */ label, /** @type {string} */ value) => ((property) => ((fit) => (property && fit !== undefined ? [[property.id, fit]] : []))(property && (property.type === 'checkbox' && value === 'true' ? true : converted(property, value))))(propertyOf(table, label))
       // When each was sent, on this device's clock, then its fields, each as its column takes it.
       await tables.change(one, rows.map((reply) => ({ set: Object.fromEntries([...cell(sent, new Date(Date.parse(reply.at) - new Date(reply.at).getTimezoneOffset() * 60_000).toISOString().slice(0, 16)), ...reply.fields.flatMap((field) => cell(field.label, field.value))]) })), 'visitor', undefined, false, false)
       collections[form] = one.folder

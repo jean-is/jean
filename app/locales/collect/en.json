@@ -1,0 +1,14 @@
+{
+  "collect.tab": "Collect replies",
+  "collect.says": "A form of this collection, online, for anyone with its link to fill in. Each reply comes here as a row.",
+  "collect.asks": "What the form asks",
+  "collect.hint": "A field for each column you tick. The others stay yours.",
+  "collect.always": "Always asked",
+  "collect.sees": "What people see",
+  "collect.pick": "Choose",
+  "collect.send": "Send",
+  "collect.sent": "Thank you. Your reply was sent.",
+  "collect.unsent": "It couldn’t be sent. Try again.",
+  "collect.sealed": "A reply is sealed in the visitor’s browser, so the host can’t read it.",
+  "collect.online": "Put the form online"
+}

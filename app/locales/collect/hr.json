@@ -1,0 +1,14 @@
+{
+  "collect.tab": "Prikupi odgovore",
+  "collect.says": "Obrazac ove zbirke, na mreži, koji može ispuniti svatko s njegovom poveznicom. Svaki odgovor stiže ovamo kao redak.",
+  "collect.asks": "Što obrazac pita",
+  "collect.hint": "Jedno polje za svaki stupac koji označite. Ostali ostaju samo vama.",
+  "collect.always": "Uvijek se pita",
+  "collect.sees": "Što ljudi vide",
+  "collect.pick": "Odaberi",
+  "collect.send": "Pošalji",
+  "collect.sent": "Hvala. Vaš je odgovor poslan.",
+  "collect.unsent": "Slanje nije uspjelo. Pokušajte ponovno.",
+  "collect.sealed": "Odgovor se zapečati u pregledniku posjetitelja, pa ga poslužitelj ne može pročitati.",
+  "collect.online": "Stavi obrazac na mrežu"
+}

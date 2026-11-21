@@ -1,0 +1,14 @@
+{
+  "collect.tab": "Antwoorden verzamelen",
+  "collect.says": "Een formulier van deze verzameling, online, dat iedereen met de link kan invullen. Elk antwoord komt hier binnen als een rij.",
+  "collect.asks": "Wat het formulier vraagt",
+  "collect.hint": "Een veld voor elke kolom die je aanvinkt. De andere blijven van jou.",
+  "collect.always": "Altijd gevraagd",
+  "collect.sees": "Wat mensen zien",
+  "collect.pick": "Kies",
+  "collect.send": "Versturen",
+  "collect.sent": "Bedankt. Je antwoord is verstuurd.",
+  "collect.unsent": "Versturen lukte niet. Probeer het opnieuw.",
+  "collect.sealed": "Een antwoord wordt verzegeld in de browser van de bezoeker, zodat de host het niet kan lezen.",
+  "collect.online": "Formulier online zetten"
+}

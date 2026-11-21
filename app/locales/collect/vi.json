@@ -1,0 +1,14 @@
+{
+  "collect.tab": "Thu thập phản hồi",
+  "collect.says": "Một biểu mẫu của bộ sưu tập này, trên mạng, để ai có đường liên kết cũng điền được. Mỗi phản hồi về đây thành một hàng.",
+  "collect.asks": "Biểu mẫu hỏi những gì",
+  "collect.hint": "Mỗi cột bạn đánh dấu là một ô để điền. Các cột khác vẫn là của riêng bạn.",
+  "collect.always": "Luôn được hỏi",
+  "collect.sees": "Mọi người thấy gì",
+  "collect.pick": "Chọn",
+  "collect.send": "Gửi",
+  "collect.sent": "Cảm ơn bạn. Phản hồi của bạn đã được gửi.",
+  "collect.unsent": "Không gửi được. Hãy thử lại.",
+  "collect.sealed": "Phản hồi được niêm phong ngay trong trình duyệt của khách, nên máy chủ không đọc được.",
+  "collect.online": "Đưa biểu mẫu lên mạng"
+}

@@ -38,7 +38,9 @@ const [mine, working, coded] = /** @type {const} */ ([signal(true), signal(false
 const told = signal(/** @type {{ id: string, word: string } | null} */ (null))
 /** Someone an audience gives Share's list, its fingerprints to invite where it has some. @typedef {{ id: string, name: string, note?: string, able: boolean, fps?: string[] }} Who */
 /** The tab shown, and who Share's list has ticked, by their audiences' ids. */
-const [tab, picked] = [signal(/** @type {'share' | 'publish'} */ ('share')), signal(/** @type {Set<string>} */ (new Set()))]
+const [tab, picked] = [signal('share'), signal(/** @type {Set<string>} */ (new Set()))]
+/** A collection's third tab, Collect replies (caps/collect), fetched as the dialog first opens on a collection. */
+const extra = signal(/** @type {typeof import('../collect/collect.js') | null} */ (null))
 /** What can be worked on together: a thing its pane names, or a task, shared whole. @param {import('./share.js').What | null} what */
 const thingOf = (what) => what?.thing ?? (what && !what.item ? { kind: /** @type {const} */ ('task'), uri: what.path } : null)
 /** Whether the relay named keeps what people work on together, as its root says (relay/journal.js), asked once for each relay. */
@@ -61,6 +63,7 @@ function reset(what) {
   const relay = String(serviceURL('relay', app.settings.peek(), app.policy) ?? '')
   if (relay !== asked.relay) { asked.relay = relay; keeps.value = false; if (relay) fetch(relay).then((answer) => answer.json()).then((root) => { keeps.value = Boolean(root?.journals) }, () => {}) }
   tab.value = share ? 'publish' : 'share'
+  if (thingOf(what)?.kind === 'collection' && !extra.peek()) import('../collect/collect.js').then((it) => { extra.value = it }, () => {})
   picked.value = new Set(audiences().flatMap((one) => one.first?.(what) ?? []))
   if (share) here(share).then((yes) => { if (sharing.peek() === what) mine.value = yes })
 }
@@ -134,15 +137,17 @@ function publishTab(what) {
 
 class ShareDialog extends Element {
   render() {
-    const what = sharing.value, both = allowed() && (audiences().length > 0 || jointly(what))
-    const shown = !allowed() ? 'share' : both ? tab.value : 'publish', live = what && shareOf(what)
-    // Left and right move between the tabs, as a tab list's keys do.
-    const arrows = (/** @type {KeyboardEvent} */ event) => { if (/^Arrow(Left|Right)$/.test(event.key)) { tab.value = shown === 'share' ? 'publish' : 'share'; requestAnimationFrame(() => /** @type {HTMLElement | null} */ (this.querySelector('[role=tab][aria-selected=true]'))?.focus()) } }
+    const what = sharing.value, both = allowed() && (audiences().length > 0 || jointly(what)), more = what && extra.value?.when(what) ? ['collect'] : []
+    const base = !allowed() ? 'share' : !both ? 'publish' : tab.value === 'collect' ? 'share' : tab.value, tabs = [...(both ? ['share', 'publish'] : [base]), ...more]
+    const shown = more.length && tab.value === 'collect' ? 'collect' : base, live = what && shareOf(what)
+    // Left and right move between the tabs, as a tab list's keys do, the way the page reads.
+    const arrows = (/** @type {KeyboardEvent} */ event) => { if (/^Arrow(Left|Right)$/.test(event.key)) { tab.value = tabs[(tabs.indexOf(shown) + ((event.key === 'ArrowRight') !== (getComputedStyle(this).direction === 'rtl') ? 1 : tabs.length - 1)) % tabs.length]; requestAnimationFrame(() => /** @type {HTMLElement | null} */ (this.querySelector('[role=tab][aria-selected=true]'))?.focus()) } }
+    const many = tabs.length > 1
     return html`<dialog class="sheet share-dialog" @close=${closed('share')} @click=${backdrop}>
       ${head(/** @type {any} */ (html`${t('share.title')} <span class="share-what" dir="auto">${what?.title || t('conversation.untitled')}</span>`))}
-      ${both ? html`<div class="share-tabs" role="tablist" aria-label=${t('share.title')}>${(/** @type {const} */ (['share', 'publish'])).map((one) => html`<button role="tab" id=${`share-tab-${one}`} aria-controls="share-panel"
-        aria-selected=${String(shown === one)} tabindex=${shown === one ? 0 : -1} @click=${() => { tab.value = one }} @keydown=${arrows}>${one === 'share' ? icons.people : icons.globe} ${t(one === 'share' ? 'share.title' : 'share.publish')}${one === 'publish' && live ? html`<span class="share-dot" role="img" aria-label=${t('share.isPublished')}></span>` : nothing}</button>`)}</div>` : nothing}
-      <div id="share-panel" class="stack" role=${both ? 'tabpanel' : nothing} aria-labelledby=${both ? `share-tab-${shown}` : nothing}>${what ? (shown === 'share' ? shareTab(what) : publishTab(what)) : nothing}</div>
+      ${many ? html`<div class="share-tabs" role="tablist" aria-label=${t('share.title')}>${tabs.map((one) => html`<button role="tab" id=${`share-tab-${one}`} aria-controls="share-panel"
+        aria-selected=${String(shown === one)} tabindex=${shown === one ? 0 : -1} @click=${() => { tab.value = one }} @keydown=${arrows}>${one === 'share' ? icons.people : one === 'publish' ? icons.globe : icons.list} ${one === 'collect' ? extra.value?.label() : t(one === 'share' ? 'share.title' : 'share.publish')}${one === 'publish' && live ? html`<span class="share-dot" role="img" aria-label=${t('share.isPublished')}></span>` : nothing}</button>`)}</div>` : nothing}
+      <div id="share-panel" class="stack" role=${many ? 'tabpanel' : nothing} aria-labelledby=${many ? `share-tab-${shown}` : nothing}>${!what ? nothing : shown === 'collect' ? extra.value?.draw(what) : shown === 'share' ? shareTab(what) : publishTab(what)}</div>
     </dialog>`
   }
 

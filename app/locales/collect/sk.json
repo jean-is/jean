@@ -1,0 +1,14 @@
+{
+  "collect.tab": "Zbierať odpovede",
+  "collect.says": "Formulár tejto zbierky, online, ktorý môže vyplniť ktokoľvek s odkazom. Každá odpoveď sem príde ako riadok.",
+  "collect.asks": "Na čo sa formulár pýta",
+  "collect.hint": "Pole pre každý stĺpec, ktorý označíte. Ostatné zostanú len vám.",
+  "collect.always": "Vždy sa pýta",
+  "collect.sees": "Čo vidia ľudia",
+  "collect.pick": "Vyberte",
+  "collect.send": "Odoslať",
+  "collect.sent": "Ďakujeme. Vaša odpoveď bola odoslaná.",
+  "collect.unsent": "Nepodarilo sa to odoslať. Skúste to znova.",
+  "collect.sealed": "Odpoveď sa zapečatí v prehliadači návštevníka, takže hostiteľ ju nemôže čítať.",
+  "collect.online": "Dať formulár online"
+}

@@ -1,0 +1,14 @@
+{
+  "collect.tab": "Samla in svar",
+  "collect.says": "Ett formulär av den här samlingen, online, som alla med länken kan fylla i. Varje svar kommer hit som en rad.",
+  "collect.asks": "Det formuläret frågar efter",
+  "collect.hint": "Ett fält för varje kolumn du kryssar i. De andra förblir dina.",
+  "collect.always": "Frågas alltid",
+  "collect.sees": "Det folk ser",
+  "collect.pick": "Välj",
+  "collect.send": "Skicka",
+  "collect.sent": "Tack. Ditt svar har skickats.",
+  "collect.unsent": "Det gick inte att skicka. Försök igen.",
+  "collect.sealed": "Ett svar förseglas i besökarens webbläsare, så värden kan inte läsa det.",
+  "collect.online": "Lägg ut formuläret online"
+}

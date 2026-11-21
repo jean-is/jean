@@ -1,0 +1,14 @@
+{
+  "collect.tab": "Antworten sammeln",
+  "collect.says": "Ein Formular dieser Sammlung, online, das alle mit dem Link ausfüllen können. Jede Antwort kommt als Zeile hierher.",
+  "collect.asks": "Was das Formular fragt",
+  "collect.hint": "Ein Feld für jede Spalte, die du ankreuzt. Die anderen bleiben bei dir.",
+  "collect.always": "Wird immer gefragt",
+  "collect.sees": "Was die Leute sehen",
+  "collect.pick": "Auswählen",
+  "collect.send": "Senden",
+  "collect.sent": "Danke. Deine Antwort wurde gesendet.",
+  "collect.unsent": "Das Senden hat nicht geklappt. Bitte noch einmal versuchen.",
+  "collect.sealed": "Eine Antwort wird im Browser des Besuchers versiegelt, sodass der Host sie nicht lesen kann.",
+  "collect.online": "Formular online stellen"
+}

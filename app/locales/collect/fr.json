@@ -1,0 +1,14 @@
+{
+  "collect.tab": "Recueillir des réponses",
+  "collect.says": "Un formulaire de cette collection, en ligne, que toute personne ayant son lien peut remplir. Chaque réponse arrive ici, comme une ligne.",
+  "collect.asks": "Ce que le formulaire demande",
+  "collect.hint": "Un champ pour chaque colonne cochée. Les autres restent à vous.",
+  "collect.always": "Toujours demandée",
+  "collect.sees": "Ce que les gens voient",
+  "collect.pick": "Choisir",
+  "collect.send": "Envoyer",
+  "collect.sent": "Merci. Votre réponse a bien été envoyée.",
+  "collect.unsent": "L’envoi n’a pas abouti. Réessayez.",
+  "collect.sealed": "Chaque réponse est scellée dans le navigateur du visiteur : l’hébergeur ne peut donc pas la lire.",
+  "collect.online": "Mettre le formulaire en ligne"
+}

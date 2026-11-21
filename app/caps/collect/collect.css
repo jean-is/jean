@@ -1,0 +1,18 @@
+/* SPDX-License-Identifier: MIT */
+/* Collect replies, in Share's dialog (./collect.js): the columns to tick beside the form as people will see it, one under the other where the
+   dialog is narrow. */
+.collect { display: flex; flex-wrap: wrap; gap: 1rem 1.5rem; }
+.collect fieldset, .collect section { flex: 1 1 13rem; min-inline-size: 0; margin: 0; padding: 0; border: 0; }
+.collect legend, .collect h3 { margin: 0 0 0.25rem; padding: 0; font-size: 0.95rem; font-weight: 600; }
+.collect .hint { margin: 0 0 0.25rem; }
+.collect ul { margin: 0; padding: 0; list-style: none; }
+.collect li label { display: flex; align-items: center; gap: 0.6rem; min-block-size: 2.75rem; border-block-start: 1px solid var(--line); cursor: pointer; }
+.collect li bdi { flex: 1; min-inline-size: 0; overflow-wrap: anywhere; }
+.collect li small { color: var(--ink-soft); }
+.collect-see { display: grid; gap: 0.6rem; padding: 0.9rem; border: 1px solid var(--line-strong); border-radius: 0.9rem; font-size: 0.9rem; }
+.collect-see > b { font-size: 1.1rem; }
+.collect-field { display: grid; gap: 0.2rem; }
+.collect-field > span:first-child:not(:has(input)) { font-weight: 600; }
+.collect-field span:has(input) { display: flex; align-items: center; gap: 0.4rem; }
+.collect-field :is(input:not([type='radio'], [type='checkbox']), select, textarea) { inline-size: 100%; }
+.collect-send { justify-self: start; padding: 0.35rem 1.1rem; border-radius: 999px; background: var(--ink); color: var(--room); font-weight: 600; }

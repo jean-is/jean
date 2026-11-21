@@ -1,0 +1,14 @@
+{
+  "collect.tab": "Mangolekta ng sagot",
+  "collect.says": "Isang form ng koleksiyong ito, online, na masasagutan ng sinumang may link nito. Dumarating dito ang bawat sagot bilang isang row.",
+  "collect.asks": "Ang itinatanong ng form",
+  "collect.hint": "Isang field para sa bawat column na lalagyan mo ng tsek. Ang iba ay nananatiling sa iyo.",
+  "collect.always": "Laging itinatanong",
+  "collect.sees": "Ang nakikita ng mga tao",
+  "collect.pick": "Pumili",
+  "collect.send": "Ipadala",
+  "collect.sent": "Salamat. Naipadala na ang sagot mo.",
+  "collect.unsent": "Hindi ito naipadala. Subukang muli.",
+  "collect.sealed": "Sineselyuhan ang sagot sa browser ng bisita, kaya hindi ito mababasa ng host.",
+  "collect.online": "Ilagay online ang form"
+}

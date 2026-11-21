@@ -1,0 +1,14 @@
+{
+  "collect.tab": "Válaszok gyűjtése",
+  "collect.says": "A gyűjtemény űrlapja, online, amelyet bárki kitölthet, akinél a linkje van. Minden válasz sorként érkezik ide.",
+  "collect.asks": "Amit az űrlap kérdez",
+  "collect.hint": "Egy mező minden oszlophoz, amelyet bejelölsz. A többi nálad marad.",
+  "collect.always": "Mindig rákérdez",
+  "collect.sees": "Amit az emberek látnak",
+  "collect.pick": "Válassz",
+  "collect.send": "Küldés",
+  "collect.sent": "Köszönjük. A válaszodat elküldtük.",
+  "collect.unsent": "Nem sikerült elküldeni. Próbáld újra.",
+  "collect.sealed": "A választ a látogató böngészője pecsételi le, így a tárhely nem tudja elolvasni.",
+  "collect.online": "Űrlap közzététele online"
+}

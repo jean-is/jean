@@ -1,0 +1,14 @@
+{
+  "collect.tab": "Yanıt topla",
+  "collect.says": "Bu koleksiyonun çevrimiçi bir formu; bağlantısı olan herkes doldurabilir. Her yanıt buraya bir satır olarak gelir.",
+  "collect.asks": "Formun sordukları",
+  "collect.hint": "İşaretlediğin her sütun için bir alan. Diğerleri sende kalır.",
+  "collect.always": "Her zaman sorulur",
+  "collect.sees": "İnsanların gördüğü",
+  "collect.pick": "Seç",
+  "collect.send": "Gönder",
+  "collect.sent": "Teşekkürler. Yanıtın gönderildi.",
+  "collect.unsent": "Gönderilemedi. Yeniden dene.",
+  "collect.sealed": "Yanıt, ziyaretçinin tarayıcısında mühürlenir; bu yüzden sunucu onu okuyamaz.",
+  "collect.online": "Formu çevrimiçi yayınla"
+}

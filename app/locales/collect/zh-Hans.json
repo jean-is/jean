@@ -1,0 +1,14 @@
+{
+  "collect.tab": "收集回复",
+  "collect.says": "这个合集的在线表单，任何拿到链接的人都能填写。每条回复都会作为一行来到这里。",
+  "collect.asks": "表单问什么",
+  "collect.hint": "你勾选的每一列对应一个填写栏。其余的列只留在你这里。",
+  "collect.always": "始终会问",
+  "collect.sees": "别人看到的样子",
+  "collect.pick": "请选择",
+  "collect.send": "发送",
+  "collect.sent": "谢谢。你的回复已发送。",
+  "collect.unsent": "没能发送。请再试一次。",
+  "collect.sealed": "回复在访客的浏览器里就已密封，托管方无法读取。",
+  "collect.online": "把表单放到网上"
+}

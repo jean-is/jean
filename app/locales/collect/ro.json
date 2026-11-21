@@ -1,0 +1,14 @@
+{
+  "collect.tab": "Strângeți răspunsuri",
+  "collect.says": "Un formular al acestei colecții, online, pe care îl poate completa oricine are linkul. Fiecare răspuns ajunge aici ca un rând.",
+  "collect.asks": "Ce întreabă formularul",
+  "collect.hint": "Un câmp pentru fiecare coloană pe care o bifați. Celelalte rămân ale dvs.",
+  "collect.always": "Se întreabă mereu",
+  "collect.sees": "Ce văd oamenii",
+  "collect.pick": "Alegeți",
+  "collect.send": "Trimiteți",
+  "collect.sent": "Mulțumim. Răspunsul dvs. a fost trimis.",
+  "collect.unsent": "Nu a putut fi trimis. Încercați din nou.",
+  "collect.sealed": "Un răspuns este sigilat în browserul vizitatorului, așa că gazda nu îl poate citi.",
+  "collect.online": "Puneți formularul online"
+}

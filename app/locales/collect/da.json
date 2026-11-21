@@ -1,0 +1,14 @@
+{
+  "collect.tab": "Indsaml svar",
+  "collect.says": "En formular til denne samling, online, som alle med linket kan udfylde. Hvert svar kommer hertil som en række.",
+  "collect.asks": "Det, formularen spørger om",
+  "collect.hint": "Et felt for hver kolonne, du sætter flueben ved. Resten forbliver dine.",
+  "collect.always": "Spørges der altid om",
+  "collect.sees": "Det, folk ser",
+  "collect.pick": "Vælg",
+  "collect.send": "Send",
+  "collect.sent": "Tak. Dit svar er sendt.",
+  "collect.unsent": "Det kunne ikke sendes. Prøv igen.",
+  "collect.sealed": "Et svar forsegles i den besøgendes browser, så værten ikke kan læse det.",
+  "collect.online": "Læg formularen online"
+}
