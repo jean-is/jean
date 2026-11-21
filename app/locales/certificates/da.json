@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "Certificeret af en myndighed, som din organisation har tillid til, uden bevis for, at det ikke er tilbagekaldt",
   "certificates.trust.untrusted": "Ikke certificeret af en myndighed, som din organisation har tillid til",
   "certificates.trust.revoked": "Dets certifikat blev tilbagekaldt, før dette blev forseglet",
-  "certificates.qualified": "Et kvalificeret segl efter EU-retten"
+  "certificates.qualified": "Et kvalificeret segl efter EU-retten",
+  "certificates.from": "Lavet ud fra",
+  "certificates.fromIntact": "Version {n} af en samling, forseglet og uændret siden",
+  "certificates.fromBroken": "Version {n} af en samling, ændret eller ikke forseglet med den nøgle, den nævner",
+  "certificates.fromMissing": "Version {n} af en samling, hvis certifikat ikke blev givet",
+  "certificates.fromLive": "En samlings rækker, som de var dengang, som ingen version gemmer"
 }

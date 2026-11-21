@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "Gecertificeerd door een instantie die je organisatie vertrouwt, zonder bewijs dat het niet is ingetrokken",
   "certificates.trust.untrusted": "Niet gecertificeerd door een instantie die je organisatie vertrouwt",
   "certificates.trust.revoked": "Het certificaat werd ingetrokken voordat dit werd verzegeld",
-  "certificates.qualified": "Een gekwalificeerd zegel volgens het EU-recht"
+  "certificates.qualified": "Een gekwalificeerd zegel volgens het EU-recht",
+  "certificates.from": "Gemaakt uit",
+  "certificates.fromIntact": "Versie {n} van een verzameling, verzegeld en sindsdien ongewijzigd",
+  "certificates.fromBroken": "Versie {n} van een verzameling, gewijzigd of niet verzegeld met de sleutel die ze noemt",
+  "certificates.fromMissing": "Versie {n} van een verzameling, waarvan het certificaat niet is meegegeven",
+  "certificates.fromLive": "De rijen van een verzameling zoals ze toen waren, die geen versie bewaart"
 }

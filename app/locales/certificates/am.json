@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "ድርጅትዎ በሚያምነው ባለሥልጣን የተረጋገጠ፣ ያልተሰረዘ ስለመሆኑ ማስረጃ የለም",
   "certificates.trust.untrusted": "ድርጅትዎ በሚያምነው ባለሥልጣን ያልተረጋገጠ",
   "certificates.trust.revoked": "የምስክር ወረቀቱ ከዚህ ማኅተም በፊት ተሰርዟል",
-  "certificates.qualified": "በአውሮፓ ኅብረት ሕግ መሠረት ብቁ ማኅተም"
+  "certificates.qualified": "በአውሮፓ ኅብረት ሕግ መሠረት ብቁ ማኅተም",
+  "certificates.from": "የተሠራው ከ",
+  "certificates.fromIntact": "የአንድ ስብስብ ስሪት {n}፣ የታተመ እና ከዚያ ወዲህ ያልተቀየረ",
+  "certificates.fromBroken": "የአንድ ስብስብ ስሪት {n}፣ የተቀየረ ወይም በሚጠቅሰው ቁልፍ ያልታተመ",
+  "certificates.fromMissing": "የአንድ ስብስብ ስሪት {n}፣ የምስክር ወረቀቱ ያልተሰጠ",
+  "certificates.fromLive": "የአንድ ስብስብ ረድፎች በዚያን ጊዜ እንደነበሩ፣ ምንም ስሪት ያልያዛቸው"
 }

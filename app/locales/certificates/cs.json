@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "Certifikováno autoritou, které vaše organizace důvěřuje, bez důkazu, že nebylo zneplatněno",
   "certificates.trust.untrusted": "Necertifikováno autoritou, které vaše organizace důvěřuje",
   "certificates.trust.revoked": "Jeho certifikát byl zneplatněn dřív, než bylo toto zapečetěno",
-  "certificates.qualified": "Kvalifikovaná pečeť podle práva EU"
+  "certificates.qualified": "Kvalifikovaná pečeť podle práva EU",
+  "certificates.from": "Vytvořeno z",
+  "certificates.fromIntact": "Verze {n} sbírky, zapečetěná a od té doby nezměněná",
+  "certificates.fromBroken": "Verze {n} sbírky, změněná nebo nezapečetěná klíčem, který uvádí",
+  "certificates.fromMissing": "Verze {n} sbírky, jejíž certifikát nebyl dodán",
+  "certificates.fromLive": "Řádky sbírky, jak tehdy byly, které žádná verze neuchovává"
 }

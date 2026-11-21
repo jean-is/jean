@@ -4,8 +4,10 @@
 // A collection's versions: published by its author, made as its columns change, refused while one would break; slides pinned to one stay
 // as they were while slides that read the published one follow it; a document and a site read them too. A recipe a brain carries out, run
 // the first time it shows, then by hand, or as its collection changes once its user opts in, each run kept and paid once per version read.
-// In Arabic and Japanese too.
+// Each version and each run certified as an answer is; from slides, the chain checked back to the collection's version, in Jean and on the
+// check page. In Arabic and Japanese too.
 import { test, expect } from '@playwright/test'
+import { readFile } from 'node:fs/promises'
 import { start, connectFakeBrain } from './helpers.js'
 
 const COLLECTION = 'collections/01K85Z1T00000000000000000A-artisans', DECK = 'decks/01K85Z1T00000000000000000D-neighbourhood.deck.html', ROW = '01K8000000000000000000000A'
@@ -200,7 +202,8 @@ test('a recipe that sums up the approved artisans on a slide updates by itself o
   const menu = page.locator('.menu:popover-open')
   await menu.getByRole('button', { name: 'Update now' }).click()
   await expect(slide).toHaveText('Summary: Ana, Bob.')
-  await expect(menu.getByRole('status').last()).toContainText('Updated')
+  await expect(menu.getByRole('status').filter({ hasText: /^Updated / })).toHaveCount(1)
+  await expect(menu.getByRole('status').filter({ hasText: 'Certified, from the collection’s rows as they were then' })).toHaveCount(1)
   await menu.getByRole('button', { name: 'Update now' }).click()
   await page.waitForTimeout(300)
   expect((await runs()).map((run) => run.n)).toEqual([1, 2])
@@ -214,4 +217,50 @@ test('a recipe that sums up the approved artisans on a slide updates by itself o
   }, { HERE, row: rows[2] })
   await expect(slide).toHaveText('Summary: Ana, Bob, Cy.', { timeout: 8000 })
   expect((await runs()).map((run) => run.n)).toEqual([1, 2, 3])
+})
+
+test('from slides, their provenance is checked back to the collection’s version, in Jean and on the check page, which says when a link was changed', async ({ page, browser, baseURL }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  const SUMMARY = 'decks/01K85Z1T00000000000000000Q-proof.deck.html', HERE = 'collections/01K85Z1T00000000000000000P-makers', ROW = '01K8000000000000000000000P'
+  await page.evaluate(async ({ SUMMARY, HERE, ROW }) => {
+    const [{ unlock }, { app }] = await Promise.all([import('/ui/caps.js'), import('/ui/state.js')])
+    await Promise.all([unlock('tables'), unlock('skills'), unlock('slides')])
+    const at = '2026-11-21T10:00:00.000Z'
+    await app.fs.write(`${app.projectDir}/${HERE}/collection.json`, JSON.stringify({ format: 1, id: HERE.slice(12, 38), name: 'Makers', author: 'user', created: at, changed: at,
+      properties: [{ id: 'name', name: 'Name', type: 'text' }, { id: 'approved', name: 'Approved', type: 'checkbox' }], views: [{ id: 'table', type: 'table' }] }))
+    await app.fs.write(`${app.projectDir}/${HERE}/changes.jsonl`, `${JSON.stringify({ row: ROW, set: { name: 'Ana', approved: true }, at, by: 'user' })}\n`)
+    await (await import('/caps/compose/compose.js')).publish(HERE)
+    await (await import('/caps/skills/decks.js')).rewrite(SUMMARY, `# Makers\n\n\`\`\`table\n${HERE}@published\nwhere: Approved is yes\nask: Sum them up\n\`\`\`\n\n---\n\n\`\`\`table\n${HERE}@1\n\`\`\`\n\n---\n\n\`\`\`table\n${HERE}\n\`\`\`\n`, 'Proof', app.projectDir)
+  }, { SUMMARY, HERE, ROW })
+  await show(page, SUMMARY, 'Proof')
+  await expect(page.locator('app-preview .deck-slide .deck-table > div').first()).toHaveText('Summary: Ana.')
+  // In Jean: the run, and the version it read, certified; the pinned version on its own; the rows as they are, none.
+  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  const uses = page.locator('.menu:popover-open').getByRole('group', { name: 'Uses' }).getByRole('listitem')
+  await expect(uses).toHaveCount(3)
+  await expect(uses.nth(0).getByRole('status').last()).toHaveText('Certified, back to version 1 of the collection')
+  await expect(uses.nth(1).getByRole('status').last()).toHaveText('Certified, back to version 1 of the collection')
+  await expect(uses.nth(2)).toContainText('The rows as they are now: no version, so no certificate')
+  const [download] = await Promise.all([page.waitForEvent('download'), uses.nth(0).getByRole('button', { name: 'Save its provenance' }).click()])
+  expect(download.suggestedFilename()).toBe('Provenance of Proof.json')
+  const chain = JSON.parse(await readFile(await download.path(), 'utf8'))
+  expect(chain).toHaveLength(2)
+  expect(JSON.parse(Buffer.from(chain[0].payload, 'base64url').toString()).type).toEqual(['VerifiableCredential', 'CreationVersion'])
+  // On the check page: the run's seal, then what it was made from, back to the collection's version.
+  const context = await browser.newContext({ baseURL }), checker = await context.newPage()
+  await checker.goto('check')
+  const input = checker.locator('input[type="file"]'), file = (/** @type {unknown} */ value) => ({ name: 'Provenance of Proof.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(value)) })
+  await input.setInputFiles([file(chain)])
+  await expect(checker.locator('.receipt-verdict')).toHaveText('Sealed, and unchanged since')
+  await expect(checker.locator('.receipt-checked dl')).toContainText('Made from')
+  await expect(checker.locator('.receipt-checked dl')).toContainText('Version 1 of a collection, sealed and unchanged since')
+  // The version's certificate changed: the run still holds, the link it names doesn't.
+  const says = JSON.parse(Buffer.from(chain[1].payload, 'base64url').toString())
+  says.credentialSubject.version = 2
+  await input.setInputFiles([file([chain[0], { ...chain[1], payload: Buffer.from(JSON.stringify(says)).toString('base64url') }])])
+  await expect(checker.locator('.receipt-checked dl')).toContainText('Version 1 of a collection, changed or not sealed by the key it names')
+  await input.setInputFiles([file([chain[0]])])
+  await expect(checker.locator('.receipt-checked dl')).toContainText('Version 1 of a collection, whose certificate wasn’t given')
+  await context.close()
 })

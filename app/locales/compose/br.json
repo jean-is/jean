@@ -30,5 +30,11 @@
   "compose.update": "Hizivaat bremañ",
   "compose.ran": "Hizivaet d’an {date}",
   "compose.failed": "C’hwitet eo an hizivadur diwezhañ; an hini a-raok a chom diskouezet.",
-  "compose.unasked": "N’eo ket diskouezet c’hoazh: empenn ebet n’en deus gallet ober ar pezh a c’houlenn."
+  "compose.unasked": "N’eo ket diskouezet c’hoazh: empenn ebet n’en deus gallet ober ar pezh a c’houlenn.",
+  "compose.certified": "Testeniet, betek stumm {n} an dastumad",
+  "compose.certifiedLive": "Testeniet, diwar linennoù an dastumad evel ma oant d’ar mare-se",
+  "compose.uncertified": "Al linennoù evel m’emaint bremañ: stumm ebet, neuze testeni ebet",
+  "compose.unproven": "N’eo ket mat e destenioù: kemmet, pe n’int ket siellet gant an alc’hwez a envelont",
+  "compose.saveProof": "Enrollañ e orin",
+  "compose.proofFile": "Orin {name}"
 }

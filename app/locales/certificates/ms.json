@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "Diperakui oleh pihak berkuasa yang dipercayai organisasi anda, tanpa bukti ia tidak dibatalkan",
   "certificates.trust.untrusted": "Tidak diperakui oleh pihak berkuasa yang dipercayai organisasi anda",
   "certificates.trust.revoked": "Sijilnya dibatalkan sebelum meterai ini",
-  "certificates.qualified": "Meterai layak di bawah undang-undang EU"
+  "certificates.qualified": "Meterai layak di bawah undang-undang EU",
+  "certificates.from": "Dibuat daripada",
+  "certificates.fromIntact": "Versi {n} sebuah koleksi, dimeterai dan tidak berubah sejak itu",
+  "certificates.fromBroken": "Versi {n} sebuah koleksi, diubah atau tidak dimeterai dengan kunci yang disebut",
+  "certificates.fromMissing": "Versi {n} sebuah koleksi, yang sijilnya tidak diberikan",
+  "certificates.fromLive": "Baris sebuah koleksi seperti ketika itu, yang tidak disimpan oleh mana-mana versi"
 }

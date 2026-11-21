@@ -30,5 +30,11 @@
   "compose.update": "지금 업데이트",
   "compose.ran": "{date}에 업데이트됨",
   "compose.failed": "마지막 업데이트에 실패했습니다. 이전 내용이 계속 표시됩니다.",
-  "compose.unasked": "아직 표시되지 않음: 요청을 수행할 수 있는 두뇌가 없었습니다."
+  "compose.unasked": "아직 표시되지 않음: 요청을 수행할 수 있는 두뇌가 없었습니다.",
+  "compose.certified": "인증됨, 컬렉션 버전 {n}까지",
+  "compose.certifiedLive": "인증됨, 당시 컬렉션의 행에서",
+  "compose.uncertified": "현재 행: 버전이 없어 인증서도 없습니다",
+  "compose.unproven": "인증서가 유효하지 않습니다: 변경되었거나 명시된 키로 봉인되지 않았습니다",
+  "compose.saveProof": "출처 저장",
+  "compose.proofFile": "{name}의 출처"
 }

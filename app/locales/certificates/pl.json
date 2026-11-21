@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "Poświadczone przez urząd, któremu ufa twoja organizacja, bez dowodu, że nie zostało unieważnione",
   "certificates.trust.untrusted": "Niepoświadczone przez urząd, któremu ufa twoja organizacja",
   "certificates.trust.revoked": "Jego certyfikat unieważniono przed tym zapieczętowaniem",
-  "certificates.qualified": "Kwalifikowana pieczęć w rozumieniu prawa UE"
+  "certificates.qualified": "Kwalifikowana pieczęć w rozumieniu prawa UE",
+  "certificates.from": "Zrobione z",
+  "certificates.fromIntact": "Wersja {n} kolekcji, zapieczętowana i niezmieniona od tamtej pory",
+  "certificates.fromBroken": "Wersja {n} kolekcji, zmieniona lub niezapieczętowana kluczem, który wskazuje",
+  "certificates.fromMissing": "Wersja {n} kolekcji, której certyfikatu nie dołączono",
+  "certificates.fromLive": "Wiersze kolekcji takie, jakie były wtedy, których nie przechowuje żadna wersja"
 }

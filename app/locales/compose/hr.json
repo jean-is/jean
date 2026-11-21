@@ -30,5 +30,11 @@
   "compose.update": "Ažuriraj sada",
   "compose.ran": "Ažurirano {date}",
   "compose.failed": "Posljednje ažuriranje nije uspjelo; prethodno ostaje prikazano.",
-  "compose.unasked": "Još nije prikazano: nijedan mozak nije mogao izvršiti traženo."
+  "compose.unasked": "Još nije prikazano: nijedan mozak nije mogao izvršiti traženo.",
+  "compose.certified": "Ovjereno, do verzije {n} zbirke",
+  "compose.certifiedLive": "Ovjereno, iz redaka zbirke kakvi su tada bili",
+  "compose.uncertified": "Retci kakvi su sada: nema verzije, pa nema ni potvrde",
+  "compose.unproven": "Njegove potvrde ne vrijede: promijenjene ili nisu zapečaćene ključem koji navode",
+  "compose.saveProof": "Spremi podrijetlo",
+  "compose.proofFile": "Podrijetlo: {name}"
 }

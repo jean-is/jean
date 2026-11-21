@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "Kuruluşunun güvendiği bir makam tarafından onaylanmış, iptal edilmediğine dair kanıt yok",
   "certificates.trust.untrusted": "Kuruluşunun güvendiği bir makam tarafından onaylanmamış",
   "certificates.trust.revoked": "Sertifikası, bu mühürlenmeden önce iptal edilmiş",
-  "certificates.qualified": "AB hukukuna göre nitelikli mühür"
+  "certificates.qualified": "AB hukukuna göre nitelikli mühür",
+  "certificates.from": "Şundan yapıldı",
+  "certificates.fromIntact": "Bir koleksiyonun {n}. sürümü, mühürlü ve o zamandan beri değişmemiş",
+  "certificates.fromBroken": "Bir koleksiyonun {n}. sürümü, değiştirilmiş ya da belirttiği anahtarla mühürlenmemiş",
+  "certificates.fromMissing": "Bir koleksiyonun {n}. sürümü, sertifikası verilmemiş",
+  "certificates.fromLive": "Bir koleksiyonun o anki satırları, hiçbir sürümün saklamadığı"
 }

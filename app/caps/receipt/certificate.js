@@ -239,6 +239,8 @@ export async function seal(credential, { keys, certificate, chain = [], sign }, 
 
 /** What witnesses date: the SHA-256 of the signature's base64url (JAdES 5.3.4). @param {Sealed} sealed */
 const imprintOf = (sealed) => sha256(encode(sealed.signature))
+/** That imprint in base64url: what a creation's version names an ingredient's certificate by (D763). @param {Sealed} sealed */
+export const imprint = async (sealed) => base64url(await imprintOf(sealed))
 
 /**
  * A witness's RFC 3161 token for an imprint: a request with a nonce, sent by `send`, and the token, once

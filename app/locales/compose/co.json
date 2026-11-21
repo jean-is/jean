@@ -30,5 +30,11 @@
   "compose.update": "Mette à ghjornu avà",
   "compose.ran": "Messu à ghjornu u {date}",
   "compose.failed": "L’ultima messa à ghjornu hè fallita; a precedente ferma mustrata.",
-  "compose.unasked": "Micca mustratu ancu: nisun cervellu hà pussutu fà ciò ch’ellu dumanda."
+  "compose.unasked": "Micca mustratu ancu: nisun cervellu hà pussutu fà ciò ch’ellu dumanda.",
+  "compose.certified": "Certificatu, finu à a versione {n} di a cullezzione",
+  "compose.certifiedLive": "Certificatu, da e linee di a cullezzione cum’elle eranu tandu",
+  "compose.uncertified": "E linee cum’elle sò avà: nisuna versione, dunque nisun certificatu",
+  "compose.unproven": "I so certificati ùn tenenu micca: cambiati, o micca sigillati cù a chjave ch’elli nominanu",
+  "compose.saveProof": "Arregistrà a so pruvenienza",
+  "compose.proofFile": "Pruvenienza di {name}"
 }

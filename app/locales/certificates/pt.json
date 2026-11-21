@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "Certificado por uma autoridade em que a tua organização confia, sem prova de que não foi revogado",
   "certificates.trust.untrusted": "Não certificado por uma autoridade em que a tua organização confia",
   "certificates.trust.revoked": "O seu certificado foi revogado antes de isto ser selado",
-  "certificates.qualified": "Um selo qualificado segundo o direito da UE"
+  "certificates.qualified": "Um selo qualificado segundo o direito da UE",
+  "certificates.from": "Feito a partir de",
+  "certificates.fromIntact": "Versão {n} de uma coleção, selada e inalterada desde então",
+  "certificates.fromBroken": "Versão {n} de uma coleção, alterada ou não selada pela chave que indica",
+  "certificates.fromMissing": "Versão {n} de uma coleção, cujo certificado não foi fornecido",
+  "certificates.fromLive": "As linhas de uma coleção como estavam então, que nenhuma versão guarda"
 }

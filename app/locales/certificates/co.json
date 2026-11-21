@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "Certificatu da un’autorità di chì a vostra urganizazione si fida, senza prova ch’ellu ùn sia statu revucatu",
   "certificates.trust.untrusted": "Micca certificatu da un’autorità di chì a vostra urganizazione si fida",
   "certificates.trust.revoked": "U so certificatu hè statu revucatu nanzu chì questu sia sigillatu",
-  "certificates.qualified": "Un sigillu qualificatu secondu u dirittu di l’UE"
+  "certificates.qualified": "Un sigillu qualificatu secondu u dirittu di l’UE",
+  "certificates.from": "Fattu da",
+  "certificates.fromIntact": "Versione {n} d’una cullezzione, sigillata è senza cambiamentu dapoi",
+  "certificates.fromBroken": "Versione {n} d’una cullezzione, cambiata o micca sigillata cù a chjave ch’ella nomina",
+  "certificates.fromMissing": "Versione {n} d’una cullezzione, chì u so certificatu ùn hè statu datu",
+  "certificates.fromLive": "E linee d’una cullezzione cum’elle eranu tandu, chì nisuna versione guarda"
 }

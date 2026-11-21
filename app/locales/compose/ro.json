@@ -30,5 +30,11 @@
   "compose.update": "Actualizează acum",
   "compose.ran": "Actualizat la {date}",
   "compose.failed": "Ultima actualizare a eșuat; cea dinainte rămâne afișată.",
-  "compose.unasked": "Încă neafișat: niciun creier n-a putut face ce se cere."
+  "compose.unasked": "Încă neafișat: niciun creier n-a putut face ce se cere.",
+  "compose.certified": "Certificat, până la versiunea {n} a colecției",
+  "compose.certifiedLive": "Certificat, din rândurile colecției așa cum erau atunci",
+  "compose.uncertified": "Rândurile așa cum sunt acum: nicio versiune, deci niciun certificat",
+  "compose.unproven": "Certificatele sale nu se confirmă: modificate sau nesigilate cu cheia pe care o numesc",
+  "compose.saveProof": "Salvează proveniența",
+  "compose.proofFile": "Proveniența pentru {name}"
 }

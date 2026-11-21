@@ -30,5 +30,11 @@
   "compose.update": "አሁን አዘምን",
   "compose.ran": "የዘመነው {date}",
   "compose.failed": "የመጨረሻው ማዘመን አልተሳካም፤ ከዚያ በፊት የነበረው እንደታየ ይቆያል።",
-  "compose.unasked": "ገና አልታየም፦ የሚጠይቀውን የሚሠራ አእምሮ አልተገኘም።"
+  "compose.unasked": "ገና አልታየም፦ የሚጠይቀውን የሚሠራ አእምሮ አልተገኘም።",
+  "compose.certified": "የተረጋገጠ፣ እስከ ስብስቡ ስሪት {n} ድረስ",
+  "compose.certifiedLive": "የተረጋገጠ፣ ከስብስቡ ረድፎች በዚያን ጊዜ እንደነበሩ",
+  "compose.uncertified": "ረድፎቹ አሁን እንዳሉ፦ ስሪት የለም፣ ስለዚህ የምስክር ወረቀት የለም",
+  "compose.unproven": "የምስክር ወረቀቶቹ አይጸኑም፦ ተቀይረዋል ወይም በሚጠቅሱት ቁልፍ አልታተሙም",
+  "compose.saveProof": "መነሻውን አስቀምጥ",
+  "compose.proofFile": "የ{name} መነሻ"
 }

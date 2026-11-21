@@ -30,5 +30,11 @@
   "compose.update": "Kemas kini sekarang",
   "compose.ran": "Dikemas kini {date}",
   "compose.failed": "Kemas kini terakhir gagal; yang sebelumnya kekal dipaparkan.",
-  "compose.unasked": "Belum dipaparkan: tiada otak yang dapat melakukan permintaannya."
+  "compose.unasked": "Belum dipaparkan: tiada otak yang dapat melakukan permintaannya.",
+  "compose.certified": "Diperakui, sehingga versi {n} koleksi",
+  "compose.certifiedLive": "Diperakui, daripada baris koleksi seperti ketika itu",
+  "compose.uncertified": "Baris seperti sekarang: tiada versi, maka tiada sijil",
+  "compose.unproven": "Sijilnya tidak sah: diubah, atau tidak dimeterai dengan kunci yang disebut",
+  "compose.saveProof": "Simpan asal-usulnya",
+  "compose.proofFile": "Asal-usul {name}"
 }

@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "Certifikované autoritou, ktorej vaša organizácia dôveruje, bez dôkazu, že nebolo zneplatnené",
   "certificates.trust.untrusted": "Necertifikované autoritou, ktorej vaša organizácia dôveruje",
   "certificates.trust.revoked": "Jeho certifikát bol zneplatnený skôr, než bolo toto zapečatené",
-  "certificates.qualified": "Kvalifikovaná pečať podľa práva EÚ"
+  "certificates.qualified": "Kvalifikovaná pečať podľa práva EÚ",
+  "certificates.from": "Vytvorené z",
+  "certificates.fromIntact": "Verzia {n} zbierky, zapečatená a odvtedy nezmenená",
+  "certificates.fromBroken": "Verzia {n} zbierky, zmenená alebo nezapečatená kľúčom, ktorý uvádza",
+  "certificates.fromMissing": "Verzia {n} zbierky, ktorej certifikát nebol dodaný",
+  "certificates.fromLive": "Riadky zbierky, aké vtedy boli, ktoré žiadna verzia neuchováva"
 }

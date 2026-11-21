@@ -30,5 +30,11 @@
   "compose.update": "Nu bijwerken",
   "compose.ran": "Bijgewerkt {date}",
   "compose.failed": "De laatste update is mislukt; de vorige blijft zichtbaar.",
-  "compose.unasked": "Nog niet getoond: geen brein kon doen wat er gevraagd wordt."
+  "compose.unasked": "Nog niet getoond: geen brein kon doen wat er gevraagd wordt.",
+  "compose.certified": "Gecertificeerd, terug tot versie {n} van de verzameling",
+  "compose.certifiedLive": "Gecertificeerd, uit de rijen van de verzameling zoals ze toen waren",
+  "compose.uncertified": "De rijen zoals ze nu zijn: geen versie, dus geen certificaat",
+  "compose.unproven": "De certificaten kloppen niet: gewijzigd, of niet verzegeld met de sleutel die ze noemen",
+  "compose.saveProof": "Herkomst opslaan",
+  "compose.proofFile": "Herkomst van {name}"
 }

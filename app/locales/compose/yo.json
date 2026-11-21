@@ -30,5 +30,11 @@
   "compose.update": "Ṣe àtúnṣe báyìí",
   "compose.ran": "A ṣe àtúnṣe ní {date}",
   "compose.failed": "Àtúnṣe tó kẹ́yìn kùnà; èyí tó ṣáájú ṣì ń hàn.",
-  "compose.unasked": "Kò tíì hàn: kò sí ọpọlọ tó lè ṣe ohun tí ó béèrè."
+  "compose.unasked": "Kò tíì hàn: kò sí ọpọlọ tó lè ṣe ohun tí ó béèrè.",
+  "compose.certified": "A ti fọwọ́ sí i, títí dé ẹ̀dà {n} ti àkójọpọ̀ náà",
+  "compose.certifiedLive": "A ti fọwọ́ sí i, láti inú àwọn ìlà àkójọpọ̀ bí wọ́n ṣe wà nígbà náà",
+  "compose.uncertified": "Àwọn ìlà bí wọ́n ṣe wà báyìí: kò sí ẹ̀dà, nítorí náà kò sí ìwé ẹ̀rí",
+  "compose.unproven": "Àwọn ìwé ẹ̀rí rẹ̀ kò dúró: a ti yí wọn padà, tàbí a kò fi kọ́kọ́rọ́ tí wọ́n dárúkọ dí wọn",
+  "compose.saveProof": "Fi orísun rẹ̀ pamọ́",
+  "compose.proofFile": "Orísun {name}"
 }

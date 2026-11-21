@@ -30,5 +30,11 @@
   "compose.update": "Aktualizovať teraz",
   "compose.ran": "Aktualizované {date}",
   "compose.failed": "Posledná aktualizácia zlyhala; zostáva zobrazená predchádzajúca.",
-  "compose.unasked": "Zatiaľ nezobrazené: žiadny mozog nedokázal urobiť, čo sa žiada."
+  "compose.unasked": "Zatiaľ nezobrazené: žiadny mozog nedokázal urobiť, čo sa žiada.",
+  "compose.certified": "Overené, až po verziu {n} zbierky",
+  "compose.certifiedLive": "Overené, z riadkov zbierky, aké vtedy boli",
+  "compose.uncertified": "Riadky, aké sú teraz: žiadna verzia, teda žiadny certifikát",
+  "compose.unproven": "Jeho certifikáty neplatia: zmenené alebo nezapečatené kľúčom, ktorý uvádzajú",
+  "compose.saveProof": "Uložiť pôvod",
+  "compose.proofFile": "Pôvod: {name}"
 }

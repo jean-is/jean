@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "Certifierat av en utfärdare som din organisation litar på, utan bevis på att det inte återkallats",
   "certificates.trust.untrusted": "Inte certifierat av en utfärdare som din organisation litar på",
   "certificates.trust.revoked": "Dess certifikat återkallades innan detta förseglades",
-  "certificates.qualified": "Ett kvalificerat sigill enligt EU-rätten"
+  "certificates.qualified": "Ett kvalificerat sigill enligt EU-rätten",
+  "certificates.from": "Gjord av",
+  "certificates.fromIntact": "Version {n} av en samling, förseglad och oförändrad sedan dess",
+  "certificates.fromBroken": "Version {n} av en samling, ändrad eller inte förseglad med nyckeln den nämner",
+  "certificates.fromMissing": "Version {n} av en samling, vars certifikat inte gavs",
+  "certificates.fromLive": "En samlings rader som de var då, som ingen version sparar"
 }

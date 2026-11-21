@@ -6,6 +6,10 @@ import assert from 'node:assert/strict'
 import { parseRef, placeOf, refsIn, withRef, filledPage, loops, refused, versionless, tableOf } from '../app/caps/compose/refs.js'
 import { versionOf, loadedOf, headOf, reshaped, breaks, current } from '../app/caps/compose/versions.js'
 import { keyOf, paceOf, sorted, askOf, lastRun, due } from '../app/caps/compose/recipes.js'
+import { credentialOf, chainOf, holds, sriOf } from '../app/caps/compose/proof.js'
+import { makeSeal, seal, imprint, disclose } from '../app/caps/receipt/certificate.js'
+import { readFileSync } from 'node:fs'
+import Ajv2020 from 'ajv/dist/2020.js'
 import { createTable } from '../app/caps/tables/table.js'
 import { stringifyChanges, reading } from '../app/caps/tables/changes.js'
 
@@ -132,4 +136,36 @@ test('a run is kept by its reference’s key, which its pace leaves alone; one t
   assert.equal(lastRun(/** @type {any} */ (runs), key, 'v1', 'openai:y'), undefined)
   const at = Date.parse('2026-11-21T10:04:00.000Z')
   assert.deepEqual([due(/** @type {any} */ (runs[0]), 5, at), due(/** @type {any} */ (runs[0]), 5, at + 60_000), due(undefined, 5, at), due(/** @type {any} */ (runs[0]), 0, at + 1e9)], [false, true, true, false])
+})
+
+const schema = JSON.parse(readFileSync(new URL('../app/caps/compose/version.schema.json', import.meta.url), 'utf8'))
+const ajv = new Ajv2020({ allErrors: true, strictTypes: false })
+ajv.addFormat('date-time', (text) => !Number.isNaN(Date.parse(text)))
+const valid = ajv.compile(schema)
+
+test('a version and a run are certified as answers are, each run naming the version it read by its certificate, and the chain checks back to it', async () => {
+  const own = await makeSeal(new Date('2026-11-21T09:00:00.000Z')), at = '2026-11-21T10:00:00.000Z', content = JSON.stringify({ n: 2, rows: [] })
+  const version = await credentialOf({ kind: 'collection', creation: '01JX0000000000000000000000', n: 2, at, by: 'user', content })
+  const sealedVersion = await seal(version.credential, own, new Date(at))
+  const run = await credentialOf({ kind: 'run', creation: '01JX00000000000000000000RR', n: 3, at, by: 'jean', content: 'Summary: Ana.', recipe: { where: 'Approved is yes', ask: 'Sum up' },
+    brain: { provider: 'anthropic', model: 'claude', local: false }, ingredients: [{ kind: 'collection', creation: '01JX0000000000000000000000', read: 'v2', certificate: await imprint(sealedVersion) }] })
+  const sealedRun = await seal(run.credential, own, new Date(at))
+  for (const one of [sealedVersion, sealedRun]) assert.equal(valid(JSON.parse(Buffer.from(one.payload, 'base64url').toString())), true, ajv.errorsText(valid.errors))
+  assert.equal(run.credential.credentialSubject.where, 'cloud')
+  // Only digests: the words and the recipe stay with their holder, who proves them with the salts kept.
+  assert.doesNotMatch(Buffer.from(sealedRun.payload, 'base64url').toString(), /Summary|Approved/)
+  assert.equal((await disclose(run.salts.content, 'digestSRI', await sriOf('Summary: Ana.'))).digest, run.credential.credentialSubject.content._sd[0])
+  const chain = await chainOf([sealedRun, sealedVersion])
+  assert.equal(chain.intact, true)
+  assert.deepEqual(chain.chain.map(({ read, given, intact, depth }) => [read, given, intact, depth]), [['v2', true, true, 0]])
+  assert.equal(holds(chain), true)
+  // The version's certificate missing, or changed: the chain no longer holds.
+  assert.equal(holds(await chainOf([sealedRun])), false)
+  const says = JSON.parse(Buffer.from(sealedVersion.payload, 'base64url').toString())
+  const forged = { ...sealedVersion, payload: Buffer.from(JSON.stringify({ ...says, credentialSubject: { ...says.credentialSubject, version: 1 } })).toString('base64url') }
+  assert.deepEqual((await chainOf([sealedRun, forged])).chain.map(({ given, intact }) => [given, intact]), [[true, false]])
+  assert.equal(holds(await chainOf([sealedRun, forged])), false)
+  // A run that read the rows live names no certificate: nothing to check further, and it holds on its own.
+  const live = await credentialOf({ kind: 'run', creation: '01JX00000000000000000000RR', n: 1, at, by: 'jean', content: 'x', ingredients: [{ kind: 'collection', creation: '01JX0000000000000000000000', read: at }] })
+  assert.equal(holds(await chainOf([await seal(live.credential, own, new Date(at))])), true)
 })

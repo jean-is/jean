@@ -30,5 +30,11 @@
   "compose.update": "Update now",
   "compose.ran": "Updated {date}",
   "compose.failed": "The last update failed; the one before stays on show.",
-  "compose.unasked": "Not shown yet: no brain could carry out what it asks."
+  "compose.unasked": "Not shown yet: no brain could carry out what it asks.",
+  "compose.certified": "Certified, back to version {n} of the collection",
+  "compose.certifiedLive": "Certified, from the collection’s rows as they were then",
+  "compose.uncertified": "The rows as they are now: no version, so no certificate",
+  "compose.unproven": "Its certificates don’t hold: changed, or not sealed by the key they name",
+  "compose.saveProof": "Save its provenance",
+  "compose.proofFile": "Provenance of {name}"
 }

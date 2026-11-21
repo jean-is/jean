@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "Certificato da un’autorità di cui la tua organizzazione si fida, senza prova che non sia stato revocato",
   "certificates.trust.untrusted": "Non certificato da un’autorità di cui la tua organizzazione si fida",
   "certificates.trust.revoked": "Il suo certificato è stato revocato prima di questo sigillo",
-  "certificates.qualified": "Un sigillo qualificato secondo il diritto dell’UE"
+  "certificates.qualified": "Un sigillo qualificato secondo il diritto dell’UE",
+  "certificates.from": "Fatto a partire da",
+  "certificates.fromIntact": "Versione {n} di una raccolta, sigillata e invariata da allora",
+  "certificates.fromBroken": "Versione {n} di una raccolta, modificata o non sigillata con la chiave che indica",
+  "certificates.fromMissing": "Versione {n} di una raccolta, il cui certificato non è stato fornito",
+  "certificates.fromLive": "Le righe di una raccolta com’erano allora, che nessuna versione conserva"
 }

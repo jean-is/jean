@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "조직이 신뢰하는 기관이 인증함, 취소되지 않았다는 증거는 없음",
   "certificates.trust.untrusted": "조직이 신뢰하는 기관이 인증하지 않음",
   "certificates.trust.revoked": "이 봉인 전에 인증서가 취소됨",
-  "certificates.qualified": "EU 법에 따른 적격 봉인"
+  "certificates.qualified": "EU 법에 따른 적격 봉인",
+  "certificates.from": "만든 바탕",
+  "certificates.fromIntact": "컬렉션 버전 {n}, 봉인되었고 이후 변경 없음",
+  "certificates.fromBroken": "컬렉션 버전 {n}, 변경되었거나 명시된 키로 봉인되지 않음",
+  "certificates.fromMissing": "컬렉션 버전 {n}, 인증서가 제공되지 않음",
+  "certificates.fromLive": "당시 컬렉션의 행, 어떤 버전에도 남아 있지 않음"
 }

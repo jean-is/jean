@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "Disertifikasi oleh otoritas yang dipercaya organisasi Anda, tanpa bukti bahwa itu tidak dicabut",
   "certificates.trust.untrusted": "Tidak disertifikasi oleh otoritas yang dipercaya organisasi Anda",
   "certificates.trust.revoked": "Sertifikatnya dicabut sebelum penyegelan ini",
-  "certificates.qualified": "Segel berkualifikasi menurut hukum Uni Eropa"
+  "certificates.qualified": "Segel berkualifikasi menurut hukum Uni Eropa",
+  "certificates.from": "Dibuat dari",
+  "certificates.fromIntact": "Versi {n} sebuah koleksi, disegel dan tidak berubah sejak itu",
+  "certificates.fromBroken": "Versi {n} sebuah koleksi, diubah atau tidak disegel dengan kunci yang disebut",
+  "certificates.fromMissing": "Versi {n} sebuah koleksi, yang sertifikatnya tidak diberikan",
+  "certificates.fromLive": "Baris sebuah koleksi seperti saat itu, yang tidak disimpan versi mana pun"
 }

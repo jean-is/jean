@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "گواهی‌شده توسط مرجعی که سازمان شما به آن اعتماد دارد، بی‌آنکه نشان دهد باطل نشده است",
   "certificates.trust.untrusted": "گواهی‌نشده توسط مرجعی که سازمان شما به آن اعتماد دارد",
   "certificates.trust.revoked": "گواهی آن پیش از این مُهر باطل شده بود",
-  "certificates.qualified": "مُهر صلاحیت‌دار طبق قانون اتحادیه اروپا"
+  "certificates.qualified": "مُهر صلاحیت‌دار طبق قانون اتحادیه اروپا",
+  "certificates.from": "ساخته‌شده از",
+  "certificates.fromIntact": "نسخهٔ {n} یک مجموعه، مهرشده و بی‌تغییر از آن زمان",
+  "certificates.fromBroken": "نسخهٔ {n} یک مجموعه، تغییرکرده یا مهرنشده با کلیدی که نام می‌برد",
+  "certificates.fromMissing": "نسخهٔ {n} یک مجموعه، که گواهی‌اش داده نشد",
+  "certificates.fromLive": "ردیف‌های یک مجموعه آن‌گونه که آن موقع بودند، که هیچ نسخه‌ای نگهشان نمی‌دارد"
 }

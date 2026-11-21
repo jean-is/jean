@@ -30,5 +30,11 @@
   "compose.update": "I-update ngayon",
   "compose.ran": "Na-update noong {date}",
   "compose.failed": "Nabigo ang huling update; nananatiling nakikita ang nauna.",
-  "compose.unasked": "Hindi pa ipinapakita: walang utak na nakagawa ng hinihingi nito."
+  "compose.unasked": "Hindi pa ipinapakita: walang utak na nakagawa ng hinihingi nito.",
+  "compose.certified": "Sertipikado, pabalik sa bersyon {n} ng koleksiyon",
+  "compose.certifiedLive": "Sertipikado, mula sa mga hilera ng koleksiyon noon",
+  "compose.uncertified": "Ang mga hilera ngayon: walang bersyon, kaya walang sertipiko",
+  "compose.unproven": "Hindi tumatayo ang mga sertipiko nito: binago, o hindi sinelyuhan ng susing binabanggit nila",
+  "compose.saveProof": "I-save ang pinagmulan nito",
+  "compose.proofFile": "Pinagmulan ng {name}"
 }

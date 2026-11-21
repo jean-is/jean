@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "tag:jean.is,2026:creation-version",
+  "title": "Creation version certificate",
+  "description": "What a creation version's certificate says (D763): the payload of a JWS sealed exactly as an answer certificate is (tag:jean.is,2026:answer-certificate, its certificateFile and protectedHeader), a W3C VC 2.0 of type CreationVersion. A provenance file is a JSON array of such certificates, the first made from the others, each ingredient naming its certificate by the base64url SHA-256 of that certificate's signature's ASCII.",
+  "$ref": "#/$defs/credential",
+  "$defs": {
+    "b64url": { "type": "string", "pattern": "^[A-Za-z0-9_-]+$" },
+    "digest": { "description": "SHA-256 of a disclosure's base64url ASCII, base64url; the disclosure, [salt, name, value], stays with its holder", "type": "string", "pattern": "^[A-Za-z0-9_-]{43}$" },
+    "ulid": { "type": "string", "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$" },
+    "salted": { "type": "object", "required": ["_sd"], "properties": { "_sd": { "type": "array", "minItems": 1, "maxItems": 1, "items": { "$ref": "#/$defs/digest" } } }, "additionalProperties": false },
+    "credential": {
+      "type": "object",
+      "required": ["@context", "type", "id", "issuer", "validFrom", "_sd_alg", "credentialSubject"],
+      "properties": {
+        "@context": { "const": ["https://www.w3.org/ns/credentials/v2"] },
+        "type": { "const": ["VerifiableCredential", "CreationVersion"] },
+        "id": { "type": "string", "pattern": "^urn:uuid:[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$" },
+        "issuer": { "description": "RFC 9278 URI of the RFC 7638 thumbprint of x5c[0]'s key", "type": "string", "pattern": "^urn:ietf:params:oauth:jwk-thumbprint:sha-256:[A-Za-z0-9_-]{43}$" },
+        "validFrom": { "type": "string", "format": "date-time" },
+        "_sd_alg": { "const": "sha-256" },
+        "credentialSubject": { "$ref": "#/$defs/subject" }
+      },
+      "additionalProperties": false
+    },
+    "subject": {
+      "type": "object",
+      "required": ["kind", "creation", "version", "author", "where", "content", "ingredients"],
+      "properties": {
+        "kind": { "description": "A collection's version, or a run of a consumer's recipe", "enum": ["collection", "run"] },
+        "creation": { "description": "The creation's ULID: the collection's, or the consumer's", "$ref": "#/$defs/ulid" },
+        "version": { "description": "The version's number, or the run's", "type": "integer", "minimum": 1 },
+        "author": { "description": "user: the person; jean: Jean, running a recipe", "type": "string", "minLength": 1 },
+        "where": { "enum": ["device", "cloud"] },
+        "content": { "description": "Disclosure [salt, \"digestSRI\", the SRI of what it holds: the version's JSON without its certificate and salts, or the run's words]", "$ref": "#/$defs/salted" },
+        "recipe": { "description": "Disclosure [salt, \"recipe\", the recipe's lines by key]", "$ref": "#/$defs/salted" },
+        "brains": { "type": "array", "maxItems": 1, "items": { "type": "object", "required": ["provider", "model", "local"], "properties": { "provider": { "type": "string", "minLength": 1 }, "model": { "type": "string", "minLength": 1 }, "local": { "type": "boolean" } }, "additionalProperties": false } },
+        "ingredients": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["kind", "creation", "read"],
+            "properties": {
+              "kind": { "const": "collection" },
+              "creation": { "$ref": "#/$defs/ulid" },
+              "read": { "description": "v<n>, a version, or the time of the journal's latest line when it was read live, empty while it had none", "type": "string", "pattern": "^(v[1-9][0-9]*|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z|)$" },
+              "certificate": { "description": "Base64url SHA-256 of the ingredient certificate's signature's ASCII", "type": "string", "pattern": "^[A-Za-z0-9_-]{43}$" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "由你的组织信任的机构认证，但没有证明它未被吊销",
   "certificates.trust.untrusted": "未由你的组织信任的机构认证",
   "certificates.trust.revoked": "它的证书在此次盖章之前已被吊销",
-  "certificates.qualified": "符合欧盟法律的合格印章"
+  "certificates.qualified": "符合欧盟法律的合格印章",
+  "certificates.from": "来源",
+  "certificates.fromIntact": "某合集的版本 {n}，已封印且此后未变",
+  "certificates.fromBroken": "某合集的版本 {n}，已被更改或未用所述密钥封印",
+  "certificates.fromMissing": "某合集的版本 {n}，未提供其证书",
+  "certificates.fromLive": "某合集当时的行，没有版本保存它们"
 }

@@ -30,5 +30,11 @@
   "compose.update": "Sabunta yanzu",
   "compose.ran": "An sabunta {date}",
   "compose.failed": "Sabuntawa ta ƙarshe ta kasa; wadda ta gabata tana nan a nuna.",
-  "compose.unasked": "Ba a nuna ba tukuna: babu ƙwaƙwalwa da ta iya yin abin da ya roƙa."
+  "compose.unasked": "Ba a nuna ba tukuna: babu ƙwaƙwalwa da ta iya yin abin da ya roƙa.",
+  "compose.certified": "An tabbatar, har zuwa siga ta {n} ta kundin",
+  "compose.certifiedLive": "An tabbatar, daga layukan kundin kamar yadda suke a lokacin",
+  "compose.uncertified": "Layukan kamar yadda suke yanzu: babu siga, don haka babu takardar shaida",
+  "compose.unproven": "Takardun shaidarsa ba su tsaya ba: an canza su, ko ba a hatimce su da makullin da suka ambata ba",
+  "compose.saveProof": "Ajiye asalinsa",
+  "compose.proofFile": "Asalin {name}"
 }

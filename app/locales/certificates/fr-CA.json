@@ -54,5 +54,10 @@
   "certificates.trust.unchecked": "Certifié par une autorité de confiance de votre organisation, sans preuve qu’il n’a pas été révoqué",
   "certificates.trust.untrusted": "Non certifié par une autorité de confiance de votre organisation",
   "certificates.trust.revoked": "Son certificat a été révoqué avant ce scellement",
-  "certificates.qualified": "Un cachet qualifié selon le droit de l’UE"
+  "certificates.qualified": "Un cachet qualifié selon le droit de l’UE",
+  "certificates.from": "Fait à partir de",
+  "certificates.fromIntact": "Version {n} d’une collection, scellée et inchangée depuis",
+  "certificates.fromBroken": "Version {n} d’une collection, modifiée ou pas scellée par la clé qu’elle nomme",
+  "certificates.fromMissing": "Version {n} d’une collection, dont le certificat n’a pas été fourni",
+  "certificates.fromLive": "Les lignes d’une collection à ce moment-là, qu’aucune version ne garde"
 }

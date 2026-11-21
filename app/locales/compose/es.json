@@ -30,5 +30,11 @@
   "compose.update": "Actualizar ahora",
   "compose.ran": "Actualizado el {date}",
   "compose.failed": "La última actualización falló; se sigue mostrando la anterior.",
-  "compose.unasked": "Aún no se muestra: ningún cerebro pudo hacer lo que pide."
+  "compose.unasked": "Aún no se muestra: ningún cerebro pudo hacer lo que pide.",
+  "compose.certified": "Certificado, hasta la versión {n} de la colección",
+  "compose.certifiedLive": "Certificado, a partir de las filas de la colección tal como estaban entonces",
+  "compose.uncertified": "Las filas tal como están ahora: sin versión, así que sin certificado",
+  "compose.unproven": "Sus certificados no se sostienen: modificados, o no sellados por la clave que nombran",
+  "compose.saveProof": "Guardar su procedencia",
+  "compose.proofFile": "Procedencia de {name}"
 }

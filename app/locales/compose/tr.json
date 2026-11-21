@@ -30,5 +30,11 @@
   "compose.update": "Şimdi güncelle",
   "compose.ran": "{date} tarihinde güncellendi",
   "compose.failed": "Son güncelleme başarısız oldu; bir öncekisi gösterilmeye devam ediyor.",
-  "compose.unasked": "Henüz gösterilmedi: istediğini yapabilen bir beyin olmadı."
+  "compose.unasked": "Henüz gösterilmedi: istediğini yapabilen bir beyin olmadı.",
+  "compose.certified": "Sertifikalı, koleksiyonun {n}. sürümüne kadar",
+  "compose.certifiedLive": "Sertifikalı, koleksiyonun o anki satırlarından",
+  "compose.uncertified": "Satırlar şu anki hâliyle: sürüm yok, bu yüzden sertifika yok",
+  "compose.unproven": "Sertifikaları geçerli değil: değiştirilmiş ya da belirttikleri anahtarla mühürlenmemiş",
+  "compose.saveProof": "Kaynağını kaydet",
+  "compose.proofFile": "{name} kaynağı"
 }

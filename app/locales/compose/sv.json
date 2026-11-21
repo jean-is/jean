@@ -30,5 +30,11 @@
   "compose.update": "Uppdatera nu",
   "compose.ran": "Uppdaterad {date}",
   "compose.failed": "Den senaste uppdateringen misslyckades; den förra visas fortfarande.",
-  "compose.unasked": "Visas inte än: ingen hjärna kunde göra det som efterfrågas."
+  "compose.unasked": "Visas inte än: ingen hjärna kunde göra det som efterfrågas.",
+  "compose.certified": "Certifierad, tillbaka till version {n} av samlingen",
+  "compose.certifiedLive": "Certifierad, utifrån samlingens rader som de var då",
+  "compose.uncertified": "Raderna som de är nu: ingen version, alltså inget certifikat",
+  "compose.unproven": "Dess certifikat håller inte: ändrade, eller inte förseglade med nyckeln de nämner",
+  "compose.saveProof": "Spara ursprunget",
+  "compose.proofFile": "Ursprung för {name}"
 }
