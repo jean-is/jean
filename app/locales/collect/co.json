@@ -10,5 +10,7 @@
   "collect.sent": "Vi ringraziemu. A vostra risposta hè stata mandata.",
   "collect.unsent": "Ùn s’hè micca pussutu mandà. Pruvate torna.",
   "collect.sealed": "Una risposta hè sigillata in u navigatore di u visitatore, cusì l’ospitatore ùn la pò leghje.",
-  "collect.online": "Mette u furmulariu in linea"
+  "collect.online": "Mette u furmulariu in linea",
+  "collect.proposals": "Accettà pruposte da un situ",
+  "collect.port": "Un furmulariu di situ pò empie {columns}."
 }

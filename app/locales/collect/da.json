@@ -10,5 +10,7 @@
   "collect.sent": "Tak. Dit svar er sendt.",
   "collect.unsent": "Det kunne ikke sendes. Prøv igen.",
   "collect.sealed": "Et svar forsegles i den besøgendes browser, så værten ikke kan læse det.",
-  "collect.online": "Læg formularen online"
+  "collect.online": "Læg formularen online",
+  "collect.proposals": "Tag imod forslag fra et websted",
+  "collect.port": "En formular på et websted kan udfylde {columns}."
 }

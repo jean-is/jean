@@ -36,9 +36,5 @@
   "compose.uncertified": "Àwọn ìlà bí wọ́n ṣe wà báyìí: kò sí ẹ̀dà, nítorí náà kò sí ìwé ẹ̀rí",
   "compose.unproven": "Àwọn ìwé ẹ̀rí rẹ̀ kò dúró: a ti yí wọn padà, tàbí a kò fi kọ́kọ́rọ́ tí wọ́n dárúkọ dí wọn",
   "compose.saveProof": "Fi orísun rẹ̀ pamọ́",
-  "compose.proofFile": "Orísun {name}",
-  "compose.ports": "Àwọn àbá",
-  "compose.open": "Gba àbá láti ojú-òpó kan",
-  "compose.close": "Dẹ́kun gbígba àbá",
-  "compose.port": "Fọ́ọ̀mù ojú-òpó kan lè kún {columns}."
+  "compose.proofFile": "Orísun {name}"
 }

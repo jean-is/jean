@@ -10,5 +10,7 @@
   "collect.sent": "Ẹ ṣé. A ti fi èsì yín ránṣẹ́.",
   "collect.unsent": "Kò ṣeé fi ránṣẹ́. Ẹ tún gbìyànjú.",
   "collect.sealed": "A máa ń di èsì nínú aṣàwákiri àlejò, nítorí náà olùgbàlejò kò lè kà á.",
-  "collect.online": "Gbé fọ́ọ̀mù náà sórí ayélujára"
+  "collect.online": "Gbé fọ́ọ̀mù náà sórí ayélujára",
+  "collect.proposals": "Gba àbá láti ojú-òpó kan",
+  "collect.port": "Fọ́ọ̀mù ojú-òpó kan lè kún {columns}."
 }

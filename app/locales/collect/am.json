@@ -10,5 +10,7 @@
   "collect.sent": "እናመሰግናለን። ምላሽዎ ተልኳል።",
   "collect.unsent": "መላክ አልተቻለም። እንደገና ይሞክሩ።",
   "collect.sealed": "ምላሽ በጎብኚው አሳሽ ውስጥ ይታሸጋል፣ ስለዚህ አስተናጋጁ ሊያነበው አይችልም።",
-  "collect.online": "ቅጹን በኢንተርኔት ላይ ያውጡ"
+  "collect.online": "ቅጹን በኢንተርኔት ላይ ያውጡ",
+  "collect.proposals": "ከድረ ገጽ ሀሳቦችን ተቀበል",
+  "collect.port": "የድረ ገጽ ቅጽ {columns} መሙላት ይችላል።"
 }

@@ -10,5 +10,7 @@
   "collect.sent": "Asante. Jibu lako limetumwa.",
   "collect.unsent": "Halikuweza kutumwa. Jaribu tena.",
   "collect.sealed": "Jibu hufungwa ndani ya kivinjari cha mgeni, kwa hiyo mwenyeji hawezi kulisoma.",
-  "collect.online": "Weka fomu mtandaoni"
+  "collect.online": "Weka fomu mtandaoni",
+  "collect.proposals": "Pokea mapendekezo kutoka kwa tovuti",
+  "collect.port": "Fomu ya tovuti inaweza kujaza {columns}."
 }

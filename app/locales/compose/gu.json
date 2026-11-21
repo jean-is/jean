@@ -36,9 +36,5 @@
   "compose.uncertified": "પંક્તિઓ હમણાં જેવી છે તેવી: કોઈ વર્ઝન નથી, તેથી કોઈ પ્રમાણપત્ર નથી",
   "compose.unproven": "તેના પ્રમાણપત્રો ટકતા નથી: બદલાયેલા છે, અથવા જે કી જણાવે છે તેનાથી સીલ થયા નથી",
   "compose.saveProof": "તેનું મૂળ સાચવો",
-  "compose.proofFile": "{name} નું મૂળ",
-  "compose.ports": "સૂચનો",
-  "compose.open": "કોઈ સાઇટ પરથી સૂચનો સ્વીકારો",
-  "compose.close": "સૂચનો સ્વીકારવાનું બંધ કરો",
-  "compose.port": "સાઇટનું ફૉર્મ {columns} ભરી શકે છે."
+  "compose.proofFile": "{name} નું મૂળ"
 }

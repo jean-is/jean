@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 // A collection's view, beside the conversation (D491) as in a document that holds it: the one on show (./tables.js) as a table, each cell changed in place
 // as its column's kind asks, or as a board, a gallery, a calendar, a timeline or, where it is narrow, a list (D757), each drawn by a folder of its own. Jean's changes
-// the user hasn't accepted are marked, under the bar over them (ui/review.js, D505). Its heads stay on top as its rows scroll, each its kind's glyph and
+// the user hasn't accepted are marked, under the bar (ui/review.js, D505). Its heads stay on top as its rows scroll, each its kind's glyph and
 // its name, opening the column's menu: renamed, made another kind or a relation to a collection, the rows sorted by it, Jean asked to fill it, a column
 // added beside it, hidden or taken away; the last head adds one. A row is moved by the handle at its start, dragged or with the arrows; a click or a right
 // click on it opens its menu: opened as a sheet, a row put under it, duplicated, asked about or deleted. A cell is selected or changed, ⌘Z undoing the
-// user's last step and ⇧⌘Z doing it again; a Formula's opens a dialog to write its column's formula in; cells copied from a spreadsheet are pasted on one (D759). Its bar: the view on show and how many rows it
-// keeps, Show as, Find, which keeps the rows with its words in any cell, Arrange, which groups, colours (D760), filters, shows columns and sorts, and New row; the table's
+// user's last step and ⇧⌘Z doing it again; a Formula's opens a dialog to write its column's formula in; cells copied from a spreadsheet are pasted on one (D759). Its bar: a pill of how it
+// shows and the view on show, Find, Arrange, which groups, colours (D760), filters, shows columns and sorts, and New row; the table's
 // foot works out a sum or a share for each column. What is arranged is kept as a view under a name; where others work on the collection too, it is this
 // person's alone until they keep it (D753). lit-html, in Jean's own document, redrawn as the collection changes here or by the brain.
 import { html, svg, nothing, render } from 'lit-html'
@@ -114,7 +114,10 @@ export function view(holds, source = shown, beside = false) {
     fields[reached]?.focus()
   }
   holds.push(effect(() => {
+    // Where the bar moved, the keys back in their field.
+    const had = box.contains(document.activeElement) && document.activeElement?.id
     render(draw(source.value, state, go), box)
+    if (had && !box.contains(document.activeElement)) document.getElementById(had)?.focus()
     // What a changed cell's tip says, on its field, where the keyboard and a screen reader are, and a sum of money's currency.
     for (const field of /** @type {NodeListOf<HTMLElement>} */ (box.querySelectorAll('tbody :is([aria-description], [data-money], .is-jean > :is(input, select))'))) {
       const words = [field.closest('.is-jean') && t('tables.changed', { count: 1, name: assistantName() }), field.dataset.money].filter(Boolean).join(' · ')
@@ -123,17 +126,14 @@ export function view(holds, source = shown, beside = false) {
     requestAnimationFrame(edge)
   }))
   /**
-   * More lies past the table's end edge: a fade says so there, told on scroll, on resize and after each draw, never over Accept and Reject;
-   * and the room the first column and the heads take, which a cell given the keys is scrolled out from under.
+   * More lies past the table's end edge: a fade says so there, told on scroll, on resize and after each draw, never over Accept and Reject.
    */
   function edge() {
     const scroll = /** @type {HTMLElement | null} */ (box.querySelector('.table-scroll')), fade = /** @type {HTMLElement | null} */ (box.querySelector('.table-fade'))
     if (!scroll || !fade) return
-    const decide = scroll.querySelector('tbody .table-decide')?.getBoundingClientRect().width ?? 0, first = /** @type {HTMLElement | null} */ (scroll.querySelector('thead .table-grip + *'))
-    // Written only when they change, on the fade alone, and the scroller's own padding never inherited: each write would restyle the whole table.
+    const decide = scroll.querySelector('tbody .table-decide')?.getBoundingClientRect().width ?? 0
+    // Written only when they change, on the fade alone: each write would restyle the whole table.
     for (const [name, px] of Object.entries({ '--top': scroll.offsetTop, '--height': scroll.clientHeight, '--end': decide + scroll.offsetWidth - scroll.clientWidth })) if (fade.style.getPropertyValue(name) !== `${px}px`) fade.style.setProperty(name, `${px}px`)
-    const pad = first && getComputedStyle(first).position === 'sticky' ? `${first.offsetWidth + (/** @type {HTMLElement | null} */ (scroll.querySelector('thead .table-grip'))?.offsetWidth ?? 0)}px` : ''
-    if (scroll.style.scrollPaddingInlineStart !== pad) scroll.style.scrollPaddingInlineStart = pad
     fade.classList.toggle('is-more', Math.abs(scroll.scrollLeft) + scroll.clientWidth < scroll.scrollWidth - 4)
   }
   // The table's own scrolls alone: a field's, as a word is typed in Find, would lay the whole table out for nothing.
@@ -209,9 +209,8 @@ const totalOf = (rows, property, how, digits) => ((value) => (value === null ? '
   : how === 'percent' ? format('NumberFormat', intlLocales(), { style: 'percent' }).format(value) : amount(value, property, intlLocales(), how === 'average' ? undefined : digits)))(total(rows, property, how))
 
 /**
- * The view: its bar, Show as (on the board where it has lanes), Find, and Arrange, one panel to group, filter, show columns and sort; a line of
- * chips under it while something is arranged, each opening Arrange on it, its × taking it away; then the rows. Beside the task, the name is the
- * pane's head's and Show as and Find's words are in the address; in a document, the name heads the bar; a whiteboard shown as a table has Find and Arrange alone.
+ * The view: its bar, with what shows over the rows (caps/over); a chip under it for each thing arranged, opening Arrange on it, its × taking it
+ * away; then the rows. Beside the task, the name is the pane's head's, a table's bar scrolls with its rows, and how it shows and Find's words are in the address; in a document, the name heads the bar; a whiteboard shown as a table has Find and Arrange alone.
  * @param {Loaded | null} one @param {State} state @param {(step: 1 | -1) => void} go
  */
 function draw(one, state, go) {
@@ -282,7 +281,6 @@ function draw(one, state, go) {
   // The cells and rows Jean changed, as "row column" and by row.
   const fresh = new Set(made ? [] : marked.flatMap((line) => [line.row, ...Object.keys(line.set ?? {}).map((id) => `${line.row} ${id}`)]))
   const cells = marked.reduce((count, line) => count + Math.max(1, Object.keys(line.set ?? {}).length), 0)
-  // Find shows from five rows, as on the Creations page; Escape empties it, leaving the pane open.
   // The names its Person columns offer, and the row open as a sheet, while it is there.
   const people = columns.some(({ type }) => type === 'person') ? namesIn(one, columns) : [], opened = state.open.value && one.rows.find((row) => row.id === state.open.value)
   const count = made ? t('tables.made', { count: one.rows.length }) : t('tables.changed', { count: cells, name: assistantName() })
@@ -327,17 +325,11 @@ function draw(one, state, go) {
     open: t('tables.open'), duplicate: t('tables.duplicate'), last: t('tables.lastChanges'), me: t('tables.me'), ask: t('tables.ask', { name: jean }), of: (/** @type {number} */ shown, /** @type {number} */ count) => t('tables.of', { shown: counted(shown), count: counted(count) }),
     about: (/** @type {Row} */ row) => t('tables.asked.row', { table: one.table.name, row: textOf(row, title) || t('tables.unnamed') }) }
   const given = { id, one, columns, rows, hidden, fresh, state, parts, covers, tint, words: said, by: wanted === 'board' ? lanes : way === 'gallery' || way === 'calendar' ? undefined : by }
-  return html`<p class="visually-hidden" role="status">${(state.reviewed ||= cells > 0) ? count : ''}</p>${marked.length ? reviewBar({
-      label: t('tables.review'), count, go: cells > 1 && !made ? go : null, previous: t('tables.previous'), next: t('tables.next'),
-      accept: decided(accept, one), reject: decided(reject, one), acceptAll: t('tables.acceptAll'), rejectAll: t('tables.rejectAll'),
-    }) : nothing}
-    <div class="table-bar">${state.beside || whiteboard ? nothing : html`<input class="table-name" dir="auto" title=${t('tables.tableName')} .value=${live(one.table.name)} @change=${(/** @type {Event} */ e) => shape(one, { name: typed(e) })}>`}
-      ${ways.length > 1 ? html`<button type="button" class="table-laid" title=${t('tables.views')} popovertarget=${`${id}-shows`}>${LAID[shows]}<span>${t(`tables.${shows}`)}</span>${icons.chevron}</button>
-        <div id=${`${id}-shows`} class="menu table-menu" popover @focusout=${leaving}>${listed(ways.map((name) => html`<button type="button" aria-current=${String(shows === name)} popovertarget=${`${id}-shows`} popovertargetaction="hide"
-          @click=${() => show(name)}>${LAID[name]}${t(`tables.${name}`)}${shows === name ? icons.check : nothing}</button>`))}</div>` : nothing}
+  const inside = state.beside && !lacks && !way, top = html`<div class="table-bar">${state.beside || whiteboard ? nothing : html`<input class="table-name" dir="auto" title=${t('tables.tableName')} .value=${live(one.table.name)} @change=${(/** @type {Event} */ e) => shape(one, { name: typed(e) })}>`}
       ${whiteboard ? nothing : state.titling.value && own ? html`<input class="table-titled" dir="auto" title=${t('tables.viewName')} .value=${live(settings.name ?? '')} @change=${(/** @type {Event} */ e) => shape(one, { named: { id: at, name: typed(e) } })}
-        @blur=${() => { state.titling.value = false }} @keydown=${titled}>` : html`<button type="button" class="table-kept" popovertarget=${`${id}-views`}><span dir="auto">${picked ? settings.name : t('tables.allRows')}</span>${rows.length < one.rows.length ? html`<span class="muted">${t('tables.of', { shown: counted(rows.length), count: counted(one.rows.length) })}</span>` : html`<span class="muted is-all">${counted(rows.length)}</span>`}${icons.chevron}</button>
-        <div id=${`${id}-views`} class="menu table-menu" popover @focusout=${leaving}>${listed([['', 'table', t('tables.allRows')], ...views.map((view) => [view.id, view.type, view.name]), ...proposed.map((key) => [key, yours[key].type, yours[key].name, assistantName()])].map(([to, type, name, from]) => html`<button type="button" aria-current=${String(to === (picked ? at : ''))}
+        @blur=${() => { state.titling.value = false }} @keydown=${titled}>` : html`<button type="button" class="table-kept" title=${t(`tables.${shows}`)} popovertarget=${`${id}-views`}>${LAID[shows]}<span dir="auto">${picked ? settings.name : t('tables.allRows')}</span>${rows.length < one.rows.length ? html`<span class="muted">${t('tables.of', { shown: counted(rows.length), count: counted(one.rows.length) })}</span>` : html`<span class="muted is-all">${counted(rows.length)}</span>`}${icons.chevron}</button>
+        <div id=${`${id}-views`} class="menu table-menu" popover @focusout=${leaving}><h3>${t('tables.views')}</h3>${listed(ways.map((name) => html`<button type="button" aria-current=${String(shows === name)} popovertarget=${`${id}-views`} popovertargetaction="hide"
+          @click=${() => show(name)}>${LAID[name]}${t(`tables.${name}`)}${shows === name ? icons.check : nothing}</button>`), [['', 'table', t('tables.allRows')], ...views.map((view) => [view.id, view.type, view.name]), ...proposed.map((key) => [key, yours[key].type, yours[key].name, assistantName()])].map(([to, type, name, from]) => html`<button type="button" aria-current=${String(to === (picked ? at : ''))}
           popovertarget=${`${id}-views`} popovertargetaction="hide" @click=${() => { as.value = /** @type {string} */ (to) }}>${LAID[/** @type {string} */ (type)] ?? LAID.table}<span dir="auto">${name}</span>${from ? html`<span class="menu-value" dir="auto">${from}</span>` : nothing}${to === (picked ? at : '') ? icons.check : nothing}</button>`),
           [option(`${id}-views`, icons.pin, t('tables.keepView'), () => keep(true)), ...(own ? [option(`${id}-views`, icons.compose, t('action.rename'), retitle), option(`${id}-views`, icons.trash, t('action.delete'), () => { as.value = ''; shape(one, { drop: at }) }, false, 'danger')] : [])])}</div>`}
       <div class="table-tools">${one.rows.length > 4 || search.value ? html`<label class="creations-find" for=${`${id}-find`}>${icons.search}<span class="visually-hidden">${t('tables.search')}</span><input id=${`${id}-find`} type="search" dir="auto" placeholder=${t('tables.search')} title=${t('tables.search')}
@@ -352,17 +344,21 @@ function draw(one, state, go) {
           <h3 id=${`${id}-shown`}>${t('tables.shown')}</h3><div class="table-lines" role="group" aria-labelledby=${`${id}-shown`}>${listed(columns.map((property) => html`<label class="table-line" for=${`${id}-shown-${property.id}`}><input id=${`${id}-shown-${property.id}`} type="checkbox" .checked=${live(!hidden.includes(property.id))} ?disabled=${property === titleOf(one.table)}
             @change=${(/** @type {Event} */ e) => view(({ hidden = [] }) => ({ hidden: /** @type {HTMLInputElement} */ (e.target).checked ? hidden.filter((id) => id !== property.id) : [...hidden, property.id] }))}>${GLYPHS[property.type]}<span dir="auto">${property.name}</span></label>`))}</div>
           <h3>${t('tables.sort')}</h3>${sorting}${whiteboard ? nothing : html`<hr>${option(`${id}-arrange`, icons.pin, t('tables.keepView'), () => keep(true))}`}</div>
-        ${whiteboard ? nothing : html`<button type="button" class="button primary table-new" @click=${() => added(one, { [title.id]: null }, state)}>${icons.plus}<span>${t('tables.addRow')}</span></button>`}
-      </div></div>
+        ${whiteboard ? nothing : html`<button type="button" class="button small primary table-new" @click=${() => added(one, { [title.id]: null }, state)}>${icons.plus}<span>${t('tables.addRow')}</span></button>`}
+      </div>${whiteboard ? nothing : laid('over', { one, open: state.openRow })}</div>
     ${chips.length ? html`<ul class="table-chips" aria-label=${t('tables.arranged')}>${chips}</ul>` : nothing}
     <div class=${mine ? 'table-yours' : 'table-yours is-quiet'}><span role="status">${mine ? (offered ? t('tool.offer', { name: settings.name ?? '' }) : t('tables.onlyYou')) : nothing}</span>${mine ? html`<button type="button" class="table-keep" @click=${() => keep()}>${t('tables.keep')}</button><button type="button" class="table-keep"
-      @click=${() => { if (offered) as.value = ''; alone(one, at) }}>${t(offered ? 'offer.no' : 'tables.reset')}</button>` : nothing}</div>
-    ${whiteboard ? nothing : laid('over', { one, open: state.openRow })}
+      @click=${() => { if (offered) as.value = ''; alone(one, at) }}>${t(offered ? 'offer.no' : 'tables.reset')}</button>` : nothing}</div>`
+  return html`<p class="visually-hidden" role="status">${(state.reviewed ||= cells > 0) ? count : ''}</p>${marked.length ? reviewBar({
+      label: t('tables.review'), count, go: cells > 1 && !made ? go : null, previous: t('tables.previous'), next: t('tables.next'),
+      accept: decided(accept, one), reject: decided(reject, one), acceptAll: t('tables.acceptAll'), rejectAll: t('tables.rejectAll'),
+    }) : nothing}
+    ${inside ? nothing : top}
     ${lacks ? nothing : way ? laid(way, { ...given, ...dated, pick: (/** @type {{ date?: string, until?: string }} */ calendar) => shape(one, { calendar }) })
-      : grid(one, columns, columns.filter((property) => !hidden.includes(property.id)), rows, calculate, fresh, state, said)}${columns.filter(({ type }) => type === 'select' || type === 'person').map((property) => html`<datalist id=${listOf(one, property)}>${(property.type === 'person' ? people : (property.options ?? []).map((option) => option.name)).map((name) => html`<option value=${name}></option>`)}</datalist>`)}
+      : grid(one, columns, columns.filter((property) => !hidden.includes(property.id)), rows, calculate, fresh, state, said, inside ? html`<div class="table-top">${top}</div>` : nothing)}${columns.filter(({ type }) => type === 'select' || type === 'person').map((property) => html`<datalist id=${listOf(one, property)}>${(property.type === 'person' ? people : (property.options ?? []).map((option) => option.name)).map((name) => html`<option value=${name}></option>`)}</datalist>`)}
     ${people.length ? html`<datalist id=${`${id}-me`}>${[t('tables.me'), ...people].map((name) => html`<option value=${name}></option>`)}</datalist>` : nothing}
     ${opened ? laid('row', { ...given, row: opened }) : nothing}<div id=${`${id}-card`} class="menu table-menu" popover @focusout=${leaving}></div>
-    <div class=${none ? 'table-none' : 'table-none is-quiet'}><p role="status" dir="auto">${none || nothing}</p>${lacks ? html`<button type="button" class="button" @click=${() => shape(one, { add: { name: t(`tables.kind.${lacks}`), type: lacks, options: lacks === 'status' ? steps() : undefined } }).then(() => /** @type {HTMLElement | null} */ (state.box.querySelector('.table-laid'))?.focus())}>${icons.plus}${t('tables.addColumn')}</button>`
+    <div class=${none ? 'table-none' : 'table-none is-quiet'}><p role="status" dir="auto">${none || nothing}</p>${lacks ? html`<button type="button" class="button" @click=${() => shape(one, { add: { name: t(`tables.kind.${lacks}`), type: lacks, options: lacks === 'status' ? steps() : undefined } }).then(() => /** @type {HTMLElement | null} */ (state.box.querySelector('.table-kept'))?.focus())}>${icons.plus}${t('tables.addColumn')}</button>`
       : words && one.rows.length && !rows.length ? html`<button type="button" class="button"
       @click=${() => { search.value = ''; /** @type {HTMLElement | null} */ (state.box.querySelector('.creations-find input'))?.focus() }}>${t('tables.clear')}</button>
       <button type="button" class="button" @click=${() => ask(one, t('tables.asked.show', { table: one.table.name, words: search.value.trim() }))}>${said.ask}</button>` : nothing}</div>`
@@ -379,9 +375,9 @@ const decide = (one, row) => html`<button type="button" class="icon-button" aria
 /**
  * The table: the columns shown, the rows the view keeps, each column's foot working out what `calculate` asks.
  * @param {Loaded} one @param {Property[]} columns @param {Property[]} shown @param {Row[]} rows @param {NonNullable<View['calculate']>} calculate @param {Set<string>} fresh @param {State} state
- * @param {{ ask: string, about: (row: Row) => string }} words
+ * @param {{ ask: string, about: (row: Row) => string }} words @param {unknown} top
  */
-function grid(one, columns, shown, rows, calculate, fresh, state, words) {
+function grid(one, columns, shown, rows, calculate, fresh, state, words, top) {
   const { box, naming, kinds, relating, list, by } = state, title = /** @type {Property} */ (titleOf(one.table))
   // As many decimals in each column of plain numbers as its longest has (D752).
   state.digits = new Map(shown.flatMap((property) => (property.type === 'number' && !property.format ? [[property.id, digitsOf(one.rows, property)]] : [])))
@@ -647,7 +643,7 @@ function grid(one, columns, shown, rows, calculate, fresh, state, words) {
         <th scope="rowgroup"><button type="button" class="table-fold" aria-expanded=${String(!shut)} @click=${fold}>${icons.chevron}<span dir="auto">${groupName(group.value, by)}</span>
           <span class="muted">${format('NumberFormat', intlLocales()).format(list.length)}</span></button></th>${shown.slice(1).map((property) => ((how) => html`<td class="table-sub">${how ? html`<span class="visually-hidden">${t('tables.subtotal')}</span>${totalOf(list, property, how, state.digits?.get(property.id))}` : nothing}</td>`)(calcOf(property, calculate)))}<td></td></tr>` : nothing}${repeat(shut ? [] : list, (row) => row.id, line)}</tbody>`
   }
-  return html`<div class="table-scroll" @paste=${pasted}><table class="table-grid" aria-label=${one.table.name}>
+  return html`<div class="table-scroll" @paste=${pasted}>${top}<table class="table-grid" aria-label=${one.table.name}>
       <thead><tr><td class="table-grip"></td>${shown.map(heading)}<th scope="col"><button type="button" class="table-add-column" aria-label=${t('tables.addColumn')} popovertarget=${`${state.id}-add`} @focus=${list} @pointerenter=${list}>+</button>
         <div id=${`${state.id}-add`} class="menu table-menu" popover @focusout=${leaving}>${listed(KINDS.map(adds),
           targets.map(({ folder, name }) => html`<button type="button" popovertarget=${`${state.id}-add`} popovertargetaction="hide" @click=${() => added('relation', undefined, folder)}>${GLYPHS.relation}${t('tables.kind.relation')} <span class="menu-value" dir="auto">${name}</span></button>`),

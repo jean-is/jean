@@ -22,16 +22,23 @@ const changes = (page) => page.evaluate(async () => {
   return one ? (await app.fs.read(`${one.dir}/${one.folder}/changes.jsonl`) ?? '').trim().split('\n').map((line) => JSON.parse(line)) : []
 })
 
-/** Shown another way, from the bar's Show as: its button names the layout on show, its menu the others on offer. @param {import('@playwright/test').Page} page @param {string} name */
-const showAs = async (page, name) => {
-  await page.locator('.table-laid').click()
-  await page.locator('.table-menu:popover-open').getByRole('button', { name, exact: true }).click()
-  await expect(page.locator('.table-laid')).toHaveText(name)
+/** The layout on show, as Show as in the bar's pill ticks it, its menu opened then closed. @param {import('@playwright/test').Page} page */
+const onShow = async (page) => {
+  await page.locator('.table-kept').click()
+  const name = await page.locator('.table-menu:popover-open ul:first-of-type [aria-current="true"]').textContent()
+  await page.keyboard.press('Escape')
+  return name?.trim()
 }
-/** The layouts Show as offers, by their names, its menu opened then closed. @param {import('@playwright/test').Page} page */
+/** Shown another way, from Show as in the bar's pill, whose glyph leads the view's name, and whose menu offers the others. @param {import('@playwright/test').Page} page @param {string} name */
+const showAs = async (page, name) => {
+  await page.locator('.table-kept').click()
+  await page.locator('.table-menu:popover-open').getByRole('button', { name, exact: true }).click()
+  await expect.poll(() => onShow(page)).toBe(name)
+}
+/** The layouts Show as offers, by their names, the pill's menu opened then closed: its first group, the views after. @param {import('@playwright/test').Page} page */
 const layouts = async (page) => {
-  await page.locator('.table-laid').click()
-  const names = await page.locator('.table-menu:popover-open button').allTextContents()
+  await page.locator('.table-kept').click()
+  const names = await page.locator('.table-menu:popover-open ul:first-of-type button').allTextContents()
   await page.keyboard.press('Escape')
   return names.map((name) => name.trim())
 }
@@ -284,7 +291,7 @@ for (const [lang, table, board, review, list] of [['ar', 'جدول', 'لوحة',
     })
     await expect(page.locator('html')).toHaveAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr')
     expect(await layouts(page)).toEqual(LAYOUTS[lang])
-    await expect(page.locator('.table-laid')).toHaveText(table)
+    await expect.poll(() => onShow(page)).toBe(table)
     await expect(page.locator('.table-total').first()).toHaveText(lang === 'ar' ? 'حساب' : '計算')
     await expect(page.locator('.table-view .review')).toContainText(review)
     await expect(page.locator('.table-view > [role="status"]')).toHaveText(review)
@@ -295,7 +302,7 @@ for (const [lang, table, board, review, list] of [['ar', 'جدول', 'لوحة',
     if (lang === 'ar') expect(Math.abs((view?.x ?? 0) + (view?.width ?? 0) - (grid?.x ?? 0) - (grid?.width ?? 0))).toBeLessThan(4)
     else expect(Math.abs((view?.x ?? 0) - (grid?.x ?? 0))).toBeLessThan(4)
     // Show as at the bar's start and its tools at its end, on the left in Arabic; the name in the pane's head alone; a line between two cells on their start side.
-    const [shows, tools] = await Promise.all(['.table-laid', '.table-tools'].map((selector) => page.locator(selector).boundingBox()))
+    const [shows, tools] = await Promise.all(['.table-kept', '.table-tools'].map((selector) => page.locator(selector).boundingBox()))
     expect(lang === 'ar' ? (tools?.x ?? 0) < (shows?.x ?? 0) : (tools?.x ?? 0) > (shows?.x ?? 0)).toBe(true)
     await expect(page.locator('app-preview .pane-name')).toHaveValue('وظائف')
     await expect(page.locator('.table-view .table-name')).toHaveCount(0)
@@ -371,7 +378,7 @@ test('at 320 px a collection loses nothing: a list of its rows’ cards in its t
   const cards = page.locator('.table-list .table-card'), heads = page.locator('.table-listed .table-fold')
   await expect(cards.locator('h4')).toHaveText(['Venue hire', 'Raffle prizes', 'Cakes and tea', 'Posters'])
   await expect(page.locator('.table-grid')).toHaveCount(0)
-  await expect(page.locator('.table-laid')).toHaveText('List')
+  await expect.poll(() => onShow(page)).toBe('List')
   expect(await layouts(page)).toEqual(LAYOUTS.en)
   await expect(page.locator('.table-kept')).toHaveText('All rows4')
   await expect(heads).toHaveText([/To pay\s*2\s*Subtotal€600\.00/, /Paid\s*2\s*Subtotal€97\.50/])
@@ -392,17 +399,18 @@ test('at 320 px a collection loses nothing: a list of its rows’ cards in its t
   await expect(page.locator('.table-menu:popover-open button')).toHaveText(['Open', 'To pay', 'Paid', 'Ask Jean', 'Delete'])
   await page.locator('.table-menu:popover-open').getByRole('button', { name: 'Paid' }).click()
   await expect(heads).toHaveText([/To pay\s*1\s*Subtotal€120\.00/, /Paid\s*3\s*Subtotal€577\.50/])
-  const [bar, shows, tools] = await Promise.all(['.table-bar', '.table-laid', '.table-tools'].map((one) => page.locator(one).boundingBox()))
-  expect(bar?.height ?? 99).toBeLessThan(64)
+  const [bar, shows, tools, over] = await Promise.all(['.table-bar', '.table-kept', '.table-tools', '.table-over'].map((one) => page.locator(one).boundingBox()))
+  // One line of tools, whatever shows over the rows under it (caps/over).
+  expect((bar?.height ?? 99) - (over?.height ?? 0)).toBeLessThan(64)
   expect(Math.abs((shows?.y ?? 0) - (tools?.y ?? 0))).toBeLessThan(8)
   for (const box of [bar, shows, tools, await cards.first().boundingBox()]) expect((box?.x ?? -1) >= 0 && (box?.x ?? 0) + (box?.width ?? 0) <= 320).toBe(true)
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320)
   const chip = await page.locator('.table-chips').boundingBox()
   expect((chip?.x ?? 0) + (chip?.width ?? 0)).toBeLessThanOrEqual(320)
-  // The table, picked from Show as, which then names it: every row, the first column staying as the rest scroll, no wider than its share.
+  // The table, picked from Show as, which then names it: every row, the first column passing as the rest do, no wider than its share.
   await showAs(page, 'Table')
   await expect(page.locator('.table-grid tbody tr[data-row]')).toHaveCount(4)
-  await expect(page.locator('.table-grid tbody tr[data-row] > :nth-child(2)').first()).toHaveCSS('position', 'sticky')
+  await expect(page.locator('.table-grid tbody tr[data-row] > :nth-child(2)').first()).not.toHaveCSS('position', 'sticky')
   expect((await page.locator('.table-grid tbody tr[data-row] > :nth-child(2)').first().boundingBox())?.width ?? 999).toBeLessThanOrEqual(153)
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320)
   // Each reading stays inside its cell.
@@ -417,8 +425,8 @@ test('a list is a layout at every width (D757): picked where the view is wide, i
   await budget(page)
   const grid = page.locator('.table-grid'), cards = page.locator('.table-list .table-card')
   await expect(grid).toHaveCount(1)
-  // The bar: the layout, then the view on show, and New row by its name.
-  const [laid, kept] = await Promise.all([page.locator('.table-laid').boundingBox(), page.locator('.table-kept').boundingBox()])
+  // The bar: one pill, the layout's glyph, then the view on show, and New row by its name.
+  const [laid, kept] = await Promise.all([page.locator('.table-kept > .icon').first().boundingBox(), page.locator('.table-kept > span').first().boundingBox()])
   expect((laid?.x ?? 0) < (kept?.x ?? 0)).toBe(true)
   await expect(page.locator('.table-new')).toHaveText('New row')
   await showAs(page, 'List')
@@ -427,7 +435,7 @@ test('a list is a layout at every width (D757): picked where the view is wide, i
   await expect(page).toHaveURL(/show=[^&]*(:|%3A)list/)
   // Narrow, it is still the list; the table is a press away there, and the list again, which is then the table's place: wide again, the table.
   await page.setViewportSize({ width: 380, height: 800 })
-  await expect(page.locator('.table-laid')).toHaveText('List')
+  await expect.poll(() => onShow(page)).toBe('List')
   await expect(page.locator('.table-new')).toHaveAccessibleName('New row')
   await showAs(page, 'Table')
   await expect(grid).toHaveCount(1)
@@ -451,7 +459,7 @@ test('under forced colours a collection\'s fields show and its readings go; with
   await expect(first.getByTitle('Cost')).toHaveCSS('opacity', '1')
 })
 
-test('in each of the 12 looks, by day and by night, a collection\'s first column stays on a ground of its own and its readings read at AA (D752)', async ({ page }) => {
+test('in each of the 12 looks, by day and by night, a collection\'s readings read at AA (D752)', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await start(page)
   await budget(page)
@@ -468,11 +476,10 @@ test('in each of the 12 looks, by day and by night, a collection\'s first column
         const rgb = (/** @type {string} */ css) => { const c = /** @type {CanvasRenderingContext2D} */ (document.createElement('canvas').getContext('2d')); c.fillStyle = css; c.fillRect(0, 0, 1, 1); return [...c.getImageData(0, 0, 1, 1).data] }
         const lum = (/** @type {number[]} */ [r, g, b]) => [r, g, b].map((v) => ((v /= 255) <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)).reduce((sum, v, i) => sum + v * [0.2126, 0.7152, 0.0722][i], 0)
         const contrast = (/** @type {number[]} */ a, /** @type {number[]} */ b) => ((x, y) => (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05))(lum(a), lum(b))
-        const cell = /** @type {HTMLElement} */ (document.querySelector('.table-grid tbody tr[data-row] > :nth-child(2)')), reading = /** @type {HTMLElement} */ (document.querySelector('.table-read.is-amount'))
-        const ground = getComputedStyle(cell), head = getComputedStyle(/** @type {HTMLElement} */ (document.querySelector('.table-grid thead th')))
-        return { position: ground.position, alpha: rgb(ground.backgroundColor)[3], same: ground.backgroundColor === head.backgroundColor, ratio: contrast(rgb(getComputedStyle(reading).color), rgb(head.backgroundColor)) }
+        const reading = /** @type {HTMLElement} */ (document.querySelector('.table-read.is-amount')), head = getComputedStyle(/** @type {HTMLElement} */ (document.querySelector('.table-grid thead th')))
+        return { ratio: contrast(rgb(getComputedStyle(reading).color), rgb(head.backgroundColor)) }
       })
-      if (said.position !== 'sticky' || said.alpha !== 255 || !said.same || said.ratio < 4.5) failures.push(`${look} ${scheme}: ${JSON.stringify(said)}`)
+      if (said.ratio < 4.5) failures.push(`${look} ${scheme}: ${JSON.stringify(said)}`)
     }
   }
   expect(failures).toEqual([])
@@ -545,9 +552,10 @@ test('a collection’s heads stay on top, show their kind and open a menu to ren
   // Each head shows its kind's glyph before its name.
   await expect(heads.locator('svg.icon')).toHaveCount(3)
 
-  // Its rows scroll under its heads, which stay at the top of the table.
+  // Its rows scroll under its heads, which stay at the top of the table, the bar, in the same box, scrolled away with them.
   await scroll.evaluate((box) => { box.scrollTop = box.scrollHeight })
   await expect.poll(async () => Math.abs(((await page.locator('.table-grid thead th').first().boundingBox())?.y ?? 0) - ((await scroll.boundingBox())?.y ?? 99))).toBeLessThan(3)
+  await expect(page.locator('.table-scroll > .table-top > .table-bar')).not.toBeInViewport()
   await scroll.evaluate((box) => { box.scrollTop = 0 })
   // Its foot stays at the bottom of the table's box, over the rows.
   const bottom = async (/** @type {import('@playwright/test').Locator} */ one) => ((box) => (box ? box.y + box.height : 0))(await one.boundingBox())
@@ -617,6 +625,9 @@ test('a collection’s heads stay on top, show their kind and open a menu to ren
   // A head dragged over another's first half goes before it, a line showing where; the mouse moves in small steps, as a hand
   // does, nudged first so that the drag starts.
   const ids = async () => (await file())?.columns.map((column) => column.split(' ')[0])
+  // The menu the deletes were made from, where it is still open, closed first: it would cover the heads.
+  if (await page.locator('.table-menu:popover-open').count()) await page.keyboard.press('Escape')
+  await expect(page.locator('.table-menu:popover-open')).toHaveCount(0)
   // Text, in view as the table runs past the pane's side, onto Nights booked.
   const [text, nights] = /** @type {{ x: number, y: number, width: number, height: number }[]} */ (await Promise.all([heads.nth(2).boundingBox(), heads.nth(1).boundingBox()]))
   await page.mouse.move(text.x + 10, text.y + text.height / 2)
@@ -1693,7 +1704,7 @@ for (const [lang, open, colour, green, choices, place, fill, asked, list] of [['
     await menu.getByRole('button', { name: fill.replace('{name}', await jean(page)) }).click()
     await expect(page.locator('#prompt')).toHaveValue(asked)
     await page.setViewportSize({ width: 390, height: 800 })
-    await expect(page.locator('.table-laid')).toHaveText(list)
+    await expect.poll(() => onShow(page)).toBe(list)
     await expect(page.locator('.table-list .table-card h4')).toHaveText(['Villa Aurore', 'Quai 12'])
     // The card's menu is at its end, the left in Arabic.
     const [card, more] = await Promise.all([page.locator('.table-card').first().boundingBox(), page.locator('.table-more').first().boundingBox()])
@@ -1815,7 +1826,7 @@ test('a link, an email and a phone open from their cells’ ends, a link read wi
   const third = page.locator('.table-list .table-card').nth(2), top = (await third.boundingBox())?.y
   await expect(page.locator('.creations-find input')).toBeFocused()
   await expect(page.locator('.table-kept')).toBeHidden()
-  expect((await page.locator('.table-bar').boundingBox())?.height ?? 99).toBeLessThan(64)
+  expect(((await page.locator('.table-bar').boundingBox())?.height ?? 99) - ((await page.locator('.table-over').boundingBox())?.height ?? 0)).toBeLessThan(64)
   // And where the pane covers the conversation, it makes way for the box once Jean is asked.
   await third.getByRole('button', { name: 'More options' }).click()
   expect((await third.boundingBox())?.y).toBe(top)
@@ -2128,7 +2139,7 @@ test('a collection with a date shows as a timeline, fetched as one is first show
 
   // Narrow, the months scroll in their place, nothing goes past the window's edge, and a bar's name stays in sight while its bar is.
   await page.setViewportSize({ width: 380, height: 800 })
-  await expect(page.locator('.table-laid')).toBeVisible()
+  await expect(page.locator('.table-kept')).toBeVisible()
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
   const scroll = page.locator('.line-scroll')
   expect(await scroll.evaluate((box) => box.scrollWidth > box.clientWidth)).toBe(true)
@@ -2237,7 +2248,7 @@ test('what is arranged is kept as a view from Arrange, under a name the person w
   // No view kept: the bar starts with All rows and how many, and its menu keeps what shows as one.
   await expect(button).toHaveText('All rows4')
   await button.click()
-  await expect(menu.getByRole('button')).toHaveText(['All rows', 'Keep as a view'])
+  await expect(menu.locator('ul:not(:first-of-type)').getByRole('button')).toHaveText(['All rows', 'Keep as a view'])
   await page.keyboard.press('Escape')
   await expect(page.locator('.table-yours')).toHaveText('')
   // Arranged: the open ones, the dearest first; alone, the collection keeps it as it always has.
@@ -2262,9 +2273,9 @@ test('what is arranged is kept as a view from Arrange, under a name the person w
   const { views } = await viewsOf(page), id = views[2].id
   expect(views).toEqual([{ id: 'table', type: 'table' }, { id: 'board', type: 'board', group: 'stage' }, { id, type: 'table', name: 'Open visits', filter: { and: [{ property: 'stage', op: 'is', value: 'Open' }] }, sort: [{ property: 'price', direction: 'descending' }] }])
   await expect(page).toHaveURL(new RegExp(`show=01K85Z1T00000000000000000V(:|%3A)${id}`))
-  // The bar's button lists All rows and the views kept, the one on show marked; All rows shows every row, with nothing arranged.
+  // The bar's button lists, after Show as, All rows and the views kept, the one on show marked; All rows shows every row, with nothing arranged.
   await button.click()
-  await expect(menu.getByRole('button')).toHaveText(['All rows', 'Open visits', 'Keep as a view', 'Rename', 'Delete'])
+  await expect(menu.locator('ul:not(:first-of-type)').getByRole('button')).toHaveText(['All rows', 'Open visits', 'Keep as a view', 'Rename', 'Delete'])
   await expect(menu.getByRole('button', { name: 'Open visits' })).toHaveAttribute('aria-current', 'true')
   await menu.getByRole('button', { name: 'All rows' }).click()
   await expect(named).toHaveText('All rows')
@@ -2400,7 +2411,7 @@ for (const [lang, all, keepView, only, keep, reset, me] of /** @type {const} */ 
     const button = page.locator('.table-kept')
     await expect(button).toBeFocused()
     await button.click()
-    await expect(page.locator('.table-menu:popover-open button').first()).toHaveText(all)
+    await expect(page.locator('.table-menu:popover-open ul:nth-of-type(2) button').first()).toHaveText(all)
     await page.keyboard.press('Escape')
     // At the bar's start: the right in Arabic.
     const [name, tools] = await Promise.all([button.boundingBox(), page.locator('.table-tools').boundingBox()])
@@ -2440,7 +2451,7 @@ test('asked to show only some rows, the brain proposes a view: on show at once, 
   expect(made.yours[id]).toEqual({ name: 'Open, dearest first', type: 'table', filter: { and: [{ property: 'stage', op: 'is', value: 'Open' }] }, sort: [{ property: 'price', direction: 'descending' }], hidden: ['who'] })
   // Its menu lists it after All rows, by whom, with nothing to rename or delete; All rows shows every row, the view still there to pick.
   await button.click()
-  await expect(menu.getByRole('button')).toHaveText(['All rows', /^Open, dearest first\s*Jean$/, 'Keep as a view'])
+  await expect(menu.locator('ul:not(:first-of-type)').getByRole('button')).toHaveText(['All rows', /^Open, dearest first\s*Jean$/, 'Keep as a view'])
   await menu.getByRole('button', { name: 'All rows' }).click()
   await expect.poll(places).toHaveLength(4)
   await expect(yours).toHaveText('')
@@ -2474,7 +2485,7 @@ test('asked to show only some rows, the brain proposes a view: on show at once, 
   await expect.poll(places).toHaveLength(4)
   await expect.poll(async () => (await viewsOf(page)).yours).toBe(null)
   await button.click()
-  await expect(menu.getByRole('button')).toHaveText(['All rows', 'Open, dearest first', 'Keep as a view'])
+  await expect(menu.locator('ul:not(:first-of-type)').getByRole('button')).toHaveText(['All rows', 'Open, dearest first', 'Keep as a view'])
 })
 
 for (const [lang, suggested, no] of /** @type {const} */ ([['ar', 'اقتراح: مفتوحة', 'لا، شكرًا'], ['ja', '提案：未完了', 'いいえ、結構です']])) {
@@ -2484,7 +2495,7 @@ for (const [lang, suggested, no] of /** @type {const} */ ([['ar', 'اقتراح:
     await expect(page.locator('.table-grid tbody tr')).toHaveCount(4)
     await page.evaluate((name) => import('/caps/tables/tables.js').then(({ shown, alone }) => shown.value && alone(shown.value, 'p1', { name, type: 'table', filter: { and: [{ property: 'stage', op: 'is', value: 'Open' }] } })), suggested.split(/[:：]\s*/)[1])
     await page.locator('.table-kept').click()
-    await page.locator('.table-menu:popover-open button').nth(1).click()
+    await page.locator('.table-menu:popover-open ul:nth-of-type(2) button').nth(1).click()
     await expect(page.locator('.table-grid tbody tr')).toHaveCount(3)
     await expect(page.locator('.table-yours [role="status"]')).toHaveText(suggested)
     await expect(page.locator('.table-yours button').last()).toHaveText(no)
@@ -2815,10 +2826,10 @@ test('a row opens from a button at the end of its name, shown with the pointer o
     await expect(none.getByRole('status')).toHaveText(`Add a “${kind}” column to show the rows this way.`)
     await expect(page.locator('.table-grid, .table-board, .table-gallery, .table-list, .cal')).toHaveCount(0)
   }
-  // Its button adds the column, named as its kind, and the layout shows; the keys go to Show as.
+  // Its button adds the column, named as its kind, and the layout shows; the keys go to the pill, whose menu has Show as.
   await none.getByRole('button', { name: 'Add a column' }).click()
   await expect(page.locator('.cal-grid')).toBeVisible()
-  await expect(page.locator('.table-laid')).toBeFocused()
+  await expect(page.locator('.table-kept')).toBeFocused()
   await expect(none.getByRole('status')).toHaveText('')
   await expect(none.getByRole('button')).toHaveCount(0)
   // The timeline is by the same date; a board gets a Status with its three steps, a gallery a Picture.

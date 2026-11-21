@@ -10,5 +10,7 @@
   "collect.sent": "Gratias agimus. Responsum tuum missum est.",
   "collect.unsent": "Mitti non potuit. Iterum tempta.",
   "collect.sealed": "Responsum in navigatro visitatoris obsignatur, itaque servitor id legere non potest.",
-  "collect.online": "Formulam in linea pone"
+  "collect.online": "Formulam in linea pone",
+  "collect.proposals": "Propositiones e situ accipe",
+  "collect.port": "Forma situs {columns} implere potest."
 }

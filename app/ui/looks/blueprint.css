@@ -60,7 +60,7 @@
 :root[data-look='blueprint'] .hero-question { font-size: clamp(2.6rem, 8vw, 5.2rem); line-height: 1; background: none; color: var(--ink); }
 /* The conversation's name in a title block. */
 :root[data-look='blueprint'] .conversation-title { inline-size: fit-content; max-inline-size: 100%; padding: 0.45rem 0.8rem 0.3rem; border: 2px solid var(--ink-soft); font-size: 1.5rem; color: var(--ink); }
-:root[data-look='blueprint'] :is(.starter, .follow-up, .button) { font-family: var(--display); font-size: 1.05rem; text-transform: uppercase; }
+:root[data-look='blueprint'] :is(.starter, .follow-up, .button) { font-family: var(--display); font-size: var(--button-size, 1.05rem); text-transform: uppercase; }
 :root[data-look='blueprint'] .starter, :root[data-look='blueprint'] .follow-up { background: var(--room); color: var(--ink); }
 :root[data-look='blueprint'] .starter:hover, :root[data-look='blueprint'] .follow-up:hover { border-color: var(--flame); color: var(--ink); box-shadow: none; }
 :root[data-look='blueprint'] .msg-user { border: 1px dashed var(--ink-soft); background: var(--room); }

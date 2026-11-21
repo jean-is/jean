@@ -10,5 +10,7 @@
   "collect.sent": "Grazie. La tua risposta è stata inviata.",
   "collect.unsent": "Non è stato possibile inviarla. Riprova.",
   "collect.sealed": "Ogni risposta viene sigillata nel browser del visitatore, quindi l’host non può leggerla.",
-  "collect.online": "Metti il modulo online"
+  "collect.online": "Metti il modulo online",
+  "collect.proposals": "Accetta proposte da un sito",
+  "collect.port": "Un modulo di un sito può compilare {columns}."
 }

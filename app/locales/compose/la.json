@@ -36,9 +36,5 @@
   "compose.uncertified": "Ordines ut nunc sunt: nulla versio, itaque nullum testimonium",
   "compose.unproven": "Testimonia eius non valent: mutata, aut non obsignata clave quam nominant",
   "compose.saveProof": "Originem eius serva",
-  "compose.proofFile": "Origo: {name}",
-  "compose.ports": "Propositiones",
-  "compose.open": "Propositiones e situ accipe",
-  "compose.close": "Propositiones accipere desine",
-  "compose.port": "Forma situs {columns} implere potest."
+  "compose.proofFile": "Origo: {name}"
 }

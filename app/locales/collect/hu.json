@@ -10,5 +10,7 @@
   "collect.sent": "Köszönjük. A válaszodat elküldtük.",
   "collect.unsent": "Nem sikerült elküldeni. Próbáld újra.",
   "collect.sealed": "A választ a látogató böngészője pecsételi le, így a tárhely nem tudja elolvasni.",
-  "collect.online": "Űrlap közzététele online"
+  "collect.online": "Űrlap közzététele online",
+  "collect.proposals": "Javaslatok fogadása webhelyről",
+  "collect.port": "Egy webhely űrlapja kitöltheti ezeket: {columns}."
 }

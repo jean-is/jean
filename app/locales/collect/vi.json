@@ -10,5 +10,7 @@
   "collect.sent": "Cảm ơn bạn. Phản hồi của bạn đã được gửi.",
   "collect.unsent": "Không gửi được. Hãy thử lại.",
   "collect.sealed": "Phản hồi được niêm phong ngay trong trình duyệt của khách, nên máy chủ không đọc được.",
-  "collect.online": "Đưa biểu mẫu lên mạng"
+  "collect.online": "Đưa biểu mẫu lên mạng",
+  "collect.proposals": "Nhận đề xuất từ một trang web",
+  "collect.port": "Biểu mẫu của trang web có thể điền {columns}."
 }

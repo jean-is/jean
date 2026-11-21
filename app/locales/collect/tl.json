@@ -10,5 +10,7 @@
   "collect.sent": "Salamat. Naipadala na ang sagot mo.",
   "collect.unsent": "Hindi ito naipadala. Subukang muli.",
   "collect.sealed": "Sineselyuhan ang sagot sa browser ng bisita, kaya hindi ito mababasa ng host.",
-  "collect.online": "Ilagay online ang form"
+  "collect.online": "Ilagay online ang form",
+  "collect.proposals": "Tumanggap ng mga mungkahi mula sa isang site",
+  "collect.port": "Mapupunan ng form ng site ang {columns}."
 }

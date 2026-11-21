@@ -36,9 +36,5 @@
   "compose.uncertified": "کرښې لکه اوس چې دي: نسخه نشته، نو سند هم نشته",
   "compose.unproven": "سندونه یې سم نه دي: بدل شوي، یا په هغه کیلي نه دي مهر شوي چې یادوي یې",
   "compose.saveProof": "سرچینه یې خوندي کړئ",
-  "compose.proofFile": "د {name} سرچینه",
-  "compose.ports": "وړاندیزونه",
-  "compose.open": "له یوې وېبپاڼې وړاندیزونه ومنئ",
-  "compose.close": "د وړاندیزونو منل ودروئ",
-  "compose.port": "د وېبپاڼې فورمه کولی شي {columns} ډک کړي."
+  "compose.proofFile": "د {name} سرچینه"
 }

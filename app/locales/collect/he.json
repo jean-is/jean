@@ -10,5 +10,7 @@
   "collect.sent": "תודה. התשובה שלך נשלחה.",
   "collect.unsent": "השליחה לא הצליחה. אפשר לנסות שוב.",
   "collect.sealed": "כל תשובה נחתמת בדפדפן של המבקר, כך שהמארח לא יכול לקרוא אותה.",
-  "collect.online": "העלאת הטופס לרשת"
+  "collect.online": "העלאת הטופס לרשת",
+  "collect.proposals": "קבלת הצעות מאתר",
+  "collect.port": "טופס באתר יכול למלא {columns}."
 }

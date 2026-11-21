@@ -1,22 +1,19 @@
 /* SPDX-License-Identifier: MIT */
-/* The bands over a collection's rows (./over.js), but Coming up's own (caps/soon/soon.css): a head that folds each and says how many, a line for
-   each thing with what acts on it at its end, under it where the pane is narrow. */
-.over-band { text-align: start; margin: 0.25rem 0.75rem 0.75rem; padding: 0.15rem 0.9rem 0.6rem; border: 1px solid var(--line-strong); border-radius: 1rem; }
-.over-band h3 { margin: 0; font-size: 0.95rem; }
-.over-band h3 button { display: flex; align-items: center; gap: 0.5rem; inline-size: 100%; min-block-size: 2.75rem; padding: 0; border: 0; background: none; color: inherit; font: inherit; font-weight: 600; text-align: start; cursor: pointer; }
-.over-band h3 span:first-of-type { flex: 1; } .over-count { color: var(--ink-soft); font-weight: 400; font-variant-numeric: tabular-nums; }
+/* The bands over a collection's rows (./over.js), in the table's bar: a line each across its width, under its tools, small, so that the rows keep
+   the room: a head that folds it and says how many, its lines under it, what acts on each at its end, under it where the pane is narrow. */
+.table-over { display: grid; flex: 1 0 100%; order: 9; margin-inline: calc(-1 * var(--pane-inset, 0px)); } .table-over:empty { display: none; }
+.over-band { font-size: 0.85rem; text-align: start; padding-inline: var(--pane-inset, 0.75rem); border-block-start: 1px solid var(--line); } .over-band:last-child { border-block-end: 1px solid var(--line); } .over-band:has(> h3 + *) { padding-block-end: 0.3rem; }
+.over-band h3 { margin: 0; font-size: inherit; }
+.over-band h3 button { display: flex; align-items: center; gap: 0.5rem; inline-size: 100%; min-block-size: 1.75rem; padding: 0; border: 0; background: none; color: inherit; font: inherit; font-weight: 600; text-align: start; cursor: pointer; }
+.over-band h3 button > span:first-of-type { flex: 1; } .over-count { color: var(--ink-soft); font-weight: 400; font-variant-numeric: tabular-nums; }
 .over-band h3 [aria-expanded='false'] svg:last-child { rotate: -90deg; } [dir='rtl'] .over-band h3 [aria-expanded='false'] svg:last-child { rotate: 90deg; }
 .over-band ul { margin: 0; padding: 0; list-style: none; }
-.over-band li { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem 0.75rem; padding-block: 0.5rem; border-block-start: 1px solid var(--line); }
+.over-band li { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 0.6rem; padding-block: 0.3rem; border-block-start: 1px solid var(--line); }
 .over-band li p { flex: 1 1 14rem; margin: 0; overflow-wrap: anywhere; }
-.over-acts { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-.over-band > .hint { margin: 0; padding-block-start: 0.5rem; border-block-start: 1px solid var(--line); }
+.over-acts { display: flex; flex-wrap: wrap; gap: 0.4rem; } .over-band h3 .icon { --glyph: var(--icon-s); }
+.over-band > .hint { margin: 0; padding-block-start: 0.3rem; border-block-start: 1px solid var(--line); }
 .look { border-color: var(--wait-line, var(--line-strong)); background: var(--wait, var(--room-2)); }
-.look-dot { inline-size: 0.55rem; block-size: 0.55rem; border-radius: 50%; background: var(--flame); }
+.look-dot { flex: none; inline-size: 0.55rem; block-size: 0.55rem; border-radius: 50%; background: var(--flame); }
 @media (forced-colors: active) { .look-dot { forced-color-adjust: none; background: CanvasText; } }
-.sum-figure { display: grid; justify-items: end; font-variant-numeric: tabular-nums; line-height: 1.2; } .sum-figure small { color: var(--ink-soft); font-weight: 400; }
-.sum h4 { margin: 0; padding-block: 0.6rem 0.2rem; border-block-start: 1px solid var(--line); color: var(--ink-soft); font-size: 0.8rem; font-weight: 600; }
-.over-band .sum-bars li { display: grid; grid-template-columns: minmax(4rem, 9rem) minmax(2rem, 1fr) auto; padding-block: 0.25rem; border: 0; font-size: 0.9rem; }
-.sum-bars meter { inline-size: 100%; block-size: 0.6rem; } .sum-worth { font-variant-numeric: tabular-nums; }
-.sources li label { flex: 1; min-inline-size: 0; overflow-wrap: anywhere; } .sources-new { margin-block: 0.5rem; }
-.sources-add { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 0.5rem 0.75rem; padding-block: 0.6rem; border-block-start: 1px solid var(--line); } .sources-add button { grid-column: 2; justify-self: start; }
+.sources li label { flex: 1; min-inline-size: 0; overflow-wrap: anywhere; } .sources-new { margin-block: 0.3rem; }
+.sources-add { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 0.4rem 0.6rem; padding-block: 0.4rem; border-block-start: 1px solid var(--line); } .sources-add button { grid-column: 2; justify-self: start; }

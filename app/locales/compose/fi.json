@@ -36,9 +36,5 @@
   "compose.uncertified": "Rivit sellaisina kuin ne nyt ovat: ei versiota, joten ei varmennetta",
   "compose.unproven": "Sen varmenteet eivät pidä: muutettu tai ei sinetöity mainitulla avaimella",
   "compose.saveProof": "Tallenna alkuperä",
-  "compose.proofFile": "Kohteen {name} alkuperä",
-  "compose.ports": "Ehdotukset",
-  "compose.open": "Ota vastaan ehdotuksia sivustolta",
-  "compose.close": "Lopeta ehdotusten vastaanotto",
-  "compose.port": "Sivuston lomake voi täyttää kohdat {columns}."
+  "compose.proofFile": "Kohteen {name} alkuperä"
 }

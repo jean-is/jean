@@ -36,9 +36,5 @@
   "compose.uncertified": "目前的列：沒有版本，因此沒有證書",
   "compose.unproven": "其證書不成立：已被更改，或未用所述金鑰封印",
   "compose.saveProof": "儲存其來源",
-  "compose.proofFile": "{name} 的來源",
-  "compose.ports": "提議",
-  "compose.open": "接受來自網站的提議",
-  "compose.close": "停止接受提議",
-  "compose.port": "網站的表單可以填寫 {columns}。"
+  "compose.proofFile": "{name} 的來源"
 }

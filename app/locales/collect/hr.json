@@ -10,5 +10,7 @@
   "collect.sent": "Hvala. Vaš je odgovor poslan.",
   "collect.unsent": "Slanje nije uspjelo. Pokušajte ponovno.",
   "collect.sealed": "Odgovor se zapečati u pregledniku posjetitelja, pa ga poslužitelj ne može pročitati.",
-  "collect.online": "Stavi obrazac na mrežu"
+  "collect.online": "Stavi obrazac na mrežu",
+  "collect.proposals": "Primaj prijedloge s weba",
+  "collect.port": "Obrazac na webu može ispuniti {columns}."
 }

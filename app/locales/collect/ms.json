@@ -10,5 +10,7 @@
   "collect.sent": "Terima kasih. Balasan anda telah dihantar.",
   "collect.unsent": "Tidak dapat dihantar. Cuba lagi.",
   "collect.sealed": "Balasan dimeterai dalam pelayar pelawat, jadi hos tidak dapat membacanya.",
-  "collect.online": "Letakkan borang dalam talian"
+  "collect.online": "Letakkan borang dalam talian",
+  "collect.proposals": "Terima cadangan daripada laman",
+  "collect.port": "Borang laman boleh mengisi {columns}."
 }

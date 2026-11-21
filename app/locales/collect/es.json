@@ -10,5 +10,7 @@
   "collect.sent": "Gracias. Tu respuesta se ha enviado.",
   "collect.unsent": "No se pudo enviar. Inténtalo de nuevo.",
   "collect.sealed": "Cada respuesta se sella en el navegador del visitante, así que el servidor no puede leerla.",
-  "collect.online": "Poner el formulario en línea"
+  "collect.online": "Poner el formulario en línea",
+  "collect.proposals": "Aceptar propuestas de un sitio",
+  "collect.port": "Un formulario de un sitio puede rellenar {columns}."
 }

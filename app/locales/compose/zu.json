@@ -36,9 +36,5 @@
   "compose.uncertified": "Imigqa njengoba injalo manje: ayikho inguqulo, ngakho asikho isitifiketi",
   "compose.unproven": "Izitifiketi zayo azimi: zishintshiwe, noma azivalwanga ngokhiye ezibala wona",
   "compose.saveProof": "Gcina umsuka wayo",
-  "compose.proofFile": "Umsuka ka-{name}",
-  "compose.ports": "Iziphakamiso",
-  "compose.open": "Yamukela iziphakamiso ezivela kusayithi",
-  "compose.close": "Yeka ukwamukela iziphakamiso",
-  "compose.port": "Ifomu lesayithi lingagcwalisa {columns}."
+  "compose.proofFile": "Umsuka ka-{name}"
 }

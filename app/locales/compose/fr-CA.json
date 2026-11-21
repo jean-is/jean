@@ -36,9 +36,5 @@
   "compose.uncertified": "Les lignes telles qu’elles sont : pas de version, donc pas de certificat",
   "compose.unproven": "Ses certificats ne tiennent pas : modifiés, ou pas scellés par la clé qu’ils nomment",
   "compose.saveProof": "Enregistrer sa provenance",
-  "compose.proofFile": "Provenance de {name}",
-  "compose.ports": "Propositions",
-  "compose.open": "Accepter des propositions d’un site",
-  "compose.close": "Ne plus accepter de propositions",
-  "compose.port": "Un formulaire de site peut remplir {columns}."
+  "compose.proofFile": "Provenance de {name}"
 }

@@ -10,5 +10,7 @@
   "collect.sent": "Galatoomi. Deebiin kee ergameera.",
   "collect.unsent": "Ergamuu hin dandeenye. Irra deebi'i yaali.",
   "collect.sealed": "Deebiin biraawuzara daawwataa keessatti chaappeffama, kanaaf keessummeessaan dubbisuu hin danda'u.",
-  "collect.online": "Unkaa interneetii irra kaa'i"
+  "collect.online": "Unkaa interneetii irra kaa'i",
+  "collect.proposals": "Yaada dhiyeessii marsariitii irraa fudhadhu",
+  "collect.port": "Unkaan marsariitii {columns} guutuu danda’a."
 }

@@ -1,13 +1,8 @@
 /* SPDX-License-Identifier: MIT */
 /* Coming up, over a collection's rows (./soon.js): a band in the colour of what waits, its head folding it, a row a line, its foot's two choices
    wrapping where the pane is narrow. A late row says so in words, in the colour of what went wrong too. */
-.soon { margin: 0.25rem 0.75rem 0.75rem; padding: 0.15rem 0.9rem 0.6rem; border: 1px solid var(--wait-line, var(--line-strong)); border-radius: 1rem; background: var(--wait, var(--room-2)); }
-.soon h3 { margin: 0; font-size: 0.95rem; }
-.soon h3 button { display: flex; align-items: center; gap: 0.5rem; inline-size: 100%; min-block-size: 2.75rem; padding: 0; border: 0; background: none; color: inherit; font: inherit; font-weight: 600; text-align: start; cursor: pointer; }
-.soon h3 span:first-of-type { flex: 1; } .soon-count { color: var(--ink-soft); font-weight: 400; font-variant-numeric: tabular-nums; }
-.soon h3 [aria-expanded='false'] svg:last-child { rotate: -90deg; } [dir='rtl'] .soon h3 [aria-expanded='false'] svg:last-child { rotate: 90deg; }
-.soon ul { margin: 0; padding: 0; list-style: none; }
-.soon li { display: flex; align-items: center; gap: 0.6rem; border-block-start: 1px solid var(--wait-line, var(--line)); }
+.soon { border-color: var(--wait-line, var(--line-strong)); background: var(--wait, var(--room-2)); }
+.over-band.soon li { padding-block: 0; display: flex; align-items: center; gap: 0.6rem; border-block-start: 1px solid var(--wait-line, var(--line)); }
 .soon-row { display: grid; flex: 1; gap: 0.1rem; min-inline-size: 0; min-block-size: 2.75rem; padding: 0.4rem 0; border: 0; background: none; color: inherit; font: inherit; text-align: start; cursor: pointer; }
 .soon-row b { overflow-wrap: anywhere; font-weight: 600; }
 .soon-when { display: flex; flex-wrap: wrap; gap: 0 0.6rem; color: var(--ink-soft); font-size: 0.85rem; } .soon-when strong { color: var(--danger); }

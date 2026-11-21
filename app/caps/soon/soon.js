@@ -37,11 +37,11 @@ export default function soon({ one, open }) {
   const day = new Intl.DateTimeFormat(locales, { weekday: 'short', day: 'numeric', month: 'long', timeZone: 'UTC' }), far = new Intl.RelativeTimeFormat(locales, { numeric: 'auto' })
   const fold = () => { const next = new Set(folded.peek()); if (!next.delete(folder)) next.add(folder); folded.value = next }
   const picked = (/** @type {Event} */ event) => /** @type {HTMLSelectElement} */ (event.target).value
-  return html`<section class="soon" aria-labelledby=${id}>
-    <h3 id=${id}><button type="button" aria-expanded=${String(!shut)} @click=${fold}>${icons.bell}<span>${t('soon.title')}</span><span class="soon-count">${new Intl.NumberFormat(locales).format(dues.length)}</span>${icons.chevron}</button></h3>
+  return html`<section class="over-band soon" aria-labelledby=${id}>
+    <h3 id=${id}><button type="button" aria-expanded=${String(!shut)} @click=${fold}>${icons.bell}<span>${t('soon.title')}</span><span class="over-count">${new Intl.NumberFormat(locales).format(dues.length)}</span>${icons.chevron}</button></h3>
     ${shut ? nothing : html`<ul>${dues.slice(0, 6).map((due) => html`<li><button type="button" class="soon-row" @click=${() => open(due.id)}><b dir="auto">${due.name || day.format(utc(due.day))}</b>
         <span class="soon-when"><span>${day.format(utc(due.day))}</span>${due.away < 0 ? html`<strong>${t('soon.late')}</strong>` : nothing}<span>${far.format(due.away, 'day')}</span></span></button>
-        ${due.away < 0 ? html`<button type="button" class="button" @click=${() => chase(folder, due)}>${t('soon.chase')}</button>` : nothing}</li>`)}</ul>
+        ${due.away < 0 ? html`<button type="button" class="button small" @click=${() => chase(folder, due)}>${t('soon.chase')}</button>` : nothing}</li>`)}</ul>
       <div class="soon-how">${dates.length > 1 ? html`<label for=${`${id}-by`}>${t('soon.by')}</label><select id=${`${id}-by`} .value=${live(how.column ?? dates[0].id)} @change=${(/** @type {Event} */ e) => keepHow(dir, folder, { ...how, column: picked(e) })}>
           ${dates.map((property) => html`<option value=${property.id} ?selected=${property.id === (how.column ?? dates[0].id)}>${property.name}</option>`)}</select>` : nothing}
         <label for=${`${id}-tell`}>${t('soon.tell')}</label><select id=${`${id}-tell`} .value=${live(String(how.before))} @change=${(/** @type {Event} */ e) => keepHow(dir, folder, { ...how, before: Number(picked(e)) })}>

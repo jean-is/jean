@@ -36,9 +36,5 @@
   "compose.uncertified": "قطاریں جیسی اب ہیں: کوئی ورژن نہیں، اس لیے کوئی سند نہیں",
   "compose.unproven": "اس کی اسناد درست نہیں: بدلی گئیں، یا اُس چابی سے مہر بند نہیں جس کا وہ نام لیتی ہیں",
   "compose.saveProof": "اس کا ماخذ محفوظ کریں",
-  "compose.proofFile": "{name} کا ماخذ",
-  "compose.ports": "تجاویز",
-  "compose.open": "کسی سائٹ سے تجاویز قبول کریں",
-  "compose.close": "تجاویز قبول کرنا بند کریں",
-  "compose.port": "سائٹ کا فارم {columns} بھر سکتا ہے۔"
+  "compose.proofFile": "{name} کا ماخذ"
 }

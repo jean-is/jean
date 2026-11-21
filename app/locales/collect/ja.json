@@ -10,5 +10,7 @@
   "collect.sent": "ありがとうございます。返信を送信しました。",
   "collect.unsent": "送信できませんでした。もう一度お試しください。",
   "collect.sealed": "返信は訪問者のブラウザで封をされるので、ホストには読めません。",
-  "collect.online": "フォームを公開"
+  "collect.online": "フォームを公開",
+  "collect.proposals": "サイトからの提案を受け付ける",
+  "collect.port": "サイトのフォームは {columns} を入力できます。"
 }

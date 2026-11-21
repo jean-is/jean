@@ -67,6 +67,10 @@ test('a slide shows a collection live: a row changed shows changed, at once and 
   await expect(menu.getByRole('group', { name: 'Uses' })).toContainText('Live')
   await expect(menu.getByRole('group', { name: 'Uses' }).getByRole('listitem'), 'a collection the project hasn’t isn’t listed').toHaveCount(1)
   await expect(menu.getByRole('group', { name: 'Used in' })).toHaveCount(0)
+  // Its row opens its settings in the menu, whose last row opens the collection.
+  await menu.getByRole('button', { name: /Artisans/ }).click()
+  await expect(menu.getByRole('button', { name: 'Uses' })).toBeFocused()
+  await expect(menu.getByRole('group', { name: 'Which version it shows' }).getByRole('button', { name: 'Live' })).toHaveAttribute('aria-current', 'true')
   await menu.getByRole('button', { name: /Artisans/ }).click()
   // The collection's pane: what uses it.
   await expect(page.locator('app-preview .table-grid')).toBeVisible()
@@ -228,7 +232,8 @@ test('slides pinned to version 1 stay as they were once version 2 is published, 
   await show(page, pinned, 'Pinned')
   await expect(cells.locator('tbody td').nth(1)).toHaveText('Baker')
   await page.getByRole('button', { name: 'Links with other creations' }).click()
-  await page.locator('.menu:popover-open').getByTitle('Which version it shows').selectOption('published')
+  await page.locator('.menu:popover-open').getByRole('button', { name: /Artisans/ }).click()
+  await page.locator('.menu:popover-open').getByRole('button', { name: 'Published', exact: true }).click()
   await expect.poll(() => page.evaluate(async (pinned) => (await (await import('/caps/skills/decks.js')).load(pinned))?.source, pinned)).toContain('-artisans@published')
   // A document pinned to version 1, and a site that reads the published one.
   await page.evaluate(async ({ COLLECTION }) => {
@@ -252,6 +257,7 @@ test('slides pinned to version 1 stay as they were once version 2 is published, 
   await show(page, 'documents/01K85Z1T00000000000000000N-notes.md', 'Notes')
   await expect(page.locator('app-preview app-composed th')).toHaveText('Trade')
   await page.getByRole('button', { name: 'Links with other creations' }).click()
+  await page.locator('.menu:popover-open').getByRole('button', { name: /Artisans/ }).click()
   await expect(page.locator('.menu:popover-open')).toContainText('“Trade” is now “Craft”')
   await page.keyboard.press('Escape')
   await retype(page, { type: 'number' })
@@ -296,6 +302,7 @@ test('a recipe that sums up the approved artisans on a slide updates by itself o
   // Update now runs it on the rows as they are; pressed again with nothing changed, it reads that run again, unpaid.
   await page.getByRole('button', { name: 'Links with other creations' }).click()
   const menu = page.locator('.menu:popover-open')
+  await menu.getByRole('button', { name: /Neighbours/ }).click()
   await menu.getByRole('button', { name: 'Update now' }).click()
   await expect(slide).toHaveText('Summary: Ana, Bob.')
   await expect(menu.getByRole('status').filter({ hasText: /^Updated / })).toHaveCount(1)
@@ -304,7 +311,7 @@ test('a recipe that sums up the approved artisans on a slide updates by itself o
   await page.waitForTimeout(300)
   expect((await runs()).map((run) => run.n)).toEqual([1, 2])
   // Its user turns on updates as the collection changes: written into the slides, and Cy approved shows by itself.
-  await menu.getByTitle('When it updates').selectOption('auto')
+  await menu.getByRole('group', { name: 'When it updates' }).getByRole('button', { name: 'As the collection changes' }).click()
   await expect.poll(() => page.evaluate(async (SUMMARY) => (await (await import('/caps/skills/decks.js')).load(SUMMARY))?.source, SUMMARY)).toContain('refresh: auto')
   await page.keyboard.press('Escape')
   await page.evaluate(async ({ HERE, row }) => {
@@ -333,12 +340,18 @@ test('from slides, their provenance is checked back to the collection’s versio
   await expect(page.locator('app-preview .deck-slide .deck-table > div').first()).toHaveText('Summary: Ana.')
   // In Jean: the run, and the version it read, certified; the pinned version on its own; the rows as they are, none.
   await page.getByRole('button', { name: 'Links with other creations' }).click()
-  const uses = page.locator('.menu:popover-open').getByRole('group', { name: 'Uses' }).getByRole('listitem')
+  const menu = page.locator('.menu:popover-open'), uses = menu.getByRole('group', { name: 'Uses' }).getByRole('listitem')
   await expect(uses).toHaveCount(3)
-  await expect(uses.nth(0).getByRole('status').last()).toHaveText('Certified, back to version 1 of the collection')
-  await expect(uses.nth(1).getByRole('status').last()).toHaveText('Certified, back to version 1 of the collection')
-  await expect(uses.nth(2)).toContainText('The rows as they are now: no version, so no certificate')
-  const [download] = await Promise.all([page.waitForEvent('download'), uses.nth(0).getByRole('button', { name: 'Save its provenance' }).click()])
+  // Each one's settings say it, Back between them.
+  await uses.nth(1).getByRole('button').click()
+  await expect(menu.getByRole('status').last()).toHaveText('Certified, back to version 1 of the collection')
+  await menu.getByRole('button', { name: 'Uses' }).click()
+  await uses.nth(2).getByRole('button').click()
+  await expect(menu).toContainText('The rows as they are now: no version, so no certificate')
+  await menu.getByRole('button', { name: 'Uses' }).click()
+  await uses.nth(0).getByRole('button').click()
+  await expect(menu.getByRole('status').last()).toHaveText('Certified, back to version 1 of the collection')
+  const [download] = await Promise.all([page.waitForEvent('download'), menu.getByRole('button', { name: 'Save its provenance' }).click()])
   expect(download.suggestedFilename()).toBe('Provenance of Proof.json')
   const chain = JSON.parse(await readFile(await download.path(), 'utf8'))
   expect(chain).toHaveLength(2)
@@ -369,7 +382,7 @@ test('a neighbourhood’s directory takes a proposal from its published site thr
   await page.evaluate(async ({ HERE, host }) => {
     const [{ unlock }, { app, updateSettings }] = await Promise.all([import('/ui/caps.js'), import('/ui/state.js')])
     await updateSettings({ urls: { ...app.settings.value.urls, share: host } })
-    await unlock('tables')
+    await Promise.all([unlock('tables'), unlock('share')])
     const at = '2026-11-21T10:00:00.000Z'
     await app.fs.write(`${app.projectDir}/${HERE}/collection.json`, JSON.stringify({ format: 1, id: HERE.slice(12, 38), name: 'Artisans', author: 'user', created: at, changed: at,
       properties: [{ id: 'name', name: 'Name', type: 'text' }, { id: 'trade', name: 'Trade', type: 'text' }, { id: 'approved', name: 'Approved', type: 'checkbox' }], views: [{ id: 'table', type: 'table' }] }))
@@ -378,13 +391,15 @@ test('a neighbourhood’s directory takes a proposal from its published site thr
   }, { HERE, host: SHARE_URL })
   const version = () => page.evaluate(async (HERE) => { const { app } = await import('/ui/state.js'); return [(await app.fs.list(`${app.projectDir}/${HERE}/versions`)).length, await app.fs.read(`${app.projectDir}/${HERE}/versions/1.json`)] }, HERE)
   const before = await version()
-  // Its owner opens its port, from its pane: a form fills Name and Trade, not the box, which the collection keeps to itself.
+  // Its owner opens its port, from Share's Collect replies: a form fills Name and Trade, not the box, which the collection keeps to itself.
   await show(page, HERE, 'Artisans')
-  await page.getByRole('button', { name: 'Links with other creations' }).click()
-  const proposals = page.locator('.menu:popover-open').getByRole('group', { name: 'Proposals' })
-  await proposals.getByRole('button', { name: 'Accept proposals from a site' }).click()
-  await expect(proposals).toContainText('A site’s form can fill Name and Trade.')
-  await page.keyboard.press('Escape')
+  await page.locator('app-preview .pane-head .icon-group > [popovertarget^="out-"]').click()
+  await page.locator('app-preview .out-menu').getByRole('button', { name: /^Share/ }).click()
+  const share = page.locator('app-share-dialog dialog[open]')
+  await share.getByRole('tab', { name: 'Collect replies' }).click()
+  await share.getByRole('switch', { name: 'Accept proposals from a site' }).check()
+  await expect(share.locator('.collect-port [role="status"]')).toHaveText('A site’s form can fill Name and Trade.')
+  await share.locator('.dialog-head').getByRole('button', { name: 'Close' }).click()
   // Its site: the artisans its table keeps by its own criteria, Approved ticked, and a form that proposes one, which also tries to tick that box.
   const form = `<h1>Artisans of the neighbourhood</h1><table data-from="${HERE}" data-fields="Name | Trade" data-where="Approved is yes"></table><h2>Propose one</h2>`
     + `<form method="post" data-form="propose" data-to="${HERE}"><label for="who">Name</label><input id="who" name="who" required><label for="what">Trade</label><input id="what" name="what" required>`

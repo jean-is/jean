@@ -10,5 +10,7 @@
   "collect.sent": "谢谢。你的回复已发送。",
   "collect.unsent": "没能发送。请再试一次。",
   "collect.sealed": "回复在访客的浏览器里就已密封，托管方无法读取。",
-  "collect.online": "把表单放到网上"
+  "collect.online": "把表单放到网上",
+  "collect.proposals": "接受来自网站的提议",
+  "collect.port": "网站的表单可以填写 {columns}。"
 }

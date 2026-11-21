@@ -10,5 +10,7 @@
   "collect.sent": "Mun gode. An aika amsar.",
   "collect.unsent": "Ba a iya aikawa ba. A sake gwadawa.",
   "collect.sealed": "Ana rufe amsa a cikin burauzar baƙon, don haka mai masaukin ba zai iya karanta ta ba.",
-  "collect.online": "Saka fom ɗin a kan intanet"
+  "collect.online": "Saka fom ɗin a kan intanet",
+  "collect.proposals": "Karɓi shawarwari daga wani shafi",
+  "collect.port": "Fom na shafi zai iya cike {columns}."
 }

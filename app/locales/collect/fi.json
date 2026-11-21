@@ -10,5 +10,7 @@
   "collect.sent": "Kiitos. Vastauksesi on lähetetty.",
   "collect.unsent": "Lähetys ei onnistunut. Yritä uudelleen.",
   "collect.sealed": "Vastaus sinetöidään kävijän selaimessa, joten palvelin ei voi lukea sitä.",
-  "collect.online": "Vie lomake verkkoon"
+  "collect.online": "Vie lomake verkkoon",
+  "collect.proposals": "Ota vastaan ehdotuksia sivustolta",
+  "collect.port": "Sivuston lomake voi täyttää kohdat {columns}."
 }

@@ -10,5 +10,7 @@
   "collect.sent": "감사합니다. 답장을 보냈어요.",
   "collect.unsent": "보내지 못했어요. 다시 시도해 주세요.",
   "collect.sealed": "답장은 방문자의 브라우저에서 봉인되므로 호스트가 읽을 수 없어요.",
-  "collect.online": "양식을 온라인에 올리기"
+  "collect.online": "양식을 온라인에 올리기",
+  "collect.proposals": "사이트에서 제안 받기",
+  "collect.port": "사이트의 양식은 {columns}을(를) 채울 수 있습니다."
 }

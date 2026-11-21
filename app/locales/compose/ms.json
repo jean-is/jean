@@ -36,9 +36,5 @@
   "compose.uncertified": "Baris seperti sekarang: tiada versi, maka tiada sijil",
   "compose.unproven": "Sijilnya tidak sah: diubah, atau tidak dimeterai dengan kunci yang disebut",
   "compose.saveProof": "Simpan asal-usulnya",
-  "compose.proofFile": "Asal-usul {name}",
-  "compose.ports": "Cadangan",
-  "compose.open": "Terima cadangan daripada laman",
-  "compose.close": "Berhenti menerima cadangan",
-  "compose.port": "Borang laman boleh mengisi {columns}."
+  "compose.proofFile": "Asal-usul {name}"
 }

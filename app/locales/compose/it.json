@@ -36,9 +36,5 @@
   "compose.uncertified": "Le righe come sono ora: nessuna versione, quindi nessun certificato",
   "compose.unproven": "I suoi certificati non reggono: modificati, o non sigillati con la chiave che indicano",
   "compose.saveProof": "Salva la provenienza",
-  "compose.proofFile": "Provenienza di {name}",
-  "compose.ports": "Proposte",
-  "compose.open": "Accetta proposte da un sito",
-  "compose.close": "Smetti di accettare proposte",
-  "compose.port": "Un modulo di un sito può compilare {columns}."
+  "compose.proofFile": "Provenienza di {name}"
 }

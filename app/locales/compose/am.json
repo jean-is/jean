@@ -36,9 +36,5 @@
   "compose.uncertified": "ረድፎቹ አሁን እንዳሉ፦ ስሪት የለም፣ ስለዚህ የምስክር ወረቀት የለም",
   "compose.unproven": "የምስክር ወረቀቶቹ አይጸኑም፦ ተቀይረዋል ወይም በሚጠቅሱት ቁልፍ አልታተሙም",
   "compose.saveProof": "መነሻውን አስቀምጥ",
-  "compose.proofFile": "የ{name} መነሻ",
-  "compose.ports": "ሀሳቦች",
-  "compose.open": "ከድረ ገጽ ሀሳቦችን ተቀበል",
-  "compose.close": "ሀሳቦችን መቀበል አቁም",
-  "compose.port": "የድረ ገጽ ቅጽ {columns} መሙላት ይችላል።"
+  "compose.proofFile": "የ{name} መነሻ"
 }

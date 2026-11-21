@@ -36,9 +36,5 @@
   "compose.uncertified": "Řádky, jak jsou teď: žádná verze, tedy žádný certifikát",
   "compose.unproven": "Jeho certifikáty neplatí: změněné, nebo nezapečetěné klíčem, který uvádějí",
   "compose.saveProof": "Uložit jeho původ",
-  "compose.proofFile": "Původ: {name}",
-  "compose.ports": "Návrhy",
-  "compose.open": "Přijímat návrhy z webu",
-  "compose.close": "Přestat přijímat návrhy",
-  "compose.port": "Formulář webu může vyplnit {columns}."
+  "compose.proofFile": "Původ: {name}"
 }

@@ -36,9 +36,5 @@
   "compose.uncertified": "A sorok, ahogy most vannak: nincs verzió, így tanúsítvány sincs",
   "compose.unproven": "A tanúsítványai nem érvényesek: módosultak, vagy nem a megnevezett kulccsal pecsételték őket",
   "compose.saveProof": "Eredet mentése",
-  "compose.proofFile": "{name} eredete",
-  "compose.ports": "Javaslatok",
-  "compose.open": "Javaslatok fogadása webhelyről",
-  "compose.close": "Javaslatok fogadásának leállítása",
-  "compose.port": "Egy webhely űrlapja kitöltheti ezeket: {columns}."
+  "compose.proofFile": "{name} eredete"
 }

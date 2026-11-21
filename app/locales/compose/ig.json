@@ -36,9 +36,5 @@
   "compose.uncertified": "Ahịrị dịka ha dị ugbu a: enweghị mbipụta, ya mere enweghị asambodo",
   "compose.unproven": "Asambodo ya anaghị eguzo: agbanwere ha, ma ọ bụ e jighị igodo ha kpọrọ akara ha",
   "compose.saveProof": "Chekwaa ebe o si",
-  "compose.proofFile": "Ebe {name} si",
-  "compose.ports": "Atụmatụ",
-  "compose.open": "Nabata atụmatụ site na saịtị",
-  "compose.close": "Kwụsị ịnabata atụmatụ",
-  "compose.port": "Fọm nke saịtị nwere ike idejupụta {columns}."
+  "compose.proofFile": "Ebe {name} si"
 }

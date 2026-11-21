@@ -36,9 +36,5 @@
   "compose.uncertified": "E linee cum’elle sò avà: nisuna versione, dunque nisun certificatu",
   "compose.unproven": "I so certificati ùn tenenu micca: cambiati, o micca sigillati cù a chjave ch’elli nominanu",
   "compose.saveProof": "Arregistrà a so pruvenienza",
-  "compose.proofFile": "Pruvenienza di {name}",
-  "compose.ports": "Pruposte",
-  "compose.open": "Accettà pruposte da un situ",
-  "compose.close": "Piantà d’accettà pruposte",
-  "compose.port": "Un furmulariu di situ pò empie {columns}."
+  "compose.proofFile": "Pruvenienza di {name}"
 }

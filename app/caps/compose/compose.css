@@ -1,7 +1,10 @@
 /* SPDX-License-Identifier: MIT */
-/* The menu of Links with other creations in a pane's head, placed as its way out is (ui/preview.css's .out-menu), loaded with composition, off the first screen. */
-.links-menu { position-anchor: auto; position-area: block-end span-inline-start; position-try-fallbacks: flip-block, flip-inline; margin: 0.25rem 0; max-inline-size: min(22rem, 92vw); max-block-size: calc(100dvh - 5rem); overflow-y: auto; }
-.links-menu button { white-space: normal; } .links-menu button > :first-child { flex: none; }
+/* The menu of Links with other creations in a pane's head, placed as its way out is (ui/preview.css's .out-menu), loaded with composition, off the
+   first screen: a status under the row it is about, set in from the menu's edge as far as the row's words, and a collection's past versions so. */
+.links-menu { --links-words: calc(0.75rem + var(--icon-m) + 0.7rem); position-anchor: auto; position-area: block-end span-inline-start; position-try-fallbacks: flip-block, flip-inline; margin: 0.25rem 0; min-inline-size: 16rem; max-inline-size: min(22rem, 92vw); max-block-size: calc(100dvh - 5rem); overflow-y: auto; }
+.links-menu button { white-space: normal; } .links-menu [aria-current] { padding-inline-start: var(--links-words); } .links-menu [aria-current] > span { flex: 1; } .links-menu button > :first-child { flex: none; } .links-menu .back { font-weight: 600; }
+.links-said, .links-past { margin: 0; padding-block: 0 0.45rem; padding-inline: var(--links-words) 1rem; color: var(--ink-soft); font-size: 0.8rem; overflow-wrap: anywhere; } .links-said { margin-block-start: -0.3rem; } .links-past { padding-block: 0.3rem; }
+.links-said[role='alert'] { color: var(--danger); } .links-menu li > .links-said:only-child { margin: 0; padding-block: 0.6rem; }
 /* A choice in a composed table, a slide's or a document's, a pill as Tables draws it (its step's shape too), in the colour Tables gives it, tinting whatever paper it is on. */
 .composed-pill { display: inline-block; white-space: nowrap; } .composed-pill[data-hue] { background: color-mix(in oklab, var(--hue) 30%, transparent); } .composed-pill + .composed-pill { margin-inline-start: 0.25em; }
 /* A figure in a slide's words, worked out: as the words around it are, its formula as code again while they are edited. */

@@ -10,5 +10,7 @@
   "collect.sent": "Mulțumim. Răspunsul dvs. a fost trimis.",
   "collect.unsent": "Nu a putut fi trimis. Încercați din nou.",
   "collect.sealed": "Un răspuns este sigilat în browserul vizitatorului, așa că gazda nu îl poate citi.",
-  "collect.online": "Puneți formularul online"
+  "collect.online": "Puneți formularul online",
+  "collect.proposals": "Acceptă propuneri de pe un site",
+  "collect.port": "Un formular de pe site poate completa {columns}."
 }

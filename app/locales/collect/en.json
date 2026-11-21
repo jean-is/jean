@@ -10,5 +10,7 @@
   "collect.sent": "Thank you. Your reply was sent.",
   "collect.unsent": "It couldn’t be sent. Try again.",
   "collect.sealed": "A reply is sealed in the visitor’s browser, so the host can’t read it.",
-  "collect.online": "Put the form online"
+  "collect.online": "Put the form online",
+  "collect.proposals": "Accept proposals from a site",
+  "collect.port": "A site’s form can fill {columns}."
 }

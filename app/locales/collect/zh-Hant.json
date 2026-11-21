@@ -10,5 +10,7 @@
   "collect.sent": "謝謝。你的回覆已送出。",
   "collect.unsent": "無法送出。請再試一次。",
   "collect.sealed": "回覆在訪客的瀏覽器裡就已密封，託管方無法讀取。",
-  "collect.online": "把表單放上網路"
+  "collect.online": "把表單放上網路",
+  "collect.proposals": "接受來自網站的提議",
+  "collect.port": "網站的表單可以填寫 {columns}。"
 }

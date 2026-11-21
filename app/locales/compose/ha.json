@@ -36,9 +36,5 @@
   "compose.uncertified": "Layukan kamar yadda suke yanzu: babu siga, don haka babu takardar shaida",
   "compose.unproven": "Takardun shaidarsa ba su tsaya ba: an canza su, ko ba a hatimce su da makullin da suka ambata ba",
   "compose.saveProof": "Ajiye asalinsa",
-  "compose.proofFile": "Asalin {name}",
-  "compose.ports": "Shawarwari",
-  "compose.open": "Karɓi shawarwari daga wani shafi",
-  "compose.close": "Daina karɓar shawarwari",
-  "compose.port": "Fom na shafi zai iya cike {columns}."
+  "compose.proofFile": "Asalin {name}"
 }

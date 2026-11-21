@@ -36,9 +36,5 @@
   "compose.uncertified": "แถวตามที่เป็นอยู่ตอนนี้: ไม่มีเวอร์ชัน จึงไม่มีใบรับรอง",
   "compose.unproven": "ใบรับรองไม่ถูกต้อง: ถูกเปลี่ยน หรือไม่ได้ประทับด้วยกุญแจที่ระบุ",
   "compose.saveProof": "บันทึกที่มา",
-  "compose.proofFile": "ที่มาของ {name}",
-  "compose.ports": "ข้อเสนอ",
-  "compose.open": "รับข้อเสนอจากเว็บไซต์",
-  "compose.close": "หยุดรับข้อเสนอ",
-  "compose.port": "ฟอร์มของเว็บไซต์กรอก {columns} ได้"
+  "compose.proofFile": "ที่มาของ {name}"
 }

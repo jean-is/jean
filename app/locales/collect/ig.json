@@ -10,5 +10,7 @@
   "collect.sent": "Daalụ. E zigala azịza gị.",
   "collect.unsent": "Enweghị ike iziga ya. Nwaa ọzọ.",
   "collect.sealed": "A na-etinye azịza n’akara n’ihe nchọgharị nke onye ọbịa, ya mere onye nnabata enweghị ike ịgụ ya.",
-  "collect.online": "Tinye fọm ahụ n’ịntanetị"
+  "collect.online": "Tinye fọm ahụ n’ịntanetị",
+  "collect.proposals": "Nabata atụmatụ site na saịtị",
+  "collect.port": "Fọm nke saịtị nwere ike idejupụta {columns}."
 }

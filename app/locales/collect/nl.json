@@ -10,5 +10,7 @@
   "collect.sent": "Bedankt. Je antwoord is verstuurd.",
   "collect.unsent": "Versturen lukte niet. Probeer het opnieuw.",
   "collect.sealed": "Een antwoord wordt verzegeld in de browser van de bezoeker, zodat de host het niet kan lezen.",
-  "collect.online": "Formulier online zetten"
+  "collect.online": "Formulier online zetten",
+  "collect.proposals": "Voorstellen van een site aannemen",
+  "collect.port": "Een formulier op een site kan {columns} invullen."
 }

@@ -36,9 +36,5 @@
   "compose.uncertified": "সারিগুলো এখন যেমন আছে: কোনো সংস্করণ নেই, তাই কোনো সনদ নেই",
   "compose.unproven": "এর সনদগুলো টেকে না: বদলানো হয়েছে, বা যে চাবির কথা বলে তা দিয়ে সিল করা হয়নি",
   "compose.saveProof": "এর উৎস সংরক্ষণ করুন",
-  "compose.proofFile": "{name}-এর উৎস",
-  "compose.ports": "প্রস্তাব",
-  "compose.open": "কোনো সাইট থেকে প্রস্তাব গ্রহণ করুন",
-  "compose.close": "প্রস্তাব গ্রহণ বন্ধ করুন",
-  "compose.port": "সাইটের একটি ফর্ম {columns} পূরণ করতে পারে।"
+  "compose.proofFile": "{name}-এর উৎস"
 }

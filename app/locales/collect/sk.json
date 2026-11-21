@@ -10,5 +10,7 @@
   "collect.sent": "Ďakujeme. Vaša odpoveď bola odoslaná.",
   "collect.unsent": "Nepodarilo sa to odoslať. Skúste to znova.",
   "collect.sealed": "Odpoveď sa zapečatí v prehliadači návštevníka, takže hostiteľ ju nemôže čítať.",
-  "collect.online": "Dať formulár online"
+  "collect.online": "Dať formulár online",
+  "collect.proposals": "Prijímať návrhy z webu",
+  "collect.port": "Formulár webu môže vyplniť {columns}."
 }

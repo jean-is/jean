@@ -36,9 +36,5 @@
   "compose.uncertified": "Die Zeilen, wie sie jetzt sind: keine Version, also kein Zertifikat",
   "compose.unproven": "Seine Zertifikate halten nicht: geändert oder nicht mit dem genannten Schlüssel versiegelt",
   "compose.saveProof": "Herkunft speichern",
-  "compose.proofFile": "Herkunft von {name}",
-  "compose.ports": "Vorschläge",
-  "compose.open": "Vorschläge von einer Website annehmen",
-  "compose.close": "Keine Vorschläge mehr annehmen",
-  "compose.port": "Ein Formular einer Website kann {columns} ausfüllen."
+  "compose.proofFile": "Herkunft von {name}"
 }

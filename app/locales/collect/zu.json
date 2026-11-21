@@ -10,5 +10,7 @@
   "collect.sent": "Ngiyabonga. Impendulo yakho ithunyelwe.",
   "collect.unsent": "Ayikwazanga ukuthunyelwa. Zama futhi.",
   "collect.sealed": "Impendulo ivikelwa isesipheqululini sesivakashi, ngakho umsingathi akakwazi ukuyifunda.",
-  "collect.online": "Faka ifomu ku-inthanethi"
+  "collect.online": "Faka ifomu ku-inthanethi",
+  "collect.proposals": "Yamukela iziphakamiso ezivela kusayithi",
+  "collect.port": "Ifomu lesayithi lingagcwalisa {columns}."
 }

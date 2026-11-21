@@ -10,5 +10,7 @@
   "collect.sent": "Terima kasih. Balasan Anda sudah terkirim.",
   "collect.unsent": "Tidak bisa dikirim. Coba lagi.",
   "collect.sealed": "Balasan disegel di browser pengunjung, jadi host tidak bisa membacanya.",
-  "collect.online": "Jadikan formulir online"
+  "collect.online": "Jadikan formulir online",
+  "collect.proposals": "Terima usulan dari situs",
+  "collect.port": "Formulir situs dapat mengisi {columns}."
 }

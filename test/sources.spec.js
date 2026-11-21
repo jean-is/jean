@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
-// Sources (caps/sources): over a collection's rows once Routines is found, a band that lists where its rows come from by themselves. Add a source
-// asks what to read and when, and makes a routine, on, each morning at eight, whose request says what to read and names the collection by its
-// place; its switch turns it off. In Arabic and Japanese, the band is in the language.
+// Sources (caps/sources): over a collection's rows, a band that lists where its rows come from by themselves, once it has one; Add a source, from
+// the collection's links menu once Routines is found, shows it open on its form, which asks what to read and when, and makes a routine, on, each
+// morning at eight, whose request says what to read and names the collection by its place; its switch turns it off. In Arabic and Japanese, the
+// menu and the band are in the language.
 import { test, expect } from '@playwright/test'
 import { start } from './helpers.js'
 
@@ -18,13 +19,16 @@ const bills = (page) => page.evaluate(async () => {
 /** The project's routines, as their files have them. @param {import('@playwright/test').Page} page */
 const routines = (page) => page.evaluate(async () => (await (await import('/caps/routines/routines.js')).routines()).map((/** @type {any} */ { title, request, every, at, when, active }) => ({ title, request, every, at, when, active })))
 
-test('a source is a routine that names the collection: made from the band, each morning, on, and turned off by its switch', async ({ page }) => {
+test('a source is a routine that names the collection: begun from its links menu, made in the band, each morning, on, and turned off by its switch', async ({ page }) => {
   await start(page)
   const folder = await bills(page), band = page.locator('app-preview .sources')
-  await expect(band.locator('h3')).toHaveText(/Sources\s*0/)
-  await band.locator('h3 button').click()
+  // None yet: no band, which Add a source shows, open on its form.
+  await expect(page.locator('app-preview .table-grid')).toBeVisible()
+  await expect(band).toHaveCount(0)
+  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  await page.locator('.menu:popover-open').getByRole('group', { name: 'Sources' }).getByRole('button', { name: 'Add a source' }).click()
+  await expect(band.getByLabel('What to read')).toBeFocused()
   await expect(band.locator('.hint')).toHaveText('Rows a source adds wait here for you to accept them.')
-  await band.getByRole('button', { name: 'Add a source' }).click()
   await band.getByLabel('What to read').fill('my emails labelled Invoices')
   await expect(band.getByLabel('When')).toHaveValue('morning')
   await band.getByRole('button', { name: 'Add', exact: true }).click()
@@ -50,8 +54,10 @@ for (const lang of ['ar', 'ja']) {
     const words = await page.evaluate(async (code) => (await fetch(`/locales/sources/${code}.json`)).json(), lang)
     await bills(page)
     const band = page.locator('app-preview .sources')
+    await expect(page.locator('app-preview .table-grid')).toBeVisible()
+    await page.locator('app-preview .pane-head button[popovertarget^="links-"]').click()
+    await page.locator('.menu:popover-open').getByRole('group', { name: words['sources.head'] }).getByRole('button', { name: words['sources.add'] }).click()
     await expect(band.locator('h3 button > span').first()).toHaveText(words['sources.head'])
-    await band.locator('h3 button').click()
-    await expect(band.locator('.sources-new')).toHaveText(words['sources.add'])
+    await expect(band.getByLabel(words['sources.what'])).toBeFocused()
   })
 }

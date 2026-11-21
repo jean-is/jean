@@ -36,9 +36,5 @@
   "compose.uncertified": "The rows as they are now: no version, so no certificate",
   "compose.unproven": "Its certificates don’t hold: changed, or not sealed by the key they name",
   "compose.saveProof": "Save its provenance",
-  "compose.proofFile": "Provenance of {name}",
-  "compose.ports": "Proposals",
-  "compose.open": "Accept proposals from a site",
-  "compose.close": "Stop accepting proposals",
-  "compose.port": "A site’s form can fill {columns}."
+  "compose.proofFile": "Provenance of {name}"
 }

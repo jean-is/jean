@@ -10,5 +10,7 @@
   "collect.sent": "Dziękujemy. Twoja odpowiedź została wysłana.",
   "collect.unsent": "Nie udało się wysłać. Spróbuj ponownie.",
   "collect.sealed": "Odpowiedź jest pieczętowana w przeglądarce odwiedzającego, więc host nie może jej przeczytać.",
-  "collect.online": "Umieść formularz online"
+  "collect.online": "Umieść formularz online",
+  "collect.proposals": "Przyjmuj propozycje ze strony",
+  "collect.port": "Formularz strony może wypełnić {columns}."
 }

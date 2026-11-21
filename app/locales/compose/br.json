@@ -36,9 +36,5 @@
   "compose.uncertified": "Al linennoù evel m’emaint bremañ: stumm ebet, neuze testeni ebet",
   "compose.unproven": "N’eo ket mat e destenioù: kemmet, pe n’int ket siellet gant an alc’hwez a envelont",
   "compose.saveProof": "Enrollañ e orin",
-  "compose.proofFile": "Orin {name}",
-  "compose.ports": "Kinnigoù",
-  "compose.open": "Degemer kinnigoù digant ul lec’hienn",
-  "compose.close": "Paouez da zegemer kinnigoù",
-  "compose.port": "Ur furmskrid lec’hienn a c’hall leuniañ {columns}."
+  "compose.proofFile": "Orin {name}"
 }

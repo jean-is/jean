@@ -36,9 +36,5 @@
   "compose.uncertified": "Rândurile așa cum sunt acum: nicio versiune, deci niciun certificat",
   "compose.unproven": "Certificatele sale nu se confirmă: modificate sau nesigilate cu cheia pe care o numesc",
   "compose.saveProof": "Salvează proveniența",
-  "compose.proofFile": "Proveniența pentru {name}",
-  "compose.ports": "Propuneri",
-  "compose.open": "Acceptă propuneri de pe un site",
-  "compose.close": "Nu mai accepta propuneri",
-  "compose.port": "Un formular de pe site poate completa {columns}."
+  "compose.proofFile": "Proveniența pentru {name}"
 }

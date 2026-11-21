@@ -35,7 +35,7 @@ export default function look({ one, open }) {
   if (!found.length) return nothing
   const id = `look-${one.folder.slice(12, 38)}`, shut = folded.value.has(one.folder), named = (/** @type {string | undefined} */ column) => one.table.properties.find((property) => property.id === column)?.name ?? ''
   const fold = () => { const next = new Set(folded.peek()); if (!next.delete(one.folder)) next.add(one.folder); folded.value = next }, count = (/** @type {number} */ n) => new Intl.NumberFormat(intlLocales()).format(n)
-  const button = (/** @type {string} */ key, /** @type {() => unknown} */ run, main = false) => html`<button type="button" class=${main ? 'button primary' : 'button'} @click=${run}>${t(key)}</button>`
+  const button = (/** @type {string} */ key, /** @type {() => unknown} */ run, main = false) => html`<button type="button" class=${main ? 'button small primary' : 'button small'} @click=${run}>${t(key)}</button>`
   /** A finding in words, then what mends it and what leaves it. @param {Finding} finding */
   const said = (finding) => { const { kind, rows, column } = finding, later = () => leave(one, finding, all)
     return kind === 'same' ? [t('checks.same', { name: finding.name ?? '' }), button('checks.keep', () => change(one, rows.slice(1).map((row) => ({ row, delete: true })), 'user'), true), button('checks.differ', later)]

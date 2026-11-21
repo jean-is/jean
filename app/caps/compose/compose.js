@@ -251,10 +251,16 @@ export async function contribute(place, proposals, dir = app.projectDir) {
   if (edits.length) await tables.change(one, edits, 'visitor', undefined, false, false)
   return edits.length
 }
-/** A collection's port opened by its owner: every column a form fills. @param {string} folder */
-async function openPort(folder) {
-  const dir = app.projectDir, one = await (await import('../tables/tables.js')).load(folder, dir)
+/** A collection's port opened by its owner, every column a form fills, or shut: from Share's Collect replies (caps/collect). @param {string} folder @param {boolean} on */
+export async function propose(folder, on) {
+  const dir = app.projectDir, one = on && await (await import('../tables/tables.js')).load(folder, dir)
   if (one) await app.fs.write(`${dir}/${folder}/port.json`, `${JSON.stringify(portFor(one.table, new Date().toISOString()), null, 1)}\n`)
+  else if (!on) await app.fs.remove(`${dir}/${folder}/port.json`)
+}
+/** The columns a site's form can fill while a collection takes proposals, in words; null while its port is shut. @param {string} folder @returns {Promise<string | null>} */
+export async function proposalsOf(folder) {
+  const dir = app.projectDir, port = await portOf(dir, folder), one = port && await (await import('../tables/tables.js')).load(folder, dir)
+  return port && one ? new Intl.ListFormat(intlLocales(locale.peek())).format(port.columns.map((id) => one.table.properties.find((p) => p.id === id)?.name ?? id)) : null
 }
 
 /** Which version a reference reads, in words. @param {Edge['at']} at */
@@ -268,13 +274,14 @@ async function choose(from, index, change) {
 }
 /** When a reference's `ask` runs again, each choice by its `refresh`: by hand, every five minutes, every hour, or as its source changes. */
 const PACES = [['', 'compose.byHand'], ['5 min', 'compose.every5'], ['60 min', 'compose.hourly'], ['auto', 'compose.auto']]
-/** What the pane's head lists for each place, once read: `source`, a collection, not a whiteboard; `runs`, each `ask`'s last run; `proofs`, the certificates of what each shows, checked. @typedef {{ source: boolean, uses: Edge[], usedIn: Edge[], names: Map<string, string>, versions: Map<string, Version[]>, old: Map<Edge, [string, string][]>, runs: Map<Edge, Run | undefined>, proofs: Map<Edge, { chain: import('../receipt/certificate.js').Sealed[], holds: boolean, n?: number } | null>, changes: number, broken: string[], port?: { columns: string } | null }} Links */
+/** What the pane's head lists for each place, once read: `source`, a collection, not a whiteboard; `runs`, each `ask`'s last run; `proofs`, the certificates of what each shows, checked. @typedef {{ source: boolean, uses: Edge[], usedIn: Edge[], names: Map<string, string>, versions: Map<string, Version[]>, old: Map<Edge, [string, string][]>, runs: Map<Edge, Run | undefined>, proofs: Map<Edge, { chain: import('../receipt/certificate.js').Sealed[], holds: boolean, n?: number } | null>, changes: number, broken: string[] }} Links */
 const links = signal(/** @type {Map<string, Links>} */ (new Map()))
 /** Each place's links, read as its menu opens. @param {string} uri */
 async function linksOf(uri) {
   const dir = app.projectDir, tables = await import('../tables/tables.js'), { edges, names } = await graph(dir), uses = edges.filter((edge) => edge.from === uri && names.has(edge.to))
   const versions = new Map(await Promise.all([...new Set([uri, ...uses.map((edge) => edge.to)])].map(async (place) => /** @type {[string, Version[]]} */ ([place, await versionsOf(dir, place)]))))
-  const own = PLACE.test(uri) ? await tables.load(uri, dir).then((one) => (one?.table.kind ? null : one)) : null, last = versions.get(uri)?.at(-1), old = new Map(), port = own && await portOf(dir, uri), named = (/** @type {string} */ id) => own?.table.properties.find((p) => p.id === id)?.name ?? id
+  const own = PLACE.test(uri) ? await tables.load(uri, dir).then((one) => (one?.table.kind ? null : one)) : null, last = versions.get(uri)?.at(-1), old = new Map()
+  fed ??= own ? await import('../sources/sources.js') : undefined
   for (const edge of uses) { const live = await tables.load(edge.to, dir).catch(() => null); if (live) old.set(edge, current(live.table, versions.get(edge.to) ?? [], edge.recipe).old) }
   const runs = await runsOf(runsAt(dir, uri)), lastOf = (/** @type {Edge} */ edge) => runs.findLast((one) => one.key === keyOf(refOf(edge))), proofs = new Map()
   // What each shows, certified: its last run's and the version it read, else the version it reads; nothing for the rows as they are.
@@ -284,37 +291,53 @@ async function linksOf(uri) {
     proofs.set(edge, chain.length ? { chain, holds: holds(await chainOf(chain)), n: version?.n } : null)
   }
   links.value = new Map(links.peek()).set(uri, { source: Boolean(own), uses, usedIn: edges.filter((edge) => edge.to === uri), names, versions, old, proofs, runs: new Map(uses.map((edge) => [edge, lastOf(edge)])), broken: own && last ? breaks(last.table, own.table) : [],
-    changes: own ? own.lines.filter((line) => 'at' in line && line.at > (last?.head ?? '')).length : 0,
-    port: own && port ? { columns: new Intl.ListFormat(intlLocales(locale.peek())).format(port.columns.map(named)) } : null })
+    changes: own ? own.lines.filter((line) => 'at' in line && line.at > (last?.head ?? '')).length : 0 })
 }
 
-/** The pane's head, for a collection, slides or a document: a button whose menu lists what it uses and what uses it, each opening it; for a collection, its versions. @param {{ uri: string }} file */
+/** A creation's glyph, by its folder. */
+const KIND = /** @type {Record<string, unknown>} */ ({ collections: icons.table, decks: icons.slides, documents: icons.note, sites: icons.code })
+/** The reference whose settings the links menu shows, as its consumer's place and its index there; the list while it is empty. */
+const deep = signal('')
+/** Sources' part of a collection's links menu, fetched as the first collection's opens. @type {typeof import('../sources/sources.js') | undefined} */
+let fed
+
+/**
+ * The pane's head, for a collection, slides or a document: a button whose menu lists what uses it and what it uses, each with the version it
+ * reads, then for a collection where its rows come from and its versions, each status under the row it is about. A reference used opens its
+ * settings in the same menu, Back returning to the list: the version it shows, when its `ask` runs, its certificate, the collection itself.
+ * @param {{ uri: string }} file
+ */
 function head({ uri }) {
   if (!PLACE.test(uri) && !CONSUMERS.some(([folder, own]) => uri.startsWith(`${folder}/`) && own.test(uri.slice(folder.length + 1)))) return nothing
   const id = `links-${uri}`, these = links.value.get(uri), date = new Intl.DateTimeFormat(intlLocales(locale.value), { dateStyle: 'medium', timeStyle: 'short' }), name = (/** @type {string} */ place) => these?.names.get(place) ?? place
-  const open = (/** @type {string} */ place, /** @type {unknown} */ value = nothing) => html`<button type="button" popovertarget=${id} popovertargetaction="hide" @click=${() => openFile({ type: 'resource_link', uri: place, name: name(place) })}><span dir="auto">${name(place)}</span>${value}</button>`
+  const open = (/** @type {string} */ place, /** @type {unknown} */ value = nothing) => html`<button type="button" popovertarget=${id} popovertargetaction="hide" @click=${() => openFile({ type: 'resource_link', uri: place, name: name(place) })}>${KIND[place.split('/')[0]] ?? icons.layers}<span dir="auto">${name(place)}</span>${value}</button>`
   const group = (/** @type {string} */ key, /** @type {unknown[]} */ rows) => (rows.length ? html`<div role="group" aria-label=${t(key)}><p class="menu-heading" aria-hidden="true">${t(key)}</p><ul>${rows}</ul></div>` : nothing)
-  const uses = (these?.uses ?? []).map((edge) => html`<li>${open(edge.to)}<select title=${t('compose.which')} ?disabled=${edge.from.startsWith('sites/')}
-    @change=${(/** @type {Event} */ event) => ((value) => choose(uri, edge.index, (ref) => ({ ...ref, at: /^\d/.test(value) ? Number(value) : /** @type {'live' | 'published'} */ (value) })).then(() => linksOf(uri)))(/** @type {HTMLSelectElement} */ (event.target).value)}>
-    ${['live', 'published', ...(these?.versions.get(edge.to) ?? []).map((version) => version.n)].map((at) => html`<option value=${String(at)} ?selected=${at === edge.at}>${which(/** @type {Edge['at']} */ (at))}</option>`)}</select>
-    ${(these?.old.get(edge) ?? []).map(([was, now]) => html`<p class="menu-heading">${t('compose.old', { old: was, name: now })}</p>`)}${edge.recipe.ask ? ((last) => html`<select title=${t('compose.pace')} ?disabled=${edge.from.startsWith('sites/')}
-      @change=${(/** @type {Event} */ event) => choose(uri, edge.index, (ref) => ((refresh) => ({ ...ref, recipe: { ...Object.fromEntries(Object.entries(ref.recipe).filter(([what]) => what !== 'refresh')), ...(refresh && { refresh }) } }))(/** @type {HTMLSelectElement} */ (event.target).value)).then(() => linksOf(uri))}>
-      ${PACES.map(([refresh, key]) => html`<option value=${refresh} ?selected=${(edge.recipe.refresh ?? '') === refresh}>${t(key)}</option>`)}</select>
-      <button type="button" @click=${() => run(refOf(edge), uri, app.projectDir).then(() => linksOf(uri))}>${icons.sync}<span>${t('compose.update')}</span></button>
-      ${last ? html`<p class="menu-heading" role=${last.error ? 'alert' : 'status'}>${last.error ? t('compose.failed') : t('compose.ran', { date: date.format(new Date(last.at)) })}</p>` : nothing}`)(these?.runs.get(edge)) : nothing}
-    ${((proof) => (proof ? html`<p class="menu-heading" role=${proof.holds ? 'status' : 'alert'}>${proof.holds ? (proof.n ? t('compose.certified', { n: proof.n }) : t('compose.certifiedLive')) : t('compose.unproven')}</p>
-      <button type="button" @click=${async () => (await import('../../ui/save.js')).save(new Blob([JSON.stringify(proof.chain, null, 1)], { type: 'application/json' }), `${t('compose.proofFile', { name: name(uri) })}.json`)}>${icons.download}<span>${t('compose.saveProof')}</span></button>`
-      : html`<p class="menu-heading">${t('compose.uncertified')}</p>`))(these?.proofs.get(edge))}</li>`)
-  const versions = these?.source ? html`<div role="group" aria-label=${t('compose.versions')}><p class="menu-heading" aria-hidden="true">${t('compose.versions')}</p>
-    <p class="menu-heading" role="status">${t('compose.journal', { count: these.changes })}</p>${these.broken.length ? html`<p class="menu-heading" role="alert">${t('compose.breaks', { columns: new Intl.ListFormat(intlLocales(locale.value)).format(these.broken) })}</p>` : nothing}
-    <ul><li><button type="button" ?disabled=${these.broken.length > 0 || (!these.changes && Boolean(these.versions.get(uri)?.length))} @click=${async () => { const made = await publish(uri); if (made?.version) notify(t('compose.done', { n: made.version.n })); await linksOf(uri) }}>${icons.upload}<span>${t('compose.publish', { n: (these.versions.get(uri)?.at(-1)?.n ?? 0) + 1 })}</span></button></li>
-    ${[...these.versions.get(uri) ?? []].reverse().slice(0, 5).map((version) => html`<li><p class="menu-heading">${t(version.why === 'schema' ? 'compose.versionSchema' : 'compose.version', { n: version.n, date: date.format(new Date(version.at)) })}</p></li>`)}</ul></div>
-    <div role="group" aria-label=${t('compose.ports')}><p class="menu-heading" aria-hidden="true">${t('compose.ports')}</p>${these.port ? html`<p class="menu-heading">${t('compose.port', these.port)}</p>` : nothing}<ul><li><button type="button" @click=${async () => { await (these.port ? app.fs.remove(`${app.projectDir}/${uri}/port.json`) : openPort(uri)); await linksOf(uri) }}>
-      ${icons[these.port ? 'close' : 'plug']}<span>${t(these.port ? 'compose.close' : 'compose.open')}</span></button></li></ul></div>` : nothing
-  // Keyed by its place: a pane that shows another creation draws its menu anew, closed.
-  return keyed(uri, html`<button class="icon-button" popovertarget=${id} aria-label=${t('compose.links')}>${icons.layers}</button>
-    <div id=${id} class="menu links-menu" popover @toggle=${(/** @type {ToggleEvent} */ event) => event.newState === 'open' && linksOf(uri)}>${these ? html`${versions}${group('compose.uses', uses)}
-      ${group('compose.usedIn', these.usedIn.map((edge) => html`<li>${open(edge.from, html`<span class="menu-value">${which(edge.at)}</span>`)}</li>`))}${these.uses.length + these.usedIn.length || versions !== nothing ? nothing : html`<p class="menu-heading">${t('compose.none')}</p>`}` : nothing}</div>`)
+  /** A line under the row it is about. @param {string} words @param {string} [role] */
+  const said = (words, role) => html`<p class="links-said" role=${role ?? nothing}>${words}</p>`
+  const go = (/** @type {string} */ to) => { deep.value = to; requestAnimationFrame(() => /** @type {HTMLElement | null | undefined} */ (document.getElementById(id)?.querySelector('button:not(:disabled)'))?.focus()) }
+  /** A choice, ticked while it holds. @param {boolean} on @param {string} words @param {() => unknown} pick @param {boolean} off */
+  const choice = (on, words, pick, off) => html`<li><button type="button" aria-current=${String(on)} ?disabled=${off} @click=${pick}><span>${words}</span>${on ? icons.check : nothing}</button></li>`
+  /** A reference's settings. @param {Edge} edge */
+  const settings = (edge) => {
+    const site = edge.from.startsWith('sites/'), last = these?.runs.get(edge), proof = these?.proofs.get(edge), set = (/** @type {(ref: Ref) => Ref} */ change) => choose(uri, edge.index, change).then(() => linksOf(uri))
+    return html`<button type="button" class="back" @click=${() => go('')}>${icons.back}${t('compose.uses')}</button><hr>${(these?.old.get(edge) ?? []).map(([was, now]) => said(t('compose.old', { old: was, name: now })))}
+      ${group('compose.which', /** @type {Edge['at'][]} */ (['live', 'published', ...(these?.versions.get(edge.to) ?? []).map((version) => version.n)]).map((at) => choice(at === edge.at, which(at), () => set((ref) => ({ ...ref, at })), site)))}
+      ${edge.recipe.ask ? html`${group('compose.pace', PACES.map(([refresh, key]) => choice((edge.recipe.refresh ?? '') === refresh, t(key), () => set((ref) => ({ ...ref, recipe: { ...Object.fromEntries(Object.entries(ref.recipe).filter(([what]) => what !== 'refresh')), ...(refresh && { refresh }) } })), site)))}
+        <ul><li><button type="button" @click=${() => run(refOf(edge), uri, app.projectDir).then(() => linksOf(uri))}>${icons.sync}<span>${t('compose.update')}</span></button>${last ? said(last.error ? t('compose.failed') : t('compose.ran', { date: date.format(new Date(last.at)) }), last.error ? 'alert' : 'status') : nothing}</li></ul>` : nothing}
+      <hr><ul>${proof ? html`<li><button type="button" @click=${async () => (await import('../../ui/save.js')).save(new Blob([JSON.stringify(proof.chain, null, 1)], { type: 'application/json' }), `${t('compose.proofFile', { name: name(uri) })}.json`)}>${icons.download}<span>${t('compose.saveProof')}</span></button>
+        ${said(proof.holds ? (proof.n ? t('compose.certified', { n: proof.n }) : t('compose.certifiedLive')) : t('compose.unproven'), proof.holds ? 'status' : 'alert')}</li>` : html`<li>${said(t('compose.uncertified'))}</li>`}<li>${open(edge.to)}</li></ul>`
+  }
+  const all = these?.versions.get(uri) ?? [], edge = these?.uses.find((one) => `${uri} ${one.index}` === deep.value)
+  const versions = these?.source ? html`<div role="group" aria-label=${t('compose.versions')}><p class="menu-heading" aria-hidden="true">${t('compose.versions')}</p><ul>
+    <li><button type="button" ?disabled=${these.broken.length > 0 || (!these.changes && all.length > 0)} @click=${async () => { const made = await publish(uri); if (made?.version) notify(t('compose.done', { n: made.version.n })); await linksOf(uri) }}>${icons.upload}<span>${t('compose.publish', { n: (all.at(-1)?.n ?? 0) + 1 })}</span></button>
+      ${these.broken.length ? said(t('compose.breaks', { columns: new Intl.ListFormat(intlLocales(locale.value)).format(these.broken) }), 'alert') : said(t('compose.journal', { count: these.changes }), 'status')}</li>
+    ${[...all].reverse().slice(0, 5).map((version) => html`<li><p class="links-past">${t(version.why === 'schema' ? 'compose.versionSchema' : 'compose.version', { n: version.n, date: date.format(new Date(version.at)) })}</p></li>`)}</ul></div>` : nothing
+  const list = these && html`${group('compose.usedIn', these.usedIn.map((one) => html`<li>${open(one.from, html`<span class="menu-value">${which(one.at)}</span>`)}</li>`))}
+    ${group('compose.uses', these.uses.map((one) => html`<li><button type="button" class="submenu" @click=${() => go(`${uri} ${one.index}`)}>${KIND.collections}<span dir="auto">${name(one.to)}</span><span class="menu-value">${which(one.at)}</span>${icons.chevron}</button></li>`))}
+    ${these.source && fed ? fed.linked(uri, id) : nothing}${versions}${these.uses.length + these.usedIn.length || these.source ? nothing : html`<p class="menu-heading">${t('compose.none')}</p>`}`
+  // Keyed by its place: a pane that shows another creation draws its menu anew, closed; closed, it opens on its list again.
+  return keyed(uri, html`<button class="icon-button" popovertarget=${id} aria-label=${t('compose.links')}>${icons.flow}</button>
+    <div id=${id} class="menu links-menu" popover @toggle=${(/** @type {ToggleEvent} */ event) => (event.newState === 'open' ? linksOf(uri) : (deep.value = ''))}>${edge ? settings(edge) : list || nothing}</div>`)
 }
 
 register({ id: 'compose', slots: { head: { at: 1, draw: head } } })

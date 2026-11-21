@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: MIT */
 /* Collect replies, in Share's dialog (./collect.js): the columns to tick beside the form as people will see it, one under the other where the
-   dialog is narrow. */
+   dialog is narrow; under them, whether a site Jean made can propose rows, by its switch. */
 .collect { display: flex; flex-wrap: wrap; gap: 1rem 1.5rem; }
 .collect fieldset, .collect section { flex: 1 1 13rem; min-inline-size: 0; margin: 0; padding: 0; border: 0; }
 .collect legend, .collect h3 { margin: 0 0 0.25rem; padding: 0; font-size: 0.95rem; font-weight: 600; }
@@ -16,3 +16,4 @@
 .collect-field span:has(input) { display: flex; align-items: center; gap: 0.4rem; }
 .collect-field :is(input:not([type='radio'], [type='checkbox']), select, textarea) { inline-size: 100%; }
 .collect-send { justify-self: start; padding: 0.35rem 1.1rem; border-radius: 999px; background: var(--ink); color: var(--room); font-weight: 600; }
+.collect-port { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 0.75rem; padding-block-start: 0.75rem; border-block-start: 1px solid var(--line); } .collect-port label { flex: 1; font-weight: 600; } .collect-port .hint { flex: 1 1 100%; margin: 0; } .collect-port .hint:empty { display: none; }

@@ -36,9 +36,5 @@
   "compose.uncertified": "Sarara akka amma jiranitti: veershiniin hin jiru, kanaaf ragaan hin jiru",
   "compose.unproven": "Ragaaleen isaa hin dhaabatan: jijjiiramaniiru, ykn furtuu isaan maqaa dhahaniin hin chaappaa’amne",
   "compose.saveProof": "Madda isaa olkaa’i",
-  "compose.proofFile": "Madda {name}",
-  "compose.ports": "Yaada dhiyeessii",
-  "compose.open": "Yaada dhiyeessii marsariitii irraa fudhadhu",
-  "compose.close": "Yaada dhiyeessii fudhachuu dhaabi",
-  "compose.port": "Unkaan marsariitii {columns} guutuu danda’a."
+  "compose.proofFile": "Madda {name}"
 }

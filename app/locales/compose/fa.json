@@ -36,9 +36,5 @@
   "compose.uncertified": "ردیف‌ها همان‌طور که اکنون هستند: نسخه‌ای نیست، پس گواهی‌ای نیست",
   "compose.unproven": "گواهی‌هایش معتبر نیستند: تغییر کرده‌اند یا با کلیدی که نام می‌برند مهر نشده‌اند",
   "compose.saveProof": "ذخیرهٔ خاستگاه آن",
-  "compose.proofFile": "خاستگاه {name}",
-  "compose.ports": "پیشنهادها",
-  "compose.open": "پذیرفتن پیشنهاد از یک سایت",
-  "compose.close": "دیگر پیشنهاد نپذیر",
-  "compose.port": "فرم یک سایت می‌تواند {columns} را پر کند."
+  "compose.proofFile": "خاستگاه {name}"
 }

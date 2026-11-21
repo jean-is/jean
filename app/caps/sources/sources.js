@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
-// Sources, over a collection's rows (caps/over draws it), once Routines is found or the collection has one: where its rows come from by
-// themselves. A source is a routine whose request names the collection by its place: each morning, or as a file is shared, Jean reads what the
+// Sources, over a collection's rows (caps/over draws it), once the collection has one, or as one is being added from its links menu (caps/compose):
+// where its rows come from by themselves. A source is a routine whose request names the collection by its place: each morning, or as a file is shared, Jean reads what the
 // person said to read and adds a row for each thing the collection doesn't hold yet. Those rows are Jean's changes, so they wait there to be
 // accepted or rejected, as any. The band lists the collection's sources, each with its switch, and Add a source asks what to read and when.
 import { html, nothing } from 'lit-html'
@@ -42,18 +42,29 @@ async function add(one, event) {
 /** A source turned off or on, as Routines does: back on, the times it fell due meanwhile make no run. @param {Loaded} one @param {Routine} routine */
 const turn = (one, routine) => writeRoutine(app.fs, { ...routine, active: !routine.active, ...(!routine.active && { resumed: new Date().toISOString() }) }).then(() => reread(one.folder))
 
+/**
+ * Where a collection's rows come from, in its links menu (caps/compose), once Routines is found or it has one: Add a source, which shows its band
+ * open on the form, how many it has beside it. @param {string} folder @param {string} menu the menu's id
+ */
+export function linked(folder, menu) {
+  const mine = sourcesOf(folder).value, id = `sources-${folder.slice(12, 38)}`
+  if (!mine.length && !loaded.value.has('routines')) return nothing
+  const begin = () => { adding.value = folder; open.value = new Set(open.peek()).add(folder); requestAnimationFrame(() => document.getElementById(`${id}-what`)?.focus()) }
+  return html`<div role="group" aria-label=${t('sources.head')}><p class="menu-heading" aria-hidden="true">${t('sources.head')}</p><ul><li><button type="button" popovertarget=${menu} popovertargetaction="hide" @click=${begin}>${icons.download}<span>${t('sources.add')}</span>${mine.length ? html`<span class="menu-value">${new Intl.NumberFormat(intlLocales()).format(mine.length)}</span>` : nothing}</button></li></ul></div>`
+}
+
 /** @param {{ one: Loaded }} given the collection */
 export default function sources({ one }) {
   const { folder } = one, mine = sourcesOf(folder).value
-  if (!mine.length && !loaded.value.has('routines')) return nothing
-  const id = `sources-${folder.slice(12, 38)}`, shown = open.value.has(folder), fold = () => { const next = new Set(open.peek()); if (!next.delete(folder)) next.add(folder); open.value = next }
+  if (!mine.length && adding.value !== folder) return nothing
+  const id = `sources-${folder.slice(12, 38)}`, shown = open.value.has(folder), fold = () => { const next = new Set(open.peek()); if (next.delete(folder)) adding.value = ''; else next.add(folder); open.value = next }
   return html`<section class="over-band sources" aria-labelledby=${id}>
     <h3 id=${id}><button type="button" aria-expanded=${String(shown)} @click=${fold}>${icons.download}<span>${t('sources.head')}</span><span class="over-count">${new Intl.NumberFormat(intlLocales()).format(mine.length)}</span>${icons.chevron}</button></h3>
     ${!shown ? nothing : html`${mine.length ? html`<ul>${mine.map((routine, i) => html`<li><label for=${`${id}-${i}`}><bdi>${routine.title}</bdi></label><input id=${`${id}-${i}`} type="checkbox" class="switch" role="switch" .checked=${routine.active} @change=${() => turn(one, routine)}></li>`)}</ul>` : nothing}
       ${adding.value === folder ? html`<form class="sources-add" @submit=${(/** @type {SubmitEvent} */ e) => add(one, e)}><label for=${`${id}-what`}>${t('sources.what')}</label><input id=${`${id}-what`} name="what" dir="auto" required>
           <label for=${`${id}-when`}>${t('sources.when')}</label><select id=${`${id}-when`} name="when"><option value="morning">${t('sources.morning')}</option><option value="file">${t('sources.file')}</option></select>
-          <button class="button primary">${t('sources.make')}</button></form>`
-        : html`<button type="button" class="button sources-new" @click=${() => { adding.value = folder }}>${t('sources.add')}</button>`}
+          <button class="button small primary">${t('sources.make')}</button></form>`
+        : html`<button type="button" class="button small sources-new" @click=${() => { adding.value = folder }}>${t('sources.add')}</button>`}
       <p class="hint">${t('sources.waits')}</p>`}
   </section>`
 }

@@ -36,9 +36,5 @@
   "compose.uncertified": "Rækkerne, som de er nu: ingen version, altså intet certifikat",
   "compose.unproven": "Dets certifikater holder ikke: ændret, eller ikke forseglet med den nøgle, de nævner",
   "compose.saveProof": "Gem dets oprindelse",
-  "compose.proofFile": "Oprindelse af {name}",
-  "compose.ports": "Forslag",
-  "compose.open": "Tag imod forslag fra et websted",
-  "compose.close": "Stop med at tage imod forslag",
-  "compose.port": "En formular på et websted kan udfylde {columns}."
+  "compose.proofFile": "Oprindelse af {name}"
 }

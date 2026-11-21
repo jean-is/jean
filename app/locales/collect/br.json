@@ -10,5 +10,7 @@
   "collect.sent": "Trugarez. Kaset eo bet ho respont.",
   "collect.unsent": "N’eus ket bet gallet e gas. Klaskit en-dro.",
   "collect.sealed": "Siellet e vez ur respont e merdeer ar gweladenner, neuze ne c’hall ket an herberc’hier e lenn.",
-  "collect.online": "Lakaat ar furmskrid enlinenn"
+  "collect.online": "Lakaat ar furmskrid enlinenn",
+  "collect.proposals": "Degemer kinnigoù digant ul lec’hienn",
+  "collect.port": "Ur furmskrid lec’hienn a c’hall leuniañ {columns}."
 }

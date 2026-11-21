@@ -10,5 +10,7 @@
   "collect.sent": "Danke. Deine Antwort wurde gesendet.",
   "collect.unsent": "Das Senden hat nicht geklappt. Bitte noch einmal versuchen.",
   "collect.sealed": "Eine Antwort wird im Browser des Besuchers versiegelt, sodass der Host sie nicht lesen kann.",
-  "collect.online": "Formular online stellen"
+  "collect.online": "Formular online stellen",
+  "collect.proposals": "Vorschläge von einer Website annehmen",
+  "collect.port": "Ein Formular einer Website kann {columns} ausfüllen."
 }
