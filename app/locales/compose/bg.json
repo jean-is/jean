@@ -36,5 +36,11 @@
   "compose.uncertified": "Редовете, каквито са сега: няма версия, значи няма удостоверение",
   "compose.unproven": "Удостоверенията му не издържат: променени или не подпечатани с ключа, който назовават",
   "compose.saveProof": "Запазване на произхода",
-  "compose.proofFile": "Произход на {name}"
+  "compose.proofFile": "Произход на {name}",
+  "compose.ports": "Предложения",
+  "compose.open": "Приемане на предложения от сайт",
+  "compose.close": "Спиране на приемането на предложения",
+  "compose.port": "Формуляр на сайт може да попълва {columns}; само вие одобрявате, в „{approval}“.",
+  "compose.waiting": "Чакат вашето одобрение: {count}",
+  "compose.approved": "Одобрено"
 }

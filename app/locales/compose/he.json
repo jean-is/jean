@@ -36,5 +36,11 @@
   "compose.uncertified": "השורות כפי שהן עכשיו: אין גרסה, ולכן אין אישור",
   "compose.unproven": "האישורים שלו לא תקפים: שונו, או לא נחתמו במפתח שהם מזכירים",
   "compose.saveProof": "שמירת המקור",
-  "compose.proofFile": "המקור של {name}"
+  "compose.proofFile": "המקור של {name}",
+  "compose.ports": "הצעות",
+  "compose.open": "קבלת הצעות מאתר",
+  "compose.close": "הפסקת קבלת הצעות",
+  "compose.port": "טופס באתר יכול למלא {columns}; רק אתם מאשרים, ב„{approval}”.",
+  "compose.waiting": "ממתינות לאישורכם: {count}",
+  "compose.approved": "אושר"
 }

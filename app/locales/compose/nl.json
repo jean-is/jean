@@ -36,5 +36,11 @@
   "compose.uncertified": "De rijen zoals ze nu zijn: geen versie, dus geen certificaat",
   "compose.unproven": "De certificaten kloppen niet: gewijzigd, of niet verzegeld met de sleutel die ze noemen",
   "compose.saveProof": "Herkomst opslaan",
-  "compose.proofFile": "Herkomst van {name}"
+  "compose.proofFile": "Herkomst van {name}",
+  "compose.ports": "Voorstellen",
+  "compose.open": "Voorstellen van een site aannemen",
+  "compose.close": "Geen voorstellen meer aannemen",
+  "compose.port": "Een formulier op een site kan {columns} invullen; alleen jij keurt goed, in ‘{approval}’.",
+  "compose.waiting": "Wachten op jouw goedkeuring: {count}",
+  "compose.approved": "Goedgekeurd"
 }

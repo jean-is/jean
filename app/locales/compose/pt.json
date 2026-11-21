@@ -36,5 +36,11 @@
   "compose.uncertified": "As linhas como estão agora: sem versão, logo sem certificado",
   "compose.unproven": "Os seus certificados não se confirmam: alterados, ou não selados pela chave que indicam",
   "compose.saveProof": "Guardar a proveniência",
-  "compose.proofFile": "Proveniência de {name}"
+  "compose.proofFile": "Proveniência de {name}",
+  "compose.ports": "Propostas",
+  "compose.open": "Aceitar propostas de um site",
+  "compose.close": "Deixar de aceitar propostas",
+  "compose.port": "Um formulário de um site pode preencher {columns}; só você aprova, em «{approval}».",
+  "compose.waiting": "À espera da sua aprovação: {count}",
+  "compose.approved": "Aprovado"
 }

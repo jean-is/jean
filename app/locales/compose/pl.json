@@ -36,5 +36,11 @@
   "compose.uncertified": "Wiersze takie, jakie są teraz: brak wersji, więc brak certyfikatu",
   "compose.unproven": "Jego certyfikaty nie są ważne: zmienione albo niezapieczętowane kluczem, który wskazują",
   "compose.saveProof": "Zapisz pochodzenie",
-  "compose.proofFile": "Pochodzenie: {name}"
+  "compose.proofFile": "Pochodzenie: {name}",
+  "compose.ports": "Propozycje",
+  "compose.open": "Przyjmuj propozycje ze strony",
+  "compose.close": "Przestań przyjmować propozycje",
+  "compose.port": "Formularz strony może wypełnić {columns}; zatwierdzasz tylko ty, w kolumnie „{approval}”.",
+  "compose.waiting": "Czeka na twoje zatwierdzenie: {count}",
+  "compose.approved": "Zatwierdzone"
 }

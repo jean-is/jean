@@ -36,5 +36,11 @@
   "compose.uncertified": "Safu jinsi zilivyo sasa: hakuna toleo, kwa hiyo hakuna cheti",
   "compose.unproven": "Vyeti vyake havisimami: vimebadilishwa, au havikutiwa muhuri kwa ufunguo vinaoutaja",
   "compose.saveProof": "Hifadhi asili yake",
-  "compose.proofFile": "Asili ya {name}"
+  "compose.proofFile": "Asili ya {name}",
+  "compose.ports": "Mapendekezo",
+  "compose.open": "Pokea mapendekezo kutoka kwa tovuti",
+  "compose.close": "Acha kupokea mapendekezo",
+  "compose.port": "Fomu ya tovuti inaweza kujaza {columns}; wewe peke yako ndiye unaidhinisha, katika “{approval}”.",
+  "compose.waiting": "Yanasubiri idhini yako: {count}",
+  "compose.approved": "Imeidhinishwa"
 }

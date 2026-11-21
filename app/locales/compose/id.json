@@ -36,5 +36,11 @@
   "compose.uncertified": "Baris seperti sekarang: tidak ada versi, jadi tidak ada sertifikat",
   "compose.unproven": "Sertifikatnya tidak berlaku: diubah, atau tidak disegel dengan kunci yang disebutkan",
   "compose.saveProof": "Simpan asal-usulnya",
-  "compose.proofFile": "Asal-usul {name}"
+  "compose.proofFile": "Asal-usul {name}",
+  "compose.ports": "Usulan",
+  "compose.open": "Terima usulan dari situs",
+  "compose.close": "Berhenti menerima usulan",
+  "compose.port": "Formulir situs dapat mengisi {columns}; hanya Anda yang menyetujui, di “{approval}”.",
+  "compose.waiting": "Menunggu persetujuan Anda: {count}",
+  "compose.approved": "Disetujui"
 }

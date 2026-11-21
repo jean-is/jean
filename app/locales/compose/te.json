@@ -36,5 +36,11 @@
   "compose.uncertified": "వరుసలు ఇప్పుడు ఉన్నట్లు: వెర్షన్ లేదు, కాబట్టి సర్టిఫికెట్ లేదు",
   "compose.unproven": "దీని సర్టిఫికెట్‌లు నిలవవు: మార్చబడ్డాయి, లేదా పేర్కొన్న కీతో ముద్రించబడలేదు",
   "compose.saveProof": "దీని మూలాన్ని సేవ్ చేయి",
-  "compose.proofFile": "{name} మూలం"
+  "compose.proofFile": "{name} మూలం",
+  "compose.ports": "ప్రతిపాదనలు",
+  "compose.open": "సైట్ నుండి ప్రతిపాదనలను అంగీకరించు",
+  "compose.close": "ప్రతిపాదనలను అంగీకరించడం ఆపు",
+  "compose.port": "సైట్ ఫారం {columns} నింపగలదు; ఆమోదం మీరు మాత్రమే, “{approval}”లో.",
+  "compose.waiting": "మీ ఆమోదం కోసం వేచి ఉన్నవి: {count}",
+  "compose.approved": "ఆమోదించబడింది"
 }

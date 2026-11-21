@@ -36,5 +36,11 @@
   "compose.uncertified": "Retci kakvi su sada: nema verzije, pa nema ni potvrde",
   "compose.unproven": "Njegove potvrde ne vrijede: promijenjene ili nisu zapečaćene ključem koji navode",
   "compose.saveProof": "Spremi podrijetlo",
-  "compose.proofFile": "Podrijetlo: {name}"
+  "compose.proofFile": "Podrijetlo: {name}",
+  "compose.ports": "Prijedlozi",
+  "compose.open": "Primaj prijedloge s weba",
+  "compose.close": "Prestani primati prijedloge",
+  "compose.port": "Obrazac na webu može ispuniti {columns}; samo vi odobravate, u „{approval}”.",
+  "compose.waiting": "Čeka vaše odobrenje: {count}",
+  "compose.approved": "Odobreno"
 }

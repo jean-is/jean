@@ -3,10 +3,11 @@
 // asked at each resolution, and what a reference shows of a collection, read again from its journal.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { parseRef, placeOf, refsIn, withRef, filledPage, loops, refused, versionless, tableOf } from '../app/caps/compose/refs.js'
+import { parseRef, placeOf, refsIn, withRef, filledPage, formsTo, loops, refused, versionless, tableOf } from '../app/caps/compose/refs.js'
 import { versionOf, loadedOf, headOf, reshaped, breaks, current } from '../app/caps/compose/versions.js'
 import { keyOf, paceOf, sorted, askOf, lastRun, due } from '../app/caps/compose/recipes.js'
 import { credentialOf, chainOf, holds, sriOf } from '../app/caps/compose/proof.js'
+import { portOf, admitted, owned, waiting, HOUR, LONGEST } from '../app/caps/compose/ports.js'
 import { makeSeal, seal, imprint, disclose } from '../app/caps/receipt/certificate.js'
 import { readFileSync } from 'node:fs'
 import Ajv2020 from 'ajv/dist/2020.js'
@@ -168,4 +169,33 @@ test('a version and a run are certified as answers are, each run naming the vers
   // A run that read the rows live names no certificate: nothing to check further, and it holds on its own.
   const live = await credentialOf({ kind: 'run', creation: '01JX00000000000000000000RR', n: 1, at, by: 'jean', content: 'x', ingredients: [{ kind: 'collection', creation: '01JX0000000000000000000000', read: at }] })
   assert.equal(holds(await chainOf([await seal(live.credential, own, new Date(at))])), true)
+})
+
+test('a port lets in what a site’s form proposes: the port’s columns alone, by their labels, never the approval, once, so many an hour', () => {
+  const one = collection([{ row: '01JX0000000000000000000001', set: { name: 'Ana', trade: 'Baker', checked: true }, at: '2026-11-21T10:00:00.000Z', by: 'user' }])
+  const port = portOf(one.table, 'checked', '2026-11-21T10:00:00.000Z')
+  assert.deepEqual([port.columns, port.approval, port.hour], [['name', 'trade'], 'checked', HOUR])
+  const lines = /** @type {any[]} */ ([]), now = Date.parse('2026-11-21T12:00:00.000Z')
+  const proposal = (/** @type {[string, string][]} */ fields) => ({ form: 'propose', at: '2026-11-21T11:59:00.000Z', fields: fields.map(([label, value]) => ({ label, value })) })
+  assert.deepEqual(admitted(port, { ...one, lines }, [proposal([['Name', 'Bob'], [' trade ', 'Potter'], ['Checked', 'yes'], ['Secret', 'x']])], now), [{ set: { name: 'Bob', trade: 'Potter' } }], 'its approval, and a field no column of the port takes, left out')
+  assert.deepEqual(admitted(port, { ...one, lines }, [proposal([['Name', 'Ana'], ['Trade', 'Baker']]), proposal([['Name', 'Cy']]), proposal([['Name', 'Cy']]), proposal([['Checked', 'yes']])], now), [{ set: { name: 'Cy' } }], 'one the collection holds, one twice, one with nothing it takes')
+  assert.equal(String(admitted(port, { ...one, lines }, [proposal([['Name', 'x'.repeat(LONGEST + 50)]])], now)[0].set.name).length, LONGEST)
+  const recent = Array.from({ length: HOUR - 1 }, (_, i) => ({ row: `01JX00000000000000000009${String(i).padStart(2, '0')}`, set: { name: `n${i}` }, at: '2026-11-21T11:30:00.000Z', by: 'visitor' }))
+  assert.equal(admitted(port, { ...one, lines: recent }, [proposal([['Name', 'Dee']]), proposal([['Name', 'Eve']])], now).length, 1, 'the hour’s count, those already in counted')
+  assert.equal(admitted(port, { ...one, lines: recent.map((line) => ({ ...line, at: '2026-11-21T10:30:00.000Z' })) }, [proposal([['Name', 'Dee']]), proposal([['Name', 'Eve']])], now).length, 2, 'an hour later, room again')
+})
+
+test('a row is approved only where the owner set its approval: the person here, or a change of Jean’s they kept; not a visitor, not someone else', () => {
+  const row = (/** @type {string} */ id, /** @type {string} */ by, at = '2026-11-21T10:00:00.000Z') => [{ row: id, set: { name: id }, at, by: 'visitor' }, { row: id, set: { checked: true }, at: '2026-11-21T10:05:00.000Z', by }]
+  const one = collection([...row('01JX0000000000000000000001', 'user'), ...row('01JX0000000000000000000002', 'visitor'), ...row('01JX0000000000000000000003', 'Mia'), ...row('01JX0000000000000000000004', 'jean')])
+  const port = portOf(one.table, 'checked', '2026-11-21T09:00:00.000Z')
+  assert.deepEqual(owned(one, port).rows.map((r) => Boolean(r.cells.checked)), [true, false, false, false])
+  assert.deepEqual(owned({ ...one, table: { ...one.table, kept: '2026-11-21T10:06:00.000Z' } }, port).rows.map((r) => Boolean(r.cells.checked)), [true, false, false, true])
+  assert.deepEqual(tableOf(owned(one, port), { fields: 'Name', where: 'Checked is yes' }, how).flat(), ['Name', '01JX0000000000000000000001'])
+  assert.equal(waiting(one, port), 3)
+  assert.equal(owned(one, null), one, 'without a port, the rows as they are')
+})
+
+test('a site’s form proposes into the collection its data-to names', () => {
+  assert.deepEqual([...formsTo(`<form method="post" data-form="propose" data-to="${PLACE}"><input name="n"></form><form data-form="orders" method="post"></form><form data-form="x" data-to="decks/a.deck.html">`)], [['propose', PLACE]])
 })

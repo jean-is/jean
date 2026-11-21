@@ -36,5 +36,11 @@
   "compose.uncertified": "Ang mga hilera ngayon: walang bersyon, kaya walang sertipiko",
   "compose.unproven": "Hindi tumatayo ang mga sertipiko nito: binago, o hindi sinelyuhan ng susing binabanggit nila",
   "compose.saveProof": "I-save ang pinagmulan nito",
-  "compose.proofFile": "Pinagmulan ng {name}"
+  "compose.proofFile": "Pinagmulan ng {name}",
+  "compose.ports": "Mga mungkahi",
+  "compose.open": "Tumanggap ng mga mungkahi mula sa isang site",
+  "compose.close": "Huminto sa pagtanggap ng mga mungkahi",
+  "compose.port": "Mapupunan ng form ng site ang {columns}; ikaw lang ang nag-aapruba, sa “{approval}”.",
+  "compose.waiting": "Naghihintay ng iyong pag-apruba: {count}",
+  "compose.approved": "Inaprubahan"
 }

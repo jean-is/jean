@@ -36,5 +36,11 @@
   "compose.uncertified": "Các hàng như hiện nay: không có phiên bản nên không có chứng chỉ",
   "compose.unproven": "Chứng chỉ không hợp lệ: đã bị thay đổi, hoặc không được niêm phong bằng khóa được nêu",
   "compose.saveProof": "Lưu nguồn gốc",
-  "compose.proofFile": "Nguồn gốc của {name}"
+  "compose.proofFile": "Nguồn gốc của {name}",
+  "compose.ports": "Đề xuất",
+  "compose.open": "Nhận đề xuất từ một trang web",
+  "compose.close": "Ngừng nhận đề xuất",
+  "compose.port": "Biểu mẫu của trang web có thể điền {columns}; chỉ bạn phê duyệt, trong “{approval}”.",
+  "compose.waiting": "Đang chờ bạn phê duyệt: {count}",
+  "compose.approved": "Đã duyệt"
 }

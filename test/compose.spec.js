@@ -5,10 +5,11 @@
 // as they were while slides that read the published one follow it; a document and a site read them too. A recipe a brain carries out, run
 // the first time it shows, then by hand, or as its collection changes once its user opts in, each run kept and paid once per version read.
 // Each version and each run certified as an answer is; from slides, the chain checked back to the collection's version, in Jean and on the
-// check page. In Arabic and Japanese too.
+// check page. A neighbourhood's directory: proposals from its published site's form come in through the collection's port alone, into its
+// journal, and show once its owner approves them, no version changing. In Arabic and Japanese too.
 import { test, expect } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
-import { start, connectFakeBrain } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, SHARE_URL } from './helpers.js'
 
 const COLLECTION = 'collections/01K85Z1T00000000000000000A-artisans', DECK = 'decks/01K85Z1T00000000000000000D-neighbourhood.deck.html', ROW = '01K8000000000000000000000A'
 
@@ -263,4 +264,95 @@ test('from slides, their provenance is checked back to the collection’s versio
   await input.setInputFiles([file([chain[0]])])
   await expect(checker.locator('.receipt-checked dl')).toContainText('Version 1 of a collection, whose certificate wasn’t given')
   await context.close()
+})
+
+test('a neighbourhood’s directory takes a proposal from its published site and shows it once its owner approves it, no published version changing', async ({ page, context, browserName }) => {
+  test.setTimeout(120_000)
+  const name = `artisans-${browserName}-${test.info().retry}-${test.info().repeatEachIndex}`, address = `http://${name}.localhost:4185/`, HERE = 'collections/01K85Z1T00000000000000000T-artisans'
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(async ({ HERE, host }) => {
+    const [{ unlock }, { app, updateSettings }] = await Promise.all([import('/ui/caps.js'), import('/ui/state.js')])
+    await updateSettings({ urls: { ...app.settings.value.urls, share: host } })
+    await unlock('tables')
+    const at = '2026-11-21T10:00:00.000Z'
+    await app.fs.write(`${app.projectDir}/${HERE}/collection.json`, JSON.stringify({ format: 1, id: HERE.slice(12, 38), name: 'Artisans', author: 'user', created: at, changed: at,
+      properties: [{ id: 'name', name: 'Name', type: 'text' }, { id: 'trade', name: 'Trade', type: 'text' }, { id: 'approved', name: 'Approved', type: 'checkbox' }], views: [{ id: 'table', type: 'table' }] }))
+    await app.fs.write(`${app.projectDir}/${HERE}/changes.jsonl`, `${JSON.stringify({ row: '01K8000000000000000000000T', set: { name: 'Ana', trade: 'Baker', approved: true }, at, by: 'user' })}\n`)
+    await (await import('/caps/compose/compose.js')).publish(HERE)
+  }, { HERE, host: SHARE_URL })
+  const version = () => page.evaluate(async (HERE) => { const { app } = await import('/ui/state.js'); return [(await app.fs.list(`${app.projectDir}/${HERE}/versions`)).length, await app.fs.read(`${app.projectDir}/${HERE}/versions/1.json`)] }, HERE)
+  const before = await version()
+  // Its owner opens its port, from its pane: a form fills Name and Trade; only they approve, in Approved.
+  await show(page, HERE, 'Artisans')
+  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  const proposals = page.locator('.menu:popover-open').getByRole('group', { name: 'Proposals' })
+  await proposals.getByRole('button', { name: 'Accept proposals from a site' }).click()
+  await expect(proposals).toContainText('A site’s form can fill Name and Trade; only you approve, in “Approved”.')
+  await expect(proposals.getByRole('status')).toHaveText('Waiting for your approval: 0')
+  await page.keyboard.press('Escape')
+  // Its site: the approved artisans, and a form that proposes one, which also tries to approve it.
+  const form = `<h1>Artisans of the neighbourhood</h1><table data-from="${HERE}" data-fields="Name | Trade" data-where="Approved is yes"></table><h2>Propose one</h2>`
+    + `<form method="post" data-form="propose" data-to="${HERE}"><label for="who">Name</label><input id="who" name="who" required><label for="what">Trade</label><input id="what" name="what" required>`
+    + '<input type="hidden" name="approved" value="yes"><button>Propose</button><p>We read each proposal before it shows here.</p><p data-sent hidden>Thank you: it shows once read.</p><p data-unsent hidden>It didn’t go. Write to us instead.</p></form>'
+  const html = /* html */ `<!doctype html><html lang="en" dir="ltr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Artisans · Our street</title><meta name="description" content="The artisans of our street, and a form to propose one."><link rel="stylesheet" href="look.css"></head><body><header><a href="index.html">Our street</a></header><main>${form}</main><footer><p>Our street</p></footer></body></html>`
+  await ask(page, 'Call skill with {"name":"site"}')
+  await answered(page, 1)
+  await ask(page, `Call site with ${JSON.stringify({ name: 'Directory', files: [{ path: 'index.html', text: html }] })}`)
+  await expect(page.locator('.msg-jean .prose')).toHaveCount(2, { timeout: 60_000 })
+  await answered(page, 2)
+  const site = page.frameLocator('app-preview app-site iframe')
+  await expect(site.locator('tbody td')).toHaveText(['Ana', 'Baker'])
+  // Published.
+  const pane = page.locator('app-preview:has(app-site)'), dialog = page.locator('dialog.site-publish')
+  const publishing = async () => {
+    await pane.getByRole('button', { name: 'Share or download' }).click()
+    await page.getByRole('button', { name: 'Publish…' }).click()
+    await expect(dialog).toBeVisible()
+  }
+  await publishing()
+  await dialog.getByLabel('Address').fill(name)
+  await expect(dialog.locator('#publish-said')).toHaveText('This address is free.')
+  await dialog.getByRole('button', { name: 'Publish', exact: true }).click()
+  await dialog.getByLabel('I’ve kept it somewhere safe').check()
+  await dialog.getByRole('button', { name: 'Done' }).click()
+  await dialog.locator('.dialog-head').getByRole('button', { name: 'Close' }).click()
+  // A neighbour proposes a potter.
+  const visit = await context.newPage()
+  await visit.goto(address)
+  await expect(visit.locator('tbody td')).toHaveText(['Ana', 'Baker'])
+  await visit.getByLabel('Name').fill('Bob')
+  await visit.getByLabel('Trade').fill('Potter')
+  await visit.getByRole('button', { name: 'Propose' }).click()
+  await expect(visit.getByRole('status')).toHaveText('Thank you: it shows once read.')
+  // Collected into the directory itself, through its port: a visitor's row, not approved, in no collection of its own; the site doesn't show it yet.
+  await publishing()
+  await expect(page.locator('.toast')).toContainText('1 new reply to Directory.')
+  await dialog.locator('.dialog-head').getByRole('button', { name: 'Close' }).click()
+  const rows = () => page.evaluate(async (HERE) => {
+    const tables = await import('/caps/tables/tables.js'), one = await tables.load(HERE)
+    return { all: (await tables.collections()).length, rows: one?.rows.map((row) => [row.cells.name, row.cells.trade, row.cells.approved ?? null, row.created.by]) }
+  }, HERE)
+  expect(await rows()).toEqual({ all: 1, rows: [['Ana', 'Baker', true, 'user'], ['Bob', 'Potter', null, 'visitor']] })
+  await show(page, (await page.evaluate(async () => { const { app } = await import('/ui/state.js'); return `sites/${(await app.fs.list(`${app.projectDir}/sites`))[0].name}` })), 'Directory')
+  await expect(site.locator('tbody td')).toHaveText(['Ana', 'Baker'])
+  await show(page, HERE, 'Artisans')
+  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  await expect(page.locator('.menu:popover-open').getByRole('group', { name: 'Proposals' }).getByRole('status')).toHaveText('Waiting for your approval: 1')
+  await page.keyboard.press('Escape')
+  // Its owner approves it: the site shows it, here and once published again; no version changed.
+  await page.evaluate(async (HERE) => {
+    const tables = await import('/caps/tables/tables.js'), one = await tables.load(HERE), bob = one?.rows.find((row) => row.cells.name === 'Bob')
+    if (one && bob) await tables.change(one, [{ row: bob.id, set: { approved: true } }], 'user')
+  }, HERE)
+  await show(page, (await page.evaluate(async () => { const { app } = await import('/ui/state.js'); return `sites/${(await app.fs.list(`${app.projectDir}/sites`))[0].name}` })), 'Directory')
+  await expect(site.locator('tbody td')).toHaveText(['Ana', 'Baker', 'Bob', 'Potter'])
+  await publishing()
+  await expect(dialog).toContainText('1 file changed since it was published.')
+  await dialog.getByRole('button', { name: 'Publish again' }).click()
+  await expect(dialog).toContainText('Nothing changed since it was published.')
+  // Asked again past the browser's cache, which keeps the page first served.
+  await visit.goto(`${address}?again`)
+  await expect(visit.locator('tbody td')).toHaveText(['Ana', 'Baker', 'Bob', 'Potter'])
+  expect(await version()).toEqual(before)
 })

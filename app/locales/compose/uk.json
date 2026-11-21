@@ -36,5 +36,11 @@
   "compose.uncertified": "Рядки, як вони є зараз: немає версії, отже немає сертифіката",
   "compose.unproven": "Його сертифікати не підтверджуються: змінені або запечатані не тим ключем, що в них названо",
   "compose.saveProof": "Зберегти походження",
-  "compose.proofFile": "Походження: {name}"
+  "compose.proofFile": "Походження: {name}",
+  "compose.ports": "Пропозиції",
+  "compose.open": "Приймати пропозиції із сайту",
+  "compose.close": "Більше не приймати пропозиції",
+  "compose.port": "Форма сайту може заповнювати {columns}; схвалюєте лише ви, у стовпці «{approval}».",
+  "compose.waiting": "Чекають на ваше схвалення: {count}",
+  "compose.approved": "Схвалено"
 }
