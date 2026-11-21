@@ -28,8 +28,8 @@
 /* The heads stay on top as the rows scroll under them: beside the conversation, the table is no taller than the pane, and goes from edge
    to edge of it, the bar and the board's lanes kept from its edges, as its foot is from its bottom. */
 .view > .table-view, .view > app-table > .table-view { min-block-size: 0; padding-block-end: var(--pane-inset); } :is(.view, .view > app-table) > .table-view > .table-scroll { max-block-size: none; } .view > app-table { display: contents; } :is(.view, .view > app-table) > .table-view > :is(.table-bar, .table-chips, .table-yours, .table-board, .table-gallery, .table-listed) { padding-inline: var(--pane-inset); } :is(.view, .view > app-table) > .table-view > .table-bar { padding-block-start: var(--pane-inset); }
-/* In a short window the pane scrolls, and the table keeps a height to read it in. */
-@media (max-height: 30rem) { :is(.view, .view > app-table) > .table-view > .table-scroll { min-block-size: 10rem; } }
+/* Where what is above the table leaves it less, in a short window or under what is coming up, the pane scrolls, and the table keeps a height to read it in. */
+:is(.view, .view > app-table) > .table-view > .table-scroll { min-block-size: 10rem; }
 /* In a document, as far down as the document's view starts below the table's top (tables.js). */
 app-table .table-grid thead > tr > * { translate: 0 var(--lift, 0); }
 /* Each column as wide as it needs, whatever a document's editor gives its tables; never a box of its own, so that its heads stick. */
