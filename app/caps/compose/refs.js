@@ -39,6 +39,9 @@ export function withRef(markdown, index, change) {
 /** Where each form of a site's pages sends what visitors propose: its `data-form` name to the collection its `data-to` names (./ports.js). @param {string} text */
 export const formsTo = (text) => new Map([...text.matchAll(/<form\b[^>]*>/gi)].flatMap(([open]) => ((name, to) => (name && to && PLACE.test(to) ? [[name, to]] : []))(/\sdata-form="([^"]*)"/.exec(open)?.[1], /\sdata-to="([^"]*)"/.exec(open)?.[1])))
 
+/** A site's page as it is kept: each table that says `data-from` empty, its rows filled only as the page is read, never kept in it. @param {string} page */
+export const bare = (page) => page.replace(TABLE, (all, open, close) => `${open}${close}`)
+
 /** A site's page with each table that says `data-from` filled with what it shows, its heads then its rows, those it can't show as written. @param {string} page @param {(string[][] | null)[]} shown each one's, in order */
 export function filledPage(page, shown) {
   let n = 0

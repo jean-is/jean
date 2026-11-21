@@ -3,7 +3,7 @@
 // asked at each resolution, and what a reference shows of a collection, read again from its journal.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { parseRef, placeOf, refsIn, withRef, filledPage, formsTo, loops, refused, versionless, tableOf } from '../app/caps/compose/refs.js'
+import { parseRef, placeOf, refsIn, withRef, filledPage, bare, formsTo, loops, refused, versionless, tableOf } from '../app/caps/compose/refs.js'
 import { versionOf, loadedOf, headOf, reshaped, breaks, current } from '../app/caps/compose/versions.js'
 import { keyOf, paceOf, sorted, askOf, lastRun, due } from '../app/caps/compose/recipes.js'
 import { credentialOf, chainOf, holds, sriOf } from '../app/caps/compose/proof.js'
@@ -73,6 +73,7 @@ test('a reference reads the journal’s head, its collection’s latest version 
 test('a site’s page refers with a table that says data-from, filled as the page is read, its words escaped, one it can’t show as written', () => {
   const page = `<main><table class="t" data-from="${PLACE}@published" data-where="Checked is yes" data-fields="Name &amp; Trade"><tr><td>old</td></tr></table><table data-from="${PLACE}"></table></main>`
   assert.deepEqual(refsIn(page).map(({ at, recipe }) => [at, recipe]), [['published', { where: 'Checked is yes', fields: 'Name & Trade' }], ['live', {}]])
+  assert.equal(bare(filledPage(page, [[['Name'], ['Ana <3']], [['Name'], ['Bob']]])), `<main><table class="t" data-from="${PLACE}@published" data-where="Checked is yes" data-fields="Name &amp; Trade"></table><table data-from="${PLACE}"></table></main>`, 'kept, a page holds none of the rows it showed')
   assert.equal(filledPage(page, [[['Name'], ['Ana <3']], null]), `<main><table class="t" data-from="${PLACE}@published" data-where="Checked is yes" data-fields="Name &amp; Trade"><thead><tr><th>Name</th></tr></thead><tbody><tr><td>Ana &lt;3</td></tr></tbody></table><table data-from="${PLACE}"></table></main>`)
 })
 

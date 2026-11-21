@@ -40,10 +40,10 @@ const CONSUMERS = [['decks', /\.deck\.html$/, async (path, dir) => (await import
     .then((pages) => ({ source: pages.join('\n'), name: record.name })))(JSON.parse((await app.fs.read(`${dir}/${path}/site.json`)) ?? 'null'))]]
 const HOW = () => ({ locales: intlLocales(locale.peek()), labels: { yes: '✓', no: '' }, today: new Date() })
 
-/** The project's graph, read again at most once a second, as slides draw each of their blocks at once: each reference, and each creation's name by its place. */
+/** The project's graph, each reference and each creation's name by its place: read again once a consumer or a collection's columns are written, else every five minutes at most (a folder changed outside Jean). */
 let read = { at: 0, dir: '', graph: /** @type {Promise<{ edges: Edge[], names: Map<string, string> }> | null} */ (null) }
 function graph(dir = app.projectDir) {
-  if (read.dir !== dir || Date.now() - read.at > 1000) read = { at: Date.now(), dir, graph: (async () => {
+  if (read.dir !== dir || Date.now() - read.at > 300_000) read = { at: Date.now(), dir, graph: (async () => {
     const tables = await import('../tables/tables.js'), names = new Map((await tables.collections(dir)).map((one) => [one.folder, one.name])), edges = /** @type {Edge[]} */ ([])
     for (const [folder, own, readOf] of CONSUMERS) for (const { name } of (await app.fs.list(`${dir}/${folder}`).catch(() => [])).filter((entry) => own.test(entry.name))) {
       const path = `${folder}/${name}`, one = await readOf(path, dir).catch(() => null)
@@ -185,14 +185,13 @@ async function propagate(place, dir, depth = 0) {
 // A consumer written: the graph is read again.
 const later = new Map()
 app.fs.watch?.((path) => {
-  const [, dir, folder, file] = /^(.*)\/(collections\/[^/]+)\/(collection\.json|changes\.jsonl|versions\/\d+\.json)$/.exec(path) ?? []
-  if (/\/(decks|documents|sites)\//.test(path)) read.at = 0
+  const [, dir, folder, file] = /^(.*)\/(collections\/[^/]+)\/(collection\.json|changes\.jsonl|versions\/\d+\.json)$/.exec(path) ?? []; if (/\/(decks|documents|sites)\/|\/collection\.json$/.test(path)) read.at = 0
   if (file === 'collection.json') clearTimeout(later.get(folder)), later.set(folder, setTimeout(() => publish(folder, 'schema', dir), 500))
   if (folder && dir === app.projectDir) void propagate(folder, dir)
 }, { all: true })
 // Each minute, the references whose `ask` runs every so many minutes, those due run.
 setInterval(async () => {
-  for (const edge of app.projectDir ? (await graph(app.projectDir)).edges : []) if (edge.recipe.ask && due(lastRun(await runsOf(runsAt(app.projectDir, edge.from)), keyOf(refOf(edge))), paceOf(edge.recipe).every, Date.now())) void run(refOf(edge), edge.from, app.projectDir)
+  for (const edge of app.projectDir ? (await graph(app.projectDir)).edges : []) if (edge.recipe.ask && paceOf(edge.recipe).every > 0 && due(lastRun(await runsOf(runsAt(app.projectDir, edge.from)), keyOf(refOf(edge))), paceOf(edge.recipe).every, Date.now())) void run(refOf(edge), edge.from, app.projectDir)
 }, 60_000)
 
 /**
@@ -209,8 +208,7 @@ export async function contribute(place, proposals, dir = app.projectDir) {
 }
 /** A collection's port opened by its owner: every column a form fills, approved in its first box, or in one made for it. @param {string} folder */
 async function openPort(folder) {
-  const dir = app.projectDir, tables = await import('../tables/tables.js'), one = await tables.load(folder, dir), box = (/** @type {Loaded} */ one) => one?.table.properties.find((p) => !p.deleted && p.type === 'checkbox')
-  const now = one && !box(one) ? (await tables.reshapeTable(one, { add: { name: t('compose.approved'), type: 'checkbox' } }), await tables.load(folder, dir)) : one, approval = box(now)
+  const dir = app.projectDir, tables = await import('../tables/tables.js'), one = await tables.load(folder, dir), box = (/** @type {Loaded} */ one) => one?.table.properties.find((p) => !p.deleted && p.type === 'checkbox'), now = one && !box(one) ? (await tables.reshapeTable(one, { add: { name: t('compose.approved'), type: 'checkbox' } }), await tables.load(folder, dir)) : one, approval = box(now)
   if (now && approval) await app.fs.write(`${dir}/${folder}/port.json`, `${JSON.stringify(portFor(now.table, approval.id, new Date().toISOString()), null, 1)}\n`)
 }
 
@@ -225,13 +223,13 @@ async function choose(from, index, change) {
 }
 /** When a reference's `ask` runs again, each choice by its `refresh`: by hand, every five minutes, every hour, or as its source changes. */
 const PACES = [['', 'compose.byHand'], ['5 min', 'compose.every5'], ['60 min', 'compose.hourly'], ['auto', 'compose.auto']]
-/** What the pane's head lists for each place, once read; `runs`, each `ask`'s last run; `proofs`, the certificates of what each shows, checked. @typedef {{ uses: Edge[], usedIn: Edge[], names: Map<string, string>, versions: Map<string, Version[]>, old: Map<Edge, [string, string][]>, runs: Map<Edge, Run | undefined>, proofs: Map<Edge, { chain: import('../receipt/certificate.js').Sealed[], holds: boolean, n?: number } | null>, changes: number, broken: string[], port?: { columns: string, approval: string, waiting: number } | null }} Links */
+/** What the pane's head lists for each place, once read: `source`, a collection, not a whiteboard; `runs`, each `ask`'s last run; `proofs`, the certificates of what each shows, checked. @typedef {{ source: boolean, uses: Edge[], usedIn: Edge[], names: Map<string, string>, versions: Map<string, Version[]>, old: Map<Edge, [string, string][]>, runs: Map<Edge, Run | undefined>, proofs: Map<Edge, { chain: import('../receipt/certificate.js').Sealed[], holds: boolean, n?: number } | null>, changes: number, broken: string[], port?: { columns: string, approval: string, waiting: number } | null }} Links */
 const links = signal(/** @type {Map<string, Links>} */ (new Map()))
 /** Each place's links, read as its menu opens. @param {string} uri */
 async function linksOf(uri) {
   const dir = app.projectDir, tables = await import('../tables/tables.js'), { edges, names } = await graph(dir), uses = edges.filter((edge) => edge.from === uri && names.has(edge.to))
   const versions = new Map(await Promise.all([...new Set([uri, ...uses.map((edge) => edge.to)])].map(async (place) => /** @type {[string, Version[]]} */ ([place, await versionsOf(dir, place)]))))
-  const own = PLACE.test(uri) ? await tables.load(uri, dir) : null, last = versions.get(uri)?.at(-1), old = new Map(), port = own && await portOf(dir, uri), named = (/** @type {string} */ id) => own?.table.properties.find((p) => p.id === id)?.name ?? id
+  const own = PLACE.test(uri) ? await tables.load(uri, dir).then((one) => (one?.table.kind ? null : one)) : null, last = versions.get(uri)?.at(-1), old = new Map(), port = own && await portOf(dir, uri), named = (/** @type {string} */ id) => own?.table.properties.find((p) => p.id === id)?.name ?? id
   for (const edge of uses) { const live = await tables.load(edge.to, dir).catch(() => null); if (live) old.set(edge, current(live.table, versions.get(edge.to) ?? [], edge.recipe).old) }
   const runs = await runsOf(runsAt(dir, uri)), lastOf = (/** @type {Edge} */ edge) => runs.findLast((one) => one.key === keyOf(refOf(edge))), proofs = new Map()
   // What each shows, certified: its last run's and the version it read, else the version it reads; nothing for the rows as they are.
@@ -240,7 +238,7 @@ async function linksOf(uri) {
     const version = all.find((one) => `v${one.n}` === read), chain = [run?.certificate, version?.certificate].filter((one) => one !== undefined)
     proofs.set(edge, chain.length ? { chain, holds: holds(await chainOf(chain)), n: version?.n } : null)
   }
-  links.value = new Map(links.peek()).set(uri, { uses, usedIn: edges.filter((edge) => edge.to === uri), names, versions, old, proofs, runs: new Map(uses.map((edge) => [edge, lastOf(edge)])), broken: own && last ? breaks(last.table, own.table) : [],
+  links.value = new Map(links.peek()).set(uri, { source: Boolean(own), uses, usedIn: edges.filter((edge) => edge.to === uri), names, versions, old, proofs, runs: new Map(uses.map((edge) => [edge, lastOf(edge)])), broken: own && last ? breaks(last.table, own.table) : [],
     changes: own ? own.lines.filter((line) => 'at' in line && line.at > (last?.head ?? '')).length : 0,
     port: own && port ? { columns: new Intl.ListFormat(intlLocales(locale.peek())).format(port.columns.map(named)), approval: named(port.approval), waiting: waiting(own, port) } : null })
 }
@@ -262,9 +260,9 @@ function head({ uri }) {
     ${((proof) => (proof ? html`<p class="menu-heading" role=${proof.holds ? 'status' : 'alert'}>${proof.holds ? (proof.n ? t('compose.certified', { n: proof.n }) : t('compose.certifiedLive')) : t('compose.unproven')}</p>
       <button type="button" @click=${async () => (await import('../../ui/save.js')).save(new Blob([JSON.stringify(proof.chain, null, 1)], { type: 'application/json' }), `${t('compose.proofFile', { name: name(uri) })}.json`)}>${icons.download}<span>${t('compose.saveProof')}</span></button>`
       : html`<p class="menu-heading">${t('compose.uncertified')}</p>`))(these?.proofs.get(edge))}</li>`)
-  const versions = PLACE.test(uri) && these ? html`<div role="group" aria-label=${t('compose.versions')}><p class="menu-heading" aria-hidden="true">${t('compose.versions')}</p>
+  const versions = these?.source ? html`<div role="group" aria-label=${t('compose.versions')}><p class="menu-heading" aria-hidden="true">${t('compose.versions')}</p>
     <p class="menu-heading" role="status">${t('compose.journal', { count: these.changes })}</p>${these.broken.length ? html`<p class="menu-heading" role="alert">${t('compose.breaks', { columns: new Intl.ListFormat(intlLocales(locale.value)).format(these.broken) })}</p>` : nothing}
-    <ul><li><button type="button" ?disabled=${these.broken.length > 0} @click=${async () => { const made = await publish(uri); if (made?.version) notify(t('compose.done', { n: made.version.n })); await linksOf(uri) }}>${icons.upload}<span>${t('compose.publish', { n: (these.versions.get(uri)?.at(-1)?.n ?? 0) + 1 })}</span></button></li>
+    <ul><li><button type="button" ?disabled=${these.broken.length > 0 || (!these.changes && Boolean(these.versions.get(uri)?.length))} @click=${async () => { const made = await publish(uri); if (made?.version) notify(t('compose.done', { n: made.version.n })); await linksOf(uri) }}>${icons.upload}<span>${t('compose.publish', { n: (these.versions.get(uri)?.at(-1)?.n ?? 0) + 1 })}</span></button></li>
     ${[...these.versions.get(uri) ?? []].reverse().slice(0, 5).map((version) => html`<li><p class="menu-heading">${t(version.why === 'schema' ? 'compose.versionSchema' : 'compose.version', { n: version.n, date: date.format(new Date(version.at)) })}</p></li>`)}</ul></div>
     <div role="group" aria-label=${t('compose.ports')}><p class="menu-heading" aria-hidden="true">${t('compose.ports')}</p>${these.port ? html`<p class="menu-heading">${t('compose.port', these.port)}</p>
       <p class="menu-heading" role="status">${t('compose.waiting', { count: these.port.waiting })}</p>` : nothing}<ul><li><button type="button" @click=${async () => { await (these.port ? app.fs.remove(`${app.projectDir}/${uri}/port.json`) : openPort(uri)); await linksOf(uri) }}>
