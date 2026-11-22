@@ -54,5 +54,6 @@
   "compose.area": "Тази дъска няма такъв раздел.",
   "compose.kit": "Дизайн система",
   "compose.kit.certified": "Удостоверено, до версия {n} на дизайн системата",
-  "compose.kit.worn": "Носят я: {names}"
+  "compose.kit.worn": "Носят я: {names}",
+  "compose.linkingAll": "Проверявам как са свързани творенията в този проект"
 }

@@ -54,5 +54,6 @@
   "compose.area": "Questa lavagna non ha questa sezione.",
   "compose.kit": "Sistema di design",
   "compose.kit.certified": "Certificato, fino alla versione {n} del sistema di design",
-  "compose.kit.worn": "Lo indossano: {names}"
+  "compose.kit.worn": "Lo indossano: {names}",
+  "compose.linkingAll": "Guardo come sono collegate le creazioni di questo progetto"
 }

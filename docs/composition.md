@@ -143,7 +143,7 @@ The graph is said in words where it matters, the links menu, an Undo's toast, `c
 - **Where it is reached.** From the links menu, *See it drawn*: the map around one creation, once its *Further along* holds one at least, the menu saying the rest until then. From Creations, the whole project's beside the cards, once three creations are linked, through a slot `creations-page.js` reads, never through `creations.js`, which the first load holds. The brain reads the whole graph from `creation_links` given no place, and draws it in an answer as a ```` ```mermaid ```` flowchart when asked, an answer being a moment (D188).
 - **How people hear of it.** No page of jean.is is about the map: people look for what composition does, a price changed everywhere at once, not for a graph. A job page for composition, when one is written, plays the map as its demo; the help gets an article on how creations link; the guide says it from step 13.
 
-### Step 13 — The graph whole, in words
+### Step 13 — The graph whole, in words (built)
 
 `creation_links` given no place: every creation of the graph with what it uses, each at the version it reads, then what shows nothing and why. A site's form that proposes into a collection (`formsTo()`) becomes a link of the graph, read by `linksIn()` as a relation is, since a column its port fills, renamed, changes what the form writes; like a relation, it carries no loop. The guide (`caps/own-skills/guide.txt`) says that Jean tells how a project's creations link, and draws it.
 

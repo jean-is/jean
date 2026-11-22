@@ -54,5 +54,6 @@
   "compose.area": "На этой доске нет такого раздела.",
   "compose.kit": "Дизайн-система",
   "compose.kit.certified": "Заверено, вплоть до версии {n} дизайн-системы",
-  "compose.kit.worn": "Её используют: {names}"
+  "compose.kit.worn": "Её используют: {names}",
+  "compose.linkingAll": "Смотрю, как связано созданное в этом проекте"
 }

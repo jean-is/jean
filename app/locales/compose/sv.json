@@ -54,5 +54,6 @@
   "compose.area": "Den här tavlan har ingen sådan sektion.",
   "compose.kit": "Designsystem",
   "compose.kit.certified": "Intygat, tillbaka till version {n} av designsystemet",
-  "compose.kit.worn": "Bärs av: {names}"
+  "compose.kit.worn": "Bärs av: {names}",
+  "compose.linkingAll": "Tittar på hur projektets skapelser hänger ihop"
 }

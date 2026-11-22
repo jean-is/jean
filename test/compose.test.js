@@ -49,6 +49,7 @@ test('a collection’s relations and the files a text holds by their content are
   const table = { properties: [{ type: 'relation', name: 'Maker', collection: PLACE }, { type: 'relation', name: 'Itself', collection: OTHER }, { type: 'text', name: 'Note' }, { type: 'relation', name: 'Lost', collection: 'nowhere' }] }
   assert.deepEqual(linksIn(OTHER, table), [{ from: OTHER, to: PLACE, at: 'live', index: 0, kind: 'relation', recipe: { relation: 'Maker' } }], 'one to itself or to no collection is none')
   assert.deepEqual(linksIn('decks/a.deck.html', null, `![Ana](../${HASH})\n\n![Again](../${HASH} "twice")`).map(({ to, kind }) => [to, kind]), [[HASH, 'file']], 'each file once')
+  assert.deepEqual(linksIn('sites/a', null, `<form data-form="propose" data-to="${PLACE}"></form><form data-form="ask" data-to="nowhere"></form>`), [{ from: 'sites/a', to: PLACE, at: 'live', index: 0, kind: 'form', recipe: { form: 'propose' } }], 'a form that proposes into a collection, none into nowhere')
   const edges = [{ from: PLACE, to: OTHER, at: /** @type {const} */ ('live'), recipe: {}, index: 0, kind: /** @type {const} */ ('relation') }]
   assert.equal(loops(edges, OTHER, PLACE), false, 'a relation is no reference: it carries no loop')
   assert.equal(loops(edges.map(({ kind, ...edge }) => edge), OTHER, PLACE), true, 'as a reference would')

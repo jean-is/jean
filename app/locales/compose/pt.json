@@ -54,5 +54,6 @@
   "compose.area": "Este quadro não tem essa secção.",
   "compose.kit": "Sistema de design",
   "compose.kit.certified": "Certificado, até à versão {n} do sistema de design",
-  "compose.kit.worn": "Usado por: {names}"
+  "compose.kit.worn": "Usado por: {names}",
+  "compose.linkingAll": "A ver como as criações deste projeto se ligam"
 }

@@ -54,5 +54,6 @@
   "compose.area": "Táto tabuľa takú sekciu nemá.",
   "compose.kit": "Dizajnový systém",
   "compose.kit.certified": "Overené, až po verziu {n} dizajnového systému",
-  "compose.kit.worn": "Nosia ho: {names}"
+  "compose.kit.worn": "Nosia ho: {names}",
+  "compose.linkingAll": "Zisťujem, ako spolu súvisia výtvory tohto projektu"
 }

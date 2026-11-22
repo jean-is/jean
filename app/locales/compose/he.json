@@ -54,5 +54,6 @@
   "compose.area": "אין בלוח הזה אזור כזה.",
   "compose.kit": "מערכת עיצוב",
   "compose.kit.certified": "מאושר, עד גרסה {n} של מערכת העיצוב",
-  "compose.kit.worn": "לובשים אותה: {names}"
+  "compose.kit.worn": "לובשים אותה: {names}",
+  "compose.linkingAll": "בודק איך היצירות בפרויקט הזה מקושרות"
 }

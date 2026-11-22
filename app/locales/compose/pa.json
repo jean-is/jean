@@ -54,5 +54,6 @@
   "compose.area": "ਇਸ ਵ੍ਹਾਈਟਬੋਰਡ ’ਤੇ ਅਜਿਹਾ ਕੋਈ ਭਾਗ ਨਹੀਂ ਹੈ।",
   "compose.kit": "ਡਿਜ਼ਾਈਨ ਸਿਸਟਮ",
   "compose.kit.certified": "ਪ੍ਰਮਾਣਿਤ, ਡਿਜ਼ਾਈਨ ਸਿਸਟਮ ਦੇ ਸੰਸਕਰਣ {n} ਤੱਕ",
-  "compose.kit.worn": "ਇਸਨੂੰ ਪਹਿਨਣ ਵਾਲੇ: {names}"
+  "compose.kit.worn": "ਇਸਨੂੰ ਪਹਿਨਣ ਵਾਲੇ: {names}",
+  "compose.linkingAll": "ਦੇਖ ਰਹੇ ਹਾਂ ਕਿ ਇਸ ਪ੍ਰੋਜੈਕਟ ਦੀਆਂ ਰਚਨਾਵਾਂ ਕਿਵੇਂ ਜੁੜੀਆਂ ਹਨ"
 }

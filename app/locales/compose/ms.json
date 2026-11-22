@@ -54,5 +54,6 @@
   "compose.area": "Papan putih ini tiada bahagian sedemikian.",
   "compose.kit": "Sistem reka bentuk",
   "compose.kit.certified": "Disahkan, hingga versi {n} sistem reka bentuk",
-  "compose.kit.worn": "Dipakai oleh: {names}"
+  "compose.kit.worn": "Dipakai oleh: {names}",
+  "compose.linkingAll": "Melihat bagaimana ciptaan dalam projek ini berpaut"
 }

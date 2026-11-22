@@ -54,5 +54,6 @@
   "compose.area": "N’eus ket eus ar rann-se war an daolenn-mañ.",
   "compose.kit": "Karta grafek",
   "compose.kit.certified": "Testeniekaet, betek stumm {n} ar garta grafek",
-  "compose.kit.worn": "Gwisket gant: {names}"
+  "compose.kit.worn": "Gwisket gant: {names}",
+  "compose.linkingAll": "O sellet penaos eo liammet krouidigezhioù ar raktres-mañ"
 }

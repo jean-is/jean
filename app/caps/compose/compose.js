@@ -470,15 +470,18 @@ function head({ uri }) {
     <div id=${id} class="menu links-menu" popover @toggle=${(/** @type {ToggleEvent} */ event) => (event.newState === 'open' ? linksOf(uri) : (deep.value = ''))}>${edge ? settings(edge) : list || nothing}</div>`)
 }
 
-/** What the brain reads of the graph: what uses a creation and what it uses, each with the version it reads and its recipe, then what is reached further. @type {import('../../core/loop.js').Tool} */
+/** What the brain reads of the graph: what uses a creation and what it uses, each with the version it reads and its recipe, then what is reached further; or, given no place, every creation that uses another, and what shows nothing and why. @type {import('../../core/loop.js').Tool} */
 const linksTool = {
-  spec: { name: 'creation_links', description: 'What uses a creation of the project and what it uses: the slides, documents, sites and prototypes that show a collection, the collections that relate to it, the files a creation holds, each with the version it reads and its recipe, then what is reached through them. Read it before changing the columns of a collection others show, or to bring up to date what shows it.',
-    parameters: { type: 'object', required: ['place'], properties: { place: { type: 'string', description: 'Its place: collections/…, decks/….deck.html, documents/….md, sites/…' } } } },
+  spec: { name: 'creation_links', description: 'What uses a creation of the project and what it uses: the slides, documents, sites and prototypes that show a collection, the collections that relate to it, the sites whose form proposes rows to it, the files a creation holds, each with the version it reads and its recipe, then what is reached through them; with no place, every creation of the project that uses another, and what shows nothing. Read it before changing the columns of a collection others show, to bring up to date what shows it, or to tell how the project’s creations link.',
+    parameters: { type: 'object', properties: { place: { type: 'string', description: 'Its place: collections/…, decks/….deck.html, documents/….md, sites/…; none for the whole project' } } } },
   kind: 'read',
-  title: (args) => t('compose.linking', { name: String(args?.place ?? '') }),
+  title: (args) => (args?.place ? t('compose.linking', { name: String(args.place) }) : t('compose.linkingAll')),
   run: async (args) => {
     const place = String(args?.place ?? '').trim().replace(/^(\.\.?\/)+/, ''), { edges, names } = await graph(), named = (/** @type {string} */ one) => `${names.get(one) ?? one} (${one})`
-    const said = (/** @type {Edge} */ edge, /** @type {string} */ other) => [named(other), ...(edge.kind === 'relation' ? [`by its column ${edge.recipe.relation}`] : edge.kind ? [] : [`reading ${edge.at === 'live' ? 'it as it is now' : edge.at === 'published' ? 'its published version' : `its version ${edge.at}`}`, ...Object.entries(edge.recipe).map(([what, value]) => `${what}: ${value}`)])].join(', ')
+    const said = (/** @type {Edge} */ edge, /** @type {string} */ other) => [named(other), ...(edge.kind === 'relation' ? [`by its column ${edge.recipe.relation}`] : edge.kind === 'form' ? [`proposing rows to it through its form ${edge.recipe.form}`] : edge.kind ? [] : [`reading ${edge.at === 'live' ? 'it as it is now' : edge.at === 'published' ? 'its published version' : `its version ${edge.at}`}`, ...Object.entries(edge.recipe).map(([what, value]) => `${what}: ${value}`)]),
+      ...(edge.kind || names.has(edge.to) ? [] : ['showing nothing, as this project has no such creation']), ...(!edge.kind && loops(edges, edge.from, edge.to) ? ['showing nothing, as each would use the other, in a loop'] : [])].join(', ')
+    const all = edges.filter((edge) => edge.kind !== 'file' && edge.kind !== 'kit')
+    if (!place) return all.length ? `In this project, ${[...new Set(all.map((edge) => edge.from))].map((from) => `${named(from)} uses ${all.filter((edge) => edge.from === from).map((edge) => said(edge, edge.to)).join('; ')}`).join('. ')}.` : 'No creation of this project uses another.'
     const far = [...further(edges, place, true), ...further(edges, place, false)].map(([one, via]) => `${named(one)} through ${names.get(via) ?? via}`)
     return names.has(place) || edges.some((edge) => edge.to === place) ? `${named(place)} is used in: ${edges.filter((edge) => edge.to === place).map((edge) => said(edge, edge.from)).join('; ') || 'nothing'}. It uses: ${edges.filter((edge) => edge.from === place).map((edge) => said(edge, edge.to)).join('; ') || 'nothing'}.${far.length ? ` Further: ${far.join('; ')}.` : ''}` : `No creation of this project is at ${place}.`
   },

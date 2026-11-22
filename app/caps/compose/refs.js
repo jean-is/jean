@@ -17,7 +17,8 @@ import { sorted } from './recipes.js'
 /**
  * An edge of the graph: a consumer's place, the source's, which of it, the recipe, and its place among the consumer's references; or, with `kind`, a link
  * that is no reference but still says what a change touches: a collection's relation to another (`relation`, its column's name its recipe's), or a
- * file held by its content (`file`), always the same; or the project's design system a deck, a site or a design wears (`kit`), live or at a version. @typedef {{ from: string, to: string, at: Ref['at'], recipe: Record<string, string>, index: number, kind?: 'relation' | 'file' | 'kit' }} Edge
+ * file held by its content (`file`), always the same; or a site's form that proposes into a collection (`form`, its name the recipe's), as a column its
+ * port fills, renamed, changes what it writes; or the project's design system a deck, a site or a design wears (`kit`), live or at a version. @typedef {{ from: string, to: string, at: Ref['at'], recipe: Record<string, string>, index: number, kind?: 'relation' | 'file' | 'form' | 'kit' }} Edge
  */
 
 const BLOCK = /^(`{3,}|~{3,})(?:table|section)[ \t]*\n([\s\S]*?)^\1[ \t]*$/gm, FIGURE = /`(=[ \t]*collections\/[^`\n]*)`/g, TABLE = /(<(table|section)\b[^>]*\bdata-from="[^"]*"[^>]*>)[\s\S]*?(<\/\2>)/gi
@@ -98,9 +99,9 @@ export function filledPage(page, shown) {
   return page.replace(TABLE, (all, open, tag, close) => ((rows) => (typeof rows === 'string' ? `${open}${rows}${close}` : rows ? `${open}<thead><tr>${rows[0].map((head) => `<th>${escaped(head)}</th>`).join('')}</tr></thead><tbody>${rows.slice(1).map((row) => `<tr>${row.map((cell) => `<td>${escaped(cell)}</td>`).join('')}</tr>`).join('')}</tbody>${close}` : all))(shown[n++] ?? null))
 }
 
-/** The links a creation holds that are no references: a collection's relations to others, by its columns (`collection.json`), and the files any text holds by their content (`../files/sha256-…`). @param {string} from @param {{ properties?: { type: string, name: string, collection?: string }[] } | null} table @param {string} [text] @returns {Edge[]} */
+/** The links a creation holds that are no references: a collection's relations to others, by its columns (`collection.json`), the files any text holds by their content (`../files/sha256-…`), and a page's forms that propose into a collection (`formsTo()`). @param {string} from @param {{ properties?: { type: string, name: string, collection?: string }[] } | null} table @param {string} [text] @returns {Edge[]} */
 export const linksIn = (from, table, text = '') => [...(table?.properties ?? []).flatMap(({ type, name, collection = '' }) => (type === 'relation' && collection !== from && PLACE.test(collection) ? [{ kind: /** @type {Edge['kind']} */ ('relation'), to: collection, recipe: { relation: name } }] : [])),
-  ...[...new Set(text.match(/\bfiles\/sha256-[0-9a-f]{64}\.\w+/g))].map((to) => ({ kind: /** @type {Edge['kind']} */ ('file'), to, recipe: {} }))].map((link, index) => ({ from, at: /** @type {Ref['at']} */ ('live'), index, ...link }))
+  ...[...new Set(text.match(/\bfiles\/sha256-[0-9a-f]{64}\.\w+/g))].map((to) => ({ kind: /** @type {Edge['kind']} */ ('file'), to, recipe: {} })), ...[...formsTo(text)].map(([form, to]) => ({ kind: /** @type {Edge['kind']} */ ('form'), to, recipe: { form } }))].map((link, index) => ({ from, at: /** @type {Ref['at']} */ ('live'), index, ...link }))
 
 /**
  * What is reached from a place beyond its own links, each with the one of them it is reached through: what uses what uses it (`down`), else what

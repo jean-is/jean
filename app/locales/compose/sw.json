@@ -54,5 +54,6 @@
   "compose.area": "Ubao huu hauna sehemu kama hiyo.",
   "compose.kit": "Mfumo wa usanifu",
   "compose.kit.certified": "Imethibitishwa, hadi toleo la {n} la mfumo wa usanifu",
-  "compose.kit.worn": "Unatumiwa na: {names}"
+  "compose.kit.worn": "Unatumiwa na: {names}",
+  "compose.linkingAll": "Inaangalia jinsi vilivyoundwa katika mradi huu vinavyounganika"
 }

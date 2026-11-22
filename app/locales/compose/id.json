@@ -54,5 +54,6 @@
   "compose.area": "Papan tulis ini tidak punya bagian seperti itu.",
   "compose.kit": "Sistem desain",
   "compose.kit.certified": "Tersertifikasi, sampai versi {n} sistem desain",
-  "compose.kit.worn": "Dipakai oleh: {names}"
+  "compose.kit.worn": "Dipakai oleh: {names}",
+  "compose.linkingAll": "Melihat bagaimana kreasi di proyek ini saling bertautan"
 }

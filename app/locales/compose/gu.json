@@ -54,5 +54,6 @@
   "compose.area": "આ વ્હાઇટબોર્ડમાં આવો કોઈ વિભાગ નથી.",
   "compose.kit": "ડિઝાઇન સિસ્ટમ",
   "compose.kit.certified": "પ્રમાણિત, ડિઝાઇન સિસ્ટમના સંસ્કરણ {n} સુધી",
-  "compose.kit.worn": "જે તેને પહેરે છે: {names}"
+  "compose.kit.worn": "જે તેને પહેરે છે: {names}",
+  "compose.linkingAll": "આ પ્રોજેક્ટની રચનાઓ કેવી રીતે જોડાયેલી છે તે જોઈ રહ્યાં છીએ"
 }

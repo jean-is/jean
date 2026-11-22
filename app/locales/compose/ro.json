@@ -54,5 +54,6 @@
   "compose.area": "Această tablă nu are o asemenea secțiune.",
   "compose.kit": "Identitate vizuală",
   "compose.kit.certified": "Certificat, până la versiunea {n} a identității vizuale",
-  "compose.kit.worn": "Purtată de: {names}"
+  "compose.kit.worn": "Purtată de: {names}",
+  "compose.linkingAll": "Caut cum sunt legate creațiile acestui proiect"
 }

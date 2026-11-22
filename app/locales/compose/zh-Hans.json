@@ -54,5 +54,6 @@
   "compose.area": "此白板中没有这个分区。",
   "compose.kit": "设计系统",
   "compose.kit.certified": "已认证，可追溯到设计系统的第 {n} 版",
-  "compose.kit.worn": "使用者：{names}"
+  "compose.kit.worn": "使用者：{names}",
+  "compose.linkingAll": "正在查看此项目中的创作如何关联"
 }

@@ -54,5 +54,6 @@
   "compose.area": "This whiteboard has no such section.",
   "compose.kit": "Design system",
   "compose.kit.certified": "Certified, back to version {n} of the design system",
-  "compose.kit.worn": "Worn by {names}"
+  "compose.kit.worn": "Worn by {names}",
+  "compose.linkingAll": "Looking at how this project’s creations link"
 }

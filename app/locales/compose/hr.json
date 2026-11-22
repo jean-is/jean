@@ -54,5 +54,6 @@
   "compose.area": "Ova ploča nema takav odjeljak.",
   "compose.kit": "Dizajnerski sustav",
   "compose.kit.certified": "Ovjereno, sve do verzije {n} dizajnerskog sustava",
-  "compose.kit.worn": "Nose ga: {names}"
+  "compose.kit.worn": "Nose ga: {names}",
+  "compose.linkingAll": "Provjeravam kako su povezane kreacije ovog projekta"
 }

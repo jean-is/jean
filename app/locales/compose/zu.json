@@ -54,5 +54,6 @@
   "compose.area": "Leli bhodi elimhlophe alinaso isigaba esinjalo.",
   "compose.kit": "Uhlelo lwedizayini",
   "compose.kit.certified": "Kuqinisekisiwe, kuze kufike enguqulweni {n} yohlelo lwedizayini",
-  "compose.kit.worn": "Lugqokwe ngu: {names}"
+  "compose.kit.worn": "Lugqokwe ngu: {names}",
+  "compose.linkingAll": "Kubhekwa ukuthi okwakhiwe kule phrojekthi kuxhumene kanjani"
 }

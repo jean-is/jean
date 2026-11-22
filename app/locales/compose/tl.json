@@ -54,5 +54,6 @@
   "compose.area": "Walang ganoong seksiyon ang whiteboard na ito.",
   "compose.kit": "Sistema ng disenyo",
   "compose.kit.certified": "Sertipikado, hanggang sa bersiyon {n} ng sistema ng disenyo",
-  "compose.kit.worn": "Suot ng: {names}"
+  "compose.kit.worn": "Suot ng: {names}",
+  "compose.linkingAll": "Tinitingnan kung paano magkakaugnay ang mga likha sa proyektong ito"
 }

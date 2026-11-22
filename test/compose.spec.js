@@ -869,3 +869,45 @@ test('a neighbourhood’s directory takes a proposal from its published site thr
   // The site's own file keeps its table empty: the rows are the collection's, filled as the site is read.
   expect(await page.evaluate(async () => { const { app } = await import('/ui/state.js'), site = (await app.fs.list(`${app.projectDir}/sites`))[0].name; return String(await app.fs.read(`${app.projectDir}/sites/${site}/index.html`)) })).toMatch(/data-where="Approved is yes"><\/table>/)
 })
+
+const ORDERS = 'collections/01K85Z1T00000000000000000B-orders', BOARD = 'decks/01K85Z1T00000000000000000V-board.deck.html', REPORT = 'documents/01K85Z1T00000000000000000R-report.md'
+const PRICES = 'documents/01K85Z1T00000000000000000P-prices.md', PROPOSAL = 'decks/01K85Z1T00000000000000000Q-proposal.deck.html', DIRECTORY = 'sites/01K85Z1T00000000000000000S-directory', MEMBERS = 'sites/01K85Z1T00000000000000000W-members'
+/**
+ * A project whose creations link (steps 13 to 16): the artisans and slides that show them (seed), version 1 of the artisans and slides pinned to it, a report
+ * that shows them, a site that shows the report's summary, a directory that shows the artisans and whose form proposes into them, orders that relate to them
+ * and that nothing shows, and prices a proposal shows. @param {import('@playwright/test').Page} page
+ */
+async function project(page) {
+  await seed(page)
+  await page.evaluate(async ({ COLLECTION, ORDERS, BOARD, REPORT, PRICES, PROPOSAL, DIRECTORY, MEMBERS }) => {
+    const [{ app }, { unlock }] = await Promise.all([import('/ui/state.js'), import('/ui/caps.js')]), at = '2026-11-21T10:00:00.000Z', decks = await import('/caps/skills/decks.js')
+    await Promise.all([unlock('documents'), unlock('sites')])
+    const document = (/** @type {string} */ name, /** @type {string} */ body) => `---\nformat: 1\nname: ${name}\nauthor: user\ncreated: ${at}\nchanged: ${at}\n---\n# ${name}\n\n${body}\n`
+    const site = async (/** @type {string} */ place, /** @type {string} */ name, /** @type {string} */ body) => { await app.fs.write(`${app.projectDir}/${place}/site.json`, JSON.stringify({ format: 1, name, author: 'user', created: at, changed: at, source: '', files: ['index.html'] })); await app.fs.write(`${app.projectDir}/${place}/index.html`, `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>${name}</title></head><body><main>${body}</main></body></html>`) }
+    await (await import('/caps/compose/compose.js')).publish(COLLECTION)
+    await app.fs.write(`${app.projectDir}/${ORDERS}/collection.json`, JSON.stringify({ format: 1, id: ORDERS.slice(12, 38), name: 'Orders', author: 'user', created: at, changed: at,
+      properties: [{ id: 'item', name: 'Item', type: 'text' }, { id: 'maker', name: 'Maker', type: 'relation', collection: COLLECTION }], views: [{ id: 'table', type: 'table' }] }))
+    await decks.rewrite(BOARD, `# Board\n\n---\n\n\`\`\`table\n${COLLECTION}@1\n\`\`\`\n`, 'Board', app.projectDir)
+    await app.fs.write(`${app.projectDir}/${REPORT}`, document('Report', `## Summary\n\n\`\`\`table\n${COLLECTION}\n\`\`\``))
+    await app.fs.write(`${app.projectDir}/${PRICES}`, document('Prices', '## Bread\n\nTwo euros.'))
+    await decks.rewrite(PROPOSAL, `# Proposal\n\n---\n\n\`\`\`section\n${PRICES}#bread\n\`\`\`\n`, 'Proposal', app.projectDir)
+    await site(DIRECTORY, 'Directory', `<table data-from="${COLLECTION}"></table><form method="post" data-form="propose" data-to="${COLLECTION}"><label for="who">Name</label><input id="who" name="who"><button>Propose</button></form>`)
+    await site(MEMBERS, 'Members', `<section data-from="${REPORT}#summary"></section>`)
+  }, { COLLECTION, ORDERS, BOARD, REPORT, PRICES, PROPOSAL, DIRECTORY, MEMBERS })
+}
+/** What the brain reads of the graph, of a creation or, with none, of the whole project. @param {import('@playwright/test').Page} page @param {string} [place] */
+const links = (page, place) => page.evaluate(async (place) => (await import('/ui/caps.js')).loaded.peek().get('compose')?.tools?.[0].run(place ? { place } : {}, /** @type {any} */ ({})), place)
+
+test('the graph whole, in words: every creation that uses another, the version each reads, a site’s form proposing into a collection, and what shows nothing and why', async ({ page }) => {
+  await start(page)
+  await project(page)
+  const said = await links(page)
+  expect(said).toMatch(/^In this project, /)
+  expect(said).toContain(`Neighbourhood (${DECK}) uses Artisans (${COLLECTION}), reading it as it is now; collections/01K85Z1T00000000000000000Z-gone (collections/01K85Z1T00000000000000000Z-gone), reading it as it is now, showing nothing, as this project has no such creation`)
+  expect(said).toContain(`Board (${BOARD}) uses Artisans (${COLLECTION}), reading its version 1`)
+  expect(said).toContain(`Orders (${ORDERS}) uses Artisans (${COLLECTION}), by its column Maker`)
+  expect(said).toContain(`Members (${MEMBERS}) uses Report (${REPORT}), reading it as it is now, section: summary`)
+  expect(said).toContain(`Directory (${DIRECTORY}) uses Artisans (${COLLECTION}), reading it as it is now; Artisans (${COLLECTION}), proposing rows to it through its form propose`)
+  // Of the artisans alone, the directory is among what uses them, by its form too; deleted from Creations, they would say so with their Undo.
+  expect(await links(page, COLLECTION)).toContain(`Directory (${DIRECTORY}), proposing rows to it through its form propose`)
+})

@@ -54,5 +54,6 @@
   "compose.area": "Gabatee adiin kun kutaa akkasii hin qabu.",
   "compose.kit": "Sirna dizaayinii",
   "compose.kit.certified": "Mirkanaa’eera, hanga gosa {n} sirna dizaayiniitti",
-  "compose.kit.worn": "Kan uffatan: {names}"
+  "compose.kit.worn": "Kan uffatan: {names}",
+  "compose.linkingAll": "Uumamoonni pirojektii kanaa akkamitti walitti hidhaman ilaalaa jira"
 }

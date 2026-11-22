@@ -54,5 +54,6 @@
   "compose.area": "इस व्हाइटबोर्ड में ऐसा कोई खंड नहीं है।",
   "compose.kit": "डिज़ाइन सिस्टम",
   "compose.kit.certified": "प्रमाणित, डिज़ाइन सिस्टम के संस्करण {n} तक",
-  "compose.kit.worn": "इसे पहनने वाले: {names}"
+  "compose.kit.worn": "इसे पहनने वाले: {names}",
+  "compose.linkingAll": "देख रहे हैं कि इस प्रोजेक्ट की रचनाएँ आपस में कैसे जुड़ी हैं"
 }

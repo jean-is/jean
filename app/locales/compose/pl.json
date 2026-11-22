@@ -54,5 +54,6 @@
   "compose.area": "Ta tablica nie ma takiej sekcji.",
   "compose.kit": "System projektowy",
   "compose.kit.certified": "Poświadczone, aż do wersji {n} systemu projektowego",
-  "compose.kit.worn": "Noszą go: {names}"
+  "compose.kit.worn": "Noszą go: {names}",
+  "compose.linkingAll": "Sprawdzam, jak łączą się kreacje tego projektu"
 }

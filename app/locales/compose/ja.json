@@ -54,5 +54,6 @@
   "compose.area": "このホワイトボードにはそのセクションがありません。",
   "compose.kit": "デザインシステム",
   "compose.kit.certified": "デザインシステムの第{n}版まで証明済み",
-  "compose.kit.worn": "使っているもの：{names}"
+  "compose.kit.worn": "使っているもの：{names}",
+  "compose.linkingAll": "このプロジェクトの作成物のつながりを確認中"
 }
