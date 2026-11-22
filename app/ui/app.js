@@ -2,7 +2,6 @@
 // Boot: storage, settings, language, default project, then the room.
 import { effect } from '@preact/signals-core'
 import { BRAND } from '../brand.js'
-import { memoryFS } from '../core/fs.js'
 import { ensureHome, listProjects } from '../core/settings.js'
 import { setLoader, useLocale, pickLocale, locale, dir } from '../core/i18n.js'
 import { ulid } from '../core/ulid.js'
@@ -32,7 +31,7 @@ async function start() {
     return response.ok ? response.json() : null
   })
   const fs = await opfsFS().catch(() => null)
-  app.fs = fs ?? memoryFS()
+  app.fs = fs ?? (await import('./memory.js')).inMemory()
   app.whole = fs?.whole ?? null
   app.ephemeral.value = !fs
   if (!fs) sessionStorage.removeItem('app.profile')

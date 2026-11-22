@@ -8,9 +8,14 @@ import { start, connectFakeBrain, ask, answered, RELAY_URL, SHARE_URL } from './
 
 /** @typedef {import('@playwright/test').Page} Page */
 
-/** A person's Jean: a context of its own, the relay named, and the name its profile goes by. @param {import('@playwright/test').Browser} browser @param {string} name */
-async function person(browser, name, lang = 'en') {
-  const page = await (await browser.newContext()).newPage()
+/**
+ * A person's Jean: a context of its own, the relay named, and the name its profile goes by; `memory`, a private window of a browser that
+ * keeps no files there, as Firefox's, where Jean keeps everything in memory (ui/app.js). @param {import('@playwright/test').Browser} browser @param {string} name
+ */
+async function person(browser, name, lang = 'en', { memory = false } = {}) {
+  const context = await browser.newContext()
+  if (memory) await context.addInitScript(() => { delete (/** @type {any} */ (StorageManager.prototype)).getDirectory })
+  const page = await context.newPage()
   await start(page, lang)
   await page.evaluate(async ([relay, share, name]) => {
     const { app, updateSettings } = await import('/ui/state.js')
@@ -96,9 +101,11 @@ test('Ana and Bob work on a collection together: a link and a name, each one’s
   expect(await items(bob, folder)).toEqual(['Flat', 'Flights', 'Museum', 'Taxi'])
 })
 
-test('Ana and Bob work on a whiteboard together: what each writes on it shows on the other’s board as it is, no reload, however many of People’s invitations wait', async ({ browser }) => {
-  const [ana, bob] = await Promise.all([person(browser, 'Ana'), person(browser, 'Bob')])
+test('Ana and Bob work on a whiteboard together: what each writes on it shows on the other’s board as it is, no reload, however many of People’s invitations wait and Bob in a private window', async ({ browser }) => {
+  // Bob in a private window that keeps no files, as Firefox's: what he writes is in memory, which Together hears as it hears files.
+  const [ana, bob] = await Promise.all([person(browser, 'Ana'), person(browser, 'Bob', 'en', { memory: true })])
   await Promise.all([ana, bob].map((page) => page.setViewportSize({ width: 1440, height: 960 })))
+  expect(await bob.evaluate(async () => 'root' in (await import('/ui/state.js')).app.fs)).toBe(false)
   // Six invitations nobody answered yet, each a mailbox Ana's Jean waits on: read in one request with her own (D737), they leave the
   // relay's other connections, six to an HTTP/1.1 relay as the tests' is, to what she works on together.
   await ana.evaluate(async () => {
