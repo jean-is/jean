@@ -96,6 +96,102 @@ test('Ana and Bob work on a collection together: a link and a name, each one’s
   expect(await items(bob, folder)).toEqual(['Flat', 'Flights', 'Museum', 'Taxi'])
 })
 
+test('Ana and Bob work on a whiteboard together: what each writes on it shows on the other’s board as it is, no reload', async ({ browser }) => {
+  const [ana, bob] = await Promise.all([person(browser, 'Ana'), person(browser, 'Bob')])
+  await Promise.all([ana, bob].map((page) => page.setViewportSize({ width: 1440, height: 960 })))
+  // Ana's whiteboard, a section with a note in it, open beside her task.
+  const folder = await retro(ana)
+  await board(ana, folder)
+  await ana.evaluate(async (folder) => {
+    const [{ app }, { unlock }] = await Promise.all([import('/ui/state.js'), import('/ui/caps.js')])
+    await unlock('share')
+    await (await import('/caps/share/share.js')).openShare({ path: `${app.projectDir}/conversations/`, title: 'Retro', item: { text: '' }, thing: { kind: 'collection', uri: folder } }, null)
+  }, folder)
+  const sharing = ana.locator('app-share-dialog dialog[open]')
+  await sharing.getByRole('button', { name: 'Copy an invitation link instead' }).click()
+  const link = await sharing.getByTitle('Link', { exact: true }).inputValue()
+  await sharing.getByRole('button', { name: 'Close' }).click()
+
+  // Bob joins: the whiteboard opens beside his task, as Ana's is.
+  await bob.goto(link)
+  const joining = bob.locator('app-together-dialog dialog[open]')
+  await joining.getByLabel('Your name, as the others will see it').fill('Bob')
+  await joining.getByRole('button', { name: 'Join' }).click()
+  await expect(bob.locator('app-whiteboard .wb-note .wb-words')).toHaveText(['Shipped the beta'])
+  await expect(ana.locator('app-toasts')).toContainText('Bob joined with the link')
+
+  await written(ana, bob, folder)
+})
+
+/**
+ * A note Ana writes on her board shows on Bob's, and one Bob writes on Ana's, each board open as it was, never opened again; then a note
+ * Bob moves into the section, on Ana's board too. @param {Page} ana @param {Page} bob @param {string} folder
+ */
+async function written(ana, bob, folder) {
+  const [anas, bobs] = [ana.locator('app-whiteboard'), bob.locator('app-whiteboard')]
+  /** The words on a board's shelf, in any order. @param {import('@playwright/test').Locator} board */
+  const shelf = (board) => board.locator('.wb-shelf .wb-note .wb-words').allTextContents().then((all) => all.sort())
+  await anas.getByTitle('New note').fill('Book the offsite')
+  await anas.getByTitle('New note').press('Enter')
+  await expect.poll(() => shelf(bobs)).toEqual(['Book the offsite'])
+  await bobs.getByTitle('New note').fill('Fewer meetings')
+  await bobs.getByTitle('New note').press('Enter')
+  await expect.poll(() => shelf(anas)).toEqual(['Book the offsite', 'Fewer meetings'])
+  await bob.evaluate(async (folder) => {
+    const { load, change } = await import('/caps/tables/tables.js')
+    const one = /** @type {any} */ (await load(folder)), area = one.rows.find((/** @type {any} */ row) => row.cells['@kind'] === 'area')
+    await change(one, [{ row: one.rows.find((/** @type {any} */ row) => row.cells.note === 'Fewer meetings').id, set: { area: area.id } }], 'user')
+  }, folder)
+  await expect(anas.locator('.wb-area .wb-note .wb-words')).toHaveText(['Shipped the beta', 'Fewer meetings'])
+  await expect.poll(() => shelf(anas)).toEqual(['Book the offsite'])
+}
+
+/** A whiteboard of a project's, a section with a note in it, written as Whiteboards writes one; its folder. @param {Page} page @param {string} [dir] */
+const retro = (page, dir) => page.evaluate(async (dir) => {
+  const [{ app }, { folderOf }, { stamp, stringifyChanges }, { ulid }, { unlock }] = await Promise.all([import('/ui/state.js'), import('/caps/tables/table.js'), import('/caps/tables/changes.js'), import('/core/ulid.js'), import('/ui/caps.js')])
+  const [id, area, at] = [ulid(), ulid(), new Date().toISOString()], place = folderOf({ id, name: 'Retro' })
+  const table = { format: 1, id, name: 'Retro', author: 'user', created: at, changed: at, kind: 'whiteboard', dir: 'ltr', views: [{ id: 'table', type: 'table' }],
+    properties: [{ id: 'note', name: 'Note', type: 'text' }, { id: 'area', name: 'Section', type: 'relation', collection: place }] }
+  await app.fs.write(`${dir ?? app.projectDir}/${place}/collection.json`, `${JSON.stringify(table, null, 2)}\n`)
+  await app.fs.write(`${dir ?? app.projectDir}/${place}/changes.jsonl`, stringifyChanges(stamp([], [{ row: area, set: { note: 'Went well', '@kind': 'area', '@spot': { area: null, x: 0, y: 0 } } },
+    { row: ulid(), set: { note: 'Shipped the beta', area } }], { by: 'user' })))
+  await unlock('whiteboards')
+  return place
+}, dir)
+/** A whiteboard open beside the task. @param {Page} page @param {string} folder */
+const board = (page, folder) => page.evaluate(async (folder) => (await import('/ui/preview.js')).preview({ uri: folder, name: 'Retro', title: 'Retro' }), folder)
+
+test('Ana and Bob work on a whole project together: its whiteboard, open on both their screens, shows what each writes on it, no reload', async ({ browser }) => {
+  const [ana, bob] = await Promise.all([person(browser, 'Ana'), person(browser, 'Bob')])
+  await Promise.all([ana, bob].map((page) => page.setViewportSize({ width: 1440, height: 960 })))
+  const dir = await ana.evaluate(async () => {
+    const [{ app, refreshProjects, enterProject }, { createProject }, { unlock }] = await Promise.all([import('/ui/state.js'), import('/core/settings.js'), import('/ui/caps.js')])
+    await unlock('projects')
+    await unlock('together')
+    const dir = await createProject(app.fs, { name: 'Offsite', by: 'user' })
+    await refreshProjects()
+    await enterProject(/** @type {any} */ (app.projects.peek().find((one) => one.dir === dir)))
+    return dir
+  })
+  const folder = await retro(ana, dir)
+  await ana.evaluate(async (dir) => (await import('/caps/projects/projects.js')).editProject((await import('/ui/state.js')).app.projects.peek().find((one) => one.dir === dir)), dir)
+  await ana.locator('app-project-dialog dialog[open]').getByRole('button', { name: 'Work on this project together' }).click()
+  const together = ana.locator('app-together-dialog dialog[open]')
+  await together.getByRole('button', { name: 'Start' }).click()
+  await expect(together.getByRole('heading', { name: 'People in this project' })).toBeVisible()
+  const link = await ana.evaluate(async (dir) => { const engine = await import('/caps/together/engine.js'); return engine.linkFor(/** @type {any} */ (engine.circleAt(dir))) }, dir)
+  await ana.keyboard.press('Escape')
+
+  await bob.goto(link)
+  const joining = bob.locator('app-together-dialog dialog[open]')
+  await joining.getByLabel('Your name, as the others will see it').fill('Bob')
+  await joining.getByRole('button', { name: 'Join' }).click()
+  await expect.poll(() => bob.evaluate(async (folder) => Boolean(await (await import('/caps/tables/tables.js')).load(folder).catch(() => null)), folder)).toBe(true)
+  await Promise.all([board(ana, folder), board(bob, folder)])
+  await expect(bob.locator('app-whiteboard .wb-note .wb-words')).toHaveText(['Shipped the beta'])
+  await written(ana, bob, folder)
+})
+
 test('Ana and Bob work on a task together: each request answered by its own person’s Jean, in turn, the other’s words quoted for each brain', async ({ browser }) => {
   const [ana, bob] = await Promise.all([person(browser, 'Ana'), person(browser, 'Bob')])
   await Promise.all([connectFakeBrain(ana), connectFakeBrain(bob)])

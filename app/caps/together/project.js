@@ -5,6 +5,7 @@
 // The journal's copy is rebuilt in memory as the journal is read; rounds wait until it is read to its end, or a file not read yet
 // would look deleted there.
 import { app } from '../../ui/state.js'
+import { loaded } from '../../ui/caps.js'
 import { memoryFS, rootedFS } from '../../core/fs.js'
 import { stringifyFrontMatter, parseFrontMatter } from '../../core/settings.js'
 import { syncRound, carried } from '../sync/mirror.js'
@@ -28,12 +29,15 @@ function thereOf(held) {
   return held.there ??= { ...raw, writeBytes: async (path, bytes) => { await raw.writeBytes(path, bytes); /** @type {any} */ (held.changes)[path] = encode(bytes) },
     remove: async (path) => { await raw.remove(path); /** @type {any} */ (held.changes)[path] = null } }
 }
-/** A round between the project here and the journal's copy, what it wrote there posted. @param {Place} place @param {Held} held */
+/**
+ * A round between the project here and the journal's copy, what it wrote there posted, and what it wrote here read again where it is
+ * drawn: a collection or a whiteboard open on screen, as Sync's rounds do (caps/sync/rounds.js). @param {Place} place @param {Held} held
+ */
 const round = (place, held) => (held.running = (held.running ?? Promise.resolve()).then(async () => {
-  await syncRound(hereOf(place), thereOf(held), { cache: '.cache/together', carry })
-  const changes = /** @type {Record<string, string | null>} */ (held.changes)
+  const came = await syncRound(hereOf(place), thereOf(held), { cache: '.cache/together', carry }), changes = /** @type {Record<string, string | null>} */ (held.changes)
   held.changes = {}
   if (Object.keys(changes).length) await held.post?.({ files: changes })
+  if (loaded.peek().has('tables') && came.some((path) => path.startsWith('collections/'))) await (await import('../tables/tables.js')).came(came.map((path) => `${place.dir}/${place.folder}/${path}`))
 }).catch((error) => console.warn('Together', error)))
 
 /** @param {Place} place */
@@ -60,10 +64,9 @@ export const hold = (held, { files }) => Promise.all(Object.entries(files).map((
  * project. @param {Place} place @param {{ files?: Record<string, string | null>, project?: { name: string } }} body @param {Held} held
  */
 export async function take(place, body, held) {
-  const project = `${place.dir}/${place.folder}/project.md`
+  const project = `${place.dir}/${place.folder}/project.md`, raw = /** @type {FS} */ (thereOf(held) && held.raw)
   if (body.project && !(await app.fs.exists(project))) await app.fs.write(project, stringifyFrontMatter({ format: 1, name: body.project.name, createdAt: new Date().toISOString(), by: app.deviceId }, ''))
-  thereOf(held)
-  for (const [path, value] of Object.entries(body.files ?? {})) if (carry(path)) await (value === null ? held.raw?.remove(path) : held.raw?.writeBytes(path, decode(value)))
+  for (const [path, value] of Object.entries(body.files ?? {})) if (carry(path)) await (value === null ? raw.remove(path) : raw.writeBytes(path, decode(value)))
   if (held.post) await round(place, held)
 }
 
