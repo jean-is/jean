@@ -157,7 +157,7 @@ Built first on a main whose line budget was nearly full, each step from the seco
 
 ## Work left
 
-Composition and the graph are one ([architecture.md](architecture.md#composition)): every way a creation shows another becomes a reference, and every reference is an edge the graph reads. Steps 6 to 12 built the graph out from that; what is left of their plan is in the departures above: a flow's step reading a reference, a link carrying its ingredients' certificates, apps and a design's figures, counts on Creations' cards and `@`, an answer's figures as edges; of the map's ([below](#the-map)), the help article and the job page that would show it. Three rules hold for what comes next:
+Composition and the graph are one ([architecture.md](architecture.md#composition)): every way a creation shows another becomes a reference, and every reference is an edge the graph reads. Steps 6 to 12 built the graph out from that; what is left of their plan is in the departures above: a flow's step reading a reference, a link carrying its ingredients' certificates, apps and a design's figures, counts on Creations' cards and `@`, an answer's figures as edges; of the map's ([below](#the-map)), the job page that would show it. Three rules hold for what comes next:
 
 - **Nothing shown outside a reference.** A kind that starts showing another's content joins `CONSUMERS` in the same change, and its test checks that the source's *Links with other creations* lists it.
 - **Budgets first.** Each step measures what it needs, deletes first where it can, asks for a raise in a change of its own, and stays out of Tables' folder and the first load, at their limits.
@@ -170,7 +170,7 @@ The graph was said in words where it matters, the links menu, an Undo's toast, `
 - **What it answers.** Along the links, what a change touches before it is made: what uses this, and what uses that. Back along them, where what shows comes from, to the version it reads. Across a project: what is behind, what runs by itself and on which brain, what shows nothing and why, and what nothing uses.
 - **Its form.** Sources at the start, each consumer a column further along, by the longest way of references that reaches it, so that it reads in the page's direction and turns with it. Nothing is dragged and nothing moves: the same graph is laid out the same, though it is read again at every change.
 - **Where it is reached.** From the links menu, the map about one creation; on Creations, the whole project's, as a way to sort them; and the brain reads the whole graph from `creation_links` given no place, drawing it in an answer as a ```` ```mermaid ```` flowchart when asked, an answer being a moment (D188).
-- **How people hear of it.** No page of jean.is is about the map: people look for what composition does, a price changed everywhere at once, not for a graph. The guide says where it is; a help article on how creations link, and a job page for composition that plays the map as its demo, are still to write.
+- **How people hear of it.** No page of jean.is is about the map: people look for what composition does, a price changed everywhere at once, not for a graph. The guide says where it is, and Help's *See how your creations link* (`site/help/links`) how to reach it and read what each creation says, its replay asking Jean how a project's creations link; a job page for composition that plays the map as its demo is still to write.
 
 ## Decisions left open
 

@@ -1,0 +1,67 @@
+{
+  "title": "Comment vos créations sont liées dans {name} : qui utilise quoi",
+  "description": "Des diapos, un document et un site peuvent afficher la même collection. Voyez ce qui utilise chaque création, la version lue, et tout le projet en carte.",
+  "h1": "Voir comment vos créations sont liées",
+  "pane.title": "Une question sur les liens entre les créations d’un projet, traitée dans {name}",
+  "pane.play": "Voir le déroulé",
+  "works": "Tous les navigateurs",
+  "answer": "Des diapos, un document ou un site qui affichent une collection y sont liés : modifiez la collection, et ce qui l’affiche change aussi. Pour voir ce qu’une modification touche avant de la faire, appuyez sur {links} en haut du volet d’une création. {drawn} le dessine en carte, et {creations} dessine tout le projet.",
+  "steps.title": "Voir à quoi une création est liée",
+  "steps": [
+    "Ouvrez une collection, des diapos, un document ou un site à côté de la tâche. En haut de son volet, appuyez sur {links}. Sous {usedIn}, ce qui l’affiche ; sous {uses}, ce qu’elle affiche, chacun avec la version qu’il lit ; et sous {further}, ce à quoi ils mènent : par exemple un site qui affiche un document qui affiche cette collection.",
+    "En dessous, appuyez sur {drawn} : la carte de cette création remplit la page. Ce qu’elle utilise vient d’abord, puis la création elle-même, puis ce qui l’utilise, et ce à quoi ils mènent une colonne plus loin, dans le sens où vous lisez.",
+    "Pointez une création sur la carte, ou atteignez-la avec la touche Tab : ce qu’elle utilise et ce qui l’utilise s’allument, aussi loin que ça va, et le reste s’estompe. Les flèches du clavier suivent les liens. Appuyez sur une création pour l’ouvrir à côté de la tâche.",
+    "Pour tout le projet, ouvrez {creations} dans le tiroir, appuyez sur le bouton qui dit comment les créations sont triées, {changed} au début, et choisissez {map}. C’est proposé dès que trois créations sont liées. La carte s’affiche à la place des créations, et les types et les mots que vous cherchez gardent allumées les créations qu’ils trouvent.",
+    "Ou demandez à {name} comment les créations de ce projet sont liées : la réponse dit qui utilise quoi, la version que chacune lit et ce qui n’affiche rien, avec un organigramme si vous le demandez."
+  ],
+  "terms.title": "Ce que la carte dit sous chaque création",
+  "terms": [
+    ["{live}", "Elle affiche la collection telle qu’elle est maintenant : chaque modification s’affiche aussitôt."],
+    ["{published}", "Elle affiche la dernière version publiée de la collection, et passe à chaque nouvelle."],
+    ["Version 2", "Elle reste sur cette version, telle qu’elle a été publiée, quoi qu’il change ensuite."],
+    ["La version 3 est sortie", "Une version plus récente a été publiée que celle sur laquelle elle reste. Pour l’afficher, choisissez-la dans {which}, dans les {links} de la création."],
+    ["{auto}, {hourly} ou {every5}", "À quelle fréquence une instruction s’exécute d’elle-même sur les lignes qu’elle lit, comme un résumé qu’écrit un cerveau. La ligne en dessous nomme ce cerveau."],
+    ["{missing}", "Elle n’affiche rien, car ce qu’elle lisait n’est plus dans ce projet. Un document disparu est signalé de la même façon. Cette ligne est en rouge."],
+    ["{loop}", "Elle n’affiche rien, car deux créations s’afficheraient l’une l’autre. Cette ligne est en rouge."],
+    ["{unused}", "Ni diapos, ni document, ni site, ni tâche n’affiche cette collection."],
+    ["{answer}", "Une tâche dont la réponse affiche la collection telle qu’elle était quand la réponse a été écrite, sans jamais changer d’elle-même."]
+  ],
+  "good": [
+    "Un trait plein va d’une création à ce qui l’affiche. Un trait pointillé relie une collection à une autre par une colonne, ou le formulaire d’un site à la collection où il envoie des lignes.",
+    "La carte ne fait que montrer : rien ne s’y déplace, ni à la main ni tout seul. Le même projet est toujours disposé de la même façon, chaque fois qu’elle est redessinée.",
+    "Quand la fenêtre est étroite, les colonnes s’empilent. En arabe ou en hébreu, la carte se lit de droite à gauche, comme la page.",
+    "Sur un écran tactile, toucher une création l’ouvre ; pour allumer ce à quoi elle est liée, utilisez un clavier.",
+    "Les images et la charte graphique ne sont pas sur la carte : les {links} d’une image listent les diapos et les documents qui la contiennent, et la page de la charte dit ce qui la porte.",
+    "Quand vous supprimez une colonne ou une collection, le message qui permet d’annuler dit ce qui l’utilise encore.",
+    "Tout est calculé sur cet appareil, à partir des fichiers de votre projet : rien n’est envoyé nulle part pour dessiner la carte."
+  ],
+  "fixes": [
+    [
+      "Vous ne voyez pas {links}",
+      "Le bouton apparaît dès que quelque chose lie la création à une autre : des diapos, un document ou un site qui l’affichent, ou une version, une source ou un formulaire à elle. Une création seule n’a aucun lien à lister."
+    ],
+    [
+      "{drawn} n’est pas dans le menu",
+      "Il apparaît dès que le menu liste une autre création. Une image qu’elle contient, ou la charte graphique qu’elle porte, n’est pas sur la carte, et ne suffit donc pas à elle seule."
+    ],
+    [
+      "{map} n’est pas parmi les façons de trier",
+      "C’est proposé dès que trois créations du projet sont liées, et tant que {creations} en montre plus d’une. Videz {find}, ou choisissez {all}."
+    ],
+    [
+      "Une création dit qu’elle n’affiche rien",
+      "Ce qu’elle affichait a été supprimé, ou elle afficherait une création qui l’affiche. Juste après une suppression, Annuler la fait revenir. Sinon, demandez à {name} d’y afficher une autre collection, ou retirez l’une des deux qui s’affichent l’une l’autre."
+    ]
+  ],
+  "ask": "Comment les créations de ce projet sont-elles liées ? Dessine-les.",
+  "demo.asked": "Comment les créations de ce projet sont-elles liées ? Dessine-les.",
+  "demo.brain": "l’IA que vous avez choisie",
+  "demo.read": "Dans ce projet, Présentation commerciale utilise Tarifs, en lisant sa version 2. Grille tarifaire utilise Tarifs, en lisant sa version publiée. Boutique utilise Tarifs, en la lisant telle qu’elle est maintenant, et la section Livraison de Grille tarifaire, telle qu’elle est maintenant. Commandes utilise Tarifs par sa colonne Produit.",
+  "demo.answer": "Votre collection **Tarifs** s’affiche à trois endroits : la présentation commerciale reste sur la version 2, la grille tarifaire affiche la version publiée, et la boutique affiche les tarifs tels qu’ils sont maintenant. La boutique affiche aussi la section Livraison de la grille tarifaire, et chaque commande nomme un produit de Tarifs.",
+  "demo.then": "Un prix modifié maintenant s’affiche donc aussitôt dans la boutique, dans la grille tarifaire une fois une version publiée, et dans la présentation commerciale seulement quand vous la passez à cette version.",
+  "demo.prices": "Tarifs",
+  "demo.deck": "Présentation commerciale",
+  "demo.list": "Grille tarifaire",
+  "demo.shop": "Boutique",
+  "demo.orders": "Commandes"
+}

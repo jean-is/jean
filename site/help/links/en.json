@@ -1,0 +1,67 @@
+{
+  "title": "How your creations link in {name}: what uses what, drawn as a map",
+  "description": "Slides, a document and a site can show the same collection. See what uses each creation and which version it reads, and the whole project drawn as a map.",
+  "h1": "See how your creations link",
+  "pane.title": "A question about how a project’s creations link, answered in {name}",
+  "pane.play": "Watch it unfold",
+  "works": "Every browser",
+  "answer": "Slides, a document or a site that show a collection are linked to it: change the collection, and what shows it changes too. To see what a change touches before you make it, press {links} at the top of a creation’s pane. {drawn} draws it as a map, and {creations} draws the whole project.",
+  "steps.title": "See what a creation is linked to",
+  "steps": [
+    "Open a collection, slides, a document or a site beside the task. At the top of its pane, press {links}. Under {usedIn} is what shows it, under {uses} what it shows, each with the version it reads, and under {further} what those lead to: a site that shows a document that shows this collection, say.",
+    "Below them, press {drawn}: the map of this creation fills the page. What it uses comes first, then the creation itself, then what uses it, and what those lead to a column further, in the direction you read.",
+    "Point at a creation on the map, or reach it with the Tab key: what it uses and what uses it light up, as far as they go, and the rest fades. The arrow keys follow the links. Press a creation to open it beside the task.",
+    "For the whole project, open {creations} in the drawer, press the button that says how the creations are sorted, {changed} at first, and choose {map}. It is offered once three creations are linked. The map takes the cards’ place, and the kinds and the words you look for keep the creations they find lit.",
+    "Or ask {name} how this project’s creations link: it says what uses what, the version each reads and what shows nothing, and draws it as a flowchart if you ask."
+  ],
+  "terms.title": "What the map says under each creation",
+  "terms": [
+    ["{live}", "It shows the collection as it is now: each change shows at once."],
+    ["{published}", "It shows the collection’s latest published version, and moves on to each new one."],
+    ["Version 2", "It stays on that version, as it was published, whatever changes after."],
+    ["Version 3 is out", "A later version was published than the one it stays on. To show it, choose it in {which}, in the creation’s {links}."],
+    ["{auto}, {hourly} or {every5}", "How often an instruction runs by itself on the rows it reads, such as a summary a brain writes. The line under it names that brain."],
+    ["{missing}", "It shows nothing, as what it read is no longer in this project. A document that is gone is said the same way. This line is in red."],
+    ["{loop}", "It shows nothing, as two creations would each show the other. This line is in red."],
+    ["{unused}", "No slides, document, site or task shows this collection."],
+    ["{answer}", "A task whose answer shows the collection as it was when the answer was written, never changing by itself."]
+  ],
+  "good": [
+    "A solid line goes from a creation to what shows it. A dashed one is a collection related to another by a column, or a site’s form that sends rows into a collection.",
+    "The map only shows: nothing on it is dragged, and nothing moves. The same project is always laid out the same way, however often it is drawn again.",
+    "Where the window is narrow, the columns are stacked. In Arabic or Hebrew, the map reads from right to left, as the page does.",
+    "On a touch screen, a tap opens a creation; to light up what it is linked to, use a keyboard.",
+    "Pictures and the design system aren’t on the map: a picture’s {links} lists the slides and documents that hold it, and the design system’s page says what wears it.",
+    "When you delete a column or a collection, the message that lets you undo it says what still uses it.",
+    "All of it is worked out on this device, from your project’s own files: nothing is sent anywhere to draw the map."
+  ],
+  "fixes": [
+    [
+      "You don’t see {links}",
+      "It shows once something links the creation to another: slides, a document or a site that show it, or a version, a source or a form of its own. A creation on its own has no links to list."
+    ],
+    [
+      "{drawn} isn’t in the menu",
+      "It shows once the menu lists another creation. A picture held in it, or the design system it wears, isn’t on the map, so on its own it doesn’t bring it."
+    ],
+    [
+      "{map} isn’t among the ways to sort",
+      "It is offered once three creations of the project are linked, and while {creations} shows more than one. Clear {find}, or choose {all}."
+    ],
+    [
+      "A creation says it shows nothing",
+      "What it showed was deleted, or it would show a creation that shows it. Right after a delete, Undo brings it back. Otherwise, ask {name} to show another collection there, or take one of the two that show each other out."
+    ]
+  ],
+  "ask": "How do this project’s creations link? Draw them.",
+  "demo.asked": "How do this project’s creations link? Draw them.",
+  "demo.brain": "the AI you chose",
+  "demo.read": "In this project, Sales deck uses Prices, reading its version 2. Price list uses Prices, reading its published version. Shop uses Prices, reading it as it is now, and the Delivery section of Price list, as it is now. Orders uses Prices by its column Product.",
+  "demo.answer": "Your **Prices** collection is shown in three places: the sales deck stays on version 2, the price list shows the published version, and the shop shows the prices as they are now. The shop also shows the price list’s Delivery section, and each order names a product from Prices.",
+  "demo.then": "So a price changed now shows in the shop at once, in the price list once you publish a version, and in the sales deck only when you move it to that version.",
+  "demo.prices": "Prices",
+  "demo.deck": "Sales deck",
+  "demo.list": "Price list",
+  "demo.shop": "Shop",
+  "demo.orders": "Orders"
+}
