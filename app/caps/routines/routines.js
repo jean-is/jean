@@ -121,17 +121,17 @@ const runsTool = {
 /**
  * What the brain reads before the request: whose it is, how often, and when it fell due, that the
  * user ran it, the file that set it off, or that the user came back; then how often it ran before, and the last run as it went.
- * @param {Routine} routine @param {Date} time @param {boolean} [asked] @param {ResourceLink} [file] @param {number} [back] when the user was last here
+ * @param {Routine} routine @param {Date} time @param {boolean} [asked] @param {ResourceLink} [file] @param {number} [back] when the user was last here @param {boolean} [changed] a collection its request reads changed @param {string} [shown] what the blocks of its request show now
  */
-async function note(routine, time, asked = false, file, back) {
+async function note(routine, time, asked = false, file, back, changed = false, shown = '') {
   const runs = runsOf(routine.path)
   const last = runs.length ? await loadConversation(app.fs, runs[0].path) : null
   const before = last ? ` It ran ${runs.length === 1 ? 'once' : `${runs.length} times`} before, last on ${localStamp(new Date(runs[0].createdAt))}; what is new is what came after that. routine_runs reads any earlier run.${
     loaded.peek().has('computer') ? ' What you keep in /workspace stays there for its next runs.' : ''}\n\nThe last run, as it went, for reference:\n\n${digest(last.records, 8_000)}` : ''
   const now = file ? `this time it is ${file.name}, ${'when' in routine && routine.when === 'made' ? 'which you made' : 'which the user shared'} in another task, shared with it. The user may not be watching`
     : back ? `the user just came back, last here on ${localStamp(new Date(back))}, local time; what is new is what came after that`
-    : asked ? 'the user ran it now' : `it fell due on ${localStamp(time)}, local time. The user may not be watching`
-  return noteRecord(`The next message is the user's routine "${routine.title}", which you send yourself ${inEnglish(routine)}; ${now}.${before}`,
+    : asked ? 'the user ran it now' : changed ? 'a collection its request reads changed. The user may not be watching' : `it fell due on ${localStamp(time)}, local time. The user may not be watching`
+  return noteRecord(`The next message is the user's routine "${routine.title}", which you send yourself ${inEnglish(routine)}; ${now}.${before}${shown && `\n\nWhat the blocks of its request show now, read for this run:\n\n${shown}`}`,
     { kind: 'routine', routine: routine.path, title: routine.title, due: time.toISOString(), ...(asked && { asked }), ...(file && { file: file.name }) })
 }
 
@@ -196,14 +196,16 @@ export async function check(now = new Date()) {
  * or one a file set off, which comes with it unless it was turned off since. It shows only when the user asked for it, and
  * otherwise runs out of sight at once, the page and the address left as they were (D317, D583). It
  * returns once begun: what a run waits for, an approval or a question, holds up no other routine.
- * @param {string} path @param {Date} now @param {boolean} [asked] @param {ResourceLink} [file] @param {number} [back] when the user who came back was last here
+ * @param {string} path @param {Date} now @param {boolean} [asked] @param {ResourceLink} [file] @param {number} [back] when the user who came back was last here @param {boolean} [changed] set off by a collection it reads (caps/compose)
  */
-async function run(path, now, asked = false, file, back) {
+async function run(path, now, asked = false, file, back, changed = false) {
   const routine = (await routines()).find((candidate) => candidate.path === path)
-  const time = asked || ((file || back) && routine?.active) ? now : routine && due(routine, now, week().weekend)
+  const time = asked || ((file || back || changed) && routine?.active) ? now : routine && due(routine, now, week().weekend)
   if (!routine || !time) return
   await writeRoutine(app.fs, { ...routine, lastRun: now.toISOString() })
-  const told = await note(routine, time, asked, file, back)
+  // What the blocks of its request show now, read as references at the versions they name (caps/compose), told with it.
+  const shown = /^ {0,3}(`{3,}|~{3,})(table|section)\b/m.test(routine.request) && await unlock('tables') ? await (await import('../compose/compose.js')).written(routine.request, routine.path) : ''
+  const told = await note(routine, time, asked, file, back, changed, shown)
   const files = file ? [{ key: file.uri, name: file.name, status: /** @type {const} */ ('ready'), link: file, pages: splitPages((await fileText(app.fs, app.projectDir, file.uri)) ?? '') }] : []
   // A routine that runs a flow: its steps are the turn (D218).
   const call = routine.flow && await unlock('flows') ? { name: 'run_flow', args: { flow: routine.flow, name: routine.request } } : undefined
@@ -228,6 +230,8 @@ function brainOf(routine) {
 
 /** @param {string} path */
 export const runNow = (path) => run(path, new Date(), true)
+/** One set off, out of sight, by a change of a collection its request reads with `refresh: auto` (caps/compose). @param {string} path */
+export const changed = (path) => run(path, new Date(), false, undefined, undefined, true)
 
 let soon = 0
 const later = () => {

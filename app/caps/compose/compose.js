@@ -38,8 +38,8 @@ await Promise.all([useStrings('compose'), styleSheet(new URL('compose.css', impo
 /** @import { Run } from './recipes.js' */
 /** @import { Port, Proposal } from './ports.js' */
 /** @typedef {Awaited<ReturnType<typeof import('../tables/tables.js').load>>} Loaded */
-/** The project's design system (ui/kit.js), a source that decks, sites and designs wear (step 11). */
-const KIT = 'kit.json'
+/** The project's design system (ui/kit.js), a source that decks, sites and designs wear (step 11); and a routine's file, its request a consumer (step 12). */
+const KIT = 'kit.json', ROUTINE = /(^|\/)routines\/[^/]+\.md$/
 /** A site's or a prototype's pages, read by its record. @param {string} record @returns {(path: string, dir: string) => Promise<{ source: string, name: string, wears?: Ref['at'] } | null>} */
 const pagesOf = (record) => async (path, dir) => ((one) => one && Promise.all(one.files.filter((/** @type {string} */ file) => file.endsWith('.html')).map((/** @type {string} */ file) => app.fs.read(`${dir}/${path}/${file}`))).then((pages) => ({ source: pages.join('\n'), name: one.name, wears: one.look?.id === 'project' ? /** @type {Ref['at']} */ ('live') : undefined })))(JSON.parse((await app.fs.read(`${dir}/${path}/${record}`)) ?? 'null'))
 /** The kinds that hold references, by folder: which entries are their own, and the text and name read from one, and the version of the design system it wears. @type {[string, RegExp, (path: string, dir: string) => Promise<{ source: string, name: string, wears?: Ref['at'] } | null>][]} */
@@ -71,6 +71,8 @@ function graph(dir = app.projectDir) {
       const path = `${folder}/${name}`, one = await readOf(path, dir).catch(() => null)
       if (one) names.set(path, one.name), edges.push(...refsIn(one.source).map((ref, index) => ({ from: path, to: ref.place, at: ref.at, recipe: ref.recipe, index })), ...linksIn(path, null, one.source), ...(kit && one.wears !== undefined ? [{ from: path, to: KIT, at: one.wears, recipe: {}, index: -1, kind: /** @type {const} */ ('kit') }] : []))
     }
+    // A routine whose request holds a reference reads it as it runs (../routines/routines.js), the project's routines where Routines keeps them.
+    for (const one of await (await import('../routines/schedule.js')).listRoutines(app.fs, app.project.peek().data.default === true && dir === app.projectDir ? '' : dir).catch(() => [])) if (refsIn(one.request).length) names.set(one.path, one.title), edges.push(...refsIn(one.request).map((ref, index) => ({ from: one.path, to: ref.place, at: ref.at, recipe: ref.recipe, index })))
     for (const { path, name, source } of /** @type {(import('../../ui/creations.js').Creation & { source: string })[]} */ (await answers.kept(dir).catch(() => []))) {
       const ref = parseRef(source), from = path.slice(0, path.indexOf('#'))
       if (ref) names.set(from, name), edges.push({ from, to: ref.place, at: ref.at, recipe: ref.recipe, index: Number(path.slice(path.indexOf('#') + 1)) })
@@ -327,12 +329,16 @@ async function publishText(place, dir) {
 }
 /**
  * A creation changed: each reference to it whose `ask` runs as its source changes (its user opted in, `refresh: auto`) run again once changes
- * stop coming for a while, then what uses that consumer, so far deep at most. @param {string} place @param {string} dir
+ * stop coming for a while, then what uses that consumer, so far deep at most; a routine whose request reads it so is set off, one clock for both.
+ * @param {string} place @param {string} dir
  */
 async function propagate(place, dir, depth = 0) {
-  if (depth < DEPTH) for (const edge of (await graph(dir)).edges.filter((one) => one.to === place && one.recipe.ask && paceOf(one.recipe).auto)) {
+  if (depth < DEPTH) for (const edge of (await graph(dir)).edges.filter((one) => one.to === place && paceOf(one.recipe).auto && (one.recipe.ask || ROUTINE.test(one.from)))) {
     clearTimeout(later.get(`${edge.from}#${edge.index}`))
-    later.set(`${edge.from}#${edge.index}`, setTimeout(async () => { if ((await run(refOf(edge), edge.from, dir))?.output !== undefined) void propagate(edge.from, dir, depth + 1) }, GATHER))
+    later.set(`${edge.from}#${edge.index}`, setTimeout(async () => {
+      if (ROUTINE.test(edge.from)) return void ((await unlock('routines')) && (await import('../routines/routines.js')).changed(edge.from))
+      if ((await run(refOf(edge), edge.from, dir))?.output !== undefined) void propagate(edge.from, dir, depth + 1)
+    }, GATHER))
   }
 }
 // A collection changed, here, in another tab or by Sync: what runs as it changes; and, its columns changed, a version of them once it has versions.
@@ -407,7 +413,7 @@ async function linksOf(uri) {
 }
 
 /** A creation's glyph, by its folder. */
-const KIND = /** @type {Record<string, unknown>} */ ({ conversations: icons.task, collections: icons.table, decks: icons.slides, documents: icons.note, sites: icons.code, prototypes: icons.code, games: icons.play, designs: icons.palette, [KIT]: icons.palette })
+const KIND = /** @type {Record<string, unknown>} */ ({ conversations: icons.task, collections: icons.table, decks: icons.slides, documents: icons.note, sites: icons.code, prototypes: icons.code, games: icons.play, designs: icons.palette, [KIT]: icons.palette, routines: icons.sync })
 /** The reference whose settings the links menu shows, as its consumer's place and its index there; the list while it is empty. */
 const deep = signal('')
 /** Sources' part of a collection's links menu, fetched as the first collection's opens. @type {typeof import('../sources/sources.js') | undefined} */
@@ -422,7 +428,7 @@ let fed
 function head({ uri }) {
   if (!PLACE.test(uri) && !/^files\/sha256-/.test(uri) && !CONSUMERS.some(([folder, own]) => uri.startsWith(`${folder}/`) && own.test(uri.slice(folder.length + 1)))) return nothing
   const id = `links-${uri}`, these = links.value.get(uri), date = new Intl.DateTimeFormat(intlLocales(locale.value), { dateStyle: 'medium', timeStyle: 'short' }), name = (/** @type {string} */ place) => these?.names.get(place) ?? place
-  const open = (/** @type {string} */ place, /** @type {unknown} */ value = nothing) => html`<button type="button" popovertarget=${id} popovertargetaction="hide" @click=${() => (place === KIT ? import('../../ui/dialogs.js').then(({ openSettings }) => openSettings(app.project.peek().data.default === true ? 'appearance/kit' : 'appearance/kit-project')) : place.startsWith('conversations/') ? openConversation(`${app.projectDir}/${place}`) : openFile({ type: 'resource_link', uri: place, name: name(place) }))}>${KIND[place.split('/')[0]] ?? icons.layers}<span dir="auto">${name(place)}</span>${value}</button>`
+  const open = (/** @type {string} */ place, /** @type {unknown} */ value = nothing) => html`<button type="button" popovertarget=${id} popovertargetaction="hide" @click=${() => (place === KIT || ROUTINE.test(place) ? import('../../ui/dialogs.js').then(({ openSettings }) => openSettings(ROUTINE.test(place) ? 'routines' : app.project.peek().data.default === true ? 'appearance/kit' : 'appearance/kit-project')) : place.startsWith('conversations/') ? openConversation(`${app.projectDir}/${place}`) : openFile({ type: 'resource_link', uri: place, name: name(place) }))}>${KIND[place.split('/')[0]] ?? icons.layers}<span dir="auto">${name(place)}</span>${value}</button>`
   const group = (/** @type {string} */ key, /** @type {unknown[]} */ rows) => (rows.length ? html`<div role="group" aria-label=${t(key)}><p class="menu-heading" aria-hidden="true">${t(key)}</p><ul>${rows}</ul></div>` : nothing)
   /** A line under the row it is about. @param {string} words @param {string} [role] */
   const said = (words, role) => html`<p class="links-said" role=${role ?? nothing}>${words}</p>`
@@ -467,6 +473,24 @@ const linksTool = {
   },
 }
 
+/**
+ * A routine's run, certified once it ends as a recipe's run is, and kept with the routine's runs: what it read, each reference of its request at the
+ * version it read, and the rows it added to the collections its request names (a source's, caps/sources), its request the recipe; so rows from
+ * elsewhere carry where they came from. The brain is the one the room's messages have, as a routine's most often is. @param {{ routine?: string, answer: string, at: string }} turn
+ */
+async function routineRan({ routine, answer, at }) {
+  const dir = app.projectDir, request = routine ? parseFrontMatter((await app.fs.read(routine)) ?? '').body : '', places = [...new Set(request.match(/collections\/[0-9A-HJKMNP-TV-Z]{26}-[^\s)\]`'"<>@#]+/g) ?? [])].filter((place) => PLACE.test(place))
+  if (!routine || !places.length || isDenied('tables')) return
+  const tables = await import('../tables/tables.js'), brain = activeBrain.peek(), file = runsAt(dir, routine), runs = await runsOf(file)
+  const read = (await Promise.all(refsIn(request).filter((ref) => PLACE.test(ref.place)).map(async (ref) => Promise.resolve(((live) => live && resolved(ref, live, dir))(await tables.load(ref.place, dir).catch(() => null)))
+    .then(async (shown) => (shown?.read ? [{ kind: /** @type {const} */ ('collection'), creation: ref.place.slice(12, 38), read: shown.read, ...(shown.certificate && { certificate: await imprint(shown.certificate) }) }] : []))))).flat()
+  const added = Object.fromEntries((await Promise.all(places.map(async (place) => [place, ((await tables.load(place, dir).catch(() => null))?.lines ?? []).filter((line) => 'at' in line && line.at >= at && line.by === 'jean')]))).filter(([, lines]) => lines.length))
+  const line = /** @type {Run & { wrote: string[] }} */ ({ format: 1, key: 'routine', n: runs.filter((one) => one.key === 'routine').length + 1, at: new Date().toISOString(), read: read.map((one) => one.read).join(' '), brain: brain ? `${brain.provider}:${brain.model}` : '', output: answer, wrote: Object.keys(added) })
+  Object.assign(line, await certified({ kind: 'run', creation: ulidOf(routine), n: line.n, at: line.at, by: 'jean', content: JSON.stringify({ answer, added }), recipe: { request }, ingredients: read,
+    ...(brain && { brain: { provider: brain.provider, model: brain.model, local: isLocal(brain) } }) }))
+  await app.fs.append(file, `${JSON.stringify(line)}\n`)
+}
+
 /** The project's design system's part of its page (../slides/kit-page.js): what wears it, and Publish version N, as a collection's menu has it. @param {string | null} dir the project's, on its page */
 function kitPart(dir) {
   const these = dir && links.value.get(KIT), all = these ? these.versions.get(KIT) ?? [] : []
@@ -475,4 +499,4 @@ function kitPart(dir) {
     <p><button type="button" class="button" ?disabled=${!these.changes && all.length > 0} @click=${async () => { const made = await publish(KIT); if (made?.version) notify(t('compose.done', { n: made.version.n })); await linksOf(KIT) }}>${t('compose.publish', { n: (all.at(-1)?.n ?? 0) + 1 })}</button></p></section>` : nothing
 }
 
-register({ id: 'compose', tools: [linksTool], lines: [{ name: 'creation_links', line: 'what uses a creation and what it uses, before changing what others show' }], hooks: [{ on: 'turn.end', run: (e, next) => ((read.at = 0), next(e)) }], slots: { head: { at: 1, draw: head }, answer: { at: 9, draw: (/** @type {{ text: string }} */ { text }) => (/`=\s*collections\//.test(text) ? html`<app-figures hidden></app-figures>` : nothing) }, touched: { at: 1, draw: () => null, said: touched }, kit: { at: 1, draw: kitPart } } })
+register({ id: 'compose', tools: [linksTool], lines: [{ name: 'creation_links', line: 'what uses a creation and what it uses, before changing what others show' }], hooks: [{ on: 'turn.end', run: (e, next) => ((read.at = 0), e.routine && void routineRan(e).catch(console.warn), next(e)) }], slots: { head: { at: 1, draw: head }, answer: { at: 9, draw: (/** @type {{ text: string }} */ { text }) => (/`=\s*collections\//.test(text) ? html`<app-figures hidden></app-figures>` : nothing) }, touched: { at: 1, draw: () => null, said: touched }, kit: { at: 1, draw: kitPart } } })

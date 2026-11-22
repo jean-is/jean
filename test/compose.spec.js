@@ -9,7 +9,7 @@
 // journal, and show where they meet what the site's own table keeps, no version changing. In Arabic and Japanese too.
 import { test, expect } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
-import { start, connectFakeBrain, ask, answered, SHARE_URL, openTasks } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, SHARE_URL, openTasks, BRAIN_URL } from './helpers.js'
 
 const COLLECTION = 'collections/01K85Z1T00000000000000000A-artisans', DECK = 'decks/01K85Z1T00000000000000000D-neighbourhood.deck.html', ROW = '01K8000000000000000000000A'
 
@@ -359,9 +359,12 @@ test('the graph whole: a collection that relates to another, a picture held by i
   await expect(menu.getByRole('group', { name: 'Used in' }).getByRole('button', { name: /Orders/ })).toContainText('Maker')
   await page.keyboard.press('Escape')
   await show(page, ORDERS, 'Orders')
-  await page.getByRole('button', { name: 'Links with other creations' }).click()
-  await menu.getByRole('group', { name: 'Uses' }).getByRole('button', { name: /Artisans/ }).click()
-  await expect(page.locator('app-preview .pane-head')).toContainText('Artisans')
+  // The menu is drawn again as its links are read: opened, then its row pressed, until the artisans are on show.
+  await expect(async () => {
+    if (!(await menu.count())) await page.getByRole('button', { name: 'Links with other creations' }).click()
+    await menu.getByRole('group', { name: 'Uses' }).getByRole('button', { name: /Artisans/ }).click({ timeout: 2000 })
+    await expect(page.locator('app-preview .pane-head')).toContainText('Artisans', { timeout: 2000 })
+  }).toPass()
   // The kept slides show their task's run, made once: nothing run again, nothing kept twice.
   await show(page, KEPT, 'Kept')
   await expect(page.locator('app-preview .deck-slide .deck-table').filter({ hasText: 'From the answer.' })).toHaveCount(1)
@@ -594,6 +597,51 @@ test('the design system is a source: a site that wears it follows it, slides pin
   await expect(part).toContainText(/Worn by .*Neighbourhood/)
   await part.getByRole('button', { name: 'Publish version 2' }).click()
   await expect(page.locator('.toast').last()).toContainText('Version 2 published.')
+})
+
+test('one clock: a routine that reads the bakers runs as they change, given their rows, its run certified back to what it read; a source’s rows carry a certificate naming it', async ({ page }) => {
+  await start(page)
+  // A plan's brain, which the fake brain answers for: not on this computer, so Tables take its changes (tables.spec.js).
+  await page.evaluate((baseURL) => import('/ui/brains.js').then(({ addBrain }) => addBrain({ id: 'claude', provider: 'claudecode', api: 'openai', baseURL, model: 'haiku' })), BRAIN_URL)
+  await seed(page)
+  const made = (/** @type {string} */ title, /** @type {string} */ request) => page.evaluate(async ({ title, request }) => {
+    const [{ app }, { unlock }, { newRoutine, writeRoutine }] = await Promise.all([import('/ui/state.js'), import('/ui/caps.js'), import('/caps/routines/schedule.js')])
+    await Promise.all([unlock('routines'), unlock('receipt')])
+    const routine = newRoutine('', { title, request, by: app.deviceId, every: 'day', at: '08:00' })
+    await writeRoutine(app.fs, /** @type {any} */ (routine))
+    return routine.path
+  }, { title, request })
+  /** A routine's certified runs, as composition keeps them. @param {string} path */
+  const runs = (path) => page.evaluate(async (path) => { const { app } = await import('/ui/state.js'); return ((await app.fs.read(`${app.projectDir}/composed/${/[0-9A-HJKMNP-TV-Z]{26}/.exec(path)?.[0]}.jsonl`)) ?? '').split('\n').filter(Boolean).map((line) => JSON.parse(line)) }, path)
+  const reader = await made('Who bakes', `Tell me who bakes.\n\n\`\`\`table\n${COLLECTION}\nwhere: Trade is Baker\nrefresh: auto\n\`\`\`\n`)
+  // It is among what uses the artisans.
+  await show(page, COLLECTION, 'Artisans')
+  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  await expect(page.locator('.menu:popover-open').getByRole('group', { name: 'Used in' })).toContainText('Who bakes')
+  await page.keyboard.press('Escape')
+  // A baker added: the routine runs by itself, given the rows as they are, and its run is certified with what it read.
+  await page.evaluate(async ({ COLLECTION }) => { const tables = await import('/caps/tables/tables.js'), one = await tables.load(COLLECTION); if (one) await tables.change(one, [{ set: { name: 'Bob', trade: 'Baker' } }], 'user') }, { COLLECTION })
+  await expect.poll(async () => (await runs(reader)).length, { timeout: 20_000 }).toBe(1)
+  const [first] = await runs(reader)
+  expect(first.key).toBe('routine')
+  expect(first.read).toMatch(/^\d{4}-/)
+  expect(first.certificate).toBeTruthy()
+  const told = await page.evaluate(async (path) => {
+    const [{ runsOf }, { loadConversation }, { app }] = await Promise.all([import('/caps/routines/routines.js'), import('/core/conversations.js'), import('/ui/state.js')])
+    const run = runsOf(path)[0]
+    return run ? JSON.stringify((await loadConversation(app.fs, run.path))?.records ?? []) : ''
+  }, reader)
+  expect(told).toContain('| Ana | Baker |')
+  expect(told).toContain('| Bob | Baker |')
+  // A source: the rows it adds are Jean's, and its run's certificate covers them, naming the routine.
+  const source = await made('Bakers from the market', `Call table_change with ${JSON.stringify({ table: COLLECTION, rows: [{ set: { Name: 'Cleo', Trade: 'Baker' } }] })}`)
+  await page.evaluate(async (path) => (await import('/caps/routines/routines.js')).runNow(path), source)
+  await expect.poll(async () => (await runs(source)).length, { timeout: 20_000 }).toBe(1)
+  const [added] = await runs(source)
+  expect(added.wrote).toEqual([COLLECTION])
+  const checked = await page.evaluate(async (certificate) => { const { chainOf, holds } = await import('/caps/compose/proof.js'), one = await chainOf([certificate]); return { holds: holds(one), says: one.says?.credentialSubject } }, added.certificate)
+  expect(checked.holds).toBe(true)
+  expect(checked.says).toMatchObject({ kind: 'run', creation: /[0-9A-HJKMNP-TV-Z]{26}/.exec(source)?.[0] })
 })
 
 test('a recipe that sums up the approved artisans on a slide updates by itself once its user turns that on, and only then; a run is paid once per version read', async ({ page }) => {

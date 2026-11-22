@@ -72,6 +72,12 @@ The project's design system (`kit.json`, `ui/kit.js`) is a node of the graph, *D
 
 **Exit criterion**: a site that wears the design system takes its new colour once it changes; slides pinned to its version 1 from their menu say they are certified back to it, and are offered nothing new once it changes, while other slides are offered its change; `creation_links` and the design system's page say what wears it, and the page publishes version 2.
 
+### Step 12 — One way to run, one way to travel
+
+A routine whose request holds a ```` ```table ```` block is a consumer of the graph, under the collection's *Used in*: as it runs, the block is read as a reference, at the version it names, and its rows are told to the brain with the routine's note (`written()`, `note()` in `caps/routines/routines.js`). With `refresh: auto` in the block, a change of the collection sets the routine off, out of sight, on the clock recipes have (`propagate()`, `changed()`): one way to run what follows a collection. Each run of a routine whose request names a collection is certified once it ends (`routineRan()`, a `CreationVersion` of kind `run` kept in `composed/<its ULID>.jsonl`): its ingredients what its blocks read, at their versions, its content its answer and the rows it added, a source's (caps/sources), its recipe its request, so rows from elsewhere carry where they came from. Working on a collection together (D733) carries its versions, each once and never written over, and its port as its owner opens or shuts it (`caps/together/collection.js`), which settles decision 3.
+
+**Exit criterion**: a routine that reads the bakers is under the artisans' *Used in*; a baker added sets it off by itself, its note holds the bakers' rows and its run is certified back to what it read; a source routine's run, which adds a baker, is certified, naming the routine and the collection it wrote; on Ana's second device, the collection's version 1 and its port arrive, and the port shut there shuts it on the first.
+
 ### Budgets
 
 Built first on a main whose line budget was nearly full, each step from the second raised `loc.app` by what it measured, at the owner's word; replayed on the main it landed on, whose budget left room enough, those raises were dropped and no budget changed. From step 6 on, a step that needs more room than the budget leaves raises `loc.app` by what it measures, at the owner's word, in a commit of its own before it; step 6 fitted in what was left. Nothing was added to the first load, the core or Tables' folder; no dependency was added. Its strings are in the 54 languages Jean speaks.
@@ -93,6 +99,8 @@ Built first on a main whose line budget was nearly full, each step from the seco
 - **No count on Creations' cards, and no `@`, yet.** The plan's step 7 put on each card of the Creations page how many creations it uses and is used in, and had `@` say what a creation uses. The page's state and `@` live in modules of the first load, which has no byte left; the links menu and `creation_links` say it meanwhile.
 - **The brain asks, rather than being told.** A tool's result saying which consumers a change of rows touches would go through Tables' code, at its gzip budget; `creation_links` is one read tool of its own, which the brain calls before changing what others show.
 - **The graph reads an answer's blocks, not its figures.** Its blocks are read as a task's tunes and apps are, by their fence; a figure, inline code in its words, is worked out as it was but is no edge yet.
+- **One clock, not one scheduler.** A routine's own schedule and a recipe's every five minutes or hour keep their ticks; what is one is following a collection, `refresh: auto`, which sets off a recipe's run and a routine alike. A flow's step reads a file by its name still, and a link to a creation carries what it shows, not its ingredients' certificates, which *Save its provenance* gives.
+- **A routine's certificate names the room's brain.** The run's end doesn't say which brain answered, so its certificate names the one the room's messages have, as a routine's most often is.
 - **The project's design system alone has versions.** The person's and the organisation's are worn as they are, under the project's; a site follows the design system as it is, and only slides are pinned to one of its versions, which they wore already, a copy being their own (D601).
 - **No apps, and no figures in a design, yet.** An app in an answer is a moment, as its answer is, and a page it draws gets no rows; a design's words hold `{Column}` for its row, not a figure worked out from a collection.
 - **One per row on paper only.** A design's picture, its post and its story are of the design as it is; only printing draws one per row.
@@ -107,7 +115,7 @@ Built first on a main whose line budget was nearly full, each step from the seco
 - Slides saved as PowerPoint: a composed chart is a native chart, each bar in its choice's colour, and a composed table a table (`test/compose.spec.js`); a run's words weren't checked in the exported file. A deck's own file, opened outside Jean, draws a reference as its text, a figure as its formula: only Jean resolves one. A link to slides or a document, and a document's Word file, hold what each shows as they are made, a chart as its figures' table.
 - A whiteboard has versions but no port: what a site's form proposes goes to collections alone.
 - A recipe that runs as its source changes may meet the month's limit in the background: the question it asks then comes up unasked for.
-- Versions, runs and ports are plain files of the project: Sync carries them as files, but working on a collection together (D733) sends its lines and its table only, so the others have neither its versions nor its port.
+- Versions, runs and ports are plain files of the project: Sync carries them as files, and working on a collection together carries its versions and its port, not its consumers' runs.
 - The graph is read again from every slides, document and site file of the project once any of them, or a collection's columns, is written, and every five minutes at most otherwise: right for tens of creations, not thousands, where an index in `.cache/` would be.
 - A run sends up to 200 rows to the brain it names, the one at hand otherwise, outside any task: through the `turn.step` hooks (a month's limit), but not through the approval rules, the brain being the person's own and the run the person's choice. Rows a visitor proposed reach it too, unless its recipe's `where` leaves them out; it has no tools, and what it writes is only shown, but words planted in a proposal could still steer what a slide says.
 - The salts of a version's or a run's digests are kept, but nothing in Jean yet makes a proof that discloses what it holds.
@@ -116,26 +124,17 @@ Built first on a main whose line budget was nearly full, each step from the seco
 - The 45 translations of the new strings are Claude's, not a native speaker's.
 - WebKit doesn't run `test/compose.spec.js` (in `CHROMIUM_ONLY`: what it checks is Jean's own JavaScript).
 
-## Work left: the graph at its best
+## Work left
 
-Composition and the graph are one ([architecture.md](architecture.md#composition)): every way a creation shows another becomes a reference, and every reference is an edge the graph reads. The steps below follow from that, each shippable alone, its exit criterion checked in `test/compose.spec.js` or `test/compose.test.js` as before. Steps 6 to 11, what already linked creations brought into the graph, what it can say at no cost, the place most people read, documents as sources, more consumers and the design system as a source, are built (above). Then: then what runs and what travels (12). Three rules hold for every step:
+Composition and the graph are one ([architecture.md](architecture.md#composition)): every way a creation shows another becomes a reference, and every reference is an edge the graph reads. Steps 6 to 12 built the graph out from that; what is left of their plan is in the departures above: a flow's step reading a reference, a link carrying its ingredients' certificates, apps and a design's figures, counts on Creations' cards and `@`, an answer's figures as edges. Three rules hold for what comes next:
 
 - **Nothing shown outside a reference.** A kind that starts showing another's content joins `CONSUMERS` in the same change, and its test checks that the source's *Links with other creations* lists it.
-- **Budgets first.** `loc.app` has a dozen lines left and Tables' code is at its gzip limit: each step measures what it needs, deletes first where it can, asks for a raise in a change of its own, and stays out of Tables' folder.
+- **Budgets first.** Each step measures what it needs, deletes first where it can, asks for a raise in a change of its own, and stays out of Tables' folder and the first load, at their limits.
 - **What is paid stays opt-in.** A step that makes the graph carry more never makes a brain run, or anything leave Jean, that the person didn't choose.
-
-### Step 12 — One way to run, one way to travel
-
-- **One clock.** A recipe's `refresh:` and a routine's schedule are one scheduler. A flow's step or a routine reads a creation through a reference, with a selector and a recipe, rather than the newest file of its name, and a run of either is a run of the graph, certified.
-- **Rows from elsewhere carry their origin.** What a routine or a connection writes into a collection, as its sources, is a run too, its certificate naming where it came from, so a chain can reach outside Jean.
-- **The graph travels.** Versions, runs and ports go to those working on a collection together (decision 3), and a link to a creation can carry its ingredients' certificates, which the check page checks.
-
-**Exit criterion**: a routine reading a collection's published version runs on a recipe's clock, its run certified with that version as ingredient; rows a source added carry a certificate naming the source; someone working on a collection together sees its versions and its port.
 
 ## Decisions left open
 
 1. Publishing a site again on a schedule, or as its collection changes: an outward action, which would need its own approval rule (*Do it / Ask me first*).
 2. Slides as sources, when a need shows; documents' sections are one since step 9.
-3. Whether people working on a collection together get its versions and its port: step 12 proposes they do.
-4. Whether Tables itself should refuse a breaking change of kind once a collection has versions: step 7's Undo, which says what still uses a column, is the middle way.
-5. A proof that discloses what a version or a run holds, from its kept salts.
+3. Whether Tables itself should refuse a breaking change of kind once a collection has versions: step 7's Undo, which says what still uses a column, is the middle way.
+4. A proof that discloses what a version or a run holds, from its kept salts.

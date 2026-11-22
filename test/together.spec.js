@@ -263,6 +263,13 @@ test('Ana keeps a collection in step on her own two devices: no link, nobody els
   await expect.poll(() => items(laptop, folder)).toEqual(['Flat', 'Flights', 'Taxi'])
   await add(laptop, folder, 'Museum')
   await expect.poll(() => items(phone, folder)).toEqual(['Flat', 'Flights', 'Museum', 'Taxi'])
+  // Its versions and its port go too (caps/compose): version 1 published, the port opened, both on the phone as they are on the laptop.
+  await laptop.evaluate(async (folder) => { const compose = await import('/caps/compose/compose.js'); await compose.publish(folder); await compose.propose(folder, true) }, folder)
+  const there = (/** @type {Page} */ page, /** @type {string} */ file) => page.evaluate(async ([folder, file]) => { const { app } = await import('/ui/state.js'); return app.fs.read(`${app.projectDir}/${folder}/${file}`) }, [folder, file])
+  await expect.poll(async () => JSON.parse((await there(phone, 'versions/1.json')) ?? 'null')?.rows?.length).toBe(4)
+  await expect.poll(() => there(phone, 'port.json')).toBe(await there(laptop, 'port.json'))
+  await phone.evaluate(async (folder) => (await import('/caps/compose/compose.js')).propose(folder, false), folder)
+  await expect.poll(() => there(laptop, 'port.json')).toBeNull()
   // Nobody else ever came, so what the phone reads of it is her own, not from elsewhere (D673).
   expect(await phone.evaluate((folder) => import('/ui/caps.js').then(({ slots }) => slots('others').some((one) => one.holds(folder))), folder)).toBe(false)
 })
