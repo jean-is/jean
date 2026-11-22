@@ -1,0 +1,115 @@
+{
+  "title": "Créer une appli gratuitement avec l’IA, sans coder · {name}",
+  "description": "Décrivez un petit outil, un suivi, une calculette ou un planning : vous obtenez une appli qui fonctionne dans votre navigateur et retient ce que vous saisissez.",
+  "eyebrow": "Applis",
+  "h1": "Décrivez l’outil qu’il vous faut, et servez-vous-en aussitôt.",
+  "h1.mark": "l’outil qu’il vous faut",
+  "acts": [["say", "Décrivez l’outil qu’il vous faut,"], ["use", "et servez-vous-en aussitôt."]],
+  "lede": "Dites à {name} ce que vous faites encore et encore : noter des heures, partager une addition, organiser une semaine. {name} écrit une petite appli dans sa réponse même, essaie chaque bouton avant vous, et garde ce que vous saisissez. Pas de code, pas de boutique d’applis, rien à installer.",
+  "cta": "Essayer avec un outil d’exemple",
+  "see": "Voir comment ça s’est passé",
+  "facts": [
+    "Libre et gratuit",
+    "Rien à installer",
+    "Rien n’est envoyé à {name}"
+  ],
+  "try.ask": "Fais-moi une appli pour noter mes heures par client : j’ajoute un client et des heures, je vois les saisies de la semaine et un total par client, et elle les retient.",
+  "pane.brain": "L’IA de votre choix",
+  "pane.ask": "Une appli pour noter mes heures par client, avec un total pour chacun.",
+  "pane.play": "Voir le déroulé",
+  "pane.title": "Une appli faite dans {name}",
+  "demo.brain": "l’IA de votre choix",
+  "demo.before": "Une appli à deux vues : les saisies de la semaine, et les totaux par client.",
+  "demo.after": "Elle garde chaque saisie, et refait les totaux à chaque changement. Les trois saisies de départ sont des exemples : retirez-les, puis ajoutez les vôtres.",
+  "app.title": "Heures par client",
+  "app.nav": "Vues",
+  "app.views": ["Saisies", "Totaux"],
+  "app.week": "Cette semaine",
+  "app.heads": ["Client", "Heures"],
+  "app.add": "Ajouter",
+  "app.missing": "Indiquez un client, et des heures au-dessus de zéro.",
+  "app.samples": "Ces trois saisies sont des exemples.",
+  "app.unsample": "Les retirer",
+  "app.empty": "Rien de noté pour l’instant. Ajoutez vos premières heures ci-dessus.",
+  "app.remove": "Retirer {who}",
+  "app.removed": "{who} retiré.",
+  "app.undo": "Annuler",
+  "app.totals": "Totaux par client",
+  "app.total": "Total",
+  "app.sample": [["Atelier Terre", "3.5"], ["Salon Rive", "2"], ["Atelier Terre", "1.5"]],
+  "replay.title": "Une appli, étape par étape.",
+  "replay.why": "La demande de l’indépendante devenue appli, de bout en bout : ce que {name} a lu, ce qu’il a écrit, ce qu’il a essayé, et ce que l’appli garde.",
+  "step.read": "{name} lit",
+  "replay.reads": [
+    "Votre demande : des clients, des heures, une liste, un total pour chacun",
+    "Son propre savoir-faire « Faire une appli », qui dit qu’une appli retient ce qu’on y saisit, et que chaque commande fait quelque chose de visible"
+  ],
+  "replay.works": [
+    "Écrit une page à deux vues, les saisies de la semaine et les totaux, avec un bouton pour passer de l’une à l’autre",
+    "Fait en sorte qu’elle retienne : chaque saisie est gardée, et les totaux sont refaits à chaque changement",
+    "Appuyé sur chaque bouton et modifié chaque champ, hors de vue, avant la fin de la réponse, et corrigé ce qui cassait"
+  ],
+  "replay.got": "L’appli, qui fonctionne dans la réponse même, et gardée parmi vos créations, où elle s’ouvre à côté de n’importe quelle tâche : telle que vous l’avez laissée, avec ce que vous y avez saisi.",
+  "replay.icon": "app",
+  "replay.chip": "Heures par client",
+  "step.again": "Vous redemandez",
+  "replay.again": "Ajoute un tarif par client, et montre ce qu’il faut facturer.",
+  "step.made": "{name} la réécrit",
+  "replay.made": "La même appli avec ce que vous avez demandé, sous le même nom : ce qu’elle gardait est toujours là. Téléchargez-la en une page à part entière, ou publiez-la à l’adresse de votre choix.",
+  "replay.madeIcon": "app",
+  "replay.madeChip": "Heures par client",
+  "asks.title": "Puis demandez les vôtres",
+  "asks.items": [
+    "Un partage d’addition pour le déjeuner d’équipe, avec qui a payé.",
+    "Une liste de bagages pour mes déplacements, qui retient ce que j’oublie toujours.",
+    "Un planning de repas pour la semaine, avec sa liste de courses.",
+    "Un quiz sur nos consignes de sécurité, dix questions, avec un score."
+  ],
+  "io.title": "Ce qui entre. Ce qui sort.",
+  "io.why": "Dites ce que vous y faites encore et encore, et ce qu’elle doit retenir. Le reste est décidé pour vous, et reste à vous de le changer.",
+  "io.in": "En entrée",
+  "io.out": "En sortie",
+  "io.ins": [
+    ["file", "Vos mots", "Ce que vous y faites, et ce qu’elle doit retenir"],
+    ["table", "Un fichier", "Un tableau ou une liste, comme point de départ de l’appli"],
+    ["table", "Une liste que vous tenez", "Une collection dans {name}, montrée dans l’appli telle qu’elle est"],
+    ["app", "Un prototype", "Ses pages devenues une appli qui fonctionne"]
+  ],
+  "io.outs": [
+    ["app", "Une appli dans la réponse", "Elle fonctionne là où elle est écrite, de jour comme de nuit, sur téléphone aussi"],
+    ["app", "Une appli parmi vos créations", "Gardée avec ce que vous y avez saisi, ouverte à côté de n’importe quelle tâche"],
+    ["file", "Une page à part entière", "Téléchargée, elle fonctionne dans tout navigateur"],
+    ["place", "Une appli en ligne", "Publiée comme un site d’une page, à l’adresse de votre choix"]
+  ],
+  "exact.title": "Essayée avant que vous y touchiez.",
+  "exact.why": "Un bouton qui ne fait rien : c’est le défaut le plus courant d’une appli écrite par une IA. {name} appuie sur chaque bouton et modifie chaque champ, hors de vue, avant la fin de la réponse, et fait corriger à l’IA ce qui casse.",
+  "exact.cards": [
+    ["Chaque commande essayée", "Chaque bouton est pressé une fois et chaque champ modifié, sans rien garder. Ce qui échoue repart à l’IA, qui réécrit l’appli, corrigée."],
+    ["Elle retient", "Ce que vous saisissez est gardé pour l’appli, sur votre appareil : fermez la tâche, revenez la semaine suivante, elle est telle que vous l’avez laissée."],
+    ["Elle ne peut rien atteindre", "Une appli tourne dans un cadre étanche : par défaut, rien ne vient d’internet et rien n’y part. Les réglages disent ce que les pages ont le droit de faire."]
+  ],
+  "where.title": "Où vont vos saisies.",
+  "where.why": "Nulle part. Une appli fonctionne sur cet appareil, pour la personne qui est devant.",
+  "where.cards": [
+    ["Gardé sur vos appareils", "L’appli et ce que vous y saisissez sont des fichiers dans votre navigateur, chiffrés. Rien de lisible ne nous parvient."],
+    ["Envoyé à l’IA de votre choix", "Votre demande et ce que vous joignez vont à l’IA choisie, et nulle part ailleurs. Sous chaque réponse, {name} indique où elle a été faite."],
+    ["Aucun serveur derrière", "Une appli n’a pas de comptes et ne partage rien entre personnes : ce qu’elle garde reste sur cet appareil, sauf si vous envoyez ou publiez l’appli vous-même."]
+  ],
+  "catch.items": [
+    "{name} est gratuit ; l’IA derrière ne l’est pas toujours. Sans inscription, seule l’IA de cet ordinateur répond.",
+    "Pour un calcul à refaire avec d’autres nombres, ou des chiffres clés avec un graphique, {name} dessine une page sans aucun code, ce qui est plus rapide. Une appli, c’est pour des écrans, des choses à retenir et un comportement à elle.",
+    "Une appli fonctionne sur un appareil, pour une personne. Elle n’a ni comptes, ni connexion, ni paiements, et ne partage rien entre personnes.",
+    "Elle garde 256 Ko au plus : des listes et des choix, pas des photos ni des fichiers.",
+    "{name} peut se tromper. Essayez l’appli avec vos propres chiffres avant de vous y fier."
+  ],
+  "faq.items": [
+    ["Est-ce gratuit ?", "Oui, sans compte chez {name}. L’IA qui répond peut en demander un : « {free} » en ouvre un gratuit, ou utilisez un abonnement que vous payez déjà, ou l’IA de cet ordinateur, sans aucun compte."],
+    ["Faut-il savoir coder ?", "Non. Vous dites ce que fait l’outil, avec vos mots, et vous le modifiez de la même façon."],
+    ["Garde-t-elle ce que je saisis ?", "Oui, sur votre appareil. Ce que vous saisissez est gardé pour l’appli, et vous le retrouvez en revenant."],
+    ["Peut-on s’en servir hors de {name} ?", "Oui. Téléchargez-la en une page à part entière, qui fonctionne dans tout navigateur, ou publiez-la à l’adresse de votre choix."],
+    ["Peut-elle afficher un graphique ?", "Oui : barres, courbes et camemberts, tracés à partir de ce que contient l’appli, de jour comme de nuit."],
+    ["Ça marche dans ma langue ?", "Oui : chaque mot est dans la vôtre, de droite à gauche aussi, avec les nombres et les dates comme votre langue les écrit."]
+  ],
+  "end.title": "Essayez avec la demande de l’indépendante.",
+  "end.why": "La demande s’ouvre dans {name} et reçoit sa réponse aussitôt, ou dès que vous choisissez une IA. Ensuite, décrivez votre propre outil."
+}

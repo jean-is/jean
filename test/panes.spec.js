@@ -25,6 +25,10 @@ const PANES = [
   ['fr/hors-ligne', null, 'mon propriétaire', 'l’IA de cet ordinateur', 'Voir le déroulé', '.msg-jean .prose'],
   ['diagrams', null, 'refund process', 'the AI you chose', 'Watch it unfold', 'app-diagram img'],
   ['fr/schemas', null, 'procédure de remboursement', 'l’IA de votre choix', 'Voir le déroulé', 'app-diagram img'],
+  ['apps', null, 'log my hours by client', 'the AI you chose', 'Watch it unfold', 'app-page iframe'],
+  ['fr/applis', null, 'noter mes heures par client', 'l’IA de votre choix', 'Voir le déroulé', 'app-page iframe'],
+  ['sheet-music', null, 'Write a lullaby for the piano', 'the AI you chose', 'Watch it unfold', 'app-score svg'],
+  ['fr/partitions', null, 'Écris une berceuse pour piano', 'l’IA de votre choix', 'Voir le déroulé', 'app-score svg'],
 ]
 
 for (const [address, file, asked, brain, play, drawn] of PANES) {
@@ -57,6 +61,29 @@ for (const [address, file, asked, brain, play, drawn] of PANES) {
     await expect(pane.locator(drawn).first()).toBeVisible()
     await expect(button).toBeVisible()
     expect(wrong).toEqual([])
+  })
+}
+
+for (const [address, client, added, total] of [['apps', 'Maison Léa', '4 hr', '11 hr'], ['fr/applis', 'Maison Léa', '4 h', '11 h']]) {
+  test(`/${address}: the app in its pane works there: an entry added shows in its list and in its totals, a view leading to the other`, async ({ page }) => {
+    await page.goto(JEAN_IS + address)
+    const app = page.frameLocator('.site-demo').first().frameLocator('app-page iframe')
+    // As it starts: its three samples, said to be samples.
+    await expect(app.locator('#entries li')).toHaveCount(3)
+    await expect(app.locator('#samples')).toBeVisible()
+    // Nothing is added until it is right, and what is missing is said.
+    await app.locator('#add button').click()
+    await expect(app.locator('#missing')).not.toBeEmpty()
+    await app.locator('#client').fill(client)
+    await app.locator('#hours').fill('4')
+    await app.locator('#add button').click()
+    await expect(app.locator('#entries li')).toHaveCount(4)
+    await expect(app.locator('#entries li').last()).toContainText(added)
+    // The other view: the totals, added up again, the new client among them.
+    await app.locator('nav button').nth(1).click()
+    await expect(app.locator('#totals h2')).toBeFocused()
+    await expect(app.locator('#rows th')).toHaveText(['Atelier Terre', client, 'Salon Rive'])
+    await expect(app.locator('#sum')).toHaveText(total)
   })
 }
 

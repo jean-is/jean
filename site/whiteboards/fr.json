@@ -1,0 +1,123 @@
+{
+  "title": "Tableau blanc en ligne gratuit, avec une IA qui trie vos notes · {name}",
+  "description": "Remue-méninges, rétrospective ou plan par semaines sur un tableau blanc de notes : écrivez en équipe, et laissez l’IA ranger les notes par sections. Gratuit.",
+  "eyebrow": "Tableaux blancs",
+  "h1": "Écrivez vos notes ensemble, et laissez l’IA les trier sous vos yeux.",
+  "h1.mark": "les trier",
+  "acts": [["write", "Écrivez vos notes ensemble,"], ["sort", "et laissez l’IA les trier sous vos yeux."]],
+  "lede": "Demandez à {name} un remue-méninges, une rétrospective ou un plan par semaines : vous obtenez un tableau de notes courtes, rangées dans des sections nommées. Chacun déplace, écrit et dessine sur le même tableau, en direct. Quand les notes s’accumulent, {name} les trie, et vous acceptez ou refusez chaque changement.",
+  "cta": "Essayer avec une rétrospective d’exemple",
+  "see": "Voir comment ça s’est passé",
+  "facts": [
+    "Libre et gratuit",
+    "Rien à installer",
+    "Un seul tableau, le même pour tous"
+  ],
+  "try.ask": "Fais un tableau blanc pour la rétrospective de notre journée portes ouvertes. Réussi : plus de visiteurs que l’an dernier, les visites guidées étaient complètes, les parents ont aimé les stands des élèves. À changer : la file à l’entrée, une signalétique difficile à trouver, plus de dépliants à midi. À essayer : réserver les visites à l’avance, un plan sur chaque porte.",
+  "pane.brain": "L’IA de votre choix",
+  "pane.ask": "Un tableau blanc pour la rétrospective de notre journée portes ouvertes.",
+  "pane.title": "Un tableau blanc fait dans {name}, en vrai",
+  "pane.try": "C’est un vrai tableau blanc. Déplacez une note, écrivez-en une sur l’étagère, en bas, ou appuyez sur « {group} » : les notes qui y attendent sont rangées dans les sections, et vous acceptez ou refusez.",
+  "pane.asked": "Voici ce que ferait l’IA. Chaque changement porte un coin jaune : acceptez-les, refusez-les, ou appuyez sur « {before} » pour voir le tableau sans eux.",
+  "made.name": "Rétrospective des portes ouvertes",
+  "made.areas": ["Réussi", "À changer", "À essayer"],
+  "made.notes": [
+    ["Réussi", "Plus de visiteurs que l’an dernier"],
+    ["Réussi", "Visites guidées complètes"],
+    ["Réussi", "Les parents ont aimé les stands des élèves"],
+    ["À changer", "La file à l’entrée"],
+    ["À changer", "Signalétique difficile à trouver"],
+    ["À changer", "Plus de dépliants à midi"],
+    ["À essayer", "Réserver les visites à l’avance"],
+    ["À essayer", "Un plan sur chaque porte"]
+  ],
+  "made.shelf": [
+    "Le café a eu du succès",
+    "Parking plein très tôt",
+    "Une visite toutes les 20 minutes",
+    "Les élèves, de bons guides",
+    "Imprimer deux fois plus de dépliants"
+  ],
+  "made.then": [
+    ["Le café a eu du succès", "Réussi"],
+    ["Parking plein très tôt", "À changer"],
+    ["Une visite toutes les 20 minutes", "À essayer"],
+    ["Les élèves, de bons guides", "Réussi"],
+    ["Imprimer deux fois plus de dépliants", "À essayer"]
+  ],
+  "replay.title": "Un tableau, étape par étape.",
+  "replay.why": "La rétrospective des portes ouvertes, de la demande au tableau trié : ce que {name} a lu, ce qu’il a fait, et ce qu’il a trié une fois les notes de l’équipe ajoutées.",
+  "step.read": "{name} lit",
+  "replay.reads": [
+    "Votre demande : trois questions, et huit choses dites par l’équipe",
+    "Son propre savoir-faire « Faire un tableau blanc », qui dit qu’une note porte une seule idée, en quelques mots"
+  ],
+  "replay.works": [
+    "Nommé trois sections, une par question",
+    "Écrit huit notes de quelques mots, chacune dans sa section",
+    "Tout placé lui-même : les sections côte à côte, les notes en rangées"
+  ],
+  "replay.got": "Le tableau blanc, ouvert à côté de votre demande, qui se remplit à mesure qu’il est écrit : ses sections d’abord, puis chaque note. Tous ceux qui y travaillent avec vous voient le même tableau, et ce que les autres pointent.",
+  "replay.icon": "app",
+  "replay.chip": "Rétrospective des portes ouvertes",
+  "step.again": "Votre équipe ajoute des notes, et vous appuyez sur",
+  "replay.again": "{group}",
+  "step.made": "{name} les trie",
+  "replay.made": "Chaque note va dans la section qui lui revient, marquée d’un coin jaune tant que vous ne l’avez ni acceptée ni refusée. « {before} » montre le tableau sans ces changements.",
+  "replay.madeIcon": "app",
+  "replay.madeChip": "5 changements à accepter ou refuser",
+  "asks.title": "Puis demandez les vôtres",
+  "asks.items": [
+    "Un remue-méninges sur le nom de notre nouvelle boutique, rangé par thèmes.",
+    "Un plan pour le déménagement des bureaux, par semaines, avec qui fait quoi.",
+    "Range ces notes par thèmes, cinq au plus.",
+    "Quelles sont les trois choses à faire en premier ? Ajoute-les en notes."
+  ],
+  "io.title": "Ce qui entre. Ce qui sort.",
+  "io.why": "Partez d’une phrase, des notes d’une réunion, ou d’un tableau que votre équipe a déjà couvert de notes.",
+  "io.in": "En entrée",
+  "io.out": "En sortie",
+  "io.ins": [
+    ["file", "Vos mots", "À quoi sert le tableau, et les idées, tâches ou retours qu’il porte"],
+    ["file", "Les notes d’une réunion", "Collées ou dictées, découpées en une idée par note"],
+    ["file", "Un document", "Un rapport ou les réponses à une enquête, lus pour ce que les gens ont dit"],
+    ["app", "Un tableau déjà commencé", "Des notes écrites à la main, que {name} trie"]
+  ],
+  "io.outs": [
+    ["app", "Un tableau blanc", "Sections, notes, textes, flèches et dessins, sur un tableau qu’on déplace et qu’on agrandit"],
+    ["tree", "Des colonnes", "Les mêmes notes, une colonne par section : ce qui s’ouvre sur un téléphone"],
+    ["table", "Une table", "Ses notes en lignes, à copier, à imprimer, ou à télécharger en Excel ou en CSV"],
+    ["picture", "Une image", "Le tableau entier, ou la partie visible"]
+  ],
+  "exact.title": "Ses changements vous attendent.",
+  "exact.why": "Un tableau, c’est la réflexion d’une équipe : rien ne doit y bouger dans votre dos. Ce que l’IA change est marqué et compté, et c’est vous qui acceptez ou refusez.",
+  "exact.cards": [
+    ["Accepter ou refuser", "Chaque note que l’IA a déplacée ou écrite porte un coin jaune. Acceptez ou refusez-les une à une, ou toutes d’un coup."],
+    ["Avant et après", "« {before} » montre le tableau tel qu’il était, sans les changements en attente. Rien n’est perdu tant que vous n’avez pas décidé."],
+    ["Elle ne touche pas à votre travail", "L’IA trie et écrit des notes. Elle ne touche pas à vos dessins, et laisse où il est ce que vous avez posé à la main sur le tableau."]
+  ],
+  "where.title": "Où vit votre tableau.",
+  "where.why": "Sur vos appareils. Partagé seulement avec les personnes que vous invitez, chacune dans son propre {name}.",
+  "where.cards": [
+    ["Gardé sur vos appareils", "Votre tableau, ce sont de simples fichiers dans votre navigateur, chiffrés. Rien de lisible ne nous parvient."],
+    ["Envoyé à l’IA de votre choix", "Quand vous demandez, ses notes vont à l’IA choisie, et nulle part ailleurs. Sous chaque réponse, {name} indique où elle a été faite."],
+    ["Partagé par vous seul", "Les autres ne voient le tableau qu’une fois invités à y travailler. Leurs changements se fondent dans les vôtres, note par note."]
+  ],
+  "catch.items": [
+    "{name} est gratuit ; l’IA derrière ne l’est pas toujours. Faire ou trier un tableau blanc demande une IA dans le cloud ou un abonnement que vous payez : l’IA de cet ordinateur lit un tableau, et n’en modifie pas.",
+    "Pour écrire sur un tableau avec vous, chacun l’ouvre dans son propre {name}. Un lien que tout le monde peut ouvrir montre une copie à lire, pas le tableau lui-même.",
+    "{name} place ce que l’IA écrit : impossible de demander une note à un endroit précis. Faites-la glisser vous-même.",
+    "L’IA lit les notes, les sections et les flèches qui les relient. Elle ne lit pas les dessins, et ne fait ni dessins ni flèches.",
+    "{name} peut se tromper. Une note rangée dans la mauvaise section se déplace d’un geste dans la bonne."
+  ],
+  "faq.items": [
+    ["Est-ce gratuit ?", "Oui, sans compte chez {name}. L’IA qui répond peut en demander un : « {free} » en ouvre un gratuit, ou utilisez un abonnement que vous payez déjà."],
+    ["C’est comme un mur de notes adhésives ?", "Oui : des notes courtes qu’on déplace, dans des sections que vous nommez, avec des textes, des flèches et des dessins à main levée, sur un tableau qu’on déplace et qu’on agrandit. Et une IA qui trie les notes quand vous le demandez."],
+    ["Peut-on l’utiliser à plusieurs en même temps ?", "Oui. Partagez-le pour y travailler ensemble : chacun voit le même tableau, ce que les autres pointent, et chaque changement au moment où il est fait."],
+    ["Ça marche sur téléphone ?", "Oui. Un écran étroit s’ouvre sur les colonnes, une section à la fois, avec les mêmes notes. Le tableau lui-même se déplace et s’agrandit avec deux doigts."],
+    ["Peut-on récupérer ses notes ?", "Oui : en image du tableau, ou en table de ses notes par section, à copier, à imprimer ou à télécharger en Excel ou en CSV."],
+    ["Ça marche dans ma langue ?", "Oui : les notes sont écrites dans la vôtre, et un tableau fait dans une langue écrite de droite à gauche commence à droite."]
+  ],
+  "end.title": "Essayez avec la rétrospective des portes ouvertes.",
+  "end.why": "La demande s’ouvre dans {name} et reçoit sa réponse dès que vous choisissez une IA. Ensuite, demandez votre propre tableau."
+}

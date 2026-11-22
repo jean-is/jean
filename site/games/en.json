@@ -1,0 +1,107 @@
+{
+  "title": "Free AI game maker: a game to play from a few words · {name}",
+  "description": "Describe a game and get one that plays right in your browser: an original game for a lesson, a party or a rainy day, tested before you see it. Free.",
+  "eyebrow": "Games",
+  "h1": "Describe a game, and play it right here.",
+  "h1.mark": "play it",
+  "acts": [["say", "Describe a game,"], ["play", "and play it right here."]],
+  "lede": "Give {name} a theme, a lesson to practise or who will play. It designs an original game, builds it, plays it itself to find what breaks, then hands you one that works: with keys, a touch screen or a gamepad, on any device, offline.",
+  "cta": "Try it with a sample game",
+  "see": "See how it went",
+  "facts": [
+    "Free and open source",
+    "Nothing to install",
+    "Nothing is sent to {name}"
+  ],
+  "try.ask": "Make a game for my class of 8-year-olds to practise the 7 times table: answers fall from a tree, and they catch the right one in a basket. Ten sums a round, and gentle when they get one wrong.",
+  "pane.brain": "The AI you chose",
+  "pane.ask": "A game for my class to practise the 7 times table: catch the right answer in a basket.",
+  "pane.title": "A game made in {name}, live",
+  "pane.try": "This is the game itself. Press {play}, then move the basket with the arrow keys, or with the buttons on a touch screen, and catch the apple with the right answer.",
+  "made.name": "Seven Apples",
+  "made.card": "Seven Apples. You hold a basket under an apple tree, and you must catch the right answers. The verb: slide the basket under the apple that answers the sum; each catch rings a note higher. The loop: a sum of the 7 times table, three apples falling, one of them right; ten sums a round. The curve: the first four sums can’t be lost; then a wrong apple costs one of three hearts, and apples fall a little faster every three right answers. Controls: left and right move the basket. Look and sound: a night-blue orchard, red apples, a yellow basket; a rising note, a low note, a chord to win.",
+  "made.words.title": "Seven Apples",
+  "made.words.how": "Catch the apple with the right answer",
+  "made.words.start": "Press ← or → to start",
+  "made.words.again": "Press ← or → to play again",
+  "made.words.won": "Well done!",
+  "made.words.over": "Good try!",
+  "made.words.right": "Right:",
+  "made.words.best": "Best:",
+  "replay.title": "One game, step by step.",
+  "replay.why": "The teacher’s request, as {name} turns it into a game: what it read, what it designed, what it played, and what you can do with it next.",
+  "step.read": "{name} reads",
+  "replay.reads": [
+    "Your request: 8-year-olds, the 7 times table, a basket, ten sums",
+    "{name}’s own skill “Make a game”, which says a game is designed before it is built, and played before it is shown"
+  ],
+  "replay.works": [
+    "Wrote a design card: the idea, the one action repeated, how a round goes, how it gets harder",
+    "Built it as one small program, everything drawn and sounded from code, nothing from the internet",
+    "Played it out of sight, holding each control in turn, and fixed what broke",
+    "Made it kind: the first sums can’t be lost, and playing again is one key away"
+  ],
+  "replay.got": "The game, open beside your request: a cover to start it, pause, mute and full screen, buttons on a touch screen, and its best score kept.",
+  "replay.icon": "app",
+  "replay.chip": "Seven Apples",
+  "step.again": "You ask again",
+  "replay.again": "Make it the 8 times table, and let apples fall faster.",
+  "step.made": "{name} changes it",
+  "replay.made": "The same game, changed where you asked and nowhere else, then played again before you see it. Saved, it is a page of its own that plays anywhere, offline.",
+  "replay.madeIcon": "app",
+  "replay.madeChip": "Seven Apples, the 8 times table",
+  "asks.title": "Then ask your own",
+  "asks.items": [
+    "A game where a cat catches falling fish, for my 5-year-old.",
+    "A memory game with the words of my Spanish lesson.",
+    "A quiz game that plays the questions I keep in my “History quiz” list.",
+    "Add a second level, harder, with a different sound."
+  ],
+  "io.title": "What goes in. What comes out.",
+  "io.why": "A sentence is enough. What you leave open is decided for you: one player, one screen, rounds of a minute or three.",
+  "io.in": "In",
+  "io.out": "Out",
+  "io.ins": [
+    ["file", "Your idea", "A theme, a kind of game, who plays and how old they are"],
+    ["file", "A lesson", "Tables, vocabulary, dates: what the game should practise"],
+    ["table", "A list you keep", "A quiz’s questions or flash cards, played as they are each time"],
+    ["picture", "A picture", "A drawing or a photo of yours, to put in the game"]
+  ],
+  "io.outs": [
+    ["app", "A game beside your request", "Played with keys, a touch screen or a gamepad, with pause, mute and full screen"],
+    ["file", "A page of its own", "Saved, it plays in any browser, offline, without {name}"],
+    ["place", "A game online", "Published as a site of one page, at an address you pick"],
+    ["clock", "What it saves", "A best score or a level reached, kept between visits"]
+  ],
+  "exact.title": "Played before you play it.",
+  "exact.why": "A game that freezes on its first screen is no game. {name} plays each one out of sight and tells the AI what broke, what each control did and how far it got, before you see it.",
+  "exact.cards": [
+    ["Tested by playing", "Every game is started twice, then each of its controls is held in turn. What broke goes back to the AI, with the line it broke at."],
+    ["Original, always", "Ask for a game you know and you get an original game of its kind, with its own name, characters and look: never that game drawn again."],
+    ["Kind to children", "In a child’s profile: nothing frightening, no betting, no shop, no daily streak, no timer that punishes. For everyone: no ads and no links out."]
+  ],
+  "where.title": "Where your game lives.",
+  "where.why": "On your device. It plays offline, and reaches nothing on the internet.",
+  "where.cards": [
+    ["Kept on your devices", "Your game is one file in your browser, encrypted. Nothing we can read reaches us."],
+    ["Sent to the AI you chose", "Your request and what you attach go to the AI you picked, and nowhere else. Under every answer, {name} says where it was done."],
+    ["It reaches nothing", "A game runs in a sealed frame: it loads nothing from the internet and sends nothing to it, whatever its code says."]
+  ],
+  "catch.items": [
+    "{name} is free; the AI behind it may not be. Without a sign-up, only the AI on this computer answers.",
+    "Everything is drawn and sounded from code: shapes, pixel art, simple sounds. No photos, no recorded music and no voices, unless a picture is yours.",
+    "One player, one screen, rounds of a minute or three: a small game, not a studio’s.",
+    "No online play and no scores shared between players: what a game saves stays on the device it is played on.",
+    "{name} can be wrong. Play a round yourself before you hand it to a class."
+  ],
+  "faq.items": [
+    ["Is it free?", "Yes, with no account at {name}. The AI that answers may want one: {free} opens a free one, or use a plan you already pay for, or the AI on this computer, with no account at all."],
+    ["Do I need to know how to code?", "No. You describe the game, and change it the same way: “make it faster”, “add a level”, “use my class’s vocabulary”."],
+    ["Can it copy a game I know?", "No, and on purpose. You get an original game of the same kind, with its own name, characters and look."],
+    ["Does it work on a phone or a tablet?", "Yes. On a touch screen the game gets buttons for its actions, and it fills the screen when you ask. A gamepad works too."],
+    ["Can I share it?", "Yes. Save it as a page that plays in any browser, offline, or publish it at an address of its own."],
+    ["Does it work in my language?", "Yes: every word a player reads is in yours, right to left too, with numbers as your language writes them."]
+  ],
+  "end.title": "Try it with the teacher’s request.",
+  "end.why": "The request opens in {name} and is answered at once, or as soon as you choose an AI. Then describe your own game."
+}

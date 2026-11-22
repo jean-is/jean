@@ -39,6 +39,12 @@ export const SUPPORT = 'arnaud@jean.is'
 /** What people use Jean for, each a page: every AI in one place, the jobs, bringing one's history, the AI offline, as the foot lists them. */
 export const USES = ['all-ai', 'excel', 'pdf', 'slides', 'diagrams', 'import', 'offline']
 
+/**
+ * What Jean makes and keeps, each kind a page, by the kind's name in the app (`creations.kind.<kind>`), in the order Create's
+ * menu has them: the foot lists them under the app's own word for them, Creations, in the app's words, which every language has.
+ */
+export const MADE = /** @type {Record<string, string>} */ ({ documents: 'documents', collections: 'tables', whiteboards: 'whiteboards', designs: 'designs', 'sheet-music': 'music', websites: 'sites', prototypes: 'prototypes', apps: 'apps', games: 'games' })
+
 /** The comparison's pages, the hub first, then a product's each, in the order the foot and the hub list them. */
 export const COMPARED = ['compare', 'compare-chatgpt', 'compare-chatgpt-work', 'compare-claude-cowork', 'compare-gemini-tasks', 'compare-manus', 'compare-notebooklm', 'compare-openclaw', 'compare-open-webui']
 
@@ -479,8 +485,8 @@ untranslated(() => links.map((link) => link.hreflang), () => own, (code) => loca
 /**
  * The foot every page ends with, the same on each: the name, what Jean is and where it's made, with the homepage's
  * menu of languages under them; the homepage, Help, Pricing, the pages every copy has, Accessibility and the source;
- * whom the site's other pages are for, where they're built; what people use Jean for (USES); and the comparison's
- * pages. The page it is on is marked, not left out.
+ * whom the site's other pages are for, where they're built; what people use Jean for (USES); what Jean makes (MADE); and
+ * the comparison's pages. The page it is on is marked, not left out.
  * @param {Kit} kit @param {string} [languages]  HTML
  */
 export function foot (kit, languages = '') {
@@ -489,6 +495,7 @@ export function foot (kit, languages = '') {
     + item(kit.link('teachers'), kit.say('foot.teachers'), 'teachers') + item(kit.link('associations'), kit.say('foot.associations'), 'associations')
     + item(kit.link('public-sector'), kit.say('foot.public'), 'public-sector') + item(kit.link('finance'), kit.say('foot.finance'), 'finance') + item(kit.link('enterprise'), kit.say('foot.it'), 'enterprise')
   const uses = USES.map((name) => item(kit.link(name), kit.say(`foot.${name}`), name)).join('')
+  const made = Object.entries(MADE).map(([name, kind]) => item(kit.link(name), kit.app(`creations.kind.${kind}`), name)).join('')
   const compared = COMPARED.map((name, i) => item(kit.link(name), i ? kit.from(name).say('product') : kit.say('foot.all'), name)).join('')
   return /* html */ `<footer class="site-foot">
   <div><p class="site-mark"><span dir="ltr">${xml(kit.brand.name)}</span></p><p>${kit.say('foot.tagline')}</p><p>${kit.say('foot.made')}</p>${languages}</div>
@@ -500,6 +507,9 @@ export function foot (kit, languages = '') {
   </ul></nav>` : ''}${uses ? /* html */ `
   <nav aria-label="${kit.say('foot.uses')}"><h2 class="site-foot-head">${kit.say('foot.uses')}</h2><ul>
     ${uses}
+  </ul></nav>` : ''}${made ? /* html */ `
+  <nav aria-label="${kit.app('creations.title')}"><h2 class="site-foot-head">${kit.app('creations.title')}</h2><ul>
+    ${made}
   </ul></nav>` : ''}${compared ? /* html */ `
   <nav aria-label="${kit.say('foot.compared')}"><h2 class="site-foot-head">${kit.say('foot.compared')}</h2><ul>
     ${compared}

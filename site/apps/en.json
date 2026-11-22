@@ -1,0 +1,115 @@
+{
+  "title": "Free AI app builder: a small tool that works, from words · {name}",
+  "description": "Describe a small tool, a tracker, a calculator or a planner, and get an app that works in your browser and remembers what you enter. Free, no code.",
+  "eyebrow": "Apps",
+  "h1": "Describe the tool you need, and use it straight away.",
+  "h1.mark": "the tool you need",
+  "acts": [["say", "Describe the tool you need,"], ["use", "and use it straight away."]],
+  "lede": "Tell {name} what you do again and again: log hours, split a bill, plan a week. It writes a small app right in its answer, tries every button itself before you do, and keeps what you enter. No code, no store, nothing to install.",
+  "cta": "Try it with a sample tool",
+  "see": "See how it went",
+  "facts": [
+    "Free and open source",
+    "Nothing to install",
+    "Nothing is sent to {name}"
+  ],
+  "try.ask": "Make me an app to log my hours by client: I add a client and hours, I see the week’s entries and a total for each client, and it remembers them.",
+  "pane.brain": "The AI you chose",
+  "pane.ask": "An app to log my hours by client, with a total for each.",
+  "pane.play": "Watch it unfold",
+  "pane.title": "An app made in {name}",
+  "demo.brain": "the AI you chose",
+  "demo.before": "An app with two views: the week’s entries, and the totals by client.",
+  "demo.after": "It keeps every entry, and adds up the totals again at each change. The three entries it starts with are samples: remove them, then add your own.",
+  "app.title": "Hours by client",
+  "app.nav": "Views",
+  "app.views": ["Entries", "Totals"],
+  "app.week": "This week",
+  "app.heads": ["Client", "Hours"],
+  "app.add": "Add",
+  "app.missing": "Give a client, and hours above zero.",
+  "app.samples": "These three are samples.",
+  "app.unsample": "Remove them",
+  "app.empty": "Nothing logged yet. Add your first hours above.",
+  "app.remove": "Remove {who}",
+  "app.removed": "{who} removed.",
+  "app.undo": "Undo",
+  "app.totals": "Totals by client",
+  "app.total": "Total",
+  "app.sample": [["Atelier Terre", "3.5"], ["Salon Rive", "2"], ["Atelier Terre", "1.5"]],
+  "replay.title": "One app, step by step.",
+  "replay.why": "The freelancer’s request, as {name} turns it into an app: what it read, what it wrote, what it tried, and what the app keeps.",
+  "step.read": "{name} reads",
+  "replay.reads": [
+    "Your request: clients, hours, a list, a total for each",
+    "{name}’s own skill “Make an app”, which says an app remembers what you enter, and every control does something you see"
+  ],
+  "replay.works": [
+    "Wrote one page with two views, the week’s entries and the totals, and a button to go from one to the other",
+    "Made it remember: each entry is kept, and the totals add up again at each change",
+    "Pressed every button and changed every field, out of sight, before the answer ended, and fixed what broke"
+  ],
+  "replay.got": "The app, working in the answer itself, and kept among your creations, where it opens beside any task: as you left it, with what you entered.",
+  "replay.icon": "app",
+  "replay.chip": "Hours by client",
+  "step.again": "You ask again",
+  "replay.again": "Add a rate for each client, and show what to invoice.",
+  "step.made": "{name} writes it again",
+  "replay.made": "The same app with what you asked, under the same name, so what it kept is still there. Download it as a page of its own, or publish it at an address you pick.",
+  "replay.madeIcon": "app",
+  "replay.madeChip": "Hours by client",
+  "asks.title": "Then ask your own",
+  "asks.items": [
+    "A bill splitter for the team lunch, with who has paid.",
+    "A packing list for my work trips that remembers what I always forget.",
+    "A meal planner for the week, with its shopping list.",
+    "A quiz on our safety rules, ten questions, with a score."
+  ],
+  "io.title": "What goes in. What comes out.",
+  "io.why": "Say what you do in it again and again, and what it must remember. The rest is decided for you, and yours to change.",
+  "io.in": "In",
+  "io.out": "Out",
+  "io.ins": [
+    ["file", "Your words", "What you do in it, and what it must remember"],
+    ["table", "A file", "A spreadsheet or a list, as what the app starts with"],
+    ["table", "A list you keep", "A collection in {name}, shown in the app as it is now"],
+    ["app", "A prototype", "Its pages turned into an app that works"]
+  ],
+  "io.outs": [
+    ["app", "An app in the answer", "It works where it is written, by day and by night, on a phone too"],
+    ["app", "An app among your creations", "Kept with what you entered, opening beside any task"],
+    ["file", "A page of its own", "Downloaded, it works in any browser"],
+    ["place", "An app online", "Published as a site of one page, at an address you pick"]
+  ],
+  "exact.title": "Tried before you touch it.",
+  "exact.why": "A button that does nothing is the commonest fault of an app written by an AI. {name} presses every button and changes every field, out of sight, before the answer ends, and has the AI fix what broke.",
+  "exact.cards": [
+    ["Every control tried", "Each button is pressed once and each field changed, with nothing kept. What fails goes back to the AI, which writes the app again, fixed."],
+    ["It remembers", "What you enter is kept for the app, on your device: close the task, come back next week, and it is as you left it."],
+    ["It can’t reach out", "An app runs in a sealed frame: by default nothing comes from the internet and nothing goes to it. Settings say what pages may do."]
+  ],
+  "where.title": "Where your entries go.",
+  "where.why": "Nowhere. An app works on this device, for the person in front of it.",
+  "where.cards": [
+    ["Kept on your devices", "The app and what you enter are files in your browser, encrypted. Nothing we can read reaches us."],
+    ["Sent to the AI you chose", "Your request and what you attach go to the AI you picked, and nowhere else. Under every answer, {name} says where it was done."],
+    ["No server behind it", "An app has no accounts and shares nothing between people: what it keeps stays on this device, unless you send or publish the app yourself."]
+  ],
+  "catch.items": [
+    "{name} is free; the AI behind it may not be. Without a sign-up, only the AI on this computer answers.",
+    "For a sum to try other numbers on, or key figures with a chart, {name} draws a page with no code at all, which is quicker. An app is for screens, things to remember and a behaviour of its own.",
+    "An app works on one device, for one person. It has no accounts, no sign-in and no payments, and shares nothing between people.",
+    "It keeps 256 KB at most: lists and choices, not photos or files.",
+    "{name} can be wrong. Try the app with your own numbers before you rely on it."
+  ],
+  "faq.items": [
+    ["Is it free?", "Yes, with no account at {name}. The AI that answers may want one: {free} opens a free one, or use a plan you already pay for, or the AI on this computer, with no account at all."],
+    ["Do I need to know how to code?", "No. You say what the tool does, in your own words, and change it the same way."],
+    ["Does it keep what I enter?", "Yes, on your device. What you enter is kept for the app, and is there when you come back."],
+    ["Can I use it outside {name}?", "Yes. Download it as a page of its own, which works in any browser, or publish it at an address you pick."],
+    ["Can it show a chart?", "Yes: bars, lines and pies, drawn from what the app holds, by day and by night."],
+    ["Does it work in my language?", "Yes: every word is in yours, right to left too, with numbers and dates as your language writes them."]
+  ],
+  "end.title": "Try it with the freelancer’s request.",
+  "end.why": "The request opens in {name} and is answered at once, or as soon as you choose an AI. Then describe your own tool."
+}

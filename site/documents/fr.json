@@ -1,0 +1,139 @@
+{
+  "title": "Rédiger un document avec l’IA, gratuitement, à votre main · {name}",
+  "description": "Écrivez un document avec l’IA dans un vrai éditeur : titres, listes, tableaux, tâches. L’IA propose ses changements sur place, et vous décidez.",
+  "eyebrow": "Documents",
+  "h1": "Écrivez votre document, et laissez l’IA l’améliorer sans vous le prendre.",
+  "h1.mark": "votre document",
+  "acts": [["write", "Écrivez votre document,"], ["improve", "et laissez l’IA l’améliorer sans vous le prendre."]],
+  "lede": "Demandez à {name} un plan, une lettre ou un rapport, ou partez d’une page blanche. Le document s’ouvre dans un vrai éditeur, à côté de votre demande : écrivez-y, et tapez / pour les titres, les listes, les tableaux et les tâches. Quand vous demandez des changements, {name} les propose sur place, et vous acceptez ou refusez chacun.",
+  "cta": "Essayer avec un plan d’exemple",
+  "see": "Voir comment ça s’est passé",
+  "facts": [
+    "Libre et gratuit",
+    "Rien à installer",
+    "Rien n’est envoyé à {name}"
+  ],
+  "try.ask": "Écris un plan d’une page pour la journée portes ouvertes de mon atelier de poterie, Atelier Terre, le 14 juin de 14 h à 18 h : ce que c’est, une liste de ce qu’il nous faut, et un tableau de qui fait quoi. Inès accueille les visiteurs, Marc fait les démonstrations.",
+  "pane.brain": "L’IA de votre choix",
+  "pane.ask": "Rends mon plan plus clair, et ajoute ce qui manque.",
+  "pane.title": "Un document écrit dans {name}, en vrai",
+  "pane.try": "C’est un vrai éditeur. Écrivez-y, cochez une tâche, ou tapez / sur une ligne vide. Les passages marqués sont des changements que l’IA propose : acceptez ou refusez chacun, ou tous d’un coup.",
+  "made.name": "Plan des portes ouvertes",
+  "made.lines": [
+    "# Portes ouvertes à l’Atelier Terre",
+    "",
+    "Nous allons ouvrir l’atelier à tout le quartier le 14 juin, et cela se passera de 14 h à 18 h. Chacun peut essayer le tour, et personne n’a besoin de réserver.",
+    "",
+    "## Ce qu’il nous faut",
+    "",
+    "- [x] Imprimer les invitations",
+    "- [ ] Emprunter deux tours de plus",
+    "- [ ] Acheter du thé et des gâteaux",
+    "",
+    "## Qui fait quoi",
+    "",
+    "| Tâche | Qui |",
+    "| --- | --- |",
+    "| Accueil à la porte | Inès |",
+    "| Démonstrations | Marc |",
+    "",
+    "> 💡 La terre tache : dites aux visiteurs de venir en vieux vêtements."
+  ],
+  "made.theirs": [
+    "# Portes ouvertes à l’Atelier Terre",
+    "",
+    "L’atelier s’ouvre au quartier le 14 juin, de 14 h à 18 h. Chacun peut essayer le tour, et personne n’a besoin de réserver.",
+    "",
+    "## Ce qu’il nous faut",
+    "",
+    "- [x] Imprimer les invitations",
+    "- [ ] Emprunter deux tours de plus",
+    "- [ ] Acheter du thé et des gâteaux",
+    "- [ ] Poser des panneaux depuis la rue",
+    "",
+    "## Qui fait quoi",
+    "",
+    "| Tâche | Qui |",
+    "| --- | --- |",
+    "| Accueil à la porte | Inès |",
+    "| Démonstrations | Marc |",
+    "| Thé et gâteaux | À décider |",
+    "",
+    "> 💡 La terre tache : dites aux visiteurs de venir en vieux vêtements."
+  ],
+  "made.notes": ["Une ouverture plus courte", "Une tâche qui manquait", "Personne n’avait le thé et les gâteaux"],
+  "replay.title": "Un document, étape par étape.",
+  "replay.why": "Le plan de l’atelier, de la demande à la page à distribuer : ce que {name} a lu, ce qu’il a écrit, et ce qu’il a proposé quand on lui en a demandé plus.",
+  "step.read": "{name} lit",
+  "replay.reads": [
+    "Votre demande : une journée portes ouvertes, sa date et ses horaires",
+    "Les trois parties demandées, et les deux prénoms que vous avez donnés"
+  ],
+  "replay.works": [
+    "Écrit une page : un titre, une courte ouverture, une liste à cocher et un tableau",
+    "Tenu à ce que vous avez donné : votre date, vos horaires, vos deux prénoms",
+    "Ouvert le document dans son éditeur, à côté de votre demande"
+  ],
+  "replay.got": "Le document, ouvert dans son éditeur : écrivez-y comme dans un traitement de texte, avec / pour les titres, les listes, les tâches, les tableaux et les encadrés.",
+  "replay.icon": "file",
+  "replay.chip": "Plan des portes ouvertes",
+  "step.again": "Vous redemandez",
+  "replay.again": "Rends-le plus clair, et ajoute ce qui manque.",
+  "step.made": "{name} propose",
+  "replay.made": "Ses changements, sur place : une ouverture plus courte, une tâche oubliée, une ligne pour le thé et les gâteaux. Acceptez ou refusez chacun. Puis téléchargez le document en fichier Word, ou imprimez-le.",
+  "replay.madeIcon": "file",
+  "replay.madeChip": "Plan des portes ouvertes.docx",
+  "asks.title": "Puis demandez les vôtres",
+  "asks.items": [
+    "Une lettre à mon propriétaire au sujet de la chaudière en panne, ferme et polie.",
+    "Le compte rendu de cette réunion d’après mes notes, avec les décisions et qui fait quoi.",
+    "Raccourcis la deuxième partie de moitié.",
+    "Traduis-le en espagnol, en gardant sa mise en page."
+  ],
+  "io.title": "Ce qui entre. Ce qui sort.",
+  "io.why": "Partez d’une phrase, de vos notes, ou d’un document que vous avez déjà.",
+  "io.in": "En entrée",
+  "io.out": "En sortie",
+  "io.ins": [
+    ["file", "Vos mots", "À quoi sert le document, et ce qu’il doit dire"],
+    ["file", "Vos notes", "Tapées, collées ou dictées"],
+    ["file", "Un document", "Word, PDF ou Markdown, à retravailler ou auquel répondre"],
+    ["table", "Une liste que vous tenez", "Une collection dans {name}, dessinée dans le document telle qu’elle est"]
+  ],
+  "io.outs": [
+    ["file", "Un document à côté de votre demande", "Dans un éditeur, avec titres, listes, tâches, tableaux, colonnes et encadrés"],
+    ["file", "Un fichier Word", "À envoyer, à imprimer, ou à poursuivre ailleurs"],
+    ["file", "Un fichier Markdown", "Du texte simple que tout éditeur ouvre"],
+    ["place", "Un lien", "Pour le partager, à lire ou à écrire avec vous"]
+  ],
+  "exact.title": "L’IA propose. Vous décidez.",
+  "exact.why": "Une IA qui réécrit votre page dans votre dos n’aide pas. Les changements de {name} s’affichent sur place, marqués, chacun avec quelques mots qui disent pourquoi, et rien n’est définitif tant que vous ne l’avez pas dit.",
+  "exact.cards": [
+    ["Accepter ou refuser, un à un", "Chaque changement se voit là où il a lieu, avec quelques mots d’explication. Acceptez-les ou refusez-les un par un, ou tous d’un coup."],
+    ["Vos mots restent les vôtres", "Ce que vous n’avez pas demandé de changer n’est pas touché, et l’annulation vaut pour tout, vos changements comme ceux de l’IA."],
+    ["Elle lit ce que vous sélectionnez", "Sélectionnez un passage, puis demandez : l’IA sait duquel vous parlez."]
+  ],
+  "where.title": "Où va votre document.",
+  "where.why": "Aucun serveur de {name} ne garde votre document sous une forme lisible. Ce qui change, c’est l’IA qui répond, et vous la choisissez.",
+  "where.cards": [
+    ["Gardé sur vos appareils", "Votre document, c’est un simple fichier dans votre navigateur, chiffré. Rien de lisible ne nous parvient."],
+    ["Envoyé à l’IA de votre choix", "Votre demande et le document vont à l’IA choisie, et nulle part ailleurs. Sous chaque réponse, {name} indique où elle a été faite."],
+    ["Partagé par vous seul", "Les autres ne le lisent ou n’y écrivent qu’une fois que vous l’avez partagé. Le curseur de chacun montre alors où il en est."]
+  ],
+  "catch.items": [
+    "{name} est gratuit ; l’IA derrière ne l’est pas toujours. Sans inscription, seule l’IA de cet ordinateur répond.",
+    "C’est un éditeur de texte, pas un outil de mise en page : pour une affiche ou une invitation, demandez un visuel.",
+    "Les images sont les vôtres, collées dans le document, ou faites par une IA qui dessine si vous en demandez une, jamais prises sur le web.",
+    "{name} peut se tromper. Lisez ses changements avant de les accepter."
+  ],
+  "faq.items": [
+    ["Est-ce gratuit ?", "Oui, sans compte chez {name}. L’IA qui répond peut en demander un : « {free} » en ouvre un gratuit, ou utilisez un abonnement que vous payez déjà, ou l’IA de cet ordinateur, sans aucun compte."],
+    ["C’est comme un traitement de texte ?", "Oui, en plus léger : titres, gras et italique, listes, tâches à cocher, tableaux, colonnes, encadrés et liens, avec / pour ajouter chacun. Et une IA à côté."],
+    ["Peut-on l’ouvrir dans Word ?", "Oui. Téléchargez-le en document Word ou en fichier Markdown, copiez-le, ou imprimez-le."],
+    ["Peut-on coller ce qu’une autre IA a écrit ?", "Oui. Un texte collé depuis une conversation devient de vrais titres, listes et tableaux dans votre document."],
+    ["Peut-on y écrire à plusieurs ?", "Oui. Partagez-le pour y travailler ensemble : le curseur de chacun s’affiche en direct."],
+    ["Ça marche dans ma langue ?", "Oui : vous écrivez dans la vôtre, de droite à gauche aussi, et l’IA y répond."]
+  ],
+  "end.title": "Essayez avec le plan de l’atelier.",
+  "end.why": "La demande s’ouvre dans {name} et reçoit sa réponse aussitôt, ou dès que vous choisissez une IA. Ensuite, écrivez le vôtre."
+}

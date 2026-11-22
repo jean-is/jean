@@ -72,7 +72,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
 
 ## Site pages
 
-- Every page beside the app (the homepage, the family page, the page for IT, the privacy policy, the terms, where files go, help and its articles, and any to come) is a folder of `site/` (an article, one of `site/help/`): its `page.js`, its words as `<lang>.json` and its look as `<folder>.css`, over `site.css`, written by `site/site.js` with the site's own top and foot (D438). Never a page anywhere else, and no head, top or foot of its own. The reels' player, `reel.html`, which `/watch` writes, is no page but a document pages frame, as `demo.html` is (D687).
+- Every page beside the app (the homepage, the family page, the page for IT, the privacy policy, the terms, where files go, help and its articles, and any to come) is a folder of `site/` (an article, one of `site/help/`): its `page.js`, its words as `<lang>.json` and its look as `<folder>.css`, over `site.css`, written by `site/site.js` with the site's own top and foot (D438). Never a page anywhere else, and no head, top or foot of its own. The reels' player, `reel.html`, which `/watch` writes, is no page but a document pages frame, as `demo.html` is (D687); so is `creation.html`, which shows what Jean made in Jean's own view (`site/creation.js`).
 - Every page is in English and French at least, and passes `site/checks.js`: accessibility, what search engines read, its languages, its links. `build:web`, `npm run build` and `npm test` enforce it, and axe-core checks contrast in `npm run e2e`. Fix the page, never the check.
 - Only a page that `ships` goes into `app/`, written there by `npm run build`; the others only jean.is serves.
 

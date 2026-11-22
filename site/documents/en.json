@@ -1,0 +1,139 @@
+{
+  "title": "Free AI document editor: write together, accept each change · {name}",
+  "description": "Write a document with AI in a real editor: headings, lists, tables, checklists. The AI proposes its changes in place, and you accept or reject each one.",
+  "eyebrow": "Documents",
+  "h1": "Write your document, and have AI improve it without taking it over.",
+  "h1.mark": "your document",
+  "acts": [["write", "Write your document,"], ["improve", "and have AI improve it without taking it over."]],
+  "lede": "Ask {name} for a plan, a letter or a report, or start from a blank page. The document opens in a real editor beside your request: type in it, and press / for headings, lists, tables and tasks. When you ask for changes, {name} proposes them in place, and you accept or reject each one.",
+  "cta": "Try it with a sample plan",
+  "see": "See how it went",
+  "facts": [
+    "Free and open source",
+    "Nothing to install",
+    "Nothing is sent to {name}"
+  ],
+  "try.ask": "Write a one-page plan for the open day of my pottery studio, Atelier Terre, on 14 June from 2 pm to 6 pm: what it is, a checklist of what we need, and a table of who does what. Inès welcomes visitors, Marc runs the demonstrations.",
+  "pane.brain": "The AI you chose",
+  "pane.ask": "Make my plan clearer, and add what is missing.",
+  "pane.title": "A document written in {name}, live",
+  "pane.try": "This is a real editor. Type in it, tick a task, or press / on an empty line. The marked passages are changes the AI proposes: accept or reject each one, or all at once.",
+  "made.name": "Open day plan",
+  "made.lines": [
+    "# Open day at Atelier Terre",
+    "",
+    "We are going to open the studio to the whole neighbourhood on 14 June, and it will run from 2 pm to 6 pm. Anyone can try the wheel, and nobody needs to book.",
+    "",
+    "## What we need",
+    "",
+    "- [x] Print the invitations",
+    "- [ ] Borrow two more wheels",
+    "- [ ] Buy tea and cake",
+    "",
+    "## Who does what",
+    "",
+    "| Task | Who |",
+    "| --- | --- |",
+    "| Welcome at the door | Inès |",
+    "| Demonstrations | Marc |",
+    "",
+    "> 💡 Clay stains: tell visitors to wear old clothes."
+  ],
+  "made.theirs": [
+    "# Open day at Atelier Terre",
+    "",
+    "The studio opens to the neighbourhood on 14 June, from 2 pm to 6 pm. Anyone can try the wheel, and nobody needs to book.",
+    "",
+    "## What we need",
+    "",
+    "- [x] Print the invitations",
+    "- [ ] Borrow two more wheels",
+    "- [ ] Buy tea and cake",
+    "- [ ] Put up signs from the street",
+    "",
+    "## Who does what",
+    "",
+    "| Task | Who |",
+    "| --- | --- |",
+    "| Welcome at the door | Inès |",
+    "| Demonstrations | Marc |",
+    "| Tea and cake | To decide |",
+    "",
+    "> 💡 Clay stains: tell visitors to wear old clothes."
+  ],
+  "made.notes": ["A shorter opening", "A task that was missing", "Nobody had the tea and cake"],
+  "replay.title": "One document, step by step.",
+  "replay.why": "The studio’s plan, from the request to a page to hand out: what {name} read, what it wrote, and what it proposed when asked for more.",
+  "step.read": "{name} reads",
+  "replay.reads": [
+    "Your request: an open day, its date and its hours",
+    "The three parts you asked for, and the two names you gave"
+  ],
+  "replay.works": [
+    "Wrote one page: a title, a short opening, a checklist and a table",
+    "Kept to what you gave: your date, your hours, your two names",
+    "Opened it in its editor, beside your request"
+  ],
+  "replay.got": "The document, open in its editor: write in it as in any word processor, with / for headings, lists, tasks, tables and callouts.",
+  "replay.icon": "file",
+  "replay.chip": "Open day plan",
+  "step.again": "You ask again",
+  "replay.again": "Make it clearer, and add what is missing.",
+  "step.made": "{name} proposes",
+  "replay.made": "Its changes, in place: a shorter opening, a task you forgot, a row for the tea and cake. Accept or reject each one. Then download the document as a Word file, or print it.",
+  "replay.madeIcon": "file",
+  "replay.madeChip": "Open day plan.docx",
+  "asks.title": "Then ask your own",
+  "asks.items": [
+    "A letter to my landlord about the broken boiler, firm and polite.",
+    "The minutes of this meeting from my notes, with the decisions and who does what.",
+    "Shorten the second section by half.",
+    "Translate it into Spanish, and keep its layout."
+  ],
+  "io.title": "What goes in. What comes out.",
+  "io.why": "Start from a sentence, from your notes, or from a document you already have.",
+  "io.in": "In",
+  "io.out": "Out",
+  "io.ins": [
+    ["file", "Your words", "What the document is for, and what it must say"],
+    ["file", "Your notes", "Typed, pasted or dictated"],
+    ["file", "A document", "Word, PDF or Markdown, to rework or to answer"],
+    ["table", "A list you keep", "A collection in {name}, drawn in the document as it is now"]
+  ],
+  "io.outs": [
+    ["file", "A document beside your request", "In an editor, with headings, lists, tasks, tables, columns and callouts"],
+    ["file", "A Word file", "To send, to print, or to go on with elsewhere"],
+    ["file", "A Markdown file", "Plain text that any editor opens"],
+    ["place", "A link", "To share it, for others to read or to write in with you"]
+  ],
+  "exact.title": "It proposes. You decide.",
+  "exact.why": "An AI that rewrites your page while you look away is no help. {name}’s changes show in place, marked, each with a few words saying why, and nothing is final until you say so.",
+  "exact.cards": [
+    ["Accept or reject, change by change", "Each change shows where it happens, with a few words on why. Accept or reject them one at a time, or all at once."],
+    ["Your words stay yours", "What you didn’t ask to change isn’t touched, and undo works on everything, yours and the AI’s."],
+    ["It reads what you select", "Select a passage, then ask: the AI knows which one you mean."]
+  ],
+  "where.title": "Where your document goes.",
+  "where.why": "No {name} server keeps your document in a form it can read. What changes is the AI that answers, and you choose it.",
+  "where.cards": [
+    ["Kept on your devices", "Your document is a plain file in your browser, encrypted. Nothing we can read reaches us."],
+    ["Sent to the AI you chose", "Your request and the document go to the AI you picked, and nowhere else. Under every answer, {name} says where it was done."],
+    ["Shared only by you", "Others read it or write in it only once you share it. Then each person’s caret shows where they are."]
+  ],
+  "catch.items": [
+    "{name} is free; the AI behind it may not be. Without a sign-up, only the AI on this computer answers.",
+    "It is an editor for text, not for page layout: for a poster or an invitation, ask for a design.",
+    "Pictures are yours, pasted in, or made by an AI that draws when you ask for one, never taken from the web.",
+    "{name} can be wrong. Read its changes before you accept them."
+  ],
+  "faq.items": [
+    ["Is it free?", "Yes, with no account at {name}. The AI that answers may want one: {free} opens a free one, or use a plan you already pay for, or the AI on this computer, with no account at all."],
+    ["Is it like a word processor?", "Yes, a light one: headings, bold and italics, lists, tasks to tick, tables, columns, callouts and links, with / to add any of them. And an AI beside it."],
+    ["Can I open it in Word?", "Yes. Download it as a Word document or as its Markdown file, copy it, or print it."],
+    ["Can I paste what another AI wrote?", "Yes. Text pasted from a chat becomes real headings, lists and tables in your document."],
+    ["Can several people write in it?", "Yes. Share it to work on it together: each person’s caret shows live."],
+    ["Does it work in my language?", "Yes: you write in yours, right to left too, and the AI answers in it."]
+  ],
+  "end.title": "Try it with the studio’s plan.",
+  "end.why": "The request opens in {name} and is answered at once, or as soon as you choose an AI. Then write your own."
+}

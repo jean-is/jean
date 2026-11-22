@@ -1,0 +1,105 @@
+{
+  "title": "Créer une affiche ou une invitation gratuitement avec l’IA · {name}",
+  "description": "Donnez les faits de votre événement : vous obtenez une invitation ou une affiche mise en page de trois façons, à retoucher, puis à imprimer ou envoyer.",
+  "eyebrow": "Visuels",
+  "h1": "Donnez les faits, et recevez un visuel prêt à imprimer ou à publier.",
+  "h1.mark": "les faits",
+  "acts": [["facts", "Donnez les faits,"], ["design", "et recevez un visuel prêt à imprimer ou à publier."]],
+  "lede": "Une invitation, une affiche, un tract, un menu, une publication : dites à {name} ce qu’il doit y avoir dessus. {name} met vos mots en page de trois façons, dans des couleurs et des caractères qui vont ensemble, et ouvre la première à côté de votre demande. Choisissez une version, déplacez ce que vous voulez, retapez n’importe quel mot, puis imprimez ou envoyez en image.",
+  "cta": "Essayer avec une annonce d’exemple",
+  "see": "Voir comment ça s’est passé",
+  "facts": [
+    "Libre et gratuit",
+    "Rien à installer",
+    "Rien n’est envoyé à {name}"
+  ],
+  "try.ask": "Fais une publication carrée pour annoncer la journée portes ouvertes de mon atelier de poterie, Atelier Terre, à Lyon, le 14 juin de 14 h à 18 h. Venez essayer le tour : du thé, des gâteaux et de la terre pour tout le monde. C’est gratuit, et personne n’a besoin de réserver.",
+  "pane.brain": "L’IA de votre choix",
+  "pane.ask": "Une publication pour annoncer les portes ouvertes de mon atelier de poterie, le 14 juin.",
+  "pane.title": "Un visuel fait dans {name}, en vrai",
+  "pane.try": "C’est le visuel lui-même. Choisissez une autre version dans la rangée du dessus, double-cliquez sur des mots pour les changer, ou faites glisser une partie pour la déplacer. Un point marque ce qu’il faut vérifier avant d’imprimer : ici, l’adresse à compléter.",
+  "pane.asked": "Dans {name}, ceci désigne cette partie à l’IA : dites quoi changer, et son changement attend que vous l’acceptiez ou le refusiez.",
+  "made.name": "Annonce portes ouvertes",
+  "made.occasion": "Les portes ouvertes d’un atelier de poterie, chaleureuses et conviviales",
+  "made.title": "Portes ouvertes",
+  "made.words": "Venez essayer le tour. Du thé, des gâteaux et de la terre pour tout le monde.",
+  "made.when": "14 juin, de 14 h à 18 h",
+  "made.where": "[Adresse], Lyon",
+  "made.who": "Atelier Terre",
+  "made.small": "Gratuit. Sans réservation.",
+  "replay.title": "Un visuel, étape par étape.",
+  "replay.why": "L’annonce de l’atelier, des faits à l’image publiée : ce que {name} a lu, ce qu’il a mis en page, et ce que vous terminez à la main.",
+  "step.read": "{name} lit",
+  "replay.reads": [
+    "Votre demande : des portes ouvertes, la date et les horaires, ce qui s’y passe, la gratuité",
+    "Ce qui manque : l’adresse de l’atelier, laissée en blanc entre crochets"
+  ],
+  "replay.works": [
+    "Donné à chaque fait son rôle : les grands mots, la date, le lieu, de la part de qui, les petites lignes",
+    "Mis le tout en page de trois façons, d’après ses propres mises en page, dans des couleurs et des caractères qui vont ensemble",
+    "Marqué ce qu’il faut vérifier avant d’imprimer : l’adresse à compléter"
+  ],
+  "replay.got": "L’annonce, ouverte à côté de votre demande, avec d’autres versions dans une rangée au-dessus. Chaque partie se déplace, se redimensionne et se retape, à la main ou au clavier.",
+  "replay.icon": "picture",
+  "replay.chip": "Annonce portes ouvertes",
+  "step.again": "Vous l’enregistrez",
+  "replay.again": "L’image, en publication",
+  "step.made": "{name} la fabrique",
+  "replay.made": "Son image, au format d’une publication, prête à publier, ou de nouveau à celui d’une story. Ou une page à imprimer, et le fichier du visuel, qui s’ouvre partout.",
+  "replay.madeIcon": "picture",
+  "replay.madeChip": "Annonce portes ouvertes.png",
+  "asks.title": "Puis demandez les vôtres",
+  "asks.items": [
+    "Une affiche pour la kermesse de l’école du 28 juin, avec son programme.",
+    "Un menu pour le dîner de vendredi : trois entrées, trois plats, deux desserts.",
+    "Une publication carrée pour annoncer nos nouveaux horaires.",
+    "Agrandis le titre, et réchauffe les couleurs."
+  ],
+  "io.title": "Ce qui entre. Ce qui sort.",
+  "io.why": "Dites à quoi il sert et donnez ses faits, comme à un ami. Ce qui manque reste en blanc, à compléter.",
+  "io.in": "En entrée",
+  "io.out": "En sortie",
+  "io.ins": [
+    ["file", "Les faits", "Quoi, quand, où et de la part de qui, avec vos mots"],
+    ["picture", "Une photo", "Déposée sur le visuel, elle remplit son cadre"],
+    ["picture", "Un logo", "Celui de votre charte graphique, placé dans son coin"],
+    ["table", "Une liste que vous tenez", "Un visuel par ligne : badges, marque-places, diplômes"]
+  ],
+  "io.outs": [
+    ["picture", "Un visuel à côté de votre demande", "Trois versions au choix, chaque partie à déplacer et à retaper"],
+    ["pdf", "Une page à imprimer", "Ou à enregistrer en PDF, deux A5 ou quatre A6 par feuille"],
+    ["picture", "Une image", "Telle quelle, ou au format d’une publication ou d’une story"],
+    ["file", "Le fichier du visuel", "Un SVG qui s’ouvre partout, et de nouveau dans {name}"]
+  ],
+  "exact.title": "Mis en page par des règles, pas par hasard.",
+  "exact.why": "Une IA qui dessine une affiche d’un seul bloc écorche vos mots, et ne se corrige pas. {name} ne demande à l’IA que les faits, et les met en page lui-même : de vrais mots, de vraies formes, tous modifiables.",
+  "exact.cards": [
+    ["Vos mots, à la lettre", "Le titre, la date et le lieu sont du texte, pas des pixels : exactement comme vous les avez donnés, et à retaper si besoin."],
+    ["Vérifié avant l’impression", "Un point marque ce qu’il faut regarder, avec sa correction à côté : un blanc à compléter, un jour de la semaine qui n’est pas celui de la date, des mots peu lisibles ou trop près du bord."],
+    ["Rien d’inventé", "Une date, un lieu ou un numéro de téléphone que vous n’avez pas donné n’est jamais inventé. Là où le visuel ne peut pas s’en passer, il reste un blanc entre crochets."]
+  ],
+  "where.title": "Où va votre visuel.",
+  "where.why": "Aucun serveur de {name} ne garde votre visuel sous une forme lisible. Ce qui change, c’est l’IA qui répond, et vous la choisissez.",
+  "where.cards": [
+    ["Gardé sur vos appareils", "Votre visuel, c’est un seul fichier dans votre navigateur, chiffré. Rien de lisible ne nous parvient."],
+    ["Envoyé à l’IA de votre choix", "Votre demande et ce que vous joignez vont à l’IA choisie, et nulle part ailleurs. Sous chaque réponse, {name} indique où elle a été faite."],
+    ["Terminé sans l’IA", "Choisir une version, déplacer une partie ou changer une couleur se fait sur votre appareil : rien n’est envoyé, et aucune IA n’est sollicitée."]
+  ],
+  "catch.items": [
+    "{name} est gratuit ; l’IA derrière ne l’est pas toujours. Sans inscription, seule l’IA de cet ordinateur répond.",
+    "Son image est faite par une IA qui dessine, quand vous en avez une. Sinon, le visuel garde un cadre pour une de vos photos.",
+    "Une seule page. Pas encore : le dessin à main levée, le regroupement de parties, la rotation, plusieurs pages, la suppression du fond d’une image.",
+    "On ne travaille pas encore à plusieurs sur un visuel : une seule personne le termine à la fois.",
+    "{name} peut se tromper. Relisez la date et le lieu avant d’en imprimer cinquante."
+  ],
+  "faq.items": [
+    ["Est-ce gratuit ?", "Oui, sans compte chez {name}. L’IA qui répond peut en demander un : « {free} » en ouvre un gratuit, ou utilisez un abonnement que vous payez déjà, ou l’IA de cet ordinateur, sans aucun compte."],
+    ["Que peut-il faire ?", "Des invitations, des affiches, des tracts, des cartes, des menus, des diplômes et des publications : tout ce qui s’imprime, se publie ou s’envoie en image, sur une page."],
+    ["Peut-on changer la mise en page ?", "Oui. Choisissez une autre version, puis déplacez, redimensionnez ou supprimez n’importe quelle partie, changez ses couleurs et ses caractères, et ajoutez des mots, une photo, une forme, un ornement ou un QR code."],
+    ["Peut-on l’imprimer ?", "Oui : en page à imprimer ou à enregistrer en PDF, deux A5 ou quatre A6 par feuille, ou en image."],
+    ["Peut-il prendre mes couleurs et mon logo ?", "Oui. Avec une charte graphique réglée, la première version porte vos couleurs et vos polices, et votre logo va dans son coin."],
+    ["Ça marche dans ma langue ?", "Oui : ses mots sont les vôtres, de droite à gauche aussi, dans des caractères qui ont toutes les lettres de votre langue."]
+  ],
+  "end.title": "Essayez avec l’annonce de l’atelier.",
+  "end.why": "La demande s’ouvre dans {name} et reçoit sa réponse aussitôt, ou dès que vous choisissez une IA. Ensuite, donnez vos propres faits."
+}

@@ -1,0 +1,123 @@
+{
+  "title": "Free AI whiteboard: sticky notes sorted with your team · {name}",
+  "description": "Brainstorm, run a retrospective or plan by weeks on a whiteboard of sticky notes: write with your team, and let AI sort the notes into sections. Free.",
+  "eyebrow": "Whiteboards",
+  "h1": "Write your notes together, and let AI sort them while you watch.",
+  "h1.mark": "sort them",
+  "acts": [["write", "Write your notes together,"], ["sort", "and let AI sort them while you watch."]],
+  "lede": "Ask {name} for a brainstorm, a retrospective or a plan by weeks, and it makes a board of short notes in named sections. Everyone drags, writes and draws on the same board, live. When notes pile up, {name} sorts them, and you accept or reject each change.",
+  "cta": "Try it with a sample retrospective",
+  "see": "See how it went",
+  "facts": [
+    "Free and open source",
+    "Nothing to install",
+    "One board, the same for everyone"
+  ],
+  "try.ask": "Make a whiteboard for the retrospective of our open day. Went well: more visitors than last year, the guided tours were full, parents liked the students’ stands. To change: the queue at the entrance, signs were hard to find, no leaflets left by noon. To try: booking the tours ahead, a map on every door.",
+  "pane.brain": "The AI you chose",
+  "pane.ask": "A whiteboard for the retrospective of our open day.",
+  "pane.title": "A whiteboard made in {name}, live",
+  "pane.try": "This is a real whiteboard. Drag a note, write one on the shelf at the bottom, or press {group}: the notes waiting there are sorted into sections, for you to accept or reject.",
+  "pane.asked": "Here is what the AI would do. Each change carries a yellow corner: accept them, reject them, or press {before} to see the board without them.",
+  "made.name": "Open day retrospective",
+  "made.areas": ["Went well", "To change", "To try"],
+  "made.notes": [
+    ["Went well", "More visitors than last year"],
+    ["Went well", "Guided tours were full"],
+    ["Went well", "Parents liked the students’ stands"],
+    ["To change", "Queue at the entrance"],
+    ["To change", "Signs were hard to find"],
+    ["To change", "No leaflets left by noon"],
+    ["To try", "Book the tours ahead"],
+    ["To try", "A map on every door"]
+  ],
+  "made.shelf": [
+    "The café was a hit",
+    "The car park filled up early",
+    "A tour every 20 minutes",
+    "Students made good guides",
+    "Print twice as many leaflets"
+  ],
+  "made.then": [
+    ["The café was a hit", "Went well"],
+    ["The car park filled up early", "To change"],
+    ["A tour every 20 minutes", "To try"],
+    ["Students made good guides", "Went well"],
+    ["Print twice as many leaflets", "To try"]
+  ],
+  "replay.title": "One board, step by step.",
+  "replay.why": "The open day’s retrospective, from the request to a sorted board: what {name} read, what it made, and what it sorted once the team had added its notes.",
+  "step.read": "{name} reads",
+  "replay.reads": [
+    "Your request: three questions, and eight things the team said",
+    "{name}’s own skill “Make a whiteboard”, which says a note holds one idea, in a few words"
+  ],
+  "replay.works": [
+    "Named three sections, one for each question",
+    "Wrote eight notes, a few words each, each in its section",
+    "Placed everything itself: the sections side by side, the notes in rows"
+  ],
+  "replay.got": "The whiteboard, open beside your request, filling as it is written: its sections first, then each note. Everyone you work on it with sees the same board, and where the others point.",
+  "replay.icon": "app",
+  "replay.chip": "Open day retrospective",
+  "step.again": "Your team adds notes, and you press",
+  "replay.again": "{group}",
+  "step.made": "{name} sorts them",
+  "replay.made": "Each note moved to the section it belongs in, marked with a yellow corner until you accept or reject it. {before} shows the board without the changes.",
+  "replay.madeIcon": "app",
+  "replay.madeChip": "5 changes to accept or reject",
+  "asks.title": "Then ask your own",
+  "asks.items": [
+    "A brainstorm on names for our new shop, sorted by theme.",
+    "A plan for the office move, by weeks, with who does what.",
+    "Sort these notes into themes, five at most.",
+    "What are the three things to do first? Add them as notes."
+  ],
+  "io.title": "What goes in. What comes out.",
+  "io.why": "Start from a sentence, from a meeting’s notes, or from a board your team has already covered in notes.",
+  "io.in": "In",
+  "io.out": "Out",
+  "io.ins": [
+    ["file", "Your words", "What the board is for, and the ideas, tasks or feedback it holds"],
+    ["file", "A meeting’s notes", "Pasted or dictated, cut into one idea a note"],
+    ["file", "A document", "A report or a survey’s answers, read for what people said"],
+    ["app", "A board already started", "Notes written by hand, for {name} to sort"]
+  ],
+  "io.outs": [
+    ["app", "A whiteboard", "Sections, notes, texts, arrows and drawings, on a board that pans and zooms"],
+    ["tree", "Lanes", "The same notes, a column for each section: what a phone opens on"],
+    ["table", "A table", "Its notes as rows, to copy, to print, or to download as Excel or CSV"],
+    ["picture", "A picture", "The whole board, or the part in view"]
+  ],
+  "exact.title": "Its changes wait for you.",
+  "exact.why": "A board is a team’s thinking: nothing on it should move behind your back. What the AI changes is marked and counted, and yours to accept or reject.",
+  "exact.cards": [
+    ["Accept or reject", "Each note the AI moved or wrote carries a yellow corner. Accept or reject them one by one, or all at once."],
+    ["Before and after", "{before} shows the board as it was, without the changes that wait. Nothing is lost until you decide."],
+    ["It leaves your work alone", "The AI sorts and writes notes. It doesn’t touch your drawings, and leaves what you placed by hand on the open board where it is."]
+  ],
+  "where.title": "Where your board lives.",
+  "where.why": "On your devices. Shared only with the people you invite, each in their own {name}.",
+  "where.cards": [
+    ["Kept on your devices", "Your board is plain files in your browser, encrypted. Nothing we can read reaches us."],
+    ["Sent to the AI you chose", "When you ask, its notes go to the AI you picked, and nowhere else. Under every answer, {name} says where it was done."],
+    ["Shared only by you", "Others see the board only once you invite them to work on it. Their changes merge with yours, note by note."]
+  ],
+  "catch.items": [
+    "{name} is free; the AI behind it may not be. Making or sorting a whiteboard needs an AI in the cloud or a plan you pay for: the AI on this computer reads a board, and doesn’t change one.",
+    "To write on a board with you, each person opens it in their own {name}. A link anyone can open shows a copy to read, not the board itself.",
+    "{name} places what the AI makes: you can’t ask for a note in a given spot. Drag it there yourself.",
+    "The AI reads the notes, the sections and the arrows between them. It doesn’t read drawings, and makes neither drawings nor arrows.",
+    "{name} can be wrong. A note sorted into the wrong section is one drag away from the right one."
+  ],
+  "faq.items": [
+    ["Is it free?", "Yes, with no account at {name}. The AI that answers may want one: {free} opens a free one, or use a plan you already pay for."],
+    ["Is it like a wall of sticky notes?", "Yes: short notes you drag around, in sections you name, with texts, arrows and freehand drawings, on a board that pans and zooms. And an AI that sorts the notes when you ask."],
+    ["Can several people use it at once?", "Yes. Share it to work on it together: everyone sees the same board, where the others point, and each change as it is made."],
+    ["Does it work on a phone?", "Yes. A narrow screen opens on the lanes, one section at a time, with the same notes. The board itself pans and zooms with two fingers."],
+    ["Can I get my notes out?", "Yes: as a picture of the board, or as a table of its notes by section, to copy, to print or to download as Excel or CSV."],
+    ["Does it work in my language?", "Yes: the notes are written in yours, and a board made in a right-to-left language starts from the right."]
+  ],
+  "end.title": "Try it with the open day’s retrospective.",
+  "end.why": "The request opens in {name} and is answered as soon as you choose an AI. Then ask for your own board."
+}

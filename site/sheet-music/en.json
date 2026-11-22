@@ -1,0 +1,97 @@
+{
+  "title": "Free AI sheet music maker: a tune to read and play · {name}",
+  "description": "Ask for a tune and get its score: sheet music drawn in your browser and played note by note, to print or to save as MIDI. Free, nothing to install.",
+  "eyebrow": "Sheet music",
+  "h1": "Ask for a tune, and read it, hear it and print it.",
+  "h1.mark": "a tune",
+  "acts": [["ask", "Ask for a tune,"], ["read", "and read it, hear it and print it."]],
+  "lede": "Tell {name} what you want to play: a lullaby, a jig, the chords of a song, a warm-up for your choir. It writes the music as a score, drawn right in the answer, with a button to play it, each note lit as it sounds.",
+  "cta": "Try it with a sample tune",
+  "see": "See how it went",
+  "facts": [
+    "Free and open source",
+    "Nothing to install",
+    "Nothing is sent to {name}"
+  ],
+  "try.ask": "Write a lullaby for the piano in G major: eight bars in three time, with a simple left hand.",
+  "pane.brain": "The AI you chose",
+  "pane.play": "Watch it unfold",
+  "pane.title": "A score written in {name}",
+  "demo.brain": "the AI you chose",
+  "demo.after": "A lullaby in G, eight bars in three time: the right hand sings, the left holds one note a bar. Press {play} to hear it.",
+  "tune.title": "Evening Lullaby",
+  "replay.title": "One tune, step by step.",
+  "replay.why": "The lullaby, from the request to the page on your music stand: what {name} read, what it worked out, and what you take away.",
+  "step.read": "{name} reads",
+  "replay.reads": [
+    "Your request: a piano, G major, three time, eight bars",
+    "{name}’s own skill “Music score”, which says how music is written down so that it can be drawn and played"
+  ],
+  "replay.works": [
+    "Composed eight bars: a melody for the right hand, one note a bar for the left",
+    "Checked that every bar adds up to three beats",
+    "Wrote it down in ABC notation, plain text that music software reads"
+  ],
+  "replay.got": "The score, drawn in the answer, with a button that plays it on the piano, a band gliding along as each note sounds.",
+  "replay.icon": "music",
+  "replay.chip": "Evening Lullaby",
+  "step.again": "You save it",
+  "replay.again": "{midi}",
+  "step.made": "{name} makes it",
+  "replay.made": "A MIDI file, made right here in this tab, to open in your notation or recording software. Or print the score alone, on a clean page.",
+  "replay.madeIcon": "music",
+  "replay.madeChip": "Evening Lullaby.mid",
+  "asks.title": "Then ask your own",
+  "asks.items": [
+    "The chords of a blues in E, twelve bars, for guitar.",
+    "A round in three parts for my choir, easy to learn.",
+    "Put it down a tone, for a clarinet.",
+    "Add these words under the melody, a syllable a note."
+  ],
+  "io.title": "What goes in. What comes out.",
+  "io.why": "Say the style, the instrument and how long. A key, a tempo or a level help, and none is required.",
+  "io.in": "In",
+  "io.out": "Out",
+  "io.ins": [
+    ["file", "Your words", "A style, a key, an instrument, how long and how hard"],
+    ["music", "A tune in ABC", "Pasted from a book of folk tunes, to draw, hear or change"],
+    ["file", "A poem", "Words to set to a melody, a syllable a note"]
+  ],
+  "io.outs": [
+    ["music", "A score in the answer", "Drawn as sheet music, its lines broken to fit your screen"],
+    ["music", "Its sound", "Played on the instruments it names, each note lit as it sounds"],
+    ["file", "A printed page", "The score alone, ready for a music stand"],
+    ["file", "A MIDI or ABC file", "To open in notation or recording software"]
+  ],
+  "exact.title": "Written music, not a recording.",
+  "exact.why": "{name} doesn’t generate audio. It writes notes: music you can read, check, change and play yourself.",
+  "exact.cards": [
+    ["Notes you can read", "A score as a musician reads one: staves, bars, keys, chords, and words under the notes. Every note is there to change."],
+    ["Played from the notes", "The sound is made on your device, from the score itself, on the instruments it names. Offline the first time, it plays on a small synthesizer."],
+    ["Only what may be copied", "{name} composes, or writes out music in the public domain. Of a song still under copyright, it gives the chords or a short phrase, not the whole melody."]
+  ],
+  "where.title": "Where your music goes.",
+  "where.why": "No {name} server keeps your request in a form it can read. What changes is the AI that answers, and you choose it.",
+  "where.cards": [
+    ["Kept on your devices", "Your scores stay in your browser, encrypted. Nothing we can read reaches us."],
+    ["Sent to the AI you chose", "Your request and what you attach go to the AI you picked, and nowhere else. Under every answer, {name} says where it was done."],
+    ["Played where you are", "The sound is made in this tab. The instruments are downloaded once, the first time a score plays, and your music is sent nowhere to be played."]
+  ],
+  "catch.items": [
+    "{name} is free; the AI behind it may not be. Without a sign-up, only the AI on this computer answers.",
+    "It writes notes, not sound files: no singing voice, no produced track, no MP3.",
+    "An AI composes by rule more than by ear: a tune can be correct and plain. Ask again, or change the notes yourself.",
+    "Of a song still under copyright you get the chords or a short phrase, never the whole melody.",
+    "{name} can be wrong: a bar may not add up, or a note may sit outside an instrument’s range. Play it through before a rehearsal."
+  ],
+  "faq.items": [
+    ["Is it free?", "Yes, with no account at {name}. The AI that answers may want one: {free} opens a free one, or use a plan you already pay for, or the AI on this computer, with no account at all."],
+    ["Can I hear it?", "Yes. Press {play} on the score: it plays on the piano, or on the instrument you asked for, each note lit as it sounds."],
+    ["Can I print it?", "Yes. The score prints alone, on a clean page, and saves as an ABC or a MIDI file."],
+    ["Which instruments?", "The piano unless you name another: violin, cello, flute, clarinet, trumpet, guitar, organ and many more, alone or together."],
+    ["Can it write for several voices?", "Yes: a melody with a bass, a piano’s two hands or a small ensemble, each on its own staff."],
+    ["Does it work in my language?", "Yes: titles and sung words are in yours. The notes read the same everywhere."]
+  ],
+  "end.title": "Try it with the lullaby.",
+  "end.why": "The request opens in {name} and is answered at once, or as soon as you choose an AI. Then ask for your own tune."
+}

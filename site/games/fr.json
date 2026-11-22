@@ -1,0 +1,107 @@
+{
+  "title": "Créer un jeu gratuitement avec l’IA, en quelques mots · {name}",
+  "description": "Décrivez un jeu : vous en obtenez un qui se joue dans votre navigateur, original, pour une leçon, une fête ou un jour de pluie, essayé avant d’être montré.",
+  "eyebrow": "Jeux",
+  "h1": "Décrivez un jeu, et jouez-y ici même.",
+  "h1.mark": "jouez-y",
+  "acts": [["say", "Décrivez un jeu,"], ["play", "et jouez-y ici même."]],
+  "lede": "Donnez à {name} un thème, une leçon à réviser ou l’âge des joueurs. {name} conçoit un jeu original, le fabrique, y joue lui-même pour trouver ce qui casse, puis vous en remet un qui fonctionne : au clavier, sur écran tactile ou à la manette, sur tout appareil, hors ligne.",
+  "cta": "Essayer avec un jeu d’exemple",
+  "see": "Voir comment ça s’est passé",
+  "facts": [
+    "Libre et gratuit",
+    "Rien à installer",
+    "Rien n’est envoyé à {name}"
+  ],
+  "try.ask": "Fais un jeu pour ma classe d’élèves de 8 ans, pour réviser la table de 7 : les réponses tombent d’un arbre, et ils attrapent la bonne dans un panier. Dix calculs par partie, et de la douceur quand ils se trompent.",
+  "pane.brain": "L’IA de votre choix",
+  "pane.ask": "Un jeu pour que ma classe révise la table de 7 : attraper la bonne réponse dans un panier.",
+  "pane.title": "Un jeu fait dans {name}, en vrai",
+  "pane.try": "C’est le jeu lui-même. Appuyez sur « {play} », puis déplacez le panier avec les flèches du clavier, ou avec les boutons sur un écran tactile, et attrapez la pomme qui porte la bonne réponse.",
+  "made.name": "Les pommes de sept",
+  "made.card": "Les pommes de sept. Vous tenez un panier sous un pommier et devez attraper les bonnes réponses. Le verbe : glisser le panier sous la pomme qui répond au calcul ; chaque prise sonne une note plus haut. La boucle : un calcul de la table de 7, trois pommes qui tombent, dont une juste ; dix calculs par partie. La courbe : les quatre premiers calculs ne se perdent pas ; ensuite une mauvaise pomme coûte un cœur sur trois, et tout tombe un peu plus vite toutes les trois bonnes réponses. Commandes : gauche et droite. Aspect et sons : verger bleu nuit, pommes rouges, panier jaune ; une note qui monte, une note grave, un accord final.",
+  "made.words.title": "Les pommes de sept",
+  "made.words.how": "Attrapez la pomme qui porte la bonne réponse",
+  "made.words.start": "Appuyez sur ← ou → pour commencer",
+  "made.words.again": "Appuyez sur ← ou → pour rejouer",
+  "made.words.won": "Bravo !",
+  "made.words.over": "Bien essayé !",
+  "made.words.right": "Justes :",
+  "made.words.best": "Record :",
+  "replay.title": "Un jeu, étape par étape.",
+  "replay.why": "La demande de l’enseignante devenue jeu, de bout en bout : ce que {name} a lu, ce qu’il a conçu, ce à quoi il a joué, et ce que vous pouvez en faire ensuite.",
+  "step.read": "{name} lit",
+  "replay.reads": [
+    "Votre demande : des élèves de 8 ans, la table de 7, un panier, dix calculs",
+    "Son propre savoir-faire « Faire un jeu », qui dit qu’un jeu se conçoit avant de se fabriquer, et s’essaie avant de se montrer"
+  ],
+  "replay.works": [
+    "Écrit une fiche de conception : l’idée, le geste répété, le déroulé d’une partie, ce qui la rend plus dure",
+    "Fabriqué le jeu en un seul petit programme, tout dessiné et sonorisé par le code, sans rien prendre sur internet",
+    "Joué hors de vue, en tenant chaque commande à son tour, et corrigé ce qui cassait",
+    "Rendu le jeu bienveillant : les premiers calculs ne se perdent pas, et rejouer tient à une touche"
+  ],
+  "replay.got": "Le jeu, ouvert à côté de votre demande : un écran pour le lancer, la pause, le son coupé et le plein écran, des boutons sur écran tactile, et son record gardé.",
+  "replay.icon": "app",
+  "replay.chip": "Les pommes de sept",
+  "step.again": "Vous redemandez",
+  "replay.again": "Passe à la table de 8, et fais tomber les pommes plus vite.",
+  "step.made": "{name} le modifie",
+  "replay.made": "Le même jeu, modifié là où vous l’avez demandé et nulle part ailleurs, puis rejoué avant que vous le voyiez. Enregistré, c’est une page à part entière qui se joue partout, hors ligne.",
+  "replay.madeIcon": "app",
+  "replay.madeChip": "Les pommes de sept, table de 8",
+  "asks.title": "Puis demandez les vôtres",
+  "asks.items": [
+    "Un jeu où un chat attrape des poissons qui tombent, pour mon enfant de 5 ans.",
+    "Un jeu de mémoire avec les mots de ma leçon d’espagnol.",
+    "Un quiz qui joue les questions que je tiens dans ma liste « Quiz d’histoire ».",
+    "Ajoute un deuxième niveau, plus dur, avec un autre son."
+  ],
+  "io.title": "Ce qui entre. Ce qui sort.",
+  "io.why": "Une phrase suffit. Ce que vous laissez ouvert est décidé pour vous : un joueur, un écran, des parties d’une à trois minutes.",
+  "io.in": "En entrée",
+  "io.out": "En sortie",
+  "io.ins": [
+    ["file", "Votre idée", "Un thème, un genre de jeu, qui joue et à quel âge"],
+    ["file", "Une leçon", "Tables, vocabulaire, dates : ce que le jeu fait réviser"],
+    ["table", "Une liste que vous tenez", "Les questions d’un quiz ou des cartes mémoire, jouées telles qu’elles sont à chaque partie"],
+    ["picture", "Une image", "Un dessin ou une photo à vous, à mettre dans le jeu"]
+  ],
+  "io.outs": [
+    ["app", "Un jeu à côté de votre demande", "Au clavier, sur écran tactile ou à la manette, avec pause, son coupé et plein écran"],
+    ["file", "Une page à part entière", "Enregistré, il se joue dans tout navigateur, hors ligne, sans {name}"],
+    ["place", "Un jeu en ligne", "Publié comme un site d’une page, à l’adresse de votre choix"],
+    ["clock", "Ce qu’il garde", "Un record ou un niveau atteint, gardés d’une visite à l’autre"]
+  ],
+  "exact.title": "Essayé avant que vous y jouiez.",
+  "exact.why": "Un jeu qui se fige sur son premier écran n’est pas un jeu. {name} joue à chacun hors de vue et dit à l’IA ce qui a cassé, ce qu’a fait chaque commande et jusqu’où il est allé, avant de vous le montrer.",
+  "exact.cards": [
+    ["Essayé en jouant", "Chaque jeu est lancé deux fois, puis chacune de ses commandes est tenue à son tour. Ce qui casse repart à l’IA, avec la ligne où ça casse."],
+    ["Toujours original", "Demandez un jeu que vous connaissez : vous obtenez un jeu original du même genre, avec son nom, ses personnages et son aspect, jamais ce jeu redessiné."],
+    ["Bienveillant pour les enfants", "Dans le profil d’un enfant : rien d’effrayant, ni pari, ni boutique, ni série quotidienne, ni chrono qui punit. Pour tous : ni publicité, ni lien vers l’extérieur."]
+  ],
+  "where.title": "Où vit votre jeu.",
+  "where.why": "Sur votre appareil. Il se joue hors ligne, et n’atteint rien sur internet.",
+  "where.cards": [
+    ["Gardé sur vos appareils", "Votre jeu, c’est un seul fichier dans votre navigateur, chiffré. Rien de lisible ne nous parvient."],
+    ["Envoyé à l’IA de votre choix", "Votre demande et ce que vous joignez vont à l’IA choisie, et nulle part ailleurs. Sous chaque réponse, {name} indique où elle a été faite."],
+    ["Il n’atteint rien", "Un jeu tourne dans un cadre étanche : il ne charge rien depuis internet et n’y envoie rien, quoi que dise son code."]
+  ],
+  "catch.items": [
+    "{name} est gratuit ; l’IA derrière ne l’est pas toujours. Sans inscription, seule l’IA de cet ordinateur répond.",
+    "Tout est dessiné et sonorisé par le code : des formes, du pixel art, des sons simples. Ni photos, ni musique enregistrée, ni voix, sauf une image qui vous appartient.",
+    "Un joueur, un écran, des parties d’une à trois minutes : un petit jeu, pas celui d’un studio.",
+    "Ni jeu en ligne, ni scores partagés entre joueurs : ce qu’un jeu garde reste sur l’appareil où l’on joue.",
+    "{name} peut se tromper. Faites une partie vous-même avant de le donner à une classe."
+  ],
+  "faq.items": [
+    ["Est-ce gratuit ?", "Oui, sans compte chez {name}. L’IA qui répond peut en demander un : « {free} » en ouvre un gratuit, ou utilisez un abonnement que vous payez déjà, ou l’IA de cet ordinateur, sans aucun compte."],
+    ["Faut-il savoir coder ?", "Non. Vous décrivez le jeu, et vous le modifiez de la même façon : « plus rapide », « ajoute un niveau », « avec le vocabulaire de ma classe »."],
+    ["Peut-il copier un jeu que je connais ?", "Non, et c’est voulu. Vous obtenez un jeu original du même genre, avec son nom, ses personnages et son aspect."],
+    ["Ça marche sur téléphone ou tablette ?", "Oui. Sur un écran tactile, le jeu reçoit des boutons pour ses commandes, et il passe en plein écran à la demande. Une manette fonctionne aussi."],
+    ["Peut-on le partager ?", "Oui. Enregistrez-le en une page qui se joue dans tout navigateur, hors ligne, ou publiez-le à une adresse à lui."],
+    ["Ça marche dans ma langue ?", "Oui : chaque mot lu par un joueur est dans la vôtre, de droite à gauche aussi, avec les nombres comme votre langue les écrit."]
+  ],
+  "end.title": "Essayez avec la demande de l’enseignante.",
+  "end.why": "La demande s’ouvre dans {name} et reçoit sa réponse aussitôt, ou dès que vous choisissez une IA. Ensuite, décrivez votre propre jeu."
+}

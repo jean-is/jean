@@ -1,0 +1,14 @@
+/* SPDX-License-Identifier: MIT */
+/* A creation framed by a page (site/creation.js), its body `shown`, as `creation` is a card's among the creations
+   (ui/creations.css): Jean's own view of it fills the frame, and under it, once the view
+   asks Jean something, what Jean would do, in the page's words. */
+html:has(> .shown), .shown { block-size: 100%; margin: 0; }
+/* Never taller than its frame: what it shows scrolls in its own view, as in a pane. */
+.shown { display: flex; flex-direction: column; max-block-size: 100dvh; overflow: hidden; background: var(--room); color: var(--ink); }
+html > .shown > main { flex: 1; min-block-size: 0; display: flex; flex-direction: column; inline-size: 100%; margin: 0; padding: 0; }
+html > .shown > main > * { flex: 1; min-block-size: 0; }
+#said { margin: 0; padding: 0.6rem 1rem; border-block-start: 1px solid var(--line); background: var(--site-side, var(--line)); font-size: 0.9rem; text-align: center; text-wrap: balance; }
+#said:empty { display: none; }
+/* A design's mark, the dot on a part that needs a look, as large as a finger needs (24 px, WCAG 2.5.8) wherever it lies: in the
+   app it is smaller, and counts on the room around it. */
+.design .design-dot { min-inline-size: 24px; min-block-size: 24px; }

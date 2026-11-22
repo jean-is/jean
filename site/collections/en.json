@@ -1,0 +1,113 @@
+{
+  "title": "Free AI tracker: lists and tables kept up to date for you · {name}",
+  "description": "Ask for a tracker and get a real table: typed columns, a board by status, rows you edit by hand or have AI update, each change yours to accept. Free.",
+  "eyebrow": "Collections",
+  "h1": "Ask for a list to keep, and let AI keep it up to date.",
+  "h1.mark": "a list to keep",
+  "acts": [["keep", "Ask for a list to keep,"], ["update", "and let AI keep it up to date."]],
+  "lede": "Job applications, expenses, books, clients: tell {name} what you want to keep track of. It makes a table with the right kind of column for each thing, shows it as a table, a board or cards, and updates it from an email or a file. Each of its changes waits for you.",
+  "cta": "Try it with a sample tracker",
+  "see": "See how it went",
+  "facts": [
+    "Free and open source",
+    "Nothing to install",
+    "Nothing is sent to {name}"
+  ],
+  "try.ask": "Keep track of my job applications: the company, the role, where each one stands, the day to follow up and the next step. Start with Atelier Nord, office manager, at the interview stage, and Maison Léa, receptionist, applied.",
+  "pane.brain": "The AI you chose",
+  "pane.ask": "Update my job applications from the email I pasted.",
+  "pane.title": "A collection kept in {name}, live",
+  "pane.try": "This is a real collection. Change a cell, see it as a board, or look at what the AI changed from an email, three rows in all: each change is marked, and waits for you to accept or reject it.",
+  "made.name": "Job applications",
+  "made.columns": ["Company", "Role", "Status", "Follow up on", "Next step"],
+  "made.steps": ["To apply", "Applied", "Interview", "Offer", "Closed"],
+  "made.rows": [
+    ["Atelier Nord", "Office manager", "Interview", "2", "Call them back"],
+    ["Maison Léa", "Receptionist", "Applied", "", ""],
+    ["Café Nord", "Shift lead", "Applied", "", ""],
+    ["Salon Rive", "Front desk", "To apply", "", "Write the letter"],
+    ["Martin’s Bakery", "Shop assistant", "Applied", "", ""],
+    ["City library", "Library assistant", "Offer", "4", "Answer their offer"]
+  ],
+  "made.then": [
+    ["Café Nord", "", "Interview", "6", "Interview at 10 am"],
+    ["Martin’s Bakery", "", "Closed", "", "The position is filled"],
+    ["Atelier Terre", "Studio assistant", "To apply", "", "Apply before the end of the month"]
+  ],
+  "made.why": "From the email you pasted",
+  "replay.title": "One collection, step by step.",
+  "replay.why": "The job hunt, from the request to a table that stays up to date: what {name} read, what it made, and what it changed for you to check.",
+  "step.read": "{name} reads",
+  "replay.reads": [
+    "Your request: five things to note for each application",
+    "The two applications you named, to start with"
+  ],
+  "replay.works": [
+    "Made a table with five columns, each of its kind: words, a status in steps, a date",
+    "Added a board by status, a lane for each step",
+    "Wrote your two applications as its first rows"
+  ],
+  "replay.got": "The collection, open beside your request: as a table, as a board or as cards. Change any cell by hand, add a column, sort and filter.",
+  "replay.icon": "table",
+  "replay.chip": "Job applications",
+  "step.again": "You ask again",
+  "replay.again": "Update it from the email I pasted.",
+  "step.made": "{name} changes it",
+  "replay.made": "Two rows changed and one added, each change marked in the table: accept or reject them one by one, or all at once. Download the collection as an Excel workbook whenever you like.",
+  "replay.madeIcon": "table",
+  "replay.madeChip": "Job applications.xlsx",
+  "asks.title": "Then ask your own",
+  "asks.items": [
+    "Keep track of my expenses this month, by category.",
+    "A reading list: the title, the author, where I am, a note.",
+    "Add a column for the salary, in euros.",
+    "Which applications have had no answer for two weeks?"
+  ],
+  "io.title": "What goes in. What comes out.",
+  "io.why": "Say what you want to keep track of. Bring what you already have, or start empty and fill it as you go.",
+  "io.in": "In",
+  "io.out": "Out",
+  "io.ins": [
+    ["file", "Your words", "What to keep track of, and what you already know"],
+    ["table", "A spreadsheet", "Excel or CSV, its rows brought in"],
+    ["file", "An email or a document", "Read for what changes: a date, a status, a new row"],
+    ["pdf", "A PDF", "An invoice or a statement, its lines made rows"]
+  ],
+  "io.outs": [
+    ["table", "A table", "A kind for each column: words, numbers, money, dates, choices, people, formulas"],
+    ["tree", "A board", "A lane for each step, its cards dragged from one to the next"],
+    ["table", "An Excel workbook or a CSV file", "Downloaded as it shows, to open anywhere"],
+    ["app", "A page that shows it", "A site, an app or a document, filled from the collection as it is now"]
+  ],
+  "exact.title": "Its changes wait for you.",
+  "exact.why": "A tracker is only worth keeping if you trust it. What the AI changes is marked, row by row, until you accept or reject it.",
+  "exact.cards": [
+    ["Accept or reject", "Each row the AI changed or added is marked. Accept or reject them one by one, or all at once."],
+    ["Every change kept", "Open a row to see its last changes: what each one set, the value before it, who made it and when."],
+    ["Worked out, not guessed", "A formula column is calculated by {name} itself from each row’s other cells, never estimated by the AI."]
+  ],
+  "where.title": "Where your list lives.",
+  "where.why": "On your devices. Shared only with the people you invite.",
+  "where.cards": [
+    ["Kept on your devices", "Your collection is plain files in your browser, encrypted. Nothing we can read reaches us."],
+    ["Sent to the AI you chose", "When you ask, its rows go to the AI you picked, and nowhere else. Under every answer, {name} says where it was done."],
+    ["Shared only by you", "Others see it only once you invite them to work on it. Their changes merge with yours, cell by cell."]
+  ],
+  "catch.items": [
+    "{name} is free; the AI behind it may not be. Making or changing a collection needs an AI in the cloud or a plan you pay for: the AI on this computer reads one, and doesn’t change one.",
+    "A collection is one table, not a workbook of linked sheets. For a heavy spreadsheet, {name} works on your Excel file instead.",
+    "The AI changes what you ask it to. It doesn’t watch your inbox: paste the email, attach the file, or connect the service.",
+    "It reads 200 rows at a time: on a long list, ask about a part of it.",
+    "{name} can be wrong. That is why its changes wait for you."
+  ],
+  "faq.items": [
+    ["Is it free?", "Yes, with no account at {name}. The AI that answers may want one: {free} opens a free one, or use a plan you already pay for."],
+    ["Is it a spreadsheet?", "It is simpler: one table, with a kind for each column, which also shows as a board or as cards. No cell to merge, no sheet to link."],
+    ["Can I change it myself?", "Yes, all of it. Click a cell to change it, drag a card to another step, add, hide and sort columns. Undo works."],
+    ["Can I get my list out?", "Yes: as an Excel workbook or a CSV file, a copy of its rows, a print, or a link to share."],
+    ["Can several people keep it?", "Yes. Share it to work on it together: everyone sees each change as it is made."],
+    ["Does it work in my language?", "Yes: its columns and rows are in yours, right to left too, with dates and money as your language writes them."]
+  ],
+  "end.title": "Try it with the job hunt.",
+  "end.why": "The request opens in {name} and is answered as soon as you choose an AI. Then ask for your own list."
+}

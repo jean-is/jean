@@ -1,0 +1,97 @@
+{
+  "title": "Créer une partition gratuitement avec l’IA, à lire et à écouter · {name}",
+  "description": "Demandez un air et recevez sa partition : dessinée dans votre navigateur, jouée note à note, à imprimer ou à enregistrer en MIDI. Gratuit, rien à installer.",
+  "eyebrow": "Partitions",
+  "h1": "Demandez un air, et lisez-le, écoutez-le, imprimez-le.",
+  "h1.mark": "un air",
+  "acts": [["ask", "Demandez un air,"], ["read", "et lisez-le, écoutez-le, imprimez-le."]],
+  "lede": "Dites à {name} ce que vous voulez jouer : une berceuse, une gigue, les accords d’une chanson, un échauffement pour votre chorale. {name} écrit la musique en partition, dessinée dans la réponse même, avec un bouton pour la jouer, chaque note éclairée quand elle sonne.",
+  "cta": "Essayer avec un air d’exemple",
+  "see": "Voir comment ça s’est passé",
+  "facts": [
+    "Libre et gratuit",
+    "Rien à installer",
+    "Rien n’est envoyé à {name}"
+  ],
+  "try.ask": "Écris une berceuse pour piano en sol majeur : huit mesures à trois temps, avec une main gauche simple.",
+  "pane.brain": "L’IA de votre choix",
+  "pane.play": "Voir le déroulé",
+  "pane.title": "Une partition écrite dans {name}",
+  "demo.brain": "l’IA de votre choix",
+  "demo.after": "Une berceuse en sol, huit mesures à trois temps : la main droite chante, la main gauche tient une note par mesure. Appuyez sur « {play} » pour l’écouter.",
+  "tune.title": "Berceuse du soir",
+  "replay.title": "Un air, étape par étape.",
+  "replay.why": "La berceuse, de la demande à la page posée sur votre pupitre : ce que {name} a lu, ce qu’il a fait, et ce que vous emportez.",
+  "step.read": "{name} lit",
+  "replay.reads": [
+    "Votre demande : un piano, sol majeur, trois temps, huit mesures",
+    "Son propre savoir-faire « Partition », qui dit comment noter la musique pour qu’elle puisse être dessinée et jouée"
+  ],
+  "replay.works": [
+    "Composé huit mesures : une mélodie à la main droite, une note par mesure à la main gauche",
+    "Vérifié que chaque mesure compte bien trois temps",
+    "Noté le tout en notation ABC, du texte simple que lisent les logiciels de musique"
+  ],
+  "replay.got": "La partition, dessinée dans la réponse, avec un bouton qui la joue au piano, une bande qui glisse à mesure que chaque note sonne.",
+  "replay.icon": "music",
+  "replay.chip": "Berceuse du soir",
+  "step.again": "Vous l’enregistrez",
+  "replay.again": "{midi}",
+  "step.made": "{name} le fabrique",
+  "replay.made": "Un fichier MIDI, fabriqué ici même, dans cet onglet, à ouvrir dans votre logiciel de notation ou d’enregistrement. Ou imprimez la partition seule, sur une page propre.",
+  "replay.madeIcon": "music",
+  "replay.madeChip": "Berceuse du soir.mid",
+  "asks.title": "Puis demandez les vôtres",
+  "asks.items": [
+    "Les accords d’un blues en mi, douze mesures, pour guitare.",
+    "Un canon à trois voix pour ma chorale, facile à apprendre.",
+    "Descends-le d’un ton, pour une clarinette.",
+    "Ajoute ces paroles sous la mélodie, une syllabe par note."
+  ],
+  "io.title": "Ce qui entre. Ce qui sort.",
+  "io.why": "Dites le style, l’instrument et la longueur. Une tonalité, un tempo ou un niveau aident, sans être obligatoires.",
+  "io.in": "En entrée",
+  "io.out": "En sortie",
+  "io.ins": [
+    ["file", "Vos mots", "Un style, une tonalité, un instrument, la longueur et la difficulté"],
+    ["music", "Un air en ABC", "Collé depuis un recueil d’airs traditionnels, à dessiner, écouter ou modifier"],
+    ["file", "Un poème", "Des paroles à mettre en musique, une syllabe par note"]
+  ],
+  "io.outs": [
+    ["music", "Une partition dans la réponse", "Dessinée comme une vraie partition, ses lignes coupées à la largeur de votre écran"],
+    ["music", "Son écoute", "Jouée sur les instruments qu’elle nomme, chaque note éclairée quand elle sonne"],
+    ["file", "Une page imprimée", "La partition seule, prête pour le pupitre"],
+    ["file", "Un fichier MIDI ou ABC", "À ouvrir dans un logiciel de notation ou d’enregistrement"]
+  ],
+  "exact.title": "De la musique écrite, pas un enregistrement.",
+  "exact.why": "{name} ne produit pas de son. {name} écrit des notes : une musique à lire, à vérifier, à modifier et à jouer vous-même.",
+  "exact.cards": [
+    ["Des notes à lire", "Une partition comme la lit un musicien : portées, mesures, tonalités, accords, et paroles sous les notes. Chaque note peut être changée."],
+    ["Jouée d’après les notes", "Le son est fabriqué sur votre appareil, à partir de la partition même, sur les instruments qu’elle nomme. Hors ligne la première fois, elle se joue sur un petit synthétiseur."],
+    ["Seulement ce qu’on peut copier", "{name} compose, ou note des musiques du domaine public. D’une chanson encore protégée, vous obtenez les accords ou une courte phrase, pas toute la mélodie."]
+  ],
+  "where.title": "Où va votre musique.",
+  "where.why": "Aucun serveur de {name} ne garde votre demande sous une forme lisible. Ce qui change, c’est l’IA qui répond, et vous la choisissez.",
+  "where.cards": [
+    ["Gardée sur vos appareils", "Vos partitions restent dans votre navigateur, chiffrées. Rien de lisible ne nous parvient."],
+    ["Envoyée à l’IA de votre choix", "Votre demande et ce que vous joignez vont à l’IA choisie, et nulle part ailleurs. Sous chaque réponse, {name} indique où elle a été faite."],
+    ["Jouée là où vous êtes", "Le son est fabriqué dans cet onglet. Les instruments sont téléchargés une fois, à la première lecture, et votre musique n’est envoyée nulle part pour être jouée."]
+  ],
+  "catch.items": [
+    "{name} est gratuit ; l’IA derrière ne l’est pas toujours. Sans inscription, seule l’IA de cet ordinateur répond.",
+    "{name} écrit des notes, pas des fichiers son : ni voix chantée, ni morceau produit, ni MP3.",
+    "Une IA compose par règles plus qu’à l’oreille : un air peut être juste et quelconque. Redemandez, ou changez les notes vous-même.",
+    "D’une chanson encore protégée, vous obtenez les accords ou une courte phrase, jamais toute la mélodie.",
+    "{name} peut se tromper : une mesure peut ne pas tomber juste, une note sortir de la tessiture d’un instrument. Jouez l’air en entier avant une répétition."
+  ],
+  "faq.items": [
+    ["Est-ce gratuit ?", "Oui, sans compte chez {name}. L’IA qui répond peut en demander un : « {free} » en ouvre un gratuit, ou utilisez un abonnement que vous payez déjà, ou l’IA de cet ordinateur, sans aucun compte."],
+    ["Peut-on l’écouter ?", "Oui. Appuyez sur « {play} » sur la partition : elle se joue au piano, ou sur l’instrument demandé, chaque note éclairée quand elle sonne."],
+    ["Peut-on l’imprimer ?", "Oui. La partition s’imprime seule, sur une page propre, et s’enregistre en fichier ABC ou MIDI."],
+    ["Quels instruments ?", "Le piano, sauf si vous en nommez un autre : violon, violoncelle, flûte, clarinette, trompette, guitare, orgue et bien d’autres, seuls ou ensemble."],
+    ["Peut-il écrire pour plusieurs voix ?", "Oui : une mélodie et sa basse, les deux mains d’un piano ou un petit ensemble, chacun sur sa portée."],
+    ["Ça marche dans ma langue ?", "Oui : les titres et les paroles sont dans la vôtre. Les notes se lisent partout de la même façon."]
+  ],
+  "end.title": "Essayez avec la berceuse.",
+  "end.why": "La demande s’ouvre dans {name} et reçoit sa réponse aussitôt, ou dès que vous choisissez une IA. Ensuite, demandez votre propre air."
+}

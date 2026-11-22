@@ -1,0 +1,113 @@
+{
+  "title": "Tableau de suivi gratuit, tenu à jour par l’IA · {name}",
+  "description": "Demandez un suivi : vous obtenez un vrai tableau, aux colonnes typées, que vous modifiez à la main ou que l’IA met à jour, sous votre contrôle. Gratuit.",
+  "eyebrow": "Collections",
+  "h1": "Demandez une liste à tenir, et laissez l’IA la tenir à jour.",
+  "h1.mark": "une liste à tenir",
+  "acts": [["keep", "Demandez une liste à tenir,"], ["update", "et laissez l’IA la tenir à jour."]],
+  "lede": "Candidatures, dépenses, lectures, clients : dites à {name} ce que vous voulez suivre. {name} fait un tableau avec le bon type de colonne pour chaque chose, le montre en tableau, en colonnes ou en fiches, et le met à jour à partir d’un e-mail ou d’un fichier. Chacun de ses changements vous attend.",
+  "cta": "Essayer avec un suivi d’exemple",
+  "see": "Voir comment ça s’est passé",
+  "facts": [
+    "Libre et gratuit",
+    "Rien à installer",
+    "Rien n’est envoyé à {name}"
+  ],
+  "try.ask": "Suis mes candidatures : l’entreprise, le poste, où en est chacune, le jour où relancer et la prochaine étape. Commence par Atelier Nord, responsable administratif, au stade de l’entretien, et Maison Léa, réceptionniste, candidature envoyée.",
+  "pane.brain": "L’IA de votre choix",
+  "pane.ask": "Mets à jour mes candidatures d’après l’e-mail que j’ai collé.",
+  "pane.title": "Une collection tenue dans {name}, en vrai",
+  "pane.try": "C’est une vraie collection. Modifiez une cellule, passez à la vue en colonnes, ou regardez ce que l’IA a changé d’après un e-mail, trois lignes en tout : chaque changement est marqué, et attend que vous l’acceptiez ou le refusiez.",
+  "made.name": "Candidatures",
+  "made.columns": ["Entreprise", "Poste", "État", "À relancer le", "Prochaine étape"],
+  "made.steps": ["À envoyer", "Envoyée", "Entretien", "Offre", "Close"],
+  "made.rows": [
+    ["Atelier Nord", "Responsable administratif", "Entretien", "2", "Les rappeler"],
+    ["Maison Léa", "Réceptionniste", "Envoyée", "", ""],
+    ["Café Nord", "Chef d’équipe", "Envoyée", "", ""],
+    ["Salon Rive", "Accueil", "À envoyer", "", "Écrire la lettre"],
+    ["Boulangerie Martin", "Vendeur", "Envoyée", "", ""],
+    ["Bibliothèque municipale", "Assistant de bibliothèque", "Offre", "4", "Répondre à leur offre"]
+  ],
+  "made.then": [
+    ["Café Nord", "", "Entretien", "6", "Entretien à 10 h"],
+    ["Boulangerie Martin", "", "Close", "", "Le poste est pourvu"],
+    ["Atelier Terre", "Assistant d’atelier", "À envoyer", "", "Postuler avant la fin du mois"]
+  ],
+  "made.why": "D’après l’e-mail que vous avez collé",
+  "replay.title": "Une collection, étape par étape.",
+  "replay.why": "La recherche d’emploi, de la demande à un tableau qui reste à jour : ce que {name} a lu, ce qu’il a fait, et ce qu’il a changé pour que vous vérifiiez.",
+  "step.read": "{name} lit",
+  "replay.reads": [
+    "Votre demande : cinq choses à noter pour chaque candidature",
+    "Les deux candidatures que vous avez citées, pour commencer"
+  ],
+  "replay.works": [
+    "Fait un tableau de cinq colonnes, chacune de son type : des mots, un état par étapes, une date",
+    "Ajouté une vue en colonnes, une par état",
+    "Écrit vos deux candidatures comme premières lignes"
+  ],
+  "replay.got": "La collection, ouverte à côté de votre demande : en tableau, en colonnes ou en fiches. Modifiez n’importe quelle cellule à la main, ajoutez une colonne, triez et filtrez.",
+  "replay.icon": "table",
+  "replay.chip": "Candidatures",
+  "step.again": "Vous redemandez",
+  "replay.again": "Mets-la à jour d’après l’e-mail que j’ai collé.",
+  "step.made": "{name} la modifie",
+  "replay.made": "Deux lignes modifiées et une ajoutée, chaque changement marqué dans le tableau : acceptez-les ou refusez-les un à un, ou tous d’un coup. Téléchargez la collection en classeur Excel quand vous voulez.",
+  "replay.madeIcon": "table",
+  "replay.madeChip": "Candidatures.xlsx",
+  "asks.title": "Puis demandez les vôtres",
+  "asks.items": [
+    "Suis mes dépenses du mois, par catégorie.",
+    "Une liste de lectures : le titre, l’auteur, où j’en suis, une note.",
+    "Ajoute une colonne pour le salaire, en euros.",
+    "Quelles candidatures sont sans réponse depuis deux semaines ?"
+  ],
+  "io.title": "Ce qui entre. Ce qui sort.",
+  "io.why": "Dites ce que vous voulez suivre. Apportez ce que vous avez déjà, ou partez de rien et remplissez au fil de l’eau.",
+  "io.in": "En entrée",
+  "io.out": "En sortie",
+  "io.ins": [
+    ["file", "Vos mots", "Ce qu’il faut suivre, et ce que vous savez déjà"],
+    ["table", "Un tableur", "Excel ou CSV, dont les lignes sont reprises"],
+    ["file", "Un e-mail ou un document", "Lus pour ce qui change : une date, un état, une nouvelle ligne"],
+    ["pdf", "Un PDF", "Une facture ou un relevé, dont les lignes deviennent des lignes du tableau"]
+  ],
+  "io.outs": [
+    ["table", "Un tableau", "Un type par colonne : mots, nombres, montants, dates, choix, personnes, formules"],
+    ["tree", "Une vue en colonnes", "Une colonne par étape, des fiches qu’on fait glisser de l’une à l’autre"],
+    ["table", "Un classeur Excel ou un fichier CSV", "Téléchargés tels qu’affichés, à ouvrir partout"],
+    ["app", "Une page qui la montre", "Un site, une appli ou un document, remplis d’après la collection telle qu’elle est"]
+  ],
+  "exact.title": "Ses changements vous attendent.",
+  "exact.why": "Un suivi ne vaut que si vous lui faites confiance. Ce que l’IA change est marqué, ligne par ligne, tant que vous ne l’avez ni accepté ni refusé.",
+  "exact.cards": [
+    ["Accepter ou refuser", "Chaque ligne que l’IA a modifiée ou ajoutée est marquée. Acceptez-les ou refusez-les une à une, ou toutes d’un coup."],
+    ["Chaque changement gardé", "Ouvrez une ligne pour voir ses derniers changements : ce que chacun a posé, la valeur d’avant, qui l’a fait et quand."],
+    ["Calculé, pas deviné", "Une colonne de formule est calculée par {name} lui-même, à partir des autres cellules de la ligne, jamais estimée par l’IA."]
+  ],
+  "where.title": "Où vit votre liste.",
+  "where.why": "Sur vos appareils. Partagée seulement avec les personnes que vous invitez.",
+  "where.cards": [
+    ["Gardée sur vos appareils", "Votre collection, ce sont de simples fichiers dans votre navigateur, chiffrés. Rien de lisible ne nous parvient."],
+    ["Envoyée à l’IA de votre choix", "Quand vous demandez, ses lignes vont à l’IA choisie, et nulle part ailleurs. Sous chaque réponse, {name} indique où elle a été faite."],
+    ["Partagée par vous seul", "Les autres ne la voient qu’une fois invités à y travailler. Leurs changements se fondent dans les vôtres, cellule par cellule."]
+  ],
+  "catch.items": [
+    "{name} est gratuit ; l’IA derrière ne l’est pas toujours. Faire ou modifier une collection demande une IA dans le cloud ou un abonnement que vous payez : l’IA de cet ordinateur en lit une, et n’en modifie pas.",
+    "Une collection, c’est un seul tableau, pas un classeur de feuilles liées. Pour un gros tableur, {name} travaille plutôt sur votre fichier Excel.",
+    "L’IA change ce que vous lui demandez. Elle ne surveille pas votre boîte de réception : collez l’e-mail, joignez le fichier, ou connectez le service.",
+    "Elle lit 200 lignes à la fois : sur une longue liste, interrogez-la sur une partie.",
+    "{name} peut se tromper. C’est pour cela que ses changements vous attendent."
+  ],
+  "faq.items": [
+    ["Est-ce gratuit ?", "Oui, sans compte chez {name}. L’IA qui répond peut en demander un : « {free} » en ouvre un gratuit, ou utilisez un abonnement que vous payez déjà."],
+    ["Est-ce un tableur ?", "C’est plus simple : un seul tableau, avec un type par colonne, qui se montre aussi en colonnes ou en fiches. Pas de cellules à fusionner, pas de feuilles à lier."],
+    ["Peut-on la modifier soi-même ?", "Oui, entièrement. Cliquez sur une cellule pour la changer, faites glisser une fiche vers une autre étape, ajoutez, masquez et triez des colonnes. L’annulation fonctionne."],
+    ["Peut-on récupérer sa liste ?", "Oui : en classeur Excel ou en fichier CSV, en copie de ses lignes, imprimée, ou par un lien à partager."],
+    ["Peut-on la tenir à plusieurs ?", "Oui. Partagez-la pour y travailler ensemble : chacun voit chaque changement au moment où il est fait."],
+    ["Ça marche dans ma langue ?", "Oui : ses colonnes et ses lignes sont dans la vôtre, de droite à gauche aussi, avec les dates et les montants comme votre langue les écrit."]
+  ],
+  "end.title": "Essayez avec la recherche d’emploi.",
+  "end.why": "La demande s’ouvre dans {name} et reçoit sa réponse dès que vous choisissez une IA. Ensuite, demandez votre propre liste."
+}

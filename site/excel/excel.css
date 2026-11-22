@@ -16,6 +16,15 @@
 .job-said { display: flex; flex-direction: column; align-items: flex-start; gap: 0.6rem; margin-inline: 1.1rem; }
 .job-box { margin-inline: 1rem; padding: 0.7rem 1rem; border: 1px solid var(--line); border-radius: 1.375rem; color: var(--ink-faint); }
 .job-ai { text-align: center; color: var(--ink-faint); font-size: 0.75rem; }
+/* What Jean made, live in Jean's own view (site/creation.js): the promise, then the creation as wide as the page, under the request that made it and over what to try there */
+.job-hero.is-made { grid-template-columns: minmax(0, 1fr); gap: 2.25rem; padding-block-start: clamp(2rem, 5vw, 3.5rem); }
+.job-hero.is-made .site-hero-text { max-inline-size: 60rem; gap: 1.1rem; }
+.site-creation { display: block; inline-size: 100%; block-size: var(--creation, min(44rem, 82dvh)); border: 0; border-block: 1px solid var(--line); }
+.site-creation.is-whiteboard { --creation: min(34rem, 82dvh); }
+/* A game's screen is as wide as it is drawn: sixteen by nine */
+.site-creation.is-game { block-size: auto; max-block-size: 82dvh; aspect-ratio: 16 / 9; }
+.job-try { display: flex; align-items: center; gap: 0.6rem; margin-inline: 1.1rem; color: var(--ink-soft); font-size: 0.9375rem; }
+.job-try .felt-point { flex: none; inline-size: 2.2rem; }
 /* A file, as Jean shows one in a request or under an answer */
 .job-file { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.15rem 0.6rem 0.15rem 0.45rem; border: 1px solid var(--line); border-radius: 0.5rem; background: var(--room); color: var(--ink); font-size: 0.8125rem; line-height: 1.5; overflow-wrap: anywhere; }
 .job-file .icon { inline-size: 1rem; block-size: 1rem; color: var(--flame); }

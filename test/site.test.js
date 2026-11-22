@@ -7,6 +7,7 @@ import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import { readFile } from 'node:fs/promises'
 import { test } from 'node:test'
+import { Script } from 'node:vm'
 import { fileURLToPath } from 'node:url'
 import { BRAND } from '../app/brand.js'
 import { shared } from '../app/caps/interactive/live.js'
@@ -30,7 +31,7 @@ const jean = () => built
 test('every page, in every language, is what a page of the site must be, as jean.is has them', async () => {
   const site = await jean()
   assert.deepEqual(checkSite(site, { base: BASE, served }), [])
-  assert.deepEqual([...new Set(site.pages.map((page) => page.name))], ['accessibility', 'all-ai', 'associations', 'charter', 'compare', 'compare-chatgpt', 'compare-chatgpt-work', 'compare-claude-cowork', 'compare-gemini-tasks', 'compare-manus', 'compare-notebooklm', 'compare-open-webui', 'compare-openclaw', 'diagrams', 'enterprise', 'enterprise-key', 'excel', 'family', 'files', 'finance', 'help', 'help/add-files', 'help/ai-sees', 'help/asks-first', 'help/back-up', 'help/choose-ai', 'help/couldnt-reach', 'help/first-task', 'help/is-free', 'help/key-refused', 'help/on-device', 'help/openrouter', 'help/plan-stopped', 'help/send-to-someone', 'help/skills', 'help/tasks-gone', 'help/together', 'help/use-a-key', 'help/what-jean-can-do', 'help/what-jean-is', 'help/where-kept', 'help/words', 'help/your-devices', 'home', 'import', 'offline', 'pdf', 'pricing', 'privacy', 'public-sector', 'site-map', 'slides', 'teachers', 'terms', 'watch', 'work'])
+  assert.deepEqual([...new Set(site.pages.map((page) => page.name))], ['accessibility', 'all-ai', 'apps', 'associations', 'charter', 'collections', 'compare', 'compare-chatgpt', 'compare-chatgpt-work', 'compare-claude-cowork', 'compare-gemini-tasks', 'compare-manus', 'compare-notebooklm', 'compare-open-webui', 'compare-openclaw', 'designs', 'diagrams', 'documents', 'enterprise', 'enterprise-key', 'excel', 'family', 'files', 'finance', 'games', 'help', 'help/add-files', 'help/ai-sees', 'help/asks-first', 'help/back-up', 'help/choose-ai', 'help/couldnt-reach', 'help/first-task', 'help/is-free', 'help/key-refused', 'help/on-device', 'help/openrouter', 'help/plan-stopped', 'help/send-to-someone', 'help/skills', 'help/tasks-gone', 'help/together', 'help/use-a-key', 'help/what-jean-can-do', 'help/what-jean-is', 'help/where-kept', 'help/words', 'help/your-devices', 'home', 'import', 'offline', 'pdf', 'pricing', 'privacy', 'prototypes', 'public-sector', 'sheet-music', 'site-map', 'slides', 'teachers', 'terms', 'watch', 'websites', 'whiteboards', 'work'])
 })
 
 test('a link to jean.is shows the card of its page’s language, and one to an organisation’s copy the welcome screen', async () => {
@@ -221,11 +222,54 @@ test('/diagrams’ loan is a page Jean’s own reader works out in each of its l
   }
 })
 
+test('/apps’ app is a page as Jean’s skill has one written, in each of its languages: from its title, one style and one script, the room’s colours alone, every field named, nothing from elsewhere', async () => {
+  const site = await jean()
+  for (const lang of ['en', 'fr']) {
+    const records = site.files[`demos/apps.${lang}.jsonl`].trim().split('\n').map((line) => JSON.parse(line)), words = /** @type {Record<string, any>} */ (site.words.get('apps')?.[lang])
+    const answer = records.at(-1).update.content.text, [, app] = /^[^\n]+\n\n```html\n([\s\S]*?)\n```\n\n[^\n]+$/.exec(answer) ?? []
+    assert.ok(app, lang)
+    assert.ok(app.startsWith(`<title>${words['app.title']}</title>\n<nav aria-label="`), lang)
+    assert.deepEqual([app.match(/<style>/g)?.length, app.match(/<script>/g)?.length, app.match(/<section /g)?.length], [1, 1, 2], lang)
+    // Its script reads as a program, keeps what is entered under one key, and never asks by a dialog of the browser's.
+    const script = /<script>\n([\s\S]*?)\n<\/script>/.exec(app)?.[1] ?? ''
+    assert.doesNotThrow(() => new Script(script), lang)
+    assert.match(script, /localStorage\.getItem\(KEY\)[\s\S]*localStorage\.setItem\(KEY, /, lang)
+    assert.doesNotMatch(app, /https?:\/\/|\balert\(|\bconfirm\(|\bprompt\(|#[\da-f]{3,8}\b|\brgb\(/i, lang)
+    // Every field has its label, and each colour is one of the room's.
+    for (const [, id] of app.matchAll(/<input id="(\w+)"/g)) assert.ok(app.includes(`<label for="${id}">`), `${lang}: ${id}`)
+    for (const [, name] of app.matchAll(/var\((--[\w-]+)\)/g)) assert.match(name, /^--(color-(text|border|background|ring)-|border-radius-|font-)/, `${lang}: ${name}`)
+    // Its samples are said to be samples, and their hours are numbers.
+    assert.ok(app.includes(words['app.samples']) && words['app.sample'].every((/** @type {string[]} */ [, hours]) => Number(hours) > 0), lang)
+  }
+})
+
+test('/sheet-music’s tune is music as Jean’s skill has it written, in each of its languages: its header in order, the key last, every bar of each hand adding up to the metre', async () => {
+  const site = await jean()
+  const { BEATS } = await import('../site/sheet-music/page.js')
+  for (const lang of ['en', 'fr']) {
+    const records = site.files[`demos/sheet-music.${lang}.jsonl`].trim().split('\n').map((line) => JSON.parse(line)), words = /** @type {Record<string, any>} */ (site.words.get('sheet-music')?.[lang])
+    const [, abc] = /^```abc\n([\s\S]*?)\n```\n\n[^\n]+$/.exec(records.at(-1).update.content.text) ?? []
+    assert.ok(abc, lang)
+    const lines = abc.split('\n'), at = lines.indexOf('K:G')
+    assert.deepEqual(lines.slice(0, at + 1).map((line) => line.split(':')[0]), ['X', 'T', 'M', 'L', 'Q', '%%score {1 2}', 'V', 'V', 'K'], lang)
+    assert.deepEqual([lines[1], lines[2], lines[3]], [`T:${words['tune.title']}`, `M:${BEATS}/4`, 'L:1/4'], lang)
+    // Each hand's eight bars, each note its letter and how many quarter notes it lasts.
+    const hands = [lines[lines.indexOf('V:1', at) + 1], lines[lines.indexOf('V:2', at) + 1]]
+    for (const hand of hands) {
+      const bars = hand.replace(/\|\]$/, '').split('|').map((bar) => bar.trim()).filter(Boolean)
+      assert.equal(bars.length, 8, `${lang}: ${hand}`)
+      for (const bar of bars) assert.equal(bar.split(/\s+/).reduce((sum, note) => sum + Number(/^[A-Ga-g][,']*(\d*)$/.exec(note)?.[1] || (/^[A-Ga-g][,']*$/.test(note) ? 1 : NaN)), 0), BEATS, `${lang}: ${bar}`)
+    }
+  }
+})
+
 test('a page whose pane draws a conversation Jean can play frames Jean’s demo of it, writes its task beside it from its words, and allows that frame alone; a help article’s figures frame other pages’', async () => {
   const site = await jean()
   const pages = await sitePages()
   const framing = [...pages].filter(([, page]) => page.frames).map(([name]) => name).sort()
-  assert.deepEqual(framing, ['diagrams', 'enterprise', 'excel', 'help/add-files', 'help/asks-first', 'help/first-task', 'help/what-jean-is', 'offline', 'slides', 'watch', 'work'])
+  assert.deepEqual(framing, ['apps', 'collections', 'designs', 'diagrams', 'documents', 'enterprise', 'excel', 'games', 'help/add-files', 'help/asks-first', 'help/first-task', 'help/what-jean-is', 'offline', 'prototypes', 'sheet-music', 'slides', 'watch', 'websites', 'whiteboards', 'work'])
+  // The pages whose pane is no conversation but what Jean made, live, as test/creation.test.js holds them.
+  const made = ['collections', 'designs', 'documents', 'games', 'prototypes', 'websites', 'whiteboards']
   const tasks = Object.fromEntries(Object.entries(site.files).filter(([path]) => /^demos\/.*\.jsonl$/.test(path)).map(([path, file]) => [path, file.trim().split('\n').map((line) => JSON.parse(line))]))
   // The homepage is a part of index.html, the app's own document, whose policy is the app's.
   for (const page of site.pages.filter((at) => !at.fragment)) {
@@ -237,7 +281,7 @@ test('a page whose pane draws a conversation Jean can play frames Jean’s demo 
     }
     assert.match(policy, / frame-src 'self';/, page.path)
     // /watch frames its reels' player, as test/watch.test.js holds it.
-    if (page.name === 'watch') continue
+    if (page.name === 'watch' || made.includes(page.name)) continue
     const words = { ...site.words.get(page.name)?.en, ...site.words.get(page.name)?.[page.lang] }
     const frames = [...html.matchAll(/<iframe class="site-demo" src="([^"]+)" title="[^"]+" loading="lazy"><\/iframe>/g)].map(([, src]) => src.replaceAll('&amp;', '&'))
     for (const src of frames) assert.equal(src.split('#')[0], `${'../'.repeat(page.address.split('/').length - 1)}demo.html`, page.path)
@@ -271,7 +315,7 @@ test('a page whose pane draws a conversation Jean can play frames Jean’s demo 
     assert.ok(brains.length && brains.every((brain) => brain.title === words['demo.brain'] && !brain.rawInput), file)
     assert.equal(records.at(-1).update.sessionUpdate, 'agent_message_chunk', file)
   }
-  assert.deepEqual(Object.keys(tasks).filter((path) => !/^demos\/(diagrams|reels)\//.test(path)).sort(), framing.filter((name) => name !== 'help/what-jean-is' && name !== 'watch').flatMap((name) => Object.keys(pages.get(name)?.addresses ?? {}).map((lang) => `demos/${name}.${lang}.jsonl`)).sort())
+  assert.deepEqual(Object.keys(tasks).filter((path) => !/^demos\/(diagrams|reels)\//.test(path)).sort(), framing.filter((name) => name !== 'help/what-jean-is' && name !== 'watch' && !made.includes(name)).flatMap((name) => Object.keys(pages.get(name)?.addresses ?? {}).map((lang) => `demos/${name}.${lang}.jsonl`)).sort())
   // Excel's: the sample's question, the program that works out the growth from sales.csv, and its chart.
   const app = JSON.parse(await readFile(new URL('../app/locales/fr.json', import.meta.url), 'utf8'))
   const excel = tasks['demos/excel.fr.jsonl'].slice(1)

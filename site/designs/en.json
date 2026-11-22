@@ -1,0 +1,105 @@
+{
+  "title": "Free AI poster and invitation maker, laid out for you · {name}",
+  "description": "Give the facts of your event and get an invitation, a poster or a post laid out three ways: pick one, change anything by hand, then print or send it. Free.",
+  "eyebrow": "Designs",
+  "h1": "Give the facts, and get a design ready to print or post.",
+  "h1.mark": "the facts",
+  "acts": [["facts", "Give the facts,"], ["design", "and get a design ready to print or post."]],
+  "lede": "An invitation, a poster, a flyer, a menu, a post: tell {name} what it must say. It lays your words out three ways, in colours and type that go together, and opens the first beside your request. Pick a take, move anything, retype any word, then print it or send it as a picture.",
+  "cta": "Try it with a sample post",
+  "see": "See how it went",
+  "facts": [
+    "Free and open source",
+    "Nothing to install",
+    "Nothing is sent to {name}"
+  ],
+  "try.ask": "Make a square post to announce the open day of my pottery studio, Atelier Terre, in Lyon, on 14 June from 2 pm to 6 pm. Come and try the wheel: tea, cake and clay for everyone. It is free, and nobody needs to book.",
+  "pane.brain": "The AI you chose",
+  "pane.ask": "A post to announce the open day of my pottery studio, on 14 June.",
+  "pane.title": "A design made in {name}, live",
+  "pane.try": "This is the design itself. Pick another take in the row above it, double-click any words to change them, or drag a part to move it. A dot marks what needs a look before printing: here, the address to fill in.",
+  "pane.asked": "In {name}, this points the AI at that part: say what to change, and its change waits for you to accept or reject.",
+  "made.name": "Open day post",
+  "made.occasion": "A pottery studio’s open day, warm and friendly",
+  "made.title": "Open day",
+  "made.words": "Come and try the wheel. Tea, cake and clay for everyone.",
+  "made.when": "14 June, from 2 pm to 6 pm",
+  "made.where": "[Address], Lyon",
+  "made.who": "Atelier Terre",
+  "made.small": "Free. No booking needed.",
+  "replay.title": "One design, step by step.",
+  "replay.why": "The studio’s post, from the facts to the picture it publishes: what {name} read, what it laid out, and what you finish by hand.",
+  "step.read": "{name} reads",
+  "replay.reads": [
+    "Your request: an open day, its date and hours, what happens, that it is free",
+    "What it lacks: the studio’s address, left as a gap in square brackets"
+  ],
+  "replay.works": [
+    "Gave each fact its role: the big words, the date, the place, who it is from, the small print",
+    "Laid them out three ways from its own layouts, in colours and type that go together",
+    "Marked what needs a look before printing: the address to fill in"
+  ],
+  "replay.got": "The post, open beside your request, with other takes in a row above it. Every part moves, resizes and retypes, by hand or with the keyboard.",
+  "replay.icon": "picture",
+  "replay.chip": "Open day post",
+  "step.again": "You save it",
+  "replay.again": "The picture, as a post",
+  "step.made": "{name} makes it",
+  "replay.made": "Its picture, sized for a post, ready to publish, or again for a story. Or a page to print, and the design’s own file, which opens anywhere.",
+  "replay.madeIcon": "picture",
+  "replay.madeChip": "Open day post.png",
+  "asks.title": "Then ask your own",
+  "asks.items": [
+    "A poster for the school fair on 28 June, with its programme.",
+    "A menu for Friday’s dinner: three starters, three mains, two desserts.",
+    "A square post announcing our new opening hours.",
+    "Make the title larger, and the colours warmer."
+  ],
+  "io.title": "What goes in. What comes out.",
+  "io.why": "Say what it is for and give its facts, as you would to a friend. What is missing is left as a gap for you to fill.",
+  "io.in": "In",
+  "io.out": "Out",
+  "io.ins": [
+    ["file", "The facts", "What, when, where and who it is from, in your own words"],
+    ["picture", "A photo", "Dropped on the design, it fills its frame"],
+    ["picture", "A logo", "From your design system, placed in its corner"],
+    ["table", "A list you keep", "A design for each row: badges, place cards, certificates"]
+  ],
+  "io.outs": [
+    ["picture", "A design beside your request", "Three takes to pick from, every part yours to move and retype"],
+    ["pdf", "A page to print", "Or to save as PDF, two A5s or four A6s to a sheet"],
+    ["picture", "A picture", "As it is, or sized for a post or a story"],
+    ["file", "The design’s file", "An SVG that opens anywhere, and in {name} again"]
+  ],
+  "exact.title": "Laid out by rules, not by chance.",
+  "exact.why": "An AI that draws a poster as one picture misspells your words, and can’t be corrected. {name} asks the AI for the facts only, and lays them out itself: real words, real shapes, all of them yours to change.",
+  "exact.cards": [
+    ["Your words, letter for letter", "The title, the date and the place are text, not pixels: exactly as you gave them, and yours to retype."],
+    ["Checked before printing", "A dot marks what needs a look, with its fix beside it: a gap to fill, a weekday that isn’t its date’s, words hard to read or too near the edge."],
+    ["Nothing made up", "A date, a place or a phone number you didn’t give is never invented. Where the design can’t do without one, it leaves a gap in square brackets."]
+  ],
+  "where.title": "Where your design goes.",
+  "where.why": "No {name} server keeps your design in a form it can read. What changes is the AI that answers, and you choose it.",
+  "where.cards": [
+    ["Kept on your devices", "Your design is one file in your browser, encrypted. Nothing we can read reaches us."],
+    ["Sent to the AI you chose", "Your request and what you attach go to the AI you picked, and nowhere else. Under every answer, {name} says where it was done."],
+    ["Finished without the AI", "Picking a take, moving a part or changing a colour happens on your device: nothing is sent, and no AI is asked."]
+  ],
+  "catch.items": [
+    "{name} is free; the AI behind it may not be. Without a sign-up, only the AI on this computer answers.",
+    "Its picture is made by an AI that draws, once you have one. Without one, the design keeps a frame for a photo of yours.",
+    "One page. Not yet: drawing by hand, grouping parts, turning one round, several pages, removing a picture’s background.",
+    "A design isn’t worked on together yet: one person finishes it at a time.",
+    "{name} can be wrong. Read the date and the place again before you print fifty."
+  ],
+  "faq.items": [
+    ["Is it free?", "Yes, with no account at {name}. The AI that answers may want one: {free} opens a free one, or use a plan you already pay for, or the AI on this computer, with no account at all."],
+    ["What can it make?", "Invitations, posters, flyers, cards, menus, certificates and posts: anything to print, post or send as a picture, on one page."],
+    ["Can I change the layout?", "Yes. Pick another take, then move, resize or delete any part, change its colours and type, and add words, a photo, a shape, an ornament or a QR code."],
+    ["Can I print it?", "Yes: as a page to print or save as PDF, two A5s or four A6s to a sheet, or as a picture."],
+    ["Can it use my colours and my logo?", "Yes. With a design system set, the first take wears your colours and fonts, and your logo goes in its corner."],
+    ["Does it work in my language?", "Yes: its words are yours, right to left too, in type that has every letter of your language."]
+  ],
+  "end.title": "Try it with the studio’s post.",
+  "end.why": "The request opens in {name} and is answered at once, or as soon as you choose an AI. Then give your own facts."
+}
