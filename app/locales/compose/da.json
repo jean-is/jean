@@ -2,7 +2,6 @@
   "compose.links": "Forbindelser til andre kreationer",
   "compose.uses": "Bruger",
   "compose.usedIn": "Bruges i",
-  "compose.none": "Ingen forbindelser til andre kreationer endnu.",
   "compose.live": "Live",
   "compose.missing": "Projektet har ingen sådan samling.",
   "compose.shared": "Samlinger vises kun i dette projekts egne opgaver.",

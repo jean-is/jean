@@ -2,7 +2,6 @@
   "compose.links": "ほかの作成物とのつながり",
   "compose.uses": "使っているもの",
   "compose.usedIn": "使われている場所",
-  "compose.none": "ほかの作成物とのつながりはまだありません。",
   "compose.live": "最新",
   "compose.missing": "このプロジェクトにはそのコレクションがありません。",
   "compose.shared": "コレクションは、このプロジェクト自身のタスクでのみ表示されます。",

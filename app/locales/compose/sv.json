@@ -2,7 +2,6 @@
   "compose.links": "Kopplingar till andra skapelser",
   "compose.uses": "Använder",
   "compose.usedIn": "Används i",
-  "compose.none": "Inga kopplingar till andra skapelser än.",
   "compose.live": "Live",
   "compose.missing": "Projektet har ingen sådan samling.",
   "compose.shared": "Samlingar visas bara i projektets egna uppgifter.",

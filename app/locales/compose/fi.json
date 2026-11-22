@@ -2,7 +2,6 @@
   "compose.links": "Yhteydet muihin luomuksiin",
   "compose.uses": "Käyttää",
   "compose.usedIn": "Käytössä kohteessa",
-  "compose.none": "Ei vielä yhteyksiä muihin luomuksiin.",
   "compose.live": "Ajantasainen",
   "compose.missing": "Tässä projektissa ei ole tällaista kokoelmaa.",
   "compose.shared": "Kokoelmat näkyvät vain tämän projektin omissa tehtävissä.",

@@ -2,7 +2,6 @@
   "compose.links": "Verbindungen zu anderen Kreationen",
   "compose.uses": "Verwendet",
   "compose.usedIn": "Verwendet in",
-  "compose.none": "Noch keine Verbindungen zu anderen Kreationen.",
   "compose.live": "Live",
   "compose.missing": "Dieses Projekt hat keine solche Sammlung.",
   "compose.shared": "Sammlungen erscheinen nur in den eigenen Aufgaben dieses Projekts.",

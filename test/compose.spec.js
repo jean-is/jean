@@ -644,6 +644,26 @@ test('one clock: a routine that reads the bakers runs as they change, given thei
   expect(checked.says).toMatchObject({ kind: 'run', creation: /[0-9A-HJKMNP-TV-Z]{26}/.exec(source)?.[0] })
 })
 
+test('a creation outside the graph has no links menu, and has one once something uses it', async ({ page }) => {
+  await start(page)
+  await seed(page)
+  const LONE = 'collections/01K85Z1T00000000000000000C-lone'
+  await page.evaluate(async (LONE) => {
+    const { app } = await import('/ui/state.js'), at = '2026-11-21T10:00:00.000Z'
+    await app.fs.write(`${app.projectDir}/${LONE}/collection.json`, JSON.stringify({ format: 1, id: LONE.slice(12, 38), name: 'Lone', author: 'user', created: at, changed: at, properties: [{ id: 'name', name: 'Name', type: 'text' }], views: [{ id: 'table', type: 'table' }] }))
+    await app.fs.write(`${app.projectDir}/${LONE}/changes.jsonl`, `${JSON.stringify({ row: '01K8000000000000000000000C', set: { name: 'Alone' }, at, by: 'user' })}\n`)
+  }, LONE)
+  const links = page.locator('app-preview').getByRole('button', { name: 'Links with other creations' })
+  await show(page, LONE, 'Lone')
+  await expect(page.locator('app-preview .table-grid')).toBeVisible()
+  await expect(links).toHaveCount(0)
+  // Slides that show it: it is in the graph, and its head shows the menu.
+  await page.evaluate(async (LONE) => { const { app } = await import('/ui/state.js'); await (await import('/caps/skills/decks.js')).rewrite('decks/01K85Z1T00000000000000000V-lone.deck.html', `# Lone\n\n---\n\n\`\`\`table\n${LONE}\n\`\`\`\n`, 'Lone slides', app.projectDir) }, LONE)
+  await expect(links).toHaveCount(1)
+  await links.click()
+  await expect(page.locator('.menu:popover-open').getByRole('group', { name: 'Used in' })).toContainText('Lone slides')
+})
+
 test('a recipe that sums up the approved artisans on a slide updates by itself once its user turns that on, and only then; a run is paid once per version read', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)

@@ -345,7 +345,7 @@ async function propagate(place, dir, depth = 0) {
 // A consumer written: the graph is read again, a second later, so that a toast's words are as it is.
 const later = new Map()
 app.fs.watch?.((path) => {
-  const [, dir, folder, file] = /^(.*)\/(collections\/[^/]+)\/(collection\.json|changes\.jsonl|versions\/\d+\.json)$/.exec(path) ?? []; if (/\/(decks|documents|sites|prototypes|games|designs)\/|\/(collection|kit)\.json$/.test(path)) read.at = 0, clearTimeout(later.get('graph')), later.set('graph', setTimeout(() => app.projectDir && graph(), 1000))
+  const [, dir, folder, file] = /^(.*)\/(collections\/[^/]+)\/(collection\.json|changes\.jsonl|versions\/\d+\.json)$/.exec(path) ?? []; if (/(^|\/)(decks|documents|sites|prototypes|games|designs|routines)\/|\/(collection|kit|port)\.json$|\/versions\/\d+\.json$/.test(path)) read.at = 0, checked.clear(), (inside.value = new Map(inside.peek())), clearTimeout(later.get('graph')), later.set('graph', setTimeout(() => app.projectDir && graph(), 1000))
   if (file === 'collection.json') clearTimeout(later.get(folder)), later.set(folder, setTimeout(() => publish(folder, 'schema', dir), 500)), dir === app.projectDir && void retyped(folder, dir)
   if (folder && dir === app.projectDir) void propagate(folder, dir)
 }, { all: true })
@@ -394,6 +394,10 @@ async function choose(from, index, change) {
 const PACES = [['', 'compose.byHand'], ['5 min', 'compose.every5'], ['60 min', 'compose.hourly'], ['auto', 'compose.auto']]
 /** What the pane's head lists for each place, once read: `source`, a collection, not a whiteboard; `runs`, each `ask`'s last run; `proofs`, the certificates of what each shows, checked. @typedef {{ source: boolean, fed: boolean, uses: Edge[], usedIn: Edge[], further: [string, string][], names: Map<string, string>, versions: Map<string, (Version & { text?: string })[]>, old: Map<Edge, [string, string][]>, runs: Map<Edge, Run | undefined>, proofs: Map<Edge, { chain: import('../receipt/certificate.js').Sealed[], holds: boolean, n?: number } | null>, changes: number, broken: string[] }} Links */
 const links = signal(/** @type {Map<string, Links>} */ (new Map()))
+/** Whether each place is in the graph, read as its pane's head first draws and again after any change of the graph, the last answer kept meanwhile so that an open menu stays: a link to or from it, a version, an open port or a source (a routine naming it). */
+const inside = signal(/** @type {Map<string, boolean>} */ (new Map())), asking = new Set(), checked = new Set()
+const within = (/** @type {string} */ uri, dir = app.projectDir) => (asking.add(uri), checked.add(uri), Promise.all([graph(dir), versionsOf(dir, uri), PLACE.test(uri) && portOf(dir, uri), PLACE.test(uri) ? import('../routines/schedule.js').then(({ listRoutines }) => listRoutines(app.fs, app.project.peek().data.default === true ? '' : dir)).catch(() => []) : []])
+  .then(([{ edges }, versions, port, routines]) => { asking.delete(uri); inside.value = new Map(inside.peek()).set(uri, edges.some((edge) => edge.from === uri || edge.to === uri) || versions.length > 0 || Boolean(port) || routines.some((one) => one.request.includes(uri))) }))
 /** Each place's links, read as its menu opens. @param {string} uri */
 async function linksOf(uri) {
   const dir = app.projectDir, tables = await import('../tables/tables.js'), { edges, names } = await graph(dir), uses = edges.filter((edge) => edge.from === uri && names.has(edge.to))
@@ -420,13 +424,15 @@ const deep = signal('')
 let fed
 
 /**
- * The pane's head, for a collection, slides or a document: a button whose menu lists what uses it and what it uses, each with the version it
+ * The pane's head, for a creation in the graph, none for one outside it: a button whose menu lists what uses it and what it uses, each with the version it
  * reads, then for a collection where its rows come from and its versions, each status under the row it is about. A reference used opens its
  * settings in the same menu, Back returning to the list: the version it shows, when its `ask` runs, its certificate, the collection itself.
  * @param {{ uri: string }} file
  */
 function head({ uri }) {
   if (!PLACE.test(uri) && !/^files\/sha256-/.test(uri) && !CONSUMERS.some(([folder, own]) => uri.startsWith(`${folder}/`) && own.test(uri.slice(folder.length + 1)))) return nothing
+  if (!checked.has(uri) && !asking.has(uri)) void within(uri)
+  if (!inside.value.get(uri)) return nothing
   const id = `links-${uri}`, these = links.value.get(uri), date = new Intl.DateTimeFormat(intlLocales(locale.value), { dateStyle: 'medium', timeStyle: 'short' }), name = (/** @type {string} */ place) => these?.names.get(place) ?? place
   const open = (/** @type {string} */ place, /** @type {unknown} */ value = nothing) => html`<button type="button" popovertarget=${id} popovertargetaction="hide" @click=${() => (place === KIT || ROUTINE.test(place) ? import('../../ui/dialogs.js').then(({ openSettings }) => openSettings(ROUTINE.test(place) ? 'routines' : app.project.peek().data.default === true ? 'appearance/kit' : 'appearance/kit-project')) : place.startsWith('conversations/') ? openConversation(`${app.projectDir}/${place}`) : openFile({ type: 'resource_link', uri: place, name: name(place) }))}>${KIND[place.split('/')[0]] ?? icons.layers}<span dir="auto">${name(place)}</span>${value}</button>`
   const group = (/** @type {string} */ key, /** @type {unknown[]} */ rows) => (rows.length ? html`<div role="group" aria-label=${t(key)}><p class="menu-heading" aria-hidden="true">${t(key)}</p><ul>${rows}</ul></div>` : nothing)
@@ -453,7 +459,7 @@ function head({ uri }) {
   const list = these && html`${group('compose.usedIn', these.usedIn.map((one) => html`<li>${open(one.from, beside(one))}</li>`))}
     ${group('compose.uses', these.uses.map((one) => (one.kind && one.kind !== 'kit' ? html`<li>${open(one.to, beside(one))}</li>` : html`<li><button type="button" class="submenu" @click=${() => go(`${uri} ${one.index}`)}>${KIND[one.to.split('/')[0]]}<span dir="auto">${name(one.to)}</span>${beside(one)}${icons.chevron}</button></li>`)))}
     ${group('compose.further', these.further.map(([place, via]) => html`<li>${open(place, html`<span class="menu-value" dir="auto">${t('compose.through', { name: name(via) })}</span>`)}</li>`))}
-    ${these.fed && fed ? fed.linked(uri, id) : nothing}${versions}${these.uses.length + these.usedIn.length + these.further.length || these.source ? nothing : html`<p class="menu-heading">${t('compose.none')}</p>`}`
+    ${these.fed && fed ? fed.linked(uri, id) : nothing}${versions}`
   // Keyed by its place: a pane that shows another creation draws its menu anew, closed; closed, it opens on its list again.
   return keyed(uri, html`<button class="icon-button" popovertarget=${id} aria-label=${t('compose.links')}>${icons.graph}</button>
     <div id=${id} class="menu links-menu" popover @toggle=${(/** @type {ToggleEvent} */ event) => (event.newState === 'open' ? linksOf(uri) : (deep.value = ''))}>${edge ? settings(edge) : list || nothing}</div>`)

@@ -2,7 +2,6 @@
   "compose.links": "Liens avec d’autres créations",
   "compose.uses": "Utilise",
   "compose.usedIn": "Apparaît dans",
-  "compose.none": "Aucun lien avec d’autres créations pour l’instant.",
   "compose.live": "En direct",
   "compose.missing": "Ce projet n’a pas cette collection.",
   "compose.shared": "Les collections ne s’affichent que dans les tâches de ce projet.",

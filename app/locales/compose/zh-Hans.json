@@ -2,7 +2,6 @@
   "compose.links": "与其他创作的关联",
   "compose.uses": "使用",
   "compose.usedIn": "被用于",
-  "compose.none": "尚未与其他创作关联。",
   "compose.live": "实时",
   "compose.missing": "此项目中没有这个合集。",
   "compose.shared": "合集只会显示在此项目自己的任务中。",
