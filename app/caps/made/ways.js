@@ -19,9 +19,9 @@ import { downloadWord, printDrawn, printPage, rowsOf, withRows } from './paper.j
  * @param {Element} pane @returns {import('../../ui/out.js').Ways}
  */
 export const documentWays = (file, { name, head, editor }, pane) => ({
-  share: async () => ({ text: await withRows(editor.markdown(true)) }), thing: { kind: /** @type {const} */ ('document'), uri: file.uri }, send: { make: async () => ({ title: name, text: editor.markdown(true) }) },
+  share: async () => ({ text: await withRows(editor.markdown(true), file.uri) }), thing: { kind: /** @type {const} */ ('document'), uri: file.uri }, send: { make: async () => ({ title: name, text: await withRows(editor.markdown(true), file.uri) }) },
   copy: { id: 'copy', run: () => copyRich(editor.markdown(true), pane.querySelector('.view')) },
-  files: [{ id: 'docx', glyph: icons.file, label: t('made.out.word'), run: () => downloadWord(editor.markdown(true).trim() || `# ${name}`, name, { made: head.author === 'jean', page: editor.view.dom }) },
+  files: [{ id: 'docx', glyph: icons.file, label: t('made.out.word'), run: () => downloadWord(editor.markdown(true).trim() || `# ${name}`, name, { made: head.author === 'jean', page: editor.view.dom, from: file.uri }) },
     { id: '', glyph: icons.download, label: t('made.out.markdown'), run: async () => (await import('../../ui/preview.js')).download(file) }],
   print: { id: 'print', run: () => printPage(editor.view.dom) }, kit: true,
 })

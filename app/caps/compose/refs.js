@@ -47,6 +47,17 @@ export function withRef(markdown, index, change) {
     .replace(FIGURE, (all, formula) => ((ref) => (ref && ++n === index ? all.replace(/=\s*\S+/, `=${placeOf(change(ref))}`) : all))(parseFigure(formula)))
 }
 
+/**
+ * Markdown as it leaves Jean (a Word file, a link), each reference as it shows now: a block as its rows' table (a chart's figures), its run's words
+ * or why it shows nothing, then a figure as its value, else —. @param {string} text @param {(ref: Ref) => Promise<{ rows?: string[][], words?: string }>} shown
+ */
+export async function written(text, shown) {
+  const line = (/** @type {string[]} */ cells) => `| ${cells.map((cell) => cell.replace(/[\\`*_[\]<>|~$&]/g, '\\$&').replace(/\s*\n\s*/g, ' ')).join(' | ')} |`, grid = (/** @type {string[][]} */ [heads = [], ...rows]) => [line(heads), line(heads.map(() => '---')), ...rows.map(line)].join('\n')
+  const each = async (/** @type {string} */ text, /** @type {RegExp} */ found, /** @type {(match: RegExpMatchArray) => Promise<string | null>} */ as) => ((done, n = 0) => text.replace(found, (all) => done[n++] ?? all))(await Promise.all([...text.matchAll(found)].map(as)))
+  const blocks = await each(text, BLOCK, async ([, , inner]) => ((ref) => ref && shown(ref).then((one) => one.words ?? grid(one.rows ?? [])))(parseRef(inner)))
+  return each(blocks, FIGURE, async ([, formula]) => ((ref) => ref && shown(ref).then((one) => one.rows?.[0]?.[0] ?? '—'))(parseFigure(formula)))
+}
+
 /** Where each form of a site's pages sends what visitors propose: its `data-form` name to the collection its `data-to` names (./ports.js). @param {string} text */
 export const formsTo = (text) => new Map([...text.matchAll(/<form\b[^>]*>/gi)].flatMap(([open]) => ((name, to) => (name && to && PLACE.test(to) ? [[name, to]] : []))(/\sdata-form="([^"]*)"/.exec(open)?.[1], /\sdata-to="([^"]*)"/.exec(open)?.[1])))
 

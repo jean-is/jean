@@ -4,7 +4,7 @@
 // note; a formula, a chart, a score, a deck, a page, a diagram, a map) shows as the answer shows it while
 // the caret is elsewhere, and as its text once the caret goes into it, by the arrows or a click: always
 // editable, with no modes. Jean's suggestions draw such a block too (`forms`, suggest.js).
-// A formula in a line is drawn in its place the same way, and a column of amounts lines up at its end, as in
+// A formula in a line, and a figure worked out from a collection (caps/compose), is drawn in its place the same way, and a column of amounts lines up at its end, as in
 // an answer. A list of tasks stays the document's own, its ticks written in the file. A ```table block naming
 // a table of the project's is that table's view, Tables' own, changed in place. A tag, #name in a line's text, is drawn as one, which a
 // click looks for among the creations (D576). A table of contents, `[TOC]` alone on its line (markdown.js), is the headings in their
@@ -116,16 +116,19 @@ export const forms = {
   },
 }
 
-/** A formula of a line, as an answer draws it; a click on it puts the caret in its text. @param {EditorView} view @param {() => number | undefined} getPos @param {string} tex @param {boolean} display */
-function formula(view, getPos, tex, display) {
-  const box = el('span', { class: 'drawn-formula', contenteditable: 'false' })
-  render(withFormulas(display ? `$$${tex}$$` : `$${tex}$`), box)
+/**
+ * A formula of a line, as an answer draws it, or a figure, inline code that starts with `=collections/`, worked out (caps/compose, D763); a click
+ * on it puts the caret in its text. @param {EditorView} view @param {() => number | undefined} getPos @param {unknown} drawing @param {string} [kind]
+ */
+function formula(view, getPos, drawing, kind = 'formula') {
+  const box = el('span', { class: `drawn-${kind}`, contenteditable: 'false' })
+  render(drawing, box)
   box.addEventListener('mousedown', (event) => { event.preventDefault(); view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, (getPos() ?? 1) - 1))) })
   return box
 }
 
 /**
- * Which blocks show as their text (the caret's, those a selection of text crosses), each formula of a line drawn
+ * Which blocks show as their text (the caret's, those a selection of text crosses), each formula of a line and each figure drawn
  * where the caret isn't, a tag as one, and a column of amounts at its end; the arrows go into
  * a block drawn before or after the caret's.
  */
@@ -141,9 +144,10 @@ export const inPlace = new Plugin({
         if (DRAWABLE.includes(node.type.name) && text && from < end && to > pos) list.push(Decoration.node(pos, end, { class: 'is-editing' }))
       })
       state.doc.descendants((node, pos, parent, i) => {
-        const math = node.marks.find((mark) => mark.type === schema.marks.math)
-        if (math && node.isText && (to < pos || from > pos + node.nodeSize)) {
-          list.push(Decoration.inline(pos, pos + node.nodeSize, { class: 'drawn-source' }), Decoration.widget(pos + node.nodeSize, (view, getPos) => formula(view, getPos, node.text ?? '', math.attrs.display), { side: -1, marks: [], key: `${math.attrs.display}${node.text}`, ignoreSelection: true }))
+        const math = node.marks.find((mark) => mark.type === schema.marks.math), figure = node.marks.some((mark) => mark.type === schema.marks.code) && /^=\s*collections\//.test(node.text ?? '')
+        if ((math || figure) && node.isText && (to < pos || from > pos + node.nodeSize)) {
+          list.push(Decoration.inline(pos, pos + node.nodeSize, { class: 'drawn-source' }), Decoration.widget(pos + node.nodeSize, (view, getPos) => (math ? formula(view, getPos, withFormulas(math.attrs.display ? `$$${node.text}$$` : `$${node.text}$`))
+            : (unlock('tables'), formula(view, getPos, html`<app-figure source=${node.text ?? ''}></app-figure>`, 'figure'))), { side: -1, marks: [], key: math ? `${math.attrs.display}${node.text}` : `=${node.text}`, ignoreSelection: true }))
         }
         // Not in the title, which holds words alone, nor in code or a link.
         if (node.isText && parent?.type !== schema.nodes.title && !node.marks.some((mark) => mark.type.spec.code || mark.type === schema.marks.link)) {

@@ -1,6 +1,6 @@
 # Composition
 
-How Jean's creations feed each other, a collection shown in a deck, a document or a site at a version the consumer chooses, its provenance checkable, is in [architecture.md](architecture.md#composition), and the decision in [decisions.md](decisions.md) (D763). This page is how it was built: five steps, each shippable alone, what each delivered and how it was verified, then what departs from the plan, the known limits and the decisions left open.
+How Jean's creations feed each other, a collection shown in a deck, a document or a site at a version the consumer chooses, its provenance checkable, is in [architecture.md](architecture.md#composition), and the decision in [decisions.md](decisions.md) (D763). This page is how it was built: five steps, each shippable alone, what each delivered and how it was verified, then what departs from the plan, the known limits, the work left, which makes the most of the graph, and the decisions left open.
 
 ## Steps
 
@@ -42,7 +42,7 @@ Built first on a main whose line budget was nearly full, each step from the seco
 
 ## Where this departs from the plan, and why
 
-- **Only collections are sources.** Slides, documents and sites consume; no step needed a document's sections or a deck's slides as a source, so their contracts aren't built. Loops therefore can't form yet: the check runs at each resolution and is tested on a graph where they can.
+- **Only collections are sources.** Slides, documents, sites and prototypes consume; no step needed a document's sections or a deck's slides as a source, so their contracts aren't built. Loops therefore can't form yet: the check runs at each resolution and is tested on a graph where they can.
 - **The journal is the one that exists.** A collection's `changes.jsonl` already says who, what and when for every write; a consumer's runs have their own (`composed/<ULID>.jsonl`). Slides and documents keep no journal of their writes: nothing reads one.
 - **A draft first.** A change of columns makes a version only once the collection has one; before its author publishes, nothing can pin it.
 - **A breaking change is refused as a version, not as a change.** Tables still lets a column change kind (and converts its values for live readers); composition makes no version of it, by hand or by itself, and says why. Refusing the change itself would mean changing Tables, whose code is at its gzip budget.
@@ -57,7 +57,7 @@ Built first on a main whose line budget was nearly full, each step from the seco
 
 ## Known limits
 
-- Slides saved as PowerPoint: a composed chart is a native chart, each bar in its choice's colour, and a composed table a table (`test/compose.spec.js`); a run's words weren't checked in the exported file. A deck's own file, opened outside Jean or shared by link, draws a reference as its text, a figure as its formula: only Jean resolves one.
+- Slides saved as PowerPoint: a composed chart is a native chart, each bar in its choice's colour, and a composed table a table (`test/compose.spec.js`); a run's words weren't checked in the exported file. A deck's own file, opened outside Jean, draws a reference as its text, a figure as its formula: only Jean resolves one. A link to slides or a document, and a document's Word file, hold what each shows as they are made, a chart as its figures' table.
 - A whiteboard is a collection too, but has neither versions nor a port.
 - A recipe that runs as its source changes may meet the month's limit in the background: the question it asks then comes up unasked for.
 - Versions, runs and ports are plain files of the project: Sync carries them as files, but working on a collection together (D733) sends its lines and its table only, so the others have neither its versions nor its port.
@@ -69,10 +69,75 @@ Built first on a main whose line budget was nearly full, each step from the seco
 - The 45 translations of the new strings are Claude's, not a native speaker's.
 - WebKit doesn't run `test/compose.spec.js` (in `CHROMIUM_ONLY`: what it checks is Jean's own JavaScript).
 
+## Work left: the graph at its best
+
+Composition and the graph are one ([architecture.md](architecture.md#composition)): every way a creation shows another becomes a reference, and every reference is an edge the graph reads. The steps below follow from that, each shippable alone, its exit criterion checked in `test/compose.spec.js` or `test/compose.test.js` as before. Their order: what already links creations comes into the graph first (6), then what the graph can say at no cost (7), then the place most people read (8), then new sources and consumers (9 to 11), then what runs and what travels (12). Three rules hold for every step:
+
+- **No edge outside a reference.** A kind that starts showing another's content joins `CONSUMERS` in the same change, and its test checks that the source's *Links with other creations* lists it.
+- **Budgets first.** `loc.app` has a dozen lines left and Tables' code is at its gzip limit: each step measures what it needs, deletes first where it can, asks for a raise in a change of its own, and stays out of Tables' folder.
+- **What is paid stays opt-in.** A step that makes the graph carry more never makes a brain run, or anything leave Jean, that the person didn't choose.
+
+### Step 6 — The graph whole
+
+What already links creations outside the graph comes into it.
+
+- A relation between collections is an edge, from the collection holding the relation to the one it names, read from `collection.json`. Relations may run both ways, so these edges count for what a change touches, never for loops.
+- A picture or a file a creation holds by its content (`../files/sha256-…`, in a design, a deck, a site or a document) is an edge to that file, always pinned, since its name is its content. The picture's own credential joins a version's or a run's ingredients, so a deck's provenance reaches its pictures.
+- A deck an answer drew, then kept as a file, runs its recipes as that file rather than as its task: one run, paid once.
+
+**Exit criterion**: a collection another relates to lists it under *Used in*; a picture used by a deck and a site lists both, and the deck's saved provenance holds the picture's credential; a deck in an answer and its kept file show the same run, made once.
+
+### Step 7 — The graph answers
+
+What the graph knows, said where it matters. Each answer below is a read of edges, and costs nothing.
+
+- **Before something breaks.** Deleting a collection or a column, or changing a column's kind, names what uses it (*Used by Q3 review and Report*) and asks first. Today only a version is refused, after the fact.
+- **The whole chain, not one hop.** The links menu shows what feeds what feeds this, as far as it goes, each with the version it reads.
+- **On the Creations page**, each card says how many creations it uses and is used in, and a creation's links narrow the page to them.
+- **To the brain**: a tool that changes a collection's columns or rows returns the consumers it touches, so that "update everything that shows the Q3 figures" is one request, and `@` on a creation says what it uses.
+
+**Exit criterion**: deleting a column a deck charts asks first, naming the deck; a deck showing a collection that relates to another shows both, the second through the first; the Creations page narrowed to a collection shows its consumers alone; a column renamed through `table_change` returns the consumers that read it by its old name.
+
+### Step 8 — Answers that compose
+
+An answer is where most people read, and today it draws a collection only inside a deck. A ```` ```table ```` block and a figure in an answer become references too, drawn by the same code (`WIDGETS` in `ui/markdown.js` gains `table`), their task the consumer. An answer is a moment: its selector is the journal as it was when the answer was written (`fold()` of the lines up to then), so it never changes by itself. It says how many changes came since, and *Show as it is now* draws the collection's head without writing into the answer (D188).
+
+**Exit criterion**: an answer that charts a collection keeps its bars once a row changes, says one change since, shows the chart as it is now on a click, and the collection lists the task under *Used in*.
+
+### Step 9 — Documents as sources
+
+Decision 2 below, settled by a need already there: a site's FAQ, terms or privacy page is a document copied into HTML, and slides made from a report copy its sections. A document's contract is its sections, each heading's id written once beside it and kept through a rename, as a column's is; a version is published by hand, as a collection's is. Slides refer to one with a ```` ```section ```` block holding `documents/…#id`, a site with `<section data-from="documents/…#id">`, filled as its tables are. Loops can form from here on, a document showing slides that show it, and `loops()` refuses them, as it was built to.
+
+**Exit criterion**: a site's FAQ page made from a document's section follows an edit of it, while a site pinned to version 1 doesn't; a reference that would close a loop says so, in words.
+
+### Step 10 — More consumers
+
+Each kind that shows data does it through a reference, never a copy.
+
+- **Designs**: a part's words bound to a column, one design drawn per row (badges, certificates, place cards), and figures in its words.
+- **Games and apps**: a quiz or flash cards whose questions are a collection's rows, given to the page as data when it is read and kept out of its file, as a site's rows are; its sandbox unchanged.
+- **Whiteboards** as sources, with a contract of their own: a section becomes a slide, and a note with its owner and date a row of an action list; versions as a collection has them.
+
+**Exit criterion**: one design makes a badge for each approved artisan, and one more once another is approved; a quiz plays a collection's questions, and a new row once it is read again; slides made of a whiteboard's sections follow a note moved to another section.
+
+### Step 11 — The design system as a source
+
+`kit.json`, the person's and the project's, is read live by decks, designs and Word, while a site copies it into `look.css` ([architecture.md](architecture.md#sites), *Later*). As a source, it has versions published by hand, each consumer reads it live or at a version, a site's `look.css` is written again as it changes, and the version it wore is an ingredient of what wears it.
+
+**Exit criterion**: a site's colours follow the project's design system once it changes, slides pinned to its version 1 don't, and their provenance names that version.
+
+### Step 12 — One way to run, one way to travel
+
+- **One clock.** A recipe's `refresh:` and a routine's schedule are one scheduler. A flow's step or a routine reads a creation through a reference, with a selector and a recipe, rather than the newest file of its name, and a run of either is a run of the graph, certified.
+- **Rows from elsewhere carry their origin.** What a routine or a connection writes into a collection, as its sources, is a run too, its certificate naming where it came from, so a chain can reach outside Jean.
+- **The graph travels.** Versions, runs and ports go to those working on a collection together (decision 3), and a link to a creation can carry its ingredients' certificates, which the check page checks.
+
+**Exit criterion**: a routine reading a collection's published version runs on a recipe's clock, its run certified with that version as ingredient; rows a source added carry a certificate naming the source; someone working on a collection together sees its versions and its port.
+
 ## Decisions left open
 
 1. Publishing a site again on a schedule, or as its collection changes: an outward action, which would need its own approval rule (*Do it / Ask me first*).
-2. Documents' sections and slides as sources, when a need shows.
-3. Whether people working on a collection together get its versions and its port.
-4. Whether Tables itself should refuse a breaking change of kind once a collection has versions.
+2. Documents' sections and slides as sources: documents in step 9; slides when a need shows.
+3. Whether people working on a collection together get its versions and its port: step 12 proposes they do.
+4. Whether Tables itself should refuse a breaking change of kind once a collection has versions: step 7's question before the change is the middle way.
 5. A proof that discloses what a version or a run holds, from its kept salts.

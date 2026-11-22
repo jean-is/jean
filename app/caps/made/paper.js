@@ -88,8 +88,8 @@ export const picturesIn = async (source, page) => new Map(/** @type {[string, im
   ...[...page?.querySelectorAll('.drawn-form :is(app-chart, app-score, app-slides, app-latex, app-diagram)') ?? []].map(async (one) => [one.getAttribute('source'), await forWord(await /** @type {{ picture(): Promise<Blob | string> }} */ (/** @type {unknown} */ (one)).picture(), (width, height) => [width / 2, height / 2])]),
 ]).map((entry) => entry.catch((error) => console.warn('Word', error) ?? [])))).filter((entry) => entry.length)))
 
-/** A collection in a document's Markdown, each as its rows under its name, in Word's Markdown. @param {string} source */
-export async function withRows(source) {
+/** A collection in a document's Markdown, each as its rows under its name, in Word's Markdown; then each other reference as it shows (caps/compose), `from` its document. @param {string} source @param {string} [from] */
+export async function withRows(source, from = '') {
   let words = source
   for (const [block, folder] of source.matchAll(/^```table\n(collections\/[^\n]+)\n```$/gm)) {
     const grid = await (await import('../tables/tables.js')).gridIn(folder), line = (/** @type {string[]} */ cells) => `| ${cells.map((cell) => cell.replace(/[\\`*_[\]<>|~$&]/g, '\\$&').replace(/\s*\n\s*/g, ' ')).join(' | ')} |`
@@ -97,16 +97,16 @@ export async function withRows(source) {
     const bold = (/** @type {string} */ row) => row.replace(/\| ([^|]+?) (?=\|)/g, (all, cell) => (cell.trim() ? `| **${cell.trim()}** ` : all))
     if (grid) words = words.replace(block, () => [`### ${grid.name}`, '', line(grid.rows[0]), `| ${grid.right.map((right) => (right ? '---:' : '---')).join(' | ')} |`, ...grid.rows.slice(1).map((row, i) => (grid.heads.includes(i + 1) ? bold(line(row)) : line(row))), ...(grid.foot ? [bold(line(grid.foot))] : [])].join('\n'))
   }
-  return words
+  return /`=\s*collections\/|^(`{3,}|~{3,})table[ \t]*\ncollections\//m.test(words) && await (await import('../../ui/caps.js')).unlock('tables') ? (await import('../compose/compose.js')).written(words, from) : words
 }
 
 /**
  * Markdown as a Word file, named by its title, on the paper of the user's country, a reference to a creation (D575) by its name, code left as it is.
- * @param {string} source @param {string} title @param {{ made?: boolean, page?: Element }} [options] whether a trained model made it; the page it is drawn on
+ * @param {string} source @param {string} title @param {{ made?: boolean, page?: Element, from?: string }} [options] whether a trained model made it; the page it is drawn on; the document it is
  */
-export async function downloadWord(source, title, { made, page } = {}) {
+export async function downloadWord(source, title, { made, page, from } = {}) {
   const { makeFile, paperFor } = await import('./formats.js')
-  const words = (await withRows(source)).replace(/^(`{3,}|~{3,})[^]*?^\1|`[^`\n]*`|\[\[([^[\]|\n]+)(?:\|([^[\]\n]+))?\]\]/gm, (all, _, place, name) => (place ? name ?? place : all))
+  const words = (await withRows(source, from)).replace(/^(`{3,}|~{3,})[^]*?^\1|`[^`\n]*`|\[\[([^[\]|\n]+)(?:\|([^[\]\n]+))?\]\]/gm, (all, _, place, name) => (place ? name ?? place : all))
   const { name, mimeType, bytes } = await makeFile(`${title}.docx`, words, { paper: paperFor(navigator.language), look: await wordLook(), pictures: await picturesIn(source, page), made })
   save(new Blob([/** @type {BlobPart} */ (bytes)], { type: mimeType }), name)
 }
@@ -147,6 +147,7 @@ export async function printPage(dom, { turn } = {}) {
   holder.append(page)
   if (look?.logo) holder[look.logoAt?.startsWith('bottom') ? 'append' : 'prepend'](logoOf(look))
   const drawing = () => [...holder.querySelectorAll('app-shared, app-chart, app-score, app-diagram, app-latex')].some((one) => !one.querySelector('img, svg, canvas, table, .latex-page')) || [...holder.querySelectorAll('img')].some((one) => !one.complete)
+    || [...holder.querySelectorAll('app-composed, app-figure')].some((one) => !one.firstElementChild || /^=\s*collections\//.test(one.textContent ?? ''))
   const across = Boolean(turn) && [...holder.querySelectorAll('table')].some((table) => wide(table, holder.clientWidth))
   holder.classList.toggle('is-across', across)
   // One wider than the page, its words whole, takes smaller letters to fit it, three fifths of the room's at least, then breaks its words where it must.

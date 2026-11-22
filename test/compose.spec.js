@@ -180,6 +180,16 @@ for (const [lang, live, missing] of [['ar', 'مباشر', 'لا توجد مجم�
     await expect(beside.locator('.deck-slide .deck-table p').first()).toHaveText(missing)
     await page.locator('app-preview .pane-head button[popovertarget^="links-"]').click()
     await expect(page.locator('.menu:popover-open')).toContainText(live)
+    await page.keyboard.press('Escape')
+    // A figure in a document's sentence, in the sentence's own direction.
+    await page.evaluate(async ({ COLLECTION, lang }) => {
+      const [{ app }, { unlock }] = await Promise.all([import('/ui/state.js'), import('/ui/caps.js')]), at = '2026-11-21T10:00:00.000Z'
+      await unlock('documents')
+      await app.fs.write(`${app.projectDir}/documents/01K85Z1T00000000000000000M-report.md`, `---\nformat: 1\nname: Report\nauthor: user\ncreated: ${at}\nchanged: ${at}\n---\n# ${lang === 'ar' ? 'تقرير' : '報告'}\n\n${lang === 'ar' ? 'عدد الحرفيين:' : '職人の数：'} \`=${COLLECTION} count\`\n`)
+    }, { COLLECTION, lang })
+    await show(page, 'documents/01K85Z1T00000000000000000M-report.md', 'Report')
+    await expect(page.locator('app-preview app-figure code')).toHaveText(/^[1١]$/)
+    await expect(page.locator('app-preview .doc p').filter({ has: page.locator('app-figure') })).toHaveAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr')
   })
 }
 
@@ -267,6 +277,36 @@ test('slides pinned to version 1 stay as they were once version 2 is published, 
   await expect(now.getByRole('alert')).toHaveText('No version can be made while these columns have another kind: Craft. Give them back their kind, or add new columns.')
   await expect(now.getByRole('button', { name: 'Publish version 4' })).toBeDisabled()
   expect(await page.evaluate(async ({ COLLECTION }) => { const { app } = await import('/ui/state.js'); return (await app.fs.list(`${app.projectDir}/${COLLECTION}/versions`)).length }, { COLLECTION })).toBe(3)
+})
+
+test('a document’s figure follows its collection, a prototype that shows it is in the graph, and what leaves Jean as words holds what each shows', async ({ page }) => {
+  await start(page)
+  await seed(page)
+  const DOCUMENT = 'documents/01K85Z1T00000000000000000M-report.md'
+  await page.evaluate(async ({ COLLECTION, DOCUMENT }) => {
+    const [{ app }, { unlock }] = await Promise.all([import('/ui/state.js'), import('/ui/caps.js')]), at = '2026-11-21T10:00:00.000Z'
+    await unlock('documents')
+    await app.fs.write(`${app.projectDir}/${DOCUMENT}`, `---\nformat: 1\nname: Report\nauthor: user\ncreated: ${at}\nchanged: ${at}\n---\n# Report\n\nBakers: \`=${COLLECTION} count where Trade is Baker\`.\n\n\`\`\`table\n${COLLECTION}\nfields: Trade\n\`\`\`\n`)
+    await app.fs.write(`${app.projectDir}/prototypes/01K85Z1T00000000000000000P-booking/prototype.json`, JSON.stringify({ format: 1, name: 'Booking', author: 'user', created: at, changed: at, source: '', files: ['index.html'] }))
+    await app.fs.write(`${app.projectDir}/prototypes/01K85Z1T00000000000000000P-booking/index.html`, `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Booking</title></head><body><main><h1>Who</h1><table data-from="${COLLECTION}" data-fields="Name"></table></main></body></html>`)
+  }, { COLLECTION, DOCUMENT })
+  await show(page, DOCUMENT, 'Report')
+  const figure = page.locator('app-preview app-figure code')
+  await expect(figure).toHaveText('1')
+  await change(page, 'Potter')
+  await expect(figure).toHaveText('0')
+  // The caret in it: its formula, which the file keeps.
+  await figure.click()
+  await expect(page.locator('app-preview .doc code').filter({ hasText: '=collections/' })).toBeVisible()
+  // A Word file and a link hold what the document shows, not its references.
+  const words = await page.evaluate(async ({ DOCUMENT }) => { const { app } = await import('/ui/state.js'); return (await import('/caps/made/paper.js')).withRows(String(await app.fs.read(`${app.projectDir}/${DOCUMENT}`)), DOCUMENT) }, { DOCUMENT })
+  expect(words).toContain('Bakers: 0.')
+  expect(words).toContain('| Trade |\n| --- |\n| Potter |')
+  expect(words).not.toContain('collections/')
+  // The collection's pane lists the prototype among what uses it.
+  await show(page, COLLECTION, 'Artisans')
+  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  await expect(page.locator('.menu:popover-open').getByRole('group', { name: 'Used in' }).getByRole('button')).toContainText(['Neighbourhood', 'Report', 'Booking'].map((name) => new RegExp(name)), { ignoreCase: false })
 })
 
 test('a recipe that sums up the approved artisans on a slide updates by itself once its user turns that on, and only then; a run is paid once per version read', async ({ page }) => {

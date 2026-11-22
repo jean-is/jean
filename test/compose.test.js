@@ -3,7 +3,7 @@
 // asked at each resolution, and what a reference shows of a collection, read again from its journal.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { parseRef, placeOf, refsIn, withRef, filledPage, bare, formsTo, loops, refused, versionless, tableOf, chartOf, choiceIn, choicesIn, tinted, parseFigure, figureOf } from '../app/caps/compose/refs.js'
+import { parseRef, placeOf, refsIn, withRef, filledPage, bare, formsTo, loops, refused, versionless, tableOf, chartOf, choiceIn, choicesIn, tinted, parseFigure, figureOf, written } from '../app/caps/compose/refs.js'
 import { versionOf, loadedOf, headOf, reshaped, breaks, current } from '../app/caps/compose/versions.js'
 import { keyOf, paceOf, sorted, askOf, lastRun, due } from '../app/caps/compose/recipes.js'
 import { credentialOf, chainOf, holds, sriOf } from '../app/caps/compose/proof.js'
@@ -75,6 +75,14 @@ test('a site’s page refers with a table that says data-from, filled as the pag
   assert.deepEqual(refsIn(page).map(({ at, recipe }) => [at, recipe]), [['published', { where: 'Checked is yes', fields: 'Name & Trade' }], ['live', {}]])
   assert.equal(bare(filledPage(page, [[['Name'], ['Ana <3']], [['Name'], ['Bob']]])), `<main><table class="t" data-from="${PLACE}@published" data-where="Checked is yes" data-fields="Name &amp; Trade"></table><table data-from="${PLACE}"></table></main>`, 'kept, a page holds none of the rows it showed')
   assert.equal(filledPage(page, [[['Name'], ['Ana <3']], null]), `<main><table class="t" data-from="${PLACE}@published" data-where="Checked is yes" data-fields="Name &amp; Trade"><thead><tr><th>Name</th></tr></thead><tbody><tr><td>Ana &lt;3</td></tr></tbody></table><table data-from="${PLACE}"></table></main>`)
+})
+
+test('what leaves Jean holds each reference as it shows: a block its rows’ table or its words, a figure its value, any other block as it was', async () => {
+  const markdown = `# Report\n\n\`\`\`table\n${PLACE}@published\nfields: Name | Trade\n\`\`\`\n\nWe approved \`=${PLACE} count where Checked is yes\` artisans, \`=${PLACE}@2 sum Name\` before.\n\n\`\`\`table\n${PLACE}\nask: Sum it up\n\`\`\`\n\n\`\`\`js\n${PLACE}\n\`\`\``
+  const asked = /** @type {string[]} */ ([])
+  const shown = async (/** @type {import('../app/caps/compose/refs.js').Ref} */ ref) => (asked.push(`${placeOf(ref)} ${Object.keys(ref.recipe)}`), ref.recipe.ask ? { words: 'Two bakers.' } : ref.at === 2 ? { words: 'No such version' } : ref.recipe.total ? { rows: [['2']] } : { rows: [['Name', 'Trade'], ['Ana | Bo', 'Baker*']] })
+  assert.equal(await written(markdown, shown), `# Report\n\n| Name | Trade |\n| --- | --- |\n| Ana \\| Bo | Baker\\* |\n\nWe approved 2 artisans, — before.\n\nTwo bakers.\n\n\`\`\`js\n${PLACE}\n\`\`\``)
+  assert.deepEqual(asked, [`${PLACE}@published fields`, `${PLACE} ask`, `${PLACE} total,where`, `${PLACE}@2 total,column`], 'blocks first, then the figures of what they left')
 })
 
 test('a version freezes a collection: its columns, its rows and the journal’s head, and reads as the collection did then', () => {

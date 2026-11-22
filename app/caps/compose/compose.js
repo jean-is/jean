@@ -22,7 +22,7 @@ import { t, useStrings, locale, intlLocales } from '../../core/i18n.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { PLACE } from '../tables/table.js'
 import '../tables/tables.js'
-import { parseRef, parseFigure, refsIn, loops, refused, versionless, tableOf, chartOf, choiceIn, choicesIn, tinted, withRef, filledPage } from './refs.js'
+import { parseRef, parseFigure, refsIn, loops, refused, versionless, tableOf, chartOf, choiceIn, choicesIn, tinted, withRef, filledPage, written as writtenWith } from './refs.js'
 import { option } from '../interactive/parts.js'
 import { versionOf, loadedOf, reshaped, breaks, current, headOf } from './versions.js'
 import { keyOf, paceOf, askOf, lastRun, due, PROMPT, DEPTH, GATHER } from './recipes.js'
@@ -37,11 +37,12 @@ await Promise.all([useStrings('compose'), styleSheet(new URL('compose.css', impo
 /** @import { Run } from './recipes.js' */
 /** @import { Port, Proposal } from './ports.js' */
 /** @typedef {Awaited<ReturnType<typeof import('../tables/tables.js').load>>} Loaded */
+/** A site's or a prototype's pages, read by its record. @param {string} record @returns {(path: string, dir: string) => Promise<{ source: string, name: string } | null>} */
+const pagesOf = (record) => async (path, dir) => ((one) => one && Promise.all(one.files.filter((/** @type {string} */ file) => file.endsWith('.html')).map((/** @type {string} */ file) => app.fs.read(`${dir}/${path}/${file}`))).then((pages) => ({ source: pages.join('\n'), name: one.name })))(JSON.parse((await app.fs.read(`${dir}/${path}/${record}`)) ?? 'null'))
 /** The kinds that hold references, by folder: which entries are their own, and the text and name read from one. @type {[string, RegExp, (path: string, dir: string) => Promise<{ source: string, name: string } | null>][]} */
 const CONSUMERS = [['decks', /\.deck\.html$/, async (path, dir) => (await import('../skills/decks.js')).load(path, dir)],
   ['documents', /^[^.].*\.md$/, async (path, dir) => ((text) => (text ? { source: text, name: /^name: *(.+)$/m.exec(text)?.[1] ?? /^# (.+)$/m.exec(text)?.[1] ?? path } : null))(await app.fs.read(`${dir}/${path}`))],
-  ['sites', /^[^.][^.]*$/, async (path, dir) => ((record) => record && Promise.all(record.files.filter((/** @type {string} */ file) => file.endsWith('.html')).map((/** @type {string} */ file) => app.fs.read(`${dir}/${path}/${file}`)))
-    .then((pages) => ({ source: pages.join('\n'), name: record.name })))(JSON.parse((await app.fs.read(`${dir}/${path}/site.json`)) ?? 'null'))]]
+  ['sites', /^[^.][^.]*$/, pagesOf('site.json')], ['prototypes', /^[^.][^.]*$/, pagesOf('prototype.json')]]
 const HOW = () => ({ locales: intlLocales(locale.peek()), labels: { yes: '✓', no: '' }, today: new Date() })
 
 /** The project's graph, each reference and each creation's name by its place: read again once a consumer or a collection's columns are written, else every five minutes at most (a folder changed outside Jean). */
@@ -165,20 +166,20 @@ export async function drawn(box, source, dress) {
 /**
  * The figures a deck's words hold (inline code that starts with `=`, ./refs.js), each shown worked out from its collection, as it is now or at the
  * version it names, again as it changes, the deck fitted to them; else —, its title saying why. Its words made editable by a double click show its
- * formula again, so that the formula is what the deck keeps. @param {HTMLElement} root @param {() => void} [refit]
+ * formula again, so that the formula is what the deck keeps. @param {HTMLElement} root @param {() => void} [refit] @param {string} [at] the code that may hold one, a slide's
  */
-export function liven(root, refit) {
+export function liven(root, refit, at = '.deck-slide code') {
   const pane = /** @type {any} */ (root.closest('app-preview')), from = String(pane?.file?.peek()?.uri ?? ''), dir = app.projectDir, holds = /** @type {(() => void)[]} */ ([]), read = /** @type {Map<string, Promise<any>>} */ (new Map()), shown = /** @type {WeakMap<HTMLElement, string>} */ (new WeakMap())
   const shared = !pane && Boolean(app.current.peek()?.records.some(({ update }) => update?.sessionUpdate === '_system_note' && update.data?.kind === 'shared')), filled = /** @type {Promise<unknown>[]} */ ([])
   // A collection read once, then as it changes, for all its figures.
   const source = (/** @type {string} */ place) => read.get(place) ?? read.set(place, import('../tables/tables.js').then(async (tables) => ((live) => live && (tables.watched(live, holds), live))(((one) => one && signal(one))(await tables.load(place, dir).catch(() => null))))).get(place)
   const show = async (/** @type {HTMLElement} */ code, /** @type {Ref} */ ref) => {
     const why = refused({ denied: isDenied('tables'), shared, loop: Boolean(from && loops((await graph(dir)).edges, from, ref.place)), found: true }), live = why ? null : await source(ref.place)
-    const put = (/** @type {{ why?: string, rows?: string[][] }} */ { why, rows }) => code.closest('[contenteditable="true"]') || (code.textContent = rows?.[0]?.[0] ?? '—', code.title = why ? t(`compose.${why}`) : '', refit?.())
+    const put = (/** @type {{ why?: string, rows?: string[][] }} */ { why, rows }) => code.isContentEditable || (code.textContent = rows?.[0]?.[0] ?? '—', code.title = why ? t(`compose.${why}`) : '', refit?.())
     // Worked out again as the collection changes, until the deck draws that slide anew.
     return live ? new Promise((resolve) => { const stop = effect(() => void (code.isConnected ? resolved(ref, live.value, dir).then(put).then(resolve) : (stop?.(), resolve(null)))); holds.push(stop) }) : put({ why: why || 'missing' })
   }
-  const scan = () => root.querySelectorAll('.deck-slide code:not([data-formula])').forEach((code) => ((ref) => ref && (Object.assign(/** @type {HTMLElement} */ (code).dataset, { formula: code.textContent }), filled.push(show(/** @type {HTMLElement} */ (code), ref))))(parseFigure(code.textContent ?? '')))
+  const scan = () => root.querySelectorAll(`${at}:not([data-formula])`).forEach((code) => ((ref) => ref && (Object.assign(/** @type {HTMLElement} */ (code).dataset, { formula: code.textContent }), filled.push(show(/** @type {HTMLElement} */ (code), ref))))(parseFigure(code.textContent ?? '')))
   // Before the deck reads them (capture), each formula back in the words double-clicked; the figures again if the deck didn't make them editable.
   const watch = new MutationObserver(scan), again = (/** @type {Event} */ event) => {
     const words = /** @type {HTMLElement | null} */ (/** @type {Element} */ (event.target).closest('[data-edit]')), codes = /** @type {HTMLElement[]} */ ([...words?.querySelectorAll('[data-formula]') ?? []])
@@ -189,6 +190,8 @@ export function liven(root, refit) {
   return { ready: Promise.all(filled), stop: () => (watch.disconnect(), root.removeEventListener('dblclick', again, true), holds.forEach((hold) => hold())) }
 }
 customElements.define('app-composed', class extends HTMLElement { connectedCallback() { void drawn(this, this.getAttribute('source') ?? '') } })
+// A figure in a document's words (../documents/drawn.js), as a slide's is.
+customElements.define('app-figure', class extends HTMLElement { connectedCallback() { this.replaceChildren(Object.assign(document.createElement('code'), { textContent: this.getAttribute('source') })), this.live = liven(this, undefined, 'code') } disconnectedCallback() { this.live?.stop() } })
 
 /** A site's pages, as it is read (../sites/kind.js), each table that says `data-from` filled as its reference shows it now, those that can't be as written. @param {Map<string, Uint8Array>} files @param {string} dir */
 export async function composed(files, dir) {
@@ -199,6 +202,13 @@ export async function composed(files, dir) {
   })))))
   return files
 }
+
+/** Markdown as it leaves Jean (../made/paper.js, ../slides/save.js), each reference as its consumer, `from`, shows it now (./refs.js). @param {string} text @param {string} from */
+export const written = (text, from, dir = app.projectDir) => writtenWith(text, async (ref) => {
+  const live = isDenied('tables') ? null : await (await import('../tables/tables.js')).load(ref.place, dir).catch(() => null), why = refused({ denied: isDenied('tables'), shared: false, loop: Boolean(from && loops((await graph(dir)).edges, from, ref.place)), found: Boolean(live) })
+  const one = /** @type {{ why?: string, rows?: string[][], output?: string }} */ (why || !live ? { why: why || 'missing' } : ref.recipe.ask ? await shownRun(ref, from, dir) : await resolved(ref, live, dir))
+  return { rows: one.rows, words: one.why ? t(`compose.${one.why}`) : one.output }
+})
 
 /**
  * A version of a collection made, its author's or for its columns changed (`schema`), when they differ from the last version's; none where a
@@ -230,7 +240,7 @@ async function propagate(place, dir, depth = 0) {
 // A consumer written: the graph is read again.
 const later = new Map()
 app.fs.watch?.((path) => {
-  const [, dir, folder, file] = /^(.*)\/(collections\/[^/]+)\/(collection\.json|changes\.jsonl|versions\/\d+\.json)$/.exec(path) ?? []; if (/\/(decks|documents|sites)\/|\/collection\.json$/.test(path)) read.at = 0
+  const [, dir, folder, file] = /^(.*)\/(collections\/[^/]+)\/(collection\.json|changes\.jsonl|versions\/\d+\.json)$/.exec(path) ?? []; if (/\/(decks|documents|sites|prototypes)\/|\/collection\.json$/.test(path)) read.at = 0
   if (file === 'collection.json') clearTimeout(later.get(folder)), later.set(folder, setTimeout(() => publish(folder, 'schema', dir), 500))
   if (folder && dir === app.projectDir) void propagate(folder, dir)
 }, { all: true })
@@ -295,7 +305,7 @@ async function linksOf(uri) {
 }
 
 /** A creation's glyph, by its folder. */
-const KIND = /** @type {Record<string, unknown>} */ ({ collections: icons.table, decks: icons.slides, documents: icons.note, sites: icons.code })
+const KIND = /** @type {Record<string, unknown>} */ ({ collections: icons.table, decks: icons.slides, documents: icons.note, sites: icons.code, prototypes: icons.code })
 /** The reference whose settings the links menu shows, as its consumer's place and its index there; the list while it is empty. */
 const deep = signal('')
 /** Sources' part of a collection's links menu, fetched as the first collection's opens. @type {typeof import('../sources/sources.js') | undefined} */
@@ -319,7 +329,7 @@ function head({ uri }) {
   const choice = (on, words, pick, off) => html`<li><button type="button" aria-current=${String(on)} ?disabled=${off} @click=${pick}><span>${words}</span>${on ? icons.check : nothing}</button></li>`
   /** A reference's settings. @param {Edge} edge */
   const settings = (edge) => {
-    const site = edge.from.startsWith('sites/'), last = these?.runs.get(edge), proof = these?.proofs.get(edge), set = (/** @type {(ref: Ref) => Ref} */ change) => choose(uri, edge.index, change).then(() => linksOf(uri))
+    const site = /^(sites|prototypes)\//.test(edge.from), last = these?.runs.get(edge), proof = these?.proofs.get(edge), set = (/** @type {(ref: Ref) => Ref} */ change) => choose(uri, edge.index, change).then(() => linksOf(uri))
     return html`<button type="button" class="back" @click=${() => go('')}>${icons.back}${t('compose.uses')}</button><hr>${(these?.old.get(edge) ?? []).map(([was, now]) => said(t('compose.old', { old: was, name: now })))}
       ${group('compose.which', /** @type {Edge['at'][]} */ (['live', 'published', ...(these?.versions.get(edge.to) ?? []).map((version) => version.n)]).map((at) => choice(at === edge.at, which(at), () => set((ref) => ({ ...ref, at })), site)))}
       ${edge.recipe.ask ? html`${group('compose.pace', PACES.map(([refresh, key]) => choice((edge.recipe.refresh ?? '') === refresh, t(key), () => set((ref) => ({ ...ref, recipe: { ...Object.fromEntries(Object.entries(ref.recipe).filter(([what]) => what !== 'refresh')), ...(refresh && { refresh }) } })), site)))}
