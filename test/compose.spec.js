@@ -554,14 +554,20 @@ test('more consumers: one badge per baker and one more for another, a game given
   await expect(menu.getByRole('group', { name: 'Used in' })).toContainText('Quiz')
 })
 
-test('the design system is a source: a site that wears it follows it, slides pinned to its version 1 are offered no change and say they are certified back to it', async ({ page }) => {
+test('the design system is a source: a site that wears it follows it at once, a poster on its palette too, slides pinned to its version 1 are offered no change and say they are certified back to it', async ({ page }) => {
   await start(page)
+  await connectFakeBrain(page)
   await seed(page)
   const SITE = 'sites/01K85Z1T00000000000000000G-shop', OTHER = 'decks/01K85Z1T00000000000000000J-other.deck.html'
   const write = (/** @type {string} */ path, /** @type {string} */ text) => page.evaluate(async ({ path, text }) => { const { app } = await import('/ui/state.js'); await app.fs.write(`${app.projectDir}/${path}`, text) }, { path, text })
-  const kit = (/** @type {string} */ primary) => page.evaluate(async (primary) => { const { app } = await import('/ui/state.js'); await (await import('/ui/kit.js')).keepKit(app.projectDir, { tokens: { primary } }) }, primary)
-  await page.evaluate(async () => { const { unlock } = await import('/ui/caps.js'); await Promise.all([unlock('sites'), unlock('receipt')]) })
+  const kit = (/** @type {string} */ primary) => page.evaluate(async (primary) => { const { app } = await import('/ui/state.js'); await (await import('/ui/kit.js')).keepKit(null, { tokens: { primary } }) }, primary)
+  await page.evaluate(async () => { const { unlock } = await import('/ui/caps.js'); await Promise.all([unlock('sites'), unlock('receipt'), unlock('designs')]) })
   await kit('#cc2200')
+  // A poster laid out once the design system is there: its first take wears its palette.
+  await ask(page, `Call design with ${JSON.stringify({ name: 'Poster', size: 'a4', words: { title: 'Open day' } })}`)
+  await answered(page)
+  const poster = () => page.evaluate(async () => { const { app } = await import('/ui/state.js'), [file] = (await app.fs.list(`${app.projectDir}/designs`)).filter(({ name }) => name.endsWith('.svg')); return (await (await import('/caps/designs/designs.js')).load(`designs/${file.name}`))?.design.colours.accent })
+  const before = await poster()
   await write(`${SITE}/site.json`, JSON.stringify({ format: 1, name: 'Shop', author: 'user', created: '2026-11-21T10:00:00.000Z', changed: '2026-11-21T10:00:00.000Z', source: '', files: ['index.html', 'look.css'], look: { id: 'project', voice: 'calm' } }))
   await write(`${SITE}/look.css`, ':root { --accent: #000000; }')
   await write(`${SITE}/index.html`, '<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Shop</title><link rel="stylesheet" href="look.css"></head><body><main><h1>Shop</h1></main></body></html>')
@@ -581,8 +587,11 @@ test('the design system is a source: a site that wears it follows it, slides pin
   const waiting = (/** @type {string} */ deck) => page.evaluate(async (deck) => { const { app } = await import('/ui/state.js'); return app.fs.read(`${app.projectDir}/${deck.replace(/^decks\//, 'decks/.suggested/').replace(/\.deck\.html$/, '.md')}`) }, deck)
   const offered = await waiting(DECK)
   // The design system changed: the site follows it; the pinned slides are offered nothing, the others their change.
+  await show(page, SITE, 'Shop')
   await kit('#1d4ed8')
-  await expect.poll(accent).toBe('#1d4ed8')
+  // The site on show is drawn again in it at once, no reopening; the poster wears it too.
+  await expect.poll(() => page.frameLocator('app-preview app-site iframe').locator('html').evaluate((html) => getComputedStyle(html).getPropertyValue('--accent').trim())).toBe('#1d4ed8')
+  await expect.poll(poster).not.toBe(before)
   await show(page, DECK, 'Neighbourhood')
   await show(page, OTHER, 'Other')
   await expect.poll(() => waiting(OTHER)).toContain('#1d4ed8')
@@ -591,8 +600,10 @@ test('the design system is a source: a site that wears it follows it, slides pin
   const said = await page.evaluate(async () => (await import('/ui/caps.js')).loaded.peek().get('compose')?.tools?.[0].run({ place: 'kit.json' }, /** @type {any} */ ({})))
   expect(said).toContain('Neighbourhood')
   expect(said).toContain('Shop')
+  expect(said).toContain('Poster')
   // Its page says what wears it, and publishes the next version.
-  await page.evaluate(async () => (await import('/ui/dialogs.js')).openSettings('appearance/kit-project'))
+  // In the home project, the design system's page is the person's own.
+  await page.evaluate(async () => (await import('/ui/dialogs.js')).openSettings('appearance/kit'))
   const part = page.locator('.settings section').filter({ has: page.getByRole('heading', { name: 'Versions' }) })
   await expect(part).toContainText(/Worn by .*Neighbourhood/)
   await part.getByRole('button', { name: 'Publish version 2' }).click()

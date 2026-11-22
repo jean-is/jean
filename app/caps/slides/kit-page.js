@@ -271,7 +271,7 @@ export function page() {
         ${CORNERS.map((corner) => html`<option value=${corner} ?selected=${corner === (tokens.logoAt ?? CORNERS[0])}>${cornerName(corner)}</option>`)}</select>`) : nothing}
     </ul></section>
     ${layouts(kit)}
-    ${slots('kit').map((part) => part.draw(pageOpen() === 'kit-project' ? app.projectDir : null))}
+    ${slots('kit').map((part) => part.draw(pageOpen() === 'kit-project' || app.project.value.data.default === true ? app.projectDir : null))}
     <section class="row kit-files">${file('kit-bring', t('slides.kit.bring'), '.json,.potx,.pptx,.thmx,application/json', (e) => void bring(e))}
       <button type="button" class="button subtle" @click=${() => keepAs(false)}>${icons.download} ${t('slides.kit.saveFile')}</button>
       <button type="button" class="button subtle" @click=${() => keepAs(true)}>${icons.download} ${t('slides.kit.saveTokens')}</button></section>`

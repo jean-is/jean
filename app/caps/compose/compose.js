@@ -16,6 +16,7 @@ import { register, isDenied, contributions, unlock } from '../../ui/caps.js'
 import { app, openFile, openConversation, notify, activeBrain, brainsHere } from '../../ui/state.js'
 import { markdown, declared, drawn as drawers } from '../../ui/markdown.js'
 import { held } from '../../ui/held.js'
+import { opened } from '../../ui/dock.js'
 import { fire } from '../../core/hooks.js'
 import { isLocal, parseFrontMatter, stringifyFrontMatter } from '../../core/settings.js'
 import { icons } from '../../ui/menu-icons.js'
@@ -40,6 +41,8 @@ await Promise.all([useStrings('compose'), styleSheet(new URL('compose.css', impo
 /** @typedef {Awaited<ReturnType<typeof import('../tables/tables.js').load>>} Loaded */
 /** The project's design system (ui/kit.js), a source that decks, sites and designs wear (step 11); and a routine's file, its request a consumer (step 12). */
 const KIT = 'kit.json', ROUTINE = /(^|\/)routines\/[^/]+\.md$/
+/** The design system a project wears and versions, as its page edits it: its own, the person's for the home project (ui/kit.js `kitPath()`). @param {string} dir */
+const kitFile = (dir) => (app.project.peek().data.default === true && dir === app.projectDir ? KIT : `${dir}/${KIT}`)
 /** A site's or a prototype's pages, read by its record. @param {string} record @returns {(path: string, dir: string) => Promise<{ source: string, name: string, wears?: Ref['at'] } | null>} */
 const pagesOf = (record) => async (path, dir) => ((one) => one && Promise.all(one.files.filter((/** @type {string} */ file) => file.endsWith('.html')).map((/** @type {string} */ file) => app.fs.read(`${dir}/${path}/${file}`))).then((pages) => ({ source: pages.join('\n'), name: one.name, wears: one.look?.id === 'project' ? /** @type {Ref['at']} */ ('live') : undefined })))(JSON.parse((await app.fs.read(`${dir}/${path}/${record}`)) ?? 'null'))
 /** The kinds that hold references, by folder: which entries are their own, and the text and name read from one, and the version of the design system it wears. @type {[string, RegExp, (path: string, dir: string) => Promise<{ source: string, name: string, wears?: Ref['at'] } | null>][]} */
@@ -48,7 +51,7 @@ const CONSUMERS = [['decks', /\.deck\.html$/, async (path, dir) => ((one) => one
   ['sites', /^[^.][^.]*$/, pagesOf('site.json')], ['prototypes', /^[^.][^.]*$/, pagesOf('prototype.json')],
   // A game's rows and a design's, each a reference in its file (`from`), and the pictures a design holds.
   ['games', /\.game\.html$/, async (path, dir) => ((one) => one && { source: blockOf(one.meta.from), name: one.name })((await import('../games/file.js')).gameOf((await app.fs.read(`${dir}/${path}`)) ?? ''))],
-  ['designs', /\.svg$/, async (path, dir) => ((one) => one && { source: [blockOf(one.from), ...one.parts.map((part) => part.file ?? '')].join('\n'), name: one.name, wears: /** @type {Ref['at']} */ ('live') })((await import('../designs/format.js')).fromSvg((await app.fs.read(`${dir}/${path}`)) ?? ''))]]
+  ['designs', /\.svg$/, async (path, dir) => ((one) => one && { source: [blockOf(one.from), ...one.parts.map((part) => part.file ?? '')].join('\n'), name: one.name, wears: one.take?.[1] === 'project' || one.take?.[2] === 'own' ? /** @type {Ref['at']} */ ('live') : undefined })((await import('../designs/format.js')).fromSvg((await app.fs.read(`${dir}/${path}`)) ?? ''))]]
 /** A reference a file holds as a value (a game's, a design's `from`), as a block, which the graph reads. @param {string} [from] */
 const blockOf = (from) => (from ? `\`\`\`table\n${from}\n\`\`\`` : '')
 const HOW = () => ({ locales: intlLocales(locale.peek()), labels: { yes: '✓', no: '' }, today: new Date() })
@@ -61,7 +64,7 @@ let known = { edges: /** @type {Edge[]} */ ([]), names: /** @type {Map<string, s
 const answers = held({ fence: 'table', record: 'reference', named: () => '', extension: 'md', mimeType: 'text/markdown' })
 function graph(dir = app.projectDir) {
   if (read.dir !== dir || Date.now() - read.at > 300_000) read = { at: Date.now(), dir, graph: (async () => {
-    const tables = await import('../tables/tables.js'), names = new Map(), edges = /** @type {Edge[]} */ ([]), kinds = new Map(), kit = await app.fs.exists(`${dir}/${KIT}`)
+    const tables = await import('../tables/tables.js'), names = new Map(), edges = /** @type {Edge[]} */ ([]), kinds = new Map(), kit = await app.fs.exists(kitFile(dir))
     if (kit) names.set(KIT, t('compose.kit'))
     for (const folder of await tables.folders(dir).catch(() => [])) {
       const table = await app.fs.read(`${dir}/${folder}/collection.json`).then((text) => JSON.parse(text ?? 'null')).catch(() => null)
@@ -320,7 +323,7 @@ export async function publish(folder, why = 'published', dir = app.projectDir) {
 }
 /** A document's version, or the design system's, its whole text frozen and certified, when it differs from the last one's. @param {string} place @param {string} dir @returns {Promise<{ version: any } | null>} */
 async function publishText(place, dir) {
-  const [body, versions] = await Promise.all([place === KIT ? app.fs.read(`${dir}/${KIT}`) : textAt({ place, at: 'live' }, dir), versionsOf(dir, place)]), last = versions.at(-1)
+  const [body, versions] = await Promise.all([place === KIT ? app.fs.read(kitFile(dir)) : textAt({ place, at: 'live' }, dir), versionsOf(dir, place)]), last = versions.at(-1)
   if (body === null || body === last?.text) return null
   const version = { format: 1, n: (last?.n ?? 0) + 1, at: new Date().toISOString(), by: 'user', why: 'published', text: body }
   Object.assign(version, await certified({ kind: place === KIT ? 'kit' : 'document', creation: place === KIT ? ulidOf(app.project.peek().dir ?? '') : ulidOf(place), n: version.n, at: version.at, by: version.by, content: body }))
@@ -345,9 +348,11 @@ async function propagate(place, dir, depth = 0) {
 // A consumer written: the graph is read again, a second later, so that a toast's words are as it is.
 const later = new Map()
 app.fs.watch?.((path) => {
-  const [, dir, folder, file] = /^(.*)\/(collections\/[^/]+)\/(collection\.json|changes\.jsonl|versions\/\d+\.json)$/.exec(path) ?? []; if (/(^|\/)(decks|documents|sites|prototypes|games|designs|routines)\/|\/(collection|kit|port)\.json$|\/versions\/\d+\.json$/.test(path)) read.at = 0, checked.clear(), (inside.value = new Map(inside.peek())), clearTimeout(later.get('graph')), later.set('graph', setTimeout(() => app.projectDir && graph(), 1000))
+  const [, dir, folder, file] = /^(.*)\/(collections\/[^/]+)\/(collection\.json|changes\.jsonl|versions\/\d+\.json)$/.exec(path) ?? []; if (/(^|\/)(decks|documents|sites|prototypes|games|designs|routines)\/|(^|\/)(collection|kit|port)\.json$|\/versions\/\d+\.json$/.test(path)) read.at = 0, checked.clear(), (inside.value = new Map(inside.peek())), clearTimeout(later.get('graph')), later.set('graph', setTimeout(() => app.projectDir && graph(), 1000))
   if (file === 'collection.json') clearTimeout(later.get(folder)), later.set(folder, setTimeout(() => publish(folder, 'schema', dir), 500)), dir === app.projectDir && void retyped(folder, dir)
   if (folder && dir === app.projectDir) void propagate(folder, dir)
+  // The design system changed: each site on show that wears it is drawn again in it, at once (../sites/kind.js dresses it at each read).
+  if (/(^|\/)kit\.json$/.test(path)) for (const edge of known.edges.filter((one) => one.kind === 'kit' && /^(sites|prototypes)\//.test(one.from) && opened.peek().includes(one.from))) void import('../../ui/preview.js').then(({ preview }) => preview({ uri: edge.from, name: known.names.get(edge.from) ?? '', title: known.names.get(edge.from) ?? '', mimeType: 'text/html' }))
 }, { all: true })
 // Each minute, the references whose `ask` runs every so many minutes, those due run; and the graph read once at the start, for a toast's words.
 setTimeout(() => app.projectDir && graph())
@@ -402,7 +407,7 @@ const within = (/** @type {string} */ uri, dir = app.projectDir) => (asking.add(
 async function linksOf(uri) {
   const dir = app.projectDir, tables = await import('../tables/tables.js'), { edges, names } = await graph(dir), uses = edges.filter((edge) => edge.from === uri && names.has(edge.to))
   const versions = new Map(await Promise.all([...new Set([uri, ...uses.map((edge) => edge.to)])].map(async (place) => /** @type {[string, (Version & { text?: string })[]]} */ ([place, await versionsOf(dir, place)]))))
-  const loaded = PLACE.test(uri) ? await tables.load(uri, dir) : null, own = loaded?.table.kind ? null : loaded, last = versions.get(uri)?.at(-1), old = new Map(), text = DOCUMENT.test(uri) ? await textAt({ place: uri, at: 'live' }, dir) : uri === KIT ? await app.fs.read(`${dir}/${KIT}`) : null
+  const loaded = PLACE.test(uri) ? await tables.load(uri, dir) : null, own = loaded?.table.kind ? null : loaded, last = versions.get(uri)?.at(-1), old = new Map(), text = DOCUMENT.test(uri) ? await textAt({ place: uri, at: 'live' }, dir) : uri === KIT ? await app.fs.read(kitFile(dir)) : null
   fed ??= own ? await import('../sources/sources.js') : undefined
   for (const edge of uses.filter((one) => !one.kind)) { const live = await tables.load(edge.to, dir).catch(() => null); if (live) old.set(edge, current(live.table, versions.get(edge.to) ?? [], edge.recipe).old) }
   const runs = await runsOf(runsAt(dir, uri)), lastOf = (/** @type {Edge} */ edge) => runs.findLast((one) => one.key === keyOf(refOf(edge))), proofs = new Map()

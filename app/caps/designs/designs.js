@@ -9,7 +9,7 @@
 // while one is on show, each message comes with a note of its parts and the one the user points at. Written at each change
 // from a page drawn out of sight (./page.js), so the file's lines are those the browser laid out.
 import { html, render } from 'lit-html'
-import { signal } from '@preact/signals-core'
+import { signal, effect } from '@preact/signals-core'
 import { register, loaded } from '../../ui/caps.js'
 import { app, conversationOf, send } from '../../ui/state.js'
 import { styleSheet } from '../../ui/sheet.js'
@@ -23,7 +23,7 @@ import { page, ask, reread as listed } from '../../ui/creations.js'
 import { languageOf } from '../../ui/language.js'
 import { xmpOf } from '../pictures/mark.js'
 import { BRAND } from '../../brand.js'
-import { lookHere, hexOf } from '../../ui/kit.js'
+import { lookHere, hexOf, kits } from '../../ui/kit.js'
 import { PICTURE } from '../../ui/touches.js'
 import { kitSlot } from '../slides/kit-slot.js'
 import { DESIGN, CHANGE, LINES, RULE, VOICES, repair } from './tool.js'
@@ -55,6 +55,9 @@ async function ownLook() {
   book.logo = PICTURE.test(look?.logo ?? '') ? { day: look?.logo, night: PICTURE.test(look?.dark?.logo ?? '') ? look?.dark.logo : undefined, at: look?.logoAt } : undefined
 }
 
+// The design system read again each time it changes, for what a design wears of it.
+effect(() => void (kits.value, ownLook()))
+
 /** How many of the project's designs the brain's <designs> names. */
 const LISTED = 20
 const PLACE = /^designs\/[^/]+\.svg$/
@@ -85,8 +88,10 @@ export const suggested = ({ design, side }) => (side ? { ...withParts(design, si
 
 /** A design of a project, read from its file's JSON alone; null when there is none, or it isn't one. @param {string} path @param {string} [dir] @returns {Promise<Kept | null>} */
 export async function load(path, dir = app.projectDir) {
-  const text = PLACE.test(path) && await app.fs.read(`${dir}/${path}`), design = text ? fromSvg(text) : null
-  if (!design) return null
+  const text = PLACE.test(path) && await app.fs.read(`${dir}/${path}`), read = text ? fromSvg(text) : null
+  if (!read) return null
+  // One on the project's palette, or in its own fonts, wears its design system as it is now (caps/compose), which `ownLook()` reads again as it changes.
+  const design = ((own) => ({ ...read, ...(read.take[1] === 'project' && own && { colours: { ground: own.ground, ink: own.ink, accent: own.accent, accent2: own.accent2 } }), ...(read.take[2] === 'own' && book.fonts && { fonts: book.fonts }) }))(book.palettes.find((one) => one.id === 'project'))
   let side = null
   try { side = JSON.parse((await app.fs.read(`${dir}/${waiting(path)}`)) ?? 'null') } catch {}
   return { dir, path, design, side }
