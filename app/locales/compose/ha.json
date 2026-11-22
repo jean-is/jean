@@ -51,5 +51,6 @@
   "compose.document.noVersion": "Wannan takardar ba ta da siga ta {n}.",
   "compose.document.denied": "An kashe takardu.",
   "compose.document.section": "Wannan takardar ba ta da irin wannan sashe.",
-  "compose.document.certified": "An tabbatar, har zuwa siga ta {n} ta takardar"
+  "compose.document.certified": "An tabbatar, har zuwa siga ta {n} ta takardar",
+  "compose.area": "Wannan farin allo ba shi da irin wannan sashe."
 }

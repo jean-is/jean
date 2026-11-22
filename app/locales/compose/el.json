@@ -51,5 +51,6 @@
   "compose.document.noVersion": "Αυτό το έγγραφο δεν έχει έκδοση {n}.",
   "compose.document.denied": "Τα έγγραφα είναι απενεργοποιημένα.",
   "compose.document.section": "Αυτό το έγγραφο δεν έχει τέτοια ενότητα.",
-  "compose.document.certified": "Πιστοποιημένο, έως την έκδοση {n} του εγγράφου"
+  "compose.document.certified": "Πιστοποιημένο, έως την έκδοση {n} του εγγράφου",
+  "compose.area": "Αυτός ο πίνακας δεν έχει τέτοια ενότητα."
 }

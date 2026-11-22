@@ -51,5 +51,6 @@
   "compose.document.noVersion": "Ennek a dokumentumnak nincs {n}. verziója.",
   "compose.document.denied": "A dokumentumok ki vannak kapcsolva.",
   "compose.document.section": "Ebben a dokumentumban nincs ilyen szakasz.",
-  "compose.document.certified": "Hitelesítve, a dokumentum {n}. verziójáig"
+  "compose.document.certified": "Hitelesítve, a dokumentum {n}. verziójáig",
+  "compose.area": "Ezen a táblán nincs ilyen szakasz."
 }

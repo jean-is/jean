@@ -51,5 +51,6 @@
   "compose.document.noVersion": "この文書には第{n}版がありません。",
   "compose.document.denied": "文書はオフになっています。",
   "compose.document.section": "この文書にはその節がありません。",
-  "compose.document.certified": "文書の第{n}版まで証明済み"
+  "compose.document.certified": "文書の第{n}版まで証明済み",
+  "compose.area": "このホワイトボードにはそのセクションがありません。"
 }

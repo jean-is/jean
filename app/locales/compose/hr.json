@@ -51,5 +51,6 @@
   "compose.document.noVersion": "Ovaj dokument nema verziju {n}.",
   "compose.document.denied": "Dokumenti su isključeni.",
   "compose.document.section": "Ovaj dokument nema takav odjeljak.",
-  "compose.document.certified": "Ovjereno, sve do verzije {n} dokumenta"
+  "compose.document.certified": "Ovjereno, sve do verzije {n} dokumenta",
+  "compose.area": "Ova ploča nema takav odjeljak."
 }

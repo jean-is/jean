@@ -51,5 +51,6 @@
   "compose.document.noVersion": "Цей документ не має версії {n}.",
   "compose.document.denied": "Документи вимкнено.",
   "compose.document.section": "У цьому документі немає такого розділу.",
-  "compose.document.certified": "Засвідчено, аж до версії {n} документа"
+  "compose.document.certified": "Засвідчено, аж до версії {n} документа",
+  "compose.area": "На цій дошці немає такого розділу."
 }

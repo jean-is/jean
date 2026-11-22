@@ -51,5 +51,6 @@
   "compose.document.noVersion": "Det här dokumentet har ingen version {n}.",
   "compose.document.denied": "Dokument är avstängda.",
   "compose.document.section": "Det här dokumentet har inget sådant avsnitt.",
-  "compose.document.certified": "Intygat, tillbaka till version {n} av dokumentet"
+  "compose.document.certified": "Intygat, tillbaka till version {n} av dokumentet",
+  "compose.area": "Den här tavlan har ingen sådan sektion."
 }

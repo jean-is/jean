@@ -60,6 +60,12 @@ Decision 2 below, settled for documents: a document's sections are a source, as 
 
 **Exit criterion**: slides show a document's section found by its words, and the document then holds its id; renamed and changed, the slides follow it; version 1 published from the document's pane, a site that reads version 1 keeps it once the document changes, while one that reads it live follows, and neither page's file holds the words; two documents that would show each other say so; in Arabic and Japanese, a section found by its heading's words in that script.
 
+### Step 10 — More consumers
+
+Each kind that shows data does it through a reference, never a copy. A design holds one as its `from`, given by `design`, each `{Column}` in its words that row's value (`filledWith()`): *Print or save as PDF* draws it once for each row, as they are then, filling the sheets as its size does. A game holds one as its `from`, given by `game`: its page gets the rows as it is read (`given()`, each row an object by its columns' names, 200 at most), `host.rows` in the game, never in its file. Both are consumers in the graph, their references read only from their menu, as a site's are, and a design lists the pictures it holds. A whiteboard is a source: a reference with `section: Ideas` shows that section's notes as a list (`notesIn()`), by its name or its name as an id, and its menu publishes versions as a collection's does; every collection, a whiteboard too, is named in the graph.
+
+**Exit criterion**: a design of badges drawn from the bakers prints one, then two once another baker is added; a game's page holds the rows as it is read and its file none; slides of a whiteboard's section list its note, then none once the note is moved to another section; the whiteboard lists the slides and publishes version 1; the artisans list the badges and the game.
+
 ### Budgets
 
 Built first on a main whose line budget was nearly full, each step from the second raised `loc.app` by what it measured, at the owner's word; replayed on the main it landed on, whose budget left room enough, those raises were dropped and no budget changed. From step 6 on, a step that needs more room than the budget leaves raises `loc.app` by what it measures, at the owner's word, in a commit of its own before it; step 6 fitted in what was left. Nothing was added to the first load, the core or Tables' folder; no dependency was added. Its strings are in the 54 languages Jean speaks.
@@ -81,6 +87,8 @@ Built first on a main whose line budget was nearly full, each step from the seco
 - **No count on Creations' cards, and no `@`, yet.** The plan's step 7 put on each card of the Creations page how many creations it uses and is used in, and had `@` say what a creation uses. The page's state and `@` live in modules of the first load, which has no byte left; the links menu and `creation_links` say it meanwhile.
 - **The brain asks, rather than being told.** A tool's result saying which consumers a change of rows touches would go through Tables' code, at its gzip budget; `creation_links` is one read tool of its own, which the brain calls before changing what others show.
 - **The graph reads an answer's blocks, not its figures.** Its blocks are read as a task's tunes and apps are, by their fence; a figure, inline code in its words, is worked out as it was but is no edge yet.
+- **No apps, and no figures in a design, yet.** An app in an answer is a moment, as its answer is, and a page it draws gets no rows; a design's words hold `{Column}` for its row, not a figure worked out from a collection.
+- **One per row on paper only.** A design's picture, its post and its story are of the design as it is; only printing draws one per row.
 - **A section is shown, not queried.** A reference to a document's section has no recipe but the section: its Markdown is drawn as it is, and in a site its HTML as Jean draws Markdown.
 - **A picture is listed, not certified.** The plan's step 6 had a picture's credential join a version's or a run's ingredients. A run's ingredients are what it read, and slides have no certificate of their own beside their runs', so a picture held by content is a link of the graph, which says where it is used, and its own credential stays its own.
 - **The commits' first lines** are in English after `composition: étape N —`, as the rest of the history is; the docs are in English, as all of Jean's are.
@@ -90,7 +98,7 @@ Built first on a main whose line budget was nearly full, each step from the seco
 - A heading copied in a document keeps its id, so two headings may share one; a reference finds the first. A section's pictures, held by their place from the documents' folder, don't show on a site, and slides saved as PowerPoint hold a section's source.
 - What leaves Jean of an answer (its Word file, a link to it) holds its references as they are when it leaves, not as they were when it was written.
 - Slides saved as PowerPoint: a composed chart is a native chart, each bar in its choice's colour, and a composed table a table (`test/compose.spec.js`); a run's words weren't checked in the exported file. A deck's own file, opened outside Jean, draws a reference as its text, a figure as its formula: only Jean resolves one. A link to slides or a document, and a document's Word file, hold what each shows as they are made, a chart as its figures' table.
-- A whiteboard is a collection too, but has neither versions nor a port.
+- A whiteboard has versions but no port: what a site's form proposes goes to collections alone.
 - A recipe that runs as its source changes may meet the month's limit in the background: the question it asks then comes up unasked for.
 - Versions, runs and ports are plain files of the project: Sync carries them as files, but working on a collection together (D733) sends its lines and its table only, so the others have neither its versions nor its port.
 - The graph is read again from every slides, document and site file of the project once any of them, or a collection's columns, is written, and every five minutes at most otherwise: right for tens of creations, not thousands, where an index in `.cache/` would be.
@@ -103,21 +111,11 @@ Built first on a main whose line budget was nearly full, each step from the seco
 
 ## Work left: the graph at its best
 
-Composition and the graph are one ([architecture.md](architecture.md#composition)): every way a creation shows another becomes a reference, and every reference is an edge the graph reads. The steps below follow from that, each shippable alone, its exit criterion checked in `test/compose.spec.js` or `test/compose.test.js` as before. Steps 6 to 9, what already linked creations brought into the graph, what it can say at no cost, the place most people read and documents as sources, are built (above). Then, in order: more consumers and sources (10 and 11), then what runs and what travels (12). Three rules hold for every step:
+Composition and the graph are one ([architecture.md](architecture.md#composition)): every way a creation shows another becomes a reference, and every reference is an edge the graph reads. The steps below follow from that, each shippable alone, its exit criterion checked in `test/compose.spec.js` or `test/compose.test.js` as before. Steps 6 to 10, what already linked creations brought into the graph, what it can say at no cost, the place most people read, documents as sources and more consumers, are built (above). Then, in order: the design system as a source (11), then what runs and what travels (12). Three rules hold for every step:
 
 - **Nothing shown outside a reference.** A kind that starts showing another's content joins `CONSUMERS` in the same change, and its test checks that the source's *Links with other creations* lists it.
 - **Budgets first.** `loc.app` has a dozen lines left and Tables' code is at its gzip limit: each step measures what it needs, deletes first where it can, asks for a raise in a change of its own, and stays out of Tables' folder.
 - **What is paid stays opt-in.** A step that makes the graph carry more never makes a brain run, or anything leave Jean, that the person didn't choose.
-
-### Step 10 — More consumers
-
-Each kind that shows data does it through a reference, never a copy.
-
-- **Designs**: a part's words bound to a column, one design drawn per row (badges, certificates, place cards), and figures in its words.
-- **Games and apps**: a quiz or flash cards whose questions are a collection's rows, given to the page as data when it is read and kept out of its file, as a site's rows are; its sandbox unchanged.
-- **Whiteboards** as sources, with a contract of their own: a section becomes a slide, and a note with its owner and date a row of an action list; versions as a collection has them.
-
-**Exit criterion**: one design makes a badge for each approved artisan, and one more once another is approved; a quiz plays a collection's questions, and a new row once it is read again; slides made of a whiteboard's sections follow a note moved to another section.
 
 ### Step 11 — The design system as a source
 

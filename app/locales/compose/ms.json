@@ -51,5 +51,6 @@
   "compose.document.noVersion": "Dokumen ini tiada versi {n}.",
   "compose.document.denied": "Dokumen dimatikan.",
   "compose.document.section": "Dokumen ini tiada bahagian sedemikian.",
-  "compose.document.certified": "Disahkan, hingga versi {n} dokumen"
+  "compose.document.certified": "Disahkan, hingga versi {n} dokumen",
+  "compose.area": "Papan putih ini tiada bahagian sedemikian."
 }

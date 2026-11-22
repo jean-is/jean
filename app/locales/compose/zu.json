@@ -51,5 +51,6 @@
   "compose.document.noVersion": "Le dokhumenti ayinayo inguqulo {n}.",
   "compose.document.denied": "Amadokhumenti avaliwe.",
   "compose.document.section": "Le dokhumenti ayinayo ingxenye enjalo.",
-  "compose.document.certified": "Kuqinisekisiwe, kuze kufike enguqulweni {n} yedokhumenti"
+  "compose.document.certified": "Kuqinisekisiwe, kuze kufike enguqulweni {n} yedokhumenti",
+  "compose.area": "Leli bhodi elimhlophe alinaso isigaba esinjalo."
 }

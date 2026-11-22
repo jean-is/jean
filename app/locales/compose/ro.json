@@ -51,5 +51,6 @@
   "compose.document.noVersion": "Acest document nu are versiunea {n}.",
   "compose.document.denied": "Documentele sunt dezactivate.",
   "compose.document.section": "Acest document nu are o asemenea secțiune.",
-  "compose.document.certified": "Certificat, până la versiunea {n} a documentului"
+  "compose.document.certified": "Certificat, până la versiunea {n} a documentului",
+  "compose.area": "Această tablă nu are o asemenea secțiune."
 }

@@ -51,5 +51,6 @@
   "compose.document.noVersion": "เอกสารนี้ไม่มีเวอร์ชัน {n}",
   "compose.document.denied": "เอกสารถูกปิดอยู่",
   "compose.document.section": "เอกสารนี้ไม่มีส่วนนั้น",
-  "compose.document.certified": "รับรองแล้ว ย้อนไปถึงเวอร์ชัน {n} ของเอกสาร"
+  "compose.document.certified": "รับรองแล้ว ย้อนไปถึงเวอร์ชัน {n} ของเอกสาร",
+  "compose.area": "ไวต์บอร์ดนี้ไม่มีส่วนนั้น"
 }

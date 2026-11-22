@@ -51,5 +51,6 @@
   "compose.document.noVersion": "ليس لهذا المستند إصدار {n}.",
   "compose.document.denied": "المستندات مُعطَّلة.",
   "compose.document.section": "ليس في هذا المستند قسم كهذا.",
-  "compose.document.certified": "موثَّق، حتى الإصدار {n} من المستند"
+  "compose.document.certified": "موثَّق، حتى الإصدار {n} من المستند",
+  "compose.area": "ليس في هذه السبورة قسم كهذا."
 }

@@ -51,5 +51,6 @@
   "compose.document.noVersion": "N’en deus ket an teul-mañ ur stumm {n}.",
   "compose.document.denied": "Lazhet eo an teulioù.",
   "compose.document.section": "N’eus ket eus ar rann-se en teul-mañ.",
-  "compose.document.certified": "Testeniekaet, betek stumm {n} an teul"
+  "compose.document.certified": "Testeniekaet, betek stumm {n} an teul",
+  "compose.area": "N’eus ket eus ar rann-se war an daolenn-mañ."
 }

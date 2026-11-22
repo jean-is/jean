@@ -51,5 +51,6 @@
   "compose.document.noVersion": "Stu ducumentu ùn hà micca a versione {n}.",
   "compose.document.denied": "I ducumenti sò disattivati.",
   "compose.document.section": "Stu ducumentu ùn hà micca una tale sezzione.",
-  "compose.document.certified": "Certificatu, finu à a versione {n} di u ducumentu"
+  "compose.document.certified": "Certificatu, finu à a versione {n} di u ducumentu",
+  "compose.area": "Sta lavagna ùn hà micca una tale sezzione."
 }

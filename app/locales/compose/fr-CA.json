@@ -51,5 +51,6 @@
   "compose.document.noVersion": "Ce document n’a pas de version {n}.",
   "compose.document.denied": "Les documents sont désactivés.",
   "compose.document.section": "Ce document n’a pas cette section.",
-  "compose.document.certified": "Certifié, jusqu’à la version {n} du document"
+  "compose.document.certified": "Certifié, jusqu’à la version {n} du document",
+  "compose.area": "Ce tableau blanc n’a pas cette section."
 }

@@ -51,5 +51,6 @@
   "compose.document.noVersion": "ይህ ሰነድ ስሪት {n} የለውም።",
   "compose.document.denied": "ሰነዶች ጠፍተዋል።",
   "compose.document.section": "ይህ ሰነድ እንዲህ ያለ ክፍል የለውም።",
-  "compose.document.certified": "የተረጋገጠ፣ እስከ ሰነዱ ስሪት {n} ድረስ"
+  "compose.document.certified": "የተረጋገጠ፣ እስከ ሰነዱ ስሪት {n} ድረስ",
+  "compose.area": "ይህ ነጭ ሰሌዳ እንዲህ ያለ ክፍል የለውም።"
 }

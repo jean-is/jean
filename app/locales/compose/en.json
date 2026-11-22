@@ -51,5 +51,6 @@
   "compose.document.noVersion": "This document has no version {n}.",
   "compose.document.denied": "Documents are turned off.",
   "compose.document.section": "This document has no such section.",
-  "compose.document.certified": "Certified, back to version {n} of the document"
+  "compose.document.certified": "Certified, back to version {n} of the document",
+  "compose.area": "This whiteboard has no such section."
 }

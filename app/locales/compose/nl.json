@@ -51,5 +51,6 @@
   "compose.document.noVersion": "Dit document heeft geen versie {n}.",
   "compose.document.denied": "Documenten staan uit.",
   "compose.document.section": "Dit document heeft zo’n onderdeel niet.",
-  "compose.document.certified": "Gecertificeerd, terug tot versie {n} van het document"
+  "compose.document.certified": "Gecertificeerd, terug tot versie {n} van het document",
+  "compose.area": "Dit whiteboard heeft zo’n sectie niet."
 }

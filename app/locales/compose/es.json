@@ -51,5 +51,6 @@
   "compose.document.noVersion": "Este documento no tiene versión {n}.",
   "compose.document.denied": "Los documentos están desactivados.",
   "compose.document.section": "Este documento no tiene esa sección.",
-  "compose.document.certified": "Certificado, hasta la versión {n} del documento"
+  "compose.document.certified": "Certificado, hasta la versión {n} del documento",
+  "compose.area": "Esta pizarra no tiene esa sección."
 }

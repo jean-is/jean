@@ -5,7 +5,7 @@
 // read; in a slide's words, a figure worked out from it, inline code that starts with `=`, its place, then what it works out and of which
 // rows: `=collections/… sum Amount where Status is Paid`. The graph of who uses whom is read from the consumers' own files, and a reference
 // that would close a loop is refused. Pure, so Node's tests run it.
-import { PLACE, propertyOf, hueOf } from '../tables/table.js'
+import { PLACE, propertyOf, hueOf, kindOf } from '../tables/table.js'
 import { fill, rules } from '../fill/fill.js'
 import { query, total } from '../tables/query.js'
 import { amount } from '../tables/export.js'
@@ -32,6 +32,9 @@ export function parseRef(text) {
   const [first = '', ...lines] = text.trim().split('\n').map((line) => line.trim()), [, named = '', at = 'live'] = /^(.*?)(?:@(live|published|[1-9]\d*))?$/.exec(first) ?? [], [place, section = ''] = named.split('#')
   return (PLACE.test(place) || DOCUMENT.test(place)) && !place.includes('@') ? { place, at: /^\d/.test(at) ? Number(at) : /** @type {'live' | 'published'} */ (at), recipe: { ...(section && { section }), ...Object.fromEntries(lines.flatMap((line) => ((kv) => (kv ? [[kv[1].toLowerCase(), kv[2].trim()]] : []))(/^(\w+):(.*)$/.exec(line)))) } } : null
 }
+
+/** A whiteboard's section as a reference shows it (`section: Ideas`): the words of the notes in it, found by its name or its name as an id; null where it has none. @param {Row[]} rows @param {string} section */
+export const notesIn = (rows, section) => ((area) => (area ? rows.filter((row) => row.cells.area === area.id && kindOf(row) === 'note').map((row) => String(row.cells.note ?? '')) : null))(rows.find((row) => kindOf(row) === 'area' && [String(row.cells.note ?? '').trim(), slugOf(String(row.cells.note ?? ''))].includes(section.trim())))
 
 /** A heading's words as an id, in any script. @param {string} words */
 export const slugOf = (words) => words.normalize('NFKC').toLocaleLowerCase().replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-|-$/g, '')

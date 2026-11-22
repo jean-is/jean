@@ -51,5 +51,6 @@
   "compose.document.noVersion": "Dokumen ini tidak punya versi {n}.",
   "compose.document.denied": "Dokumen dimatikan.",
   "compose.document.section": "Dokumen ini tidak punya bagian seperti itu.",
-  "compose.document.certified": "Tersertifikasi, sampai versi {n} dokumen"
+  "compose.document.certified": "Tersertifikasi, sampai versi {n} dokumen",
+  "compose.area": "Papan tulis ini tidak punya bagian seperti itu."
 }

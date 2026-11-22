@@ -51,5 +51,6 @@
   "compose.document.noVersion": "Dette dokument har ingen version {n}.",
   "compose.document.denied": "Dokumenter er slået fra.",
   "compose.document.section": "Dette dokument har ikke et sådant afsnit.",
-  "compose.document.certified": "Bekræftet, tilbage til version {n} af dokumentet"
+  "compose.document.certified": "Bekræftet, tilbage til version {n} af dokumentet",
+  "compose.area": "Denne tavle har ikke en sådan sektion."
 }

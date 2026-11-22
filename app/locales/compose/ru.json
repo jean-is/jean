@@ -51,5 +51,6 @@
   "compose.document.noVersion": "У этого документа нет версии {n}.",
   "compose.document.denied": "Документы выключены.",
   "compose.document.section": "В этом документе нет такого раздела.",
-  "compose.document.certified": "Заверено, вплоть до версии {n} документа"
+  "compose.document.certified": "Заверено, вплоть до версии {n} документа",
+  "compose.area": "На этой доске нет такого раздела."
 }

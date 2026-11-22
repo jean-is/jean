@@ -51,5 +51,6 @@
   "compose.document.noVersion": "Walang bersiyon {n} ang dokumentong ito.",
   "compose.document.denied": "Nakapatay ang mga dokumento.",
   "compose.document.section": "Walang ganoong seksiyon ang dokumentong ito.",
-  "compose.document.certified": "Sertipikado, hanggang sa bersiyon {n} ng dokumento"
+  "compose.document.certified": "Sertipikado, hanggang sa bersiyon {n} ng dokumento",
+  "compose.area": "Walang ganoong seksiyon ang whiteboard na ito."
 }

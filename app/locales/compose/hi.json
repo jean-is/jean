@@ -51,5 +51,6 @@
   "compose.document.noVersion": "इस दस्तावेज़ का संस्करण {n} नहीं है।",
   "compose.document.denied": "दस्तावेज़ बंद हैं।",
   "compose.document.section": "इस दस्तावेज़ में ऐसा कोई खंड नहीं है।",
-  "compose.document.certified": "प्रमाणित, दस्तावेज़ के संस्करण {n} तक"
+  "compose.document.certified": "प्रमाणित, दस्तावेज़ के संस्करण {n} तक",
+  "compose.area": "इस व्हाइटबोर्ड में ऐसा कोई खंड नहीं है।"
 }

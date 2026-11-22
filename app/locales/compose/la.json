@@ -51,5 +51,6 @@
   "compose.document.noVersion": "Hoc documentum editionem {n} non habet.",
   "compose.document.denied": "Documenta exstincta sunt.",
   "compose.document.section": "Hoc documentum talem partem non habet.",
-  "compose.document.certified": "Probatum, usque ad editionem {n} documenti"
+  "compose.document.certified": "Probatum, usque ad editionem {n} documenti",
+  "compose.area": "Haec tabula talem partem non habet."
 }

@@ -51,5 +51,6 @@
   "compose.document.noVersion": "Tento dokument nemá verzi {n}.",
   "compose.document.denied": "Dokumenty jsou vypnuté.",
   "compose.document.section": "Tento dokument takový oddíl nemá.",
-  "compose.document.certified": "Ověřeno, až k verzi {n} dokumentu"
+  "compose.document.certified": "Ověřeno, až k verzi {n} dokumentu",
+  "compose.area": "Tato tabule takovou sekci nemá."
 }

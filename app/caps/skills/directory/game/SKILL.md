@@ -151,6 +151,7 @@ The game is one JavaScript module. It runs offline in a frame that already has a
 - `host.input.down(action)`, `host.input.pressed(action)` (this frame only), `host.input.on(action, fn)`, for `left`, `right`, `up`, `down`, `a`, `b`, from arrows or WASD, Space, Z or Enter (`a`), X or Shift (`b`), touch buttons and gamepads, which also reach the page as keys.
 - `host.sound(...zzfxParams)`: a ZzFX sound, silent when muted.
 - `host.save(value)`, `host.load()`: JSON kept between visits, 64 KB at most; `load()` returns it at once. `localStorage` works too.
+- `host.rows`: when the game plays what one of the user's collections holds (a quiz's questions, words to learn, cards), give `game` its `from`, the collection's place then `fields:` and `where:` lines as a `table` block holds them; each row is an object by its columns' names, as the collection is each time the game starts, never copied into the game. Never write those rows into the code.
 - `host.state(name)`, `host.score(n)`: the game's moments and score.
 - `host.reduced`: true when the player asked for less motion. `host.lang`, `host.dir`: the language and its direction.
 

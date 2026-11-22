@@ -3,7 +3,8 @@
 // asked at each resolution, and what a reference shows of a collection, read again from its journal.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { parseRef, placeOf, refsIn, withRef, filledPage, bare, formsTo, loops, refused, versionless, tableOf, chartOf, choiceIn, choicesIn, tinted, parseFigure, figureOf, written, linksIn, further, sectionOf, slugOf, withId } from '../app/caps/compose/refs.js'
+import { parseRef, placeOf, refsIn, withRef, filledPage, bare, formsTo, loops, refused, versionless, tableOf, chartOf, choiceIn, choicesIn, tinted, parseFigure, figureOf, written, linksIn, further, sectionOf, slugOf, withId, notesIn } from '../app/caps/compose/refs.js'
+import { filledWith } from '../app/caps/designs/layout.js'
 import { versionOf, loadedOf, headOf, reshaped, breaks, current } from '../app/caps/compose/versions.js'
 import { keyOf, paceOf, sorted, askOf, lastRun, due } from '../app/caps/compose/recipes.js'
 import { credentialOf, chainOf, holds, sriOf } from '../app/caps/compose/proof.js'
@@ -108,6 +109,16 @@ test('a document’s section is a source: found by the id after its heading, els
   assert.deepEqual(refsIn(page).map(({ place, recipe }) => [place, recipe.section]), [[DOC, 'prices'], [PLACE, undefined]])
   assert.equal(filledPage(page, ['<p>Ten euros.</p>', null]), `<main><section data-from="${DOC}#prices"><p>Ten euros.</p></section><table data-from="${PLACE}"></table></main>`)
   assert.equal(bare(filledPage(page, ['<p>Ten euros.</p>', null])), `<main><section data-from="${DOC}#prices"></section><table data-from="${PLACE}"></table></main>`)
+})
+
+test('a whiteboard’s section is its notes, found by its name or its name as an id; a design is drawn for a row, each {Column} its value', () => {
+  const row = (/** @type {string} */ id, /** @type {Record<string, unknown>} */ cells) => /** @type {any} */ ({ id, cells })
+  const rows = [row('a', { note: 'Ideas en vrac', '@kind': 'area' }), row('b', { note: 'Bake bread', area: 'a' }), row('c', { note: 'Ideas en vrac', '@kind': 'text', area: 'a' }), row('d', { note: 'Elsewhere' })]
+  assert.deepEqual(notesIn(rows, 'Ideas en vrac'), ['Bake bread'], 'its notes alone, by its name')
+  assert.deepEqual(notesIn(rows, 'ideas-en-vrac'), ['Bake bread'], 'or its name as an id')
+  assert.equal(notesIn(rows, 'Later'), null)
+  const design = /** @type {any} */ ({ parts: [{ id: 'title', role: 'title', text: '{Name}' }, { id: 'who', role: 'who', text: '{ Trade } · {Unknown}' }, { id: 'picture', role: 'picture', words: '{Name}' }] })
+  assert.deepEqual(filledWith(design, { Name: 'Ana', Trade: 'Baker' }).parts.map((part) => part.text ?? part.words), ['Ana', 'Baker · {Unknown}', '{Name}'])
 })
 
 test('what is reached further from a place goes as far as the graph does, each through the link it starts from, never back to the place', () => {

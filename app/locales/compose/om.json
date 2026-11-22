@@ -51,5 +51,6 @@
   "compose.document.noVersion": "Sanadni kun gosa {n} hin qabu.",
   "compose.document.denied": "Sanadoonni dhaamsamaniiru.",
   "compose.document.section": "Sanadni kun kutaa akkasii hin qabu.",
-  "compose.document.certified": "Mirkanaa’eera, hanga gosa {n} sanadichaatti"
+  "compose.document.certified": "Mirkanaa’eera, hanga gosa {n} sanadichaatti",
+  "compose.area": "Gabatee adiin kun kutaa akkasii hin qabu."
 }

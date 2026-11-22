@@ -491,6 +491,66 @@ test('a document’s section is a source: slides and a site follow it through a 
   await expect(page.locator('app-preview app-composed')).toContainText('Not shown: each would use the other, in a loop.')
 })
 
+test('more consumers: one badge per baker and one more for another, a game given the rows as it starts, slides of a whiteboard’s section that follow a note moved', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await seed(page)
+  const WB = 'collections/01K85Z1T00000000000000000W-board', GAME = 'games/01K85Z1T00000000000000000Q-quiz.game.html', AREAS = ['01K8000000000000000000000X', '01K8000000000000000000000Y'], NOTE = '01K8000000000000000000000Z'
+  await page.evaluate(async () => { const { unlock } = await import('/ui/caps.js'); await Promise.all([unlock('designs'), unlock('games')]) })
+  // One badge per baker, laid out once: each {Column} its row's.
+  await ask(page, `Call design with ${JSON.stringify({ name: 'Badges', size: 'a6', words: { title: '{Name}', who: '{Trade}' }, from: `${COLLECTION}\nwhere: Trade is Baker` })}`)
+  await answered(page)
+  await page.evaluate(() => { window.print = () => {} })
+  const print = async () => {
+    await page.locator('app-preview .pane-head .icon-group > [popovertarget^="out-"]').click()
+    await page.locator('.out-menu').getByRole('button', { name: /^Print or save as PDF/ }).click()
+  }
+  await print()
+  await expect(page.locator('.design-print .design-page')).toHaveCount(1)
+  await expect(page.locator('.design-print .design-page')).toContainText('Ana')
+  await page.evaluate(async ({ COLLECTION }) => { const tables = await import('/caps/tables/tables.js'), one = await tables.load(COLLECTION); if (one) await tables.change(one, [{ set: { name: 'Bob', trade: 'Baker' } }], 'user') }, { COLLECTION })
+  await page.evaluate(() => window.dispatchEvent(new Event('afterprint')))
+  await expect(page.locator('.design-print')).toHaveCount(0)
+  await print()
+  await expect(page.locator('.design-print .design-page')).toHaveCount(2)
+  await expect(page.locator('.design-print .design-page').nth(1)).toContainText('Bob')
+  // A game is given the rows as it starts, never in its file.
+  const given = await page.evaluate(async ({ COLLECTION, GAME }) => {
+    const { app } = await import('/ui/state.js'), [file, { pageOf }] = await Promise.all([import('/caps/games/file.js'), import('/caps/games/page.js')])
+    const game = { path: GAME, name: 'Quiz', card: 'Who makes what', code: 'host.stage.textContent = host.rows.map((row) => row.Name).join()', meta: { engine: 'none', actions: '', author: 'jean', created: '', changed: '', from: `${COLLECTION}\nfields: Name | Trade` } }
+    await app.fs.write(`${app.projectDir}/${GAME}`, file.fileOf(game, 'en'))
+    return pageOf(/** @type {any} */ (game))
+  }, { COLLECTION, GAME })
+  expect(given).toContain('"rows":[{"Name":"Ana","Trade":"Baker"},{"Name":"Bob","Trade":"Baker"}]')
+  expect(await page.evaluate(async (GAME) => String(await (await import('/ui/state.js')).app.fs.read(`${(await import('/ui/state.js')).app.projectDir}/${GAME}`)), GAME)).not.toContain('Bob')
+  // A whiteboard's section on a slide, as a list of its notes; a note moved to another section leaves it.
+  await page.evaluate(async ({ WB, AREAS, NOTE }) => {
+    const { app } = await import('/ui/state.js'), at = '2026-11-21T10:00:00.000Z'
+    await app.fs.write(`${app.projectDir}/${WB}/collection.json`, JSON.stringify({ format: 1, id: WB.slice(12, 38), name: 'Board', kind: 'whiteboard', dir: 'ltr', author: 'user', created: at, changed: at,
+      properties: [{ id: 'note', name: 'Note', type: 'text' }, { id: 'area', name: 'Section', type: 'relation', collection: WB }], views: [{ id: 'table', type: 'table' }] }))
+    await app.fs.write(`${app.projectDir}/${WB}/changes.jsonl`, [{ row: AREAS[0], set: { note: 'Ideas', '@kind': 'area' } }, { row: AREAS[1], set: { note: 'Later', '@kind': 'area' } }, { row: NOTE, set: { note: 'Bake bread', area: AREAS[0] } }]
+      .map((line) => `${JSON.stringify({ ...line, at, by: 'user' })}\n`).join(''))
+    await (await import('/caps/skills/decks.js')).rewrite('decks/01K85Z1T00000000000000000S-ideas.deck.html', `# Ideas\n\n---\n\n\`\`\`table\n${WB}\nsection: Ideas\n\`\`\`\n`, 'Ideas', app.projectDir)
+  }, { WB, AREAS, NOTE })
+  await show(page, 'decks/01K85Z1T00000000000000000S-ideas.deck.html', 'Ideas')
+  const list = page.locator('app-preview .deck-slide .deck-table ul').first()
+  await expect(list.locator('li')).toHaveText(['Bake bread'])
+  await page.evaluate(async ({ WB, AREAS, NOTE }) => { const tables = await import('/caps/tables/tables.js'), one = await tables.load(WB); if (one) await tables.change(one, [{ row: NOTE, set: { area: AREAS[1] } }], 'user') }, { WB, AREAS, NOTE })
+  await expect(list.locator('li')).toHaveCount(0)
+  // The whiteboard is a source: what uses it, and its versions.
+  await show(page, WB, 'Board')
+  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  const menu = page.locator('.menu:popover-open')
+  await expect(menu.getByRole('group', { name: 'Used in' }).getByRole('button', { name: /Ideas/ })).toBeVisible()
+  await expect(menu.getByRole('group', { name: 'Versions' }).getByRole('button', { name: 'Publish version 1' })).toBeEnabled()
+  // The artisans list the badges and the game among what uses them.
+  await page.keyboard.press('Escape')
+  await show(page, COLLECTION, 'Artisans')
+  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  await expect(menu.getByRole('group', { name: 'Used in' })).toContainText('Badges')
+  await expect(menu.getByRole('group', { name: 'Used in' })).toContainText('Quiz')
+})
+
 test('a recipe that sums up the approved artisans on a slide updates by itself once its user turns that on, and only then; a run is paid once per version read', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)

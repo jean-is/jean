@@ -51,5 +51,6 @@
   "compose.document.noVersion": "Tài liệu này không có phiên bản {n}.",
   "compose.document.denied": "Tài liệu đang tắt.",
   "compose.document.section": "Tài liệu này không có phần đó.",
-  "compose.document.certified": "Đã chứng nhận, tới phiên bản {n} của tài liệu"
+  "compose.document.certified": "Đã chứng nhận, tới phiên bản {n} của tài liệu",
+  "compose.area": "Bảng trắng này không có phần đó."
 }

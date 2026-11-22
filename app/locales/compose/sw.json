@@ -51,5 +51,6 @@
   "compose.document.noVersion": "Hati hii haina toleo la {n}.",
   "compose.document.denied": "Hati zimezimwa.",
   "compose.document.section": "Hati hii haina sehemu kama hiyo.",
-  "compose.document.certified": "Imethibitishwa, hadi toleo la {n} la hati"
+  "compose.document.certified": "Imethibitishwa, hadi toleo la {n} la hati",
+  "compose.area": "Ubao huu hauna sehemu kama hiyo."
 }

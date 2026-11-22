@@ -12,7 +12,8 @@ export const GAME = {
   parameters: { type: 'object', properties: {
     name: { type: 'string', description: "Its title, in the user's language" }, card: { type: 'string', description: 'Its design card, 120 words at most' },
     engine: { type: 'string', enum: ENGINES }, actions: { type: 'array', items: { type: 'string', enum: ACTIONS }, description: 'The actions it uses' },
-    game: { type: 'string', description: "A game's place, to replace it whole" }, code: { type: 'string', description: 'The whole game' } },
+    game: { type: 'string', description: "A game's place, to replace it whole" }, code: { type: 'string', description: 'The whole game' },
+    from: { type: 'string', description: 'A collection whose rows it plays (a quiz\'s questions, flash cards): its place, then fields: and where: lines as a table block holds them; the game reads host.rows, each row by its columns\' names' } },
   required: ['name', 'card', 'engine', 'actions', 'code'] },
 }
 

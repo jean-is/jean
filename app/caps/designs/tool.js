@@ -7,7 +7,7 @@
 import { readDates } from './checks.js'
 
 /** @typedef {{ title: string, words?: string, items?: string, when?: string, where?: string, who?: string, small?: string }} Words */
-/** @typedef {{ name: string, size: string, occasion?: string, words: Words, date?: string, pictures: { describe: string }[] }} Facts */
+/** @typedef {{ name: string, size: string, occasion?: string, words: Words, date?: string, pictures: { describe: string }[], from?: string }} Facts */
 
 export const SIZES = ['a5', 'a6', 'a4', 'letter', 'square', 'story', 'wide']
 export const ROLES = /** @type {const} */ (['title', 'words', 'items', 'when', 'where', 'who', 'small'])
@@ -50,6 +50,7 @@ export const DESIGN = {
         required: ['title'],
       },
       date: { type: 'string', description: "The event's date and time in ISO 8601 (2026-11-14T15:00), if it announces one" },
+      from: { type: 'string', description: 'For one design per row of a collection (badges, place cards, certificates): its place, then fields: and where: lines as a table block holds them; each {Column} in the words is that row\'s value' },
       pictures: { type: 'array', description: 'Pictures to make for it, each described in detail, or the name of a picture of the task to put in as it is', items: { type: 'object', properties: { describe: { type: 'string' } }, required: ['describe'] } },
     },
     required: ['name', 'size', 'words'],
@@ -270,5 +271,5 @@ export function repair(args, lang = 'en') {
     words.when = [written[0].toLocaleUpperCase(lang) + written.slice(1), words.when].filter(Boolean).join(' · ')
     repairs.push('date into when')
   }
-  return { facts: { name: name || words.title, size, occasion: text(given.occasion), words: /** @type {Words} */ (words), ...(date ? { date } : {}), pictures }, repairs }
+  return { facts: { name: name || words.title, size, occasion: text(given.occasion), words: /** @type {Words} */ (words), ...(date ? { date } : {}), pictures, ...(text(given.from) && { from: text(given.from) }) }, repairs }
 }

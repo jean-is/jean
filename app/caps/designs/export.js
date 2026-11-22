@@ -15,7 +15,7 @@ import { paperFor } from '../made/formats.js'
 import { marked, xmpOf } from '../pictures/mark.js'
 import { BRAND } from '../../brand.js'
 import { book, shown, load, suggested } from './designs.js'
-import { resized, textOf } from './layout.js'
+import { resized, textOf, filledWith } from './layout.js'
 import { toSvg, withDesign } from './format.js'
 import { laidOut, pageOf, typeOf, ART, codeOf } from './page.js'
 import { marksHere, look } from './view.js'
@@ -59,13 +59,17 @@ async function pngOf(design) {
   return new Blob([/** @type {BlobPart} */ (withDesign(marked(bytes, BRAND.name), fitted))], { type: 'image/png' })
 }
 
-/** Two A5s or four A6s to a sheet of the region's paper, with a line to cut along, else one: drawn for the printer alone, then gone. @param {Design} design */
-async function print(design) {
+/**
+ * Two A5s or four A6s to a sheet of the region's paper, with a line to cut along, else one: drawn for the printer alone, then gone. One that shows a
+ * collection (`from`, caps/compose) is drawn once for each of its rows, as they are now, filling the sheets. @param {Design} design @param {string} path
+ */
+async function print(design, path) {
   const paper = paperFor(intlLocales()[0]), [copies, columns, sheet] = /** @type {Record<string, [number, number, string]>} */ ({ a5: [2, 2, `${paper} landscape`], a6: [4, 2, paper] })[design.size] ?? [1, 1, paper]
   const holder = document.body.appendChild(Object.assign(document.createElement('div'), { className: 'design-print' }))
   holder.style.setProperty('--width', design.size === 'a6' ? '104mm' : design.page.mm ? `${design.page.w * design.page.mm}mm` : '180mm')
   holder.style.setProperty('--columns', String(columns))
-  render(html`${Array.from({ length: copies }, () => pageOf(design))}`, holder)
+  const rows = design.from && await (await import('../../ui/caps.js')).unlock('tables') ? await (await import('../compose/compose.js')).given(design.from, path) : null
+  render(html`${(rows ? rows.map((row) => filledWith(design, row)) : Array.from({ length: copies }, () => design)).map((one) => pageOf(one))}`, holder)
   await printAlone(holder, 'is-printing-design', { page: `@page { size: ${sheet}; margin: 0 }`, drawing: () => [...holder.querySelectorAll('app-shared')].some((one) => !one.querySelector('img')?.complete) })
 }
 
@@ -86,5 +90,5 @@ export function ways(file) {
     copy: { id: 'copy', run: async () => { await copyDrawing(textOf(design), pictureFor(design)); notify(t('toast.copied')) } },
     files: [{ id: 'png', glyph: icons.image, label: t('designs.out.picture'), run: async () => save(await pictureFor(design), `${name}.png`) }, ...laid('square', t('designs.out.post')), ...laid('story', t('designs.out.story')),
       { id: 'svg', glyph: icons.download, label: t('designs.out.file'), run: async () => save(new Blob([(await svgOf(design)).svg], { type: 'image/svg+xml' }), `${name}.svg`) }],
-    print: { id: 'print', run: () => print(design) } }
+    print: { id: 'print', run: () => print(design, file.uri) } }
 }

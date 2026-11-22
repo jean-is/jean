@@ -51,5 +51,6 @@
   "compose.document.noVersion": "此文件沒有第 {n} 版。",
   "compose.document.denied": "文件已關閉。",
   "compose.document.section": "此文件中沒有這一節。",
-  "compose.document.certified": "已認證，可追溯到文件的第 {n} 版"
+  "compose.document.certified": "已認證，可追溯到文件的第 {n} 版",
+  "compose.area": "此白板中沒有這個分區。"
 }

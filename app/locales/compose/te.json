@@ -51,5 +51,6 @@
   "compose.document.noVersion": "ఈ పత్రానికి వెర్షన్ {n} లేదు.",
   "compose.document.denied": "పత్రాలు ఆఫ్‌లో ఉన్నాయి.",
   "compose.document.section": "ఈ పత్రంలో అలాంటి విభాగం లేదు.",
-  "compose.document.certified": "ధృవీకరించబడింది, పత్రం యొక్క వెర్షన్ {n} వరకు"
+  "compose.document.certified": "ధృవీకరించబడింది, పత్రం యొక్క వెర్షన్ {n} వరకు",
+  "compose.area": "ఈ వైట్‌బోర్డ్‌లో అలాంటి విభాగం లేదు."
 }

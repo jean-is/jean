@@ -85,7 +85,7 @@ const gameTool = {
   run: async (args, ctx) => {
     const name = String(args?.name ?? '').trim(), code = String(args?.code ?? ''), now = new Date().toISOString(), before = args?.game ? await load(String(args.game)) : null
     if (!name || !code.trim()) throw new Error('Give the game its name and its whole code.')
-    const facts = { name, card: String(args?.card ?? ''), code, meta: { engine: ENGINES.includes(args?.engine) ? args.engine : 'none', actions: actionsOf(args?.actions).join(' '), changed: now } }
+    const facts = { name, card: String(args?.card ?? ''), code, meta: { engine: ENGINES.includes(args?.engine) ? args.engine : 'none', actions: actionsOf(args?.actions).join(' '), changed: now, ...(args?.from && { from: String(args.from) }) } }
     return played(before ? { ...before, ...facts, meta: { ...before.meta, ...facts.meta } } : { dir: app.projectDir, path: `games/${ulid()}-${slug(name) || 'game'}.game.html`, ...facts,
       meta: { ...facts.meta, author: 'jean', created: now, source: conversationOf(ctx.signal)?.path ?? '' } }, ctx, before ? 'Replaced' : 'Made')
   },

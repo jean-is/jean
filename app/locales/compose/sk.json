@@ -51,5 +51,6 @@
   "compose.document.noVersion": "Tento dokument nemá verziu {n}.",
   "compose.document.denied": "Dokumenty sú vypnuté.",
   "compose.document.section": "Tento dokument taký oddiel nemá.",
-  "compose.document.certified": "Overené, až po verziu {n} dokumentu"
+  "compose.document.certified": "Overené, až po verziu {n} dokumentu",
+  "compose.area": "Táto tabuľa takú sekciu nemá."
 }

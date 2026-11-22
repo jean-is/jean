@@ -26,7 +26,7 @@ import { dir } from '../../core/i18n.js'
 /** A take: its layout's, palette's and voice's ids. @typedef {[string, string, string]} Take */
 /**
  * @typedef {{ format: 1, name: string, author: string, created: string, changed: string, lang: string, size: string, page: Page, take: Take, deal: number,
- *   colours: Colours, voice: string, parts: Part[], quiet?: string[], occasion?: string, date?: string, pinned?: boolean, fonts?: Fonts }} Design
+ *   colours: Colours, voice: string, parts: Part[], quiet?: string[], occasion?: string, date?: string, pinned?: boolean, fonts?: Fonts, from?: string }} Design
  */
 /** @typedef {{ box: number[], roles?: string[], align: string, valign: string, foot?: boolean, on?: string }} Region */
 /** @typedef {{ picture?: number[], shapes?: { box: number[], fill: string, radius?: number }[], regions: Region[] }} Frame */
@@ -163,9 +163,12 @@ export function designOf(book, facts, { lang, now, by }) {
   const parts = [...ROLES.flatMap((role) => (facts.words[role] ? [{ id: role, role, text: facts.words[role], box: [0, 0, 0, 0], by, at: now }] : [])),
     ...facts.pictures.slice(0, 1).map((picture) => ({ id: 'picture', role: 'picture', words: picture.describe, box: [0, 0, 0, 0], by, at: now }))]
   const design = /** @type {Design} */ ({ format: 1, name: facts.name, author: by, created: now, changed: now, lang, size: facts.size, page: PAGES[facts.size], take: ['', '', ''], deal: 0,
-    colours: book.palettes[0], voice: 'calm', parts, ...(facts.occasion && { occasion: facts.occasion }), ...(facts.date && { date: facts.date }) })
+    colours: book.palettes[0], voice: 'calm', parts, ...(facts.occasion && { occasion: facts.occasion }), ...(facts.date && { date: facts.date }), ...(facts.from && { from: facts.from }) })
   return laid(book, { ...design, take: takesOf(book, design, 0)[0] })
 }
+
+/** A design drawn for one row of the collection it shows (`from`, caps/compose): each `{Column}` in its words that row's value, an unknown one left as it is. @param {Design} design @param {Record<string, string>} row */
+export const filledWith = (design, row) => ({ ...design, parts: design.parts.map((part) => (part.text ? { ...part, text: part.text.replace(/\{([^{}\n]+)\}/g, (all, name) => row[name.trim()] ?? all) } : part)) })
 
 /** The design at another size, laid out on its take, what the user added in the same place on the page. @param {Book} book @param {Design} design @param {string} size */
 export function resized(book, design, size) {

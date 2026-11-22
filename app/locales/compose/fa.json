@@ -51,5 +51,6 @@
   "compose.document.noVersion": "این سند نسخهٔ {n} ندارد.",
   "compose.document.denied": "سندها خاموش‌اند.",
   "compose.document.section": "این سند چنین بخشی ندارد.",
-  "compose.document.certified": "تأییدشده، تا نسخهٔ {n} سند"
+  "compose.document.certified": "تأییدشده، تا نسخهٔ {n} سند",
+  "compose.area": "این تخته چنین بخشی ندارد."
 }

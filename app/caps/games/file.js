@@ -9,9 +9,9 @@ export const ENGINES = ['phaser', 'babylon', 'none']
 export const ACTIONS = ['left', 'right', 'up', 'down', 'a', 'b']
 /** A picture of the game for its card, as its play-test or its first seconds played took it (./shell.js): WebP or JPEG, 200 KB at most. */
 export const PICTURE = /^data:image\/(?:webp|jpeg);base64,[A-Za-z0-9+/]{100,266000}={0,2}$/
-const KEYS = ['format', 'engine', 'actions', 'author', 'created', 'changed', 'pinned', 'source']
+const KEYS = ['format', 'engine', 'actions', 'author', 'created', 'changed', 'pinned', 'source', 'from']
 
-/** @typedef {{ format?: string, engine: string, actions: string, author: string, created: string, changed: string, pinned?: string, source?: string }} Meta */
+/** @typedef {{ format?: string, engine: string, actions: string, author: string, created: string, changed: string, pinned?: string, source?: string, from?: string }} Meta */
 /** @typedef {{ name: string, card: string, code: string, meta: Meta, picture?: string }} Game */
 
 /** @param {string} text */

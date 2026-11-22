@@ -51,5 +51,6 @@
   "compose.document.noVersion": "Dieses Dokument hat keine Version {n}.",
   "compose.document.denied": "Dokumente sind ausgeschaltet.",
   "compose.document.section": "Dieses Dokument hat keinen solchen Abschnitt.",
-  "compose.document.certified": "Zertifiziert, zurück bis Version {n} des Dokuments"
+  "compose.document.certified": "Zertifiziert, zurück bis Version {n} des Dokuments",
+  "compose.area": "Dieses Whiteboard hat keinen solchen Bereich."
 }

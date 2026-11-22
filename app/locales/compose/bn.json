@@ -51,5 +51,6 @@
   "compose.document.noVersion": "এই নথির সংস্করণ {n} নেই।",
   "compose.document.denied": "নথি বন্ধ আছে।",
   "compose.document.section": "এই নথিতে এমন কোনো অংশ নেই।",
-  "compose.document.certified": "প্রত্যয়িত, নথির সংস্করণ {n} পর্যন্ত"
+  "compose.document.certified": "প্রত্যয়িত, নথির সংস্করণ {n} পর্যন্ত",
+  "compose.area": "এই হোয়াইটবোর্ডে এমন কোনো অংশ নেই।"
 }

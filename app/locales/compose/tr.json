@@ -51,5 +51,6 @@
   "compose.document.noVersion": "Bu belgenin {n}. sürümü yok.",
   "compose.document.denied": "Belgeler kapalı.",
   "compose.document.section": "Bu belgede böyle bir bölüm yok.",
-  "compose.document.certified": "Belgenin {n}. sürümüne kadar onaylı"
+  "compose.document.certified": "Belgenin {n}. sürümüne kadar onaylı",
+  "compose.area": "Bu panoda böyle bir bölüm yok."
 }

@@ -28,7 +28,9 @@ const VIEWPORT = '<meta name="viewport" content="width=device-width, initial-sca
 export async function pageOf(game, { test = null, saved = { save: null, storage: {} }, imports = null, head = '', boot = '', src = '' } = {}) {
   const lang = locale.peek(), [shell, css] = await Promise.all([text('./shell.js'), text('./frame.css')])
   const words = Object.fromEntries(['play', 'resume', 'paused', 'pause', 'mute', 'full', 'left', 'right', 'up', 'down'].map((key) => [key, t(`games.${key}`)]))
-  const given = JSON.stringify({ test, saved, words, actions: actionsOf(game.meta.actions), reduced: still(), title: game.name, pictured: Boolean(game.picture) }).replace(/</g, '\\u003c')
+  // The rows of the collection it plays (`from`, caps/compose), as they are when it is read: never in its file.
+  const rows = game.meta.from && await (await import('../../ui/caps.js')).unlock('tables') ? await (await import('../compose/compose.js')).given(game.meta.from, String(/** @type {any} */ (game).path ?? '')) : []
+  const given = JSON.stringify({ test, saved, words, actions: actionsOf(game.meta.actions), reduced: still(), title: game.name, pictured: Boolean(game.picture), rows }).replace(/</g, '\\u003c')
   return /* html */ `<html lang="${lang}" dir="${dir(lang)}"><meta charset="utf-8">${head}${imports ? `<script type="importmap">${JSON.stringify({ imports })}</script>` : ''}<script>window.__game=${given}</script>${boot}<script>${shell}</script><style>${css}</style>
 <body><noscript><article dir="auto">${game.picture && PICTURE.test(game.picture) ? `<img src="${game.picture}" alt="">` : ''}<h1>${escaped(game.name)}</h1><p>${escaped(game.card)}</p></article></noscript><div id="stage" tabindex="-1"></div><script type="text/x-game" id="game"${src ? ` src="${src}">` : `>${guard(game.code, '__loop()').replace(/<\/(script)/gi, '<\\/$1')}`}</script>`
 }

@@ -51,5 +51,6 @@
   "compose.document.noVersion": "Този документ няма версия {n}.",
   "compose.document.denied": "Документите са изключени.",
   "compose.document.section": "Този документ няма такъв раздел.",
-  "compose.document.certified": "Удостоверено, до версия {n} на документа"
+  "compose.document.certified": "Удостоверено, до версия {n} на документа",
+  "compose.area": "Тази дъска няма такъв раздел."
 }

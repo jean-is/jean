@@ -51,5 +51,6 @@
   "compose.document.noVersion": "இந்த ஆவணத்துக்குப் பதிப்பு {n} இல்லை.",
   "compose.document.denied": "ஆவணங்கள் அணைக்கப்பட்டுள்ளன.",
   "compose.document.section": "இந்த ஆவணத்தில் அப்படி ஒரு பகுதி இல்லை.",
-  "compose.document.certified": "சான்றளிக்கப்பட்டது, ஆவணத்தின் பதிப்பு {n} வரை"
+  "compose.document.certified": "சான்றளிக்கப்பட்டது, ஆவணத்தின் பதிப்பு {n} வரை",
+  "compose.area": "இந்த வெள்ளைப் பலகையில் அப்படி ஒரு பகுதி இல்லை."
 }

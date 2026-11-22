@@ -51,5 +51,6 @@
   "compose.document.noVersion": "या दस्तऐवजाची आवृत्ती {n} नाही.",
   "compose.document.denied": "दस्तऐवज बंद आहेत.",
   "compose.document.section": "या दस्तऐवजात असा कोणताही विभाग नाही.",
-  "compose.document.certified": "प्रमाणित, दस्तऐवजाच्या आवृत्ती {n} पर्यंत"
+  "compose.document.certified": "प्रमाणित, दस्तऐवजाच्या आवृत्ती {n} पर्यंत",
+  "compose.area": "या व्हाइटबोर्डवर असा कोणताही विभाग नाही."
 }

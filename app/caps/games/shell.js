@@ -12,7 +12,7 @@
 // A loop the guard (./guard.js) finds running a second throws at its line, since a frame shares Jean's thread in WebKit.
 ;(() => {
   const win = /** @type {any} */ (window)
-  const given = /** @type {{ test: { frames: number, seed: number, press: { action: string, from: number, to: number }[] } | null, saved: { save: string | null, storage: Record<string, string> }, words: Record<string, string>, actions: string[], reduced: boolean, title: string, pictured: boolean }} */ (win.__game)
+  const given = /** @type {{ test: { frames: number, seed: number, press: { action: string, from: number, to: number }[] } | null, saved: { save: string | null, storage: Record<string, string> }, words: Record<string, string>, actions: string[], reduced: boolean, title: string, pictured: boolean, rows?: Record<string, string>[] }} */ (win.__game)
   const { test, words } = given
   const real = { now: performance.now.bind(performance), raf: requestAnimationFrame.bind(window), later: setTimeout.bind(window), clear: clearTimeout.bind(window) }
   const post = (/** @type {Record<string, unknown>} */ message) => parent.postMessage(message, '*')
@@ -120,6 +120,8 @@
     score: (/** @type {unknown} */ n) => { if (Number(n) !== score && report.scores.length < 500) report.scores.push([Math.round(now), (score = Number(n))]) },
     on: (/** @type {string} */ name, /** @type {unknown} */ fn) => void listeners[name]?.push(fn),
     reduced: given.reduced, lang: document.documentElement.lang, dir: document.documentElement.dir || 'ltr',
+    // The rows of the collection it plays, each by its columns' names.
+    rows: given.rows ?? [],
   }
 
   // The words it draws, and a picture of the screen: the largest canvas read in the task that drew it, 160 × 90, by areas of 5 × 5;
