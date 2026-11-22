@@ -16,7 +16,7 @@ test('the Help center’s home lists every article under its moment, and an arti
   await expect(page.locator('.help-path a')).toHaveText(['What Jean is', 'Choose the AI that answers', 'Your first task', 'Back up and restore', 'When Jean asks first', 'How Jean shows what it can do'])
   await expect(page.locator('#help-path-title')).toHaveText('Start here.')
   await expect(page.locator('#help-path .site-why')).toHaveText('About 17 minutes')
-  await expect(page.locator('.help-moments h3')).toHaveText(['Start', 'The AI that answers', 'Ask', 'Keep safe', 'Go further'])
+  await expect(page.locator('.help-moments h3')).toHaveText(['Start', 'The AI that answers', 'Ask', 'Make', 'Keep safe', 'Go further'])
   await expect(page.locator('#help-start ~ ul a')).toHaveText(['What Jean is', 'Your first task', 'Is Jean free?', 'Words you’ll see in Jean'])
   await page.locator('.help-moments a', { hasText: 'Choose the AI that answers' }).click()
   await expect(page).toHaveURL(`${JEAN_IS}help/choose-the-ai`)

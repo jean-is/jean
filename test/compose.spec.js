@@ -363,7 +363,7 @@ test('the graph whole: a collection that relates to another, a picture held by i
   await expect(async () => {
     if (!(await menu.count())) await page.getByRole('button', { name: 'Links with other creations' }).click()
     await menu.getByRole('group', { name: 'Uses' }).getByRole('button', { name: /Artisans/ }).click({ timeout: 2000 })
-    await expect(page.locator('app-preview .pane-head')).toContainText('Artisans', { timeout: 2000 })
+    await expect(page.locator('app-preview .pane-name')).toHaveValue('Artisans', { timeout: 2000 })
   }).toPass()
   // The kept slides show their task's run, made once: nothing run again, nothing kept twice.
   await show(page, KEPT, 'Kept')
