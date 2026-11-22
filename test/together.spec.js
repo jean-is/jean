@@ -166,6 +166,11 @@ async function written(ana, bob, folder) {
     await expect(board.locator('.wb-pointer')).toHaveText([name])
     await expect(board.getByRole('button', { name: '1 other person here' })).toBeVisible()
   }
+  // Bob's pointer keeps its size on Ana's board at any zoom.
+  expect(await ana.evaluate(() => {
+    const board = /** @type {any} */ (document.querySelector('app-whiteboard'))
+    return [0.25, 1, 2].map((level) => { board.zoom(0, level); return Math.round(board.querySelector('.wb-pointer svg').getBoundingClientRect().width) })
+  })).toEqual([24, 24, 24])
 }
 
 /** A whiteboard of a project's, a section with a note in it, written as Whiteboards writes one; its folder. @param {Page} page @param {string} [dir] */
