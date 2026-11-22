@@ -118,8 +118,10 @@ customElements.define('app-prototype', class extends HTMLElement {
     const room = this.querySelector('.proto-board')?.getBoundingClientRect(), steps = this.querySelector('.proto-steps'), was = steps?.getBoundingClientRect(), on = at ?? (room && { x: room.x + room.width / 2, y: room.y + room.height / 2 })
     this.#zoom = Math.max(0.2, Math.min(2, to ?? this.#zoom * 1.25 ** by))
     this.draw()
-    const now = steps?.getBoundingClientRect()
-    if (was?.width && now && on) this.pan(on.x - now.x - (on.x - was.x) / was.width * now.width, on.y - now.y - (on.y - was.y) / was.height * now.height)
+    const now = steps?.getBoundingClientRect(); if (was?.width && now && on) this.pan(on.x - now.x - (on.x - was.x) / was.width * now.width, on.y - now.y - (on.y - was.y) / was.height * now.height)
+    // The dots start at the top corner of the page on show nearest the point zoomed about, at its start: its left, or its right right to left; with no page on show,
+    // at the point itself, the pointer or the board's middle. A pan carries them with it.
+    const box = steps?.getBoundingClientRect(), rtl = getComputedStyle(this).direction === 'rtl', near = on && room && [...this.querySelectorAll('.proto-card')].map((card) => card.getBoundingClientRect()).filter((r) => r.right > room.left && r.left < room.right && r.bottom > room.top && r.top < room.bottom).sort((a, b) => Math.hypot(Math.max(a.left - on.x, 0, on.x - a.right), Math.max(a.top - on.y, 0, on.y - a.bottom)) - Math.hypot(Math.max(b.left - on.x, 0, on.x - b.right), Math.max(b.top - on.y, 0, on.y - b.bottom)))[0], from = near ? { x: rtl ? near.right : near.left, y: near.top } : on; if (box && from) this.style.setProperty('--left', `${from.x - (rtl ? box.right : box.left)}px`), this.style.setProperty('--top', `${from.y - box.top}px`)
   }
 
   /** The board zoomed so that every step shows across it, or one on a narrow pane, its pages never wider than their cards are made, and set in its middle, or under its top where it is taller. */
@@ -191,8 +193,8 @@ customElements.define('app-prototype', class extends HTMLElement {
       : html`<div class="proto-play"><div class="proto-strip"><button type="button" class="button subtle" @click=${() => this.show('board')}>${icons.board}${t('prototypes.board')}</button>
           <ol aria-label=${t('prototypes.pages', { name: one.name })} @keydown=${this.keys}>${all.map(card)}</ol></div>
         <app-site class="beside" .site=${one} @input=${() => { this.#at = this.#live?.page ?? this.#at; this.draw() }}></app-site></div>`, this)
-    // Its zoom, and dots that stick to its pages: one at each step's start and on its first pages' tops, 1.5 to 3rem apart however wide the steps, those between coming in as they part.
-    this.style.setProperty('--zoom', String(this.#zoom)); const step = this.querySelector('.proto-step'), shot = step?.querySelector('.proto-card'), dot = 1.5 * parseFloat(getComputedStyle(document.documentElement).fontSize), pitch = step ? step.getBoundingClientRect().width + parseFloat(getComputedStyle(/** @type {Element} */ (step.parentElement)).columnGap) : dot; this.style.setProperty('--dots', String(pitch / 2 ** Math.floor(Math.log2(pitch / dot)) / dot)); this.style.setProperty('--top', `${shot && step ? shot.getBoundingClientRect().top - step.getBoundingClientRect().top : 0}px`)
+    // Its zoom, and dots that stick to its pages, a step and its gap apart halved or doubled into 1.5 to 3rem, those between coming in as they part; zoom() says where they start.
+    this.style.setProperty('--zoom', String(this.#zoom)); const step = this.querySelector('.proto-step'), dot = 1.5 * parseFloat(getComputedStyle(document.documentElement).fontSize), pitch = step ? step.getBoundingClientRect().width + parseFloat(getComputedStyle(/** @type {Element} */ (step.parentElement)).columnGap) : dot; this.style.setProperty('--dots', String(pitch / 2 ** Math.floor(Math.log2(pitch / dot)) / dot))
     if (board && !this.#fitted) (this.#fitted = true), this.fit()
   }
 })
