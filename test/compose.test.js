@@ -3,7 +3,7 @@
 // asked at each resolution, and what a reference shows of a collection, read again from its journal.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { parseRef, placeOf, refsIn, withRef, filledPage, bare, formsTo, loops, refused, versionless, tableOf, chartOf, choiceIn, choicesIn, tinted, parseFigure, figureOf, written } from '../app/caps/compose/refs.js'
+import { parseRef, placeOf, refsIn, withRef, filledPage, bare, formsTo, loops, refused, versionless, tableOf, chartOf, choiceIn, choicesIn, tinted, parseFigure, figureOf, written, linksIn } from '../app/caps/compose/refs.js'
 import { versionOf, loadedOf, headOf, reshaped, breaks, current } from '../app/caps/compose/versions.js'
 import { keyOf, paceOf, sorted, askOf, lastRun, due } from '../app/caps/compose/recipes.js'
 import { credentialOf, chainOf, holds, sriOf } from '../app/caps/compose/proof.js'
@@ -41,6 +41,16 @@ test('a reference that would close a loop is refused, however long the loop; any
   assert.equal(loops([...edges], 'd', 'b'), false)
   assert.equal(loops([...edges], 'a', 'd'), false)
   assert.equal(loops([{ from: 'x', to: 'y', at: 'live' }, { from: 'y', to: 'x', at: 'live' }], 'z', 'x'), false, 'a loop elsewhere stops nothing')
+})
+
+test('a collection’s relations and the files a text holds by their content are links of the graph, which say what a change touches but close no loop', () => {
+  const OTHER = 'collections/01JX0000000000000000000001-orders', HASH = `files/sha256-${'a'.repeat(64)}.png`
+  const table = { properties: [{ type: 'relation', name: 'Maker', collection: PLACE }, { type: 'relation', name: 'Itself', collection: OTHER }, { type: 'text', name: 'Note' }, { type: 'relation', name: 'Lost', collection: 'nowhere' }] }
+  assert.deepEqual(linksIn(OTHER, table), [{ from: OTHER, to: PLACE, at: 'live', index: 0, kind: 'relation', recipe: { relation: 'Maker' } }], 'one to itself or to no collection is none')
+  assert.deepEqual(linksIn('decks/a.deck.html', null, `![Ana](../${HASH})\n\n![Again](../${HASH} "twice")`).map(({ to, kind }) => [to, kind]), [[HASH, 'file']], 'each file once')
+  const edges = [{ from: PLACE, to: OTHER, at: /** @type {const} */ ('live'), recipe: {}, index: 0, kind: /** @type {const} */ ('relation') }]
+  assert.equal(loops(edges, OTHER, PLACE), false, 'a relation is no reference: it carries no loop')
+  assert.equal(loops(edges.map(({ kind, ...edge }) => edge), OTHER, PLACE), true, 'as a reference would')
 })
 
 test('the reader’s right is asked in order at each resolution: Tables off, a task from someone else’s, a loop, none there', () => {

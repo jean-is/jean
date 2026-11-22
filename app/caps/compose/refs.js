@@ -14,7 +14,11 @@ import { sorted } from './recipes.js'
 /** @import { Table } from '../tables/table.js' */
 /** @import { Row } from '../tables/changes.js' */
 /** A reference: the source's place, which of it (`live`, the journal's head; `published`, its latest version; or a version's number), and the recipe's lines by key. @typedef {{ place: string, at: 'live' | 'published' | number, recipe: Record<string, string> }} Ref */
-/** An edge of the graph: a consumer's place, the source's, which of it, the recipe, and its place among the consumer's references. @typedef {{ from: string, to: string, at: Ref['at'], recipe: Record<string, string>, index: number }} Edge */
+/**
+ * An edge of the graph: a consumer's place, the source's, which of it, the recipe, and its place among the consumer's references; or, with `kind`, a link
+ * that is no reference but still says what a change touches: a collection's relation to another (`relation`, its column's name its recipe's), or a
+ * file held by its content (`file`), always the same. @typedef {{ from: string, to: string, at: Ref['at'], recipe: Record<string, string>, index: number, kind?: 'relation' | 'file' }} Edge
+ */
 
 const BLOCK = /^(`{3,}|~{3,})table[ \t]*\n([\s\S]*?)^\1[ \t]*$/gm, FIGURE = /`(=[ \t]*collections\/[^`\n]*)`/g, TABLE = /(<table\b[^>]*\bdata-from="[^"]*"[^>]*>)[\s\S]*?(<\/table>)/gi
 const escaped = (/** @type {string} */ text) => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
@@ -70,12 +74,16 @@ export function filledPage(page, shown) {
   return page.replace(TABLE, (all, open, close) => ((rows) => (rows ? `${open}<thead><tr>${rows[0].map((head) => `<th>${escaped(head)}</th>`).join('')}</tr></thead><tbody>${rows.slice(1).map((row) => `<tr>${row.map((cell) => `<td>${escaped(cell)}</td>`).join('')}</tr>`).join('')}</tbody>${close}` : all))(shown[n++] ?? null))
 }
 
+/** The links a creation holds that are no references: a collection's relations to others, by its columns (`collection.json`), and the files any text holds by their content (`../files/sha256-…`). @param {string} from @param {{ properties?: { type: string, name: string, collection?: string }[] } | null} table @param {string} [text] @returns {Edge[]} */
+export const linksIn = (from, table, text = '') => [...(table?.properties ?? []).flatMap(({ type, name, collection = '' }) => (type === 'relation' && collection !== from && PLACE.test(collection) ? [{ kind: /** @type {Edge['kind']} */ ('relation'), to: collection, recipe: { relation: name } }] : [])),
+  ...[...new Set(text.match(/\bfiles\/sha256-[0-9a-f]{64}\.\w+/g))].map((to) => ({ kind: /** @type {Edge['kind']} */ ('file'), to, recipe: {} }))].map((link, index) => ({ from, at: /** @type {Ref['at']} */ ('live'), index, ...link }))
+
 /** Whether a reference from `from` to `to` closes a loop: whether `from` is reached from `to`. @param {Edge[]} edges @param {string} from @param {string} to */
 export function loops(edges, from, to) {
   const seen = new Set(), next = [to]
   for (let at = next.pop(); at !== undefined; at = next.pop()) {
     if (at === from) return true
-    if (!seen.has(at)) seen.add(at), next.push(...edges.flatMap((edge) => (edge.from === at ? [edge.to] : [])))
+    if (!seen.has(at)) seen.add(at), next.push(...edges.flatMap((edge) => (edge.from === at && !edge.kind ? [edge.to] : [])))
   }
   return false
 }

@@ -309,6 +309,45 @@ test('a document’s figure follows its collection, a prototype that shows it is
   await expect(page.locator('.menu:popover-open').getByRole('group', { name: 'Used in' }).getByRole('button')).toContainText(['Neighbourhood', 'Report', 'Booking'].map((name) => new RegExp(name)), { ignoreCase: false })
 })
 
+test('the graph whole: a collection that relates to another, a picture held by its content, and slides kept from an answer reading its run again', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await seed(page)
+  const ORDERS = 'collections/01K85Z1T00000000000000000B-orders', PICTURE = `files/sha256-${'b'.repeat(64)}.png`, KEPT = 'decks/01K85Z1T00000000000000000K-kept.deck.html', TASK = '01K85Z1T00000000000000000T'
+  await page.evaluate(async ({ COLLECTION, ORDERS, PICTURE, KEPT, TASK }) => {
+    const { app, activeBrain } = await import('/ui/state.js'), at = '2026-11-21T10:00:00.000Z', decks = await import('/caps/skills/decks.js')
+    await app.fs.write(`${app.projectDir}/${ORDERS}/collection.json`, JSON.stringify({ format: 1, id: ORDERS.slice(12, 38), name: 'Orders', author: 'user', created: at, changed: at,
+      properties: [{ id: 'item', name: 'Item', type: 'text' }, { id: 'maker', name: 'Maker', type: 'relation', collection: COLLECTION }], views: [{ id: 'table', type: 'table' }] }))
+    await app.fs.writeBytes(`${app.projectDir}/${PICTURE}`, Uint8Array.from(atob('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFBQIAX8jx0gAAAABJRU5ErkJggg=='), (c) => c.charCodeAt(0)))
+    // Slides an answer drew, then kept as a file of their own: their task ran their recipe already.
+    const source = `# Kept\n\n---\n\n![Ana](../${PICTURE})\n\n---\n\n\`\`\`table\n${COLLECTION}\nask: Sum it up\n\`\`\`\n`
+    await decks.rewrite(KEPT, source, 'Kept', app.projectDir)
+    const file = `${app.projectDir}/${KEPT}`
+    await app.fs.write(file, String(await app.fs.read(file)).replace('<meta name="author"', `<meta name="source" content="${app.projectDir}/conversations/${TASK}.jsonl"><meta name="author"`))
+    const [{ keyOf }, { parseRef }, { headOf }, tables] = await Promise.all([import('/caps/compose/recipes.js'), import('/caps/compose/refs.js'), import('/caps/compose/versions.js'), import('/caps/tables/tables.js')])
+    const ref = /** @type {any} */ (parseRef(`${COLLECTION}\nask: Sum it up`)), brain = /** @type {any} */ (activeBrain.peek()), live = /** @type {any} */ (await tables.load(COLLECTION))
+    await app.fs.write(`${app.projectDir}/composed/${TASK}.jsonl`, `${JSON.stringify({ format: 1, key: keyOf(ref), n: 1, at, read: headOf(live.lines), brain: `${brain.provider}:${brain.model}`, output: 'From the answer.' })}\n`)
+  }, { COLLECTION, ORDERS, PICTURE, KEPT, TASK })
+  // A collection that relates to the artisans is among what uses them, by its column; the artisans are among what it uses.
+  await show(page, COLLECTION, 'Artisans')
+  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  const menu = page.locator('.menu:popover-open')
+  await expect(menu.getByRole('group', { name: 'Used in' }).getByRole('button', { name: /Orders/ })).toContainText('Maker')
+  await page.keyboard.press('Escape')
+  await show(page, ORDERS, 'Orders')
+  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  await menu.getByRole('group', { name: 'Uses' }).getByRole('button', { name: /Artisans/ }).click()
+  await expect(page.locator('app-preview .pane-head')).toContainText('Artisans')
+  // The kept slides show their task's run, made once: nothing run again, nothing kept twice.
+  await show(page, KEPT, 'Kept')
+  await expect(page.locator('app-preview .deck-slide .deck-table').filter({ hasText: 'From the answer.' })).toHaveCount(1)
+  expect(await page.evaluate(async () => { const { app } = await import('/ui/state.js'); return app.fs.read(`${app.projectDir}/composed/01K85Z1T00000000000000000K.jsonl`) })).toBeNull()
+  // The picture says what holds it.
+  await show(page, PICTURE, 'Ana')
+  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  await expect(menu.getByRole('group', { name: 'Used in' }).getByRole('button')).toHaveText([/Kept/])
+})
+
 test('a recipe that sums up the approved artisans on a slide updates by itself once its user turns that on, and only then; a run is paid once per version read', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)

@@ -1,6 +1,6 @@
 # Composition
 
-How Jean's creations feed each other, a collection shown in a deck, a document or a site at a version the consumer chooses, its provenance checkable, is in [architecture.md](architecture.md#composition), and the decision in [decisions.md](decisions.md) (D763). This page is how it was built: five steps, each shippable alone, what each delivered and how it was verified, then what departs from the plan, the known limits, the work left, which makes the most of the graph, and the decisions left open.
+How Jean's creations feed each other, a collection shown in a deck, a document or a site at a version the consumer chooses, its provenance checkable, is in [architecture.md](architecture.md#composition), and the decision in [decisions.md](decisions.md) (D763). This page is how it was built: steps each shippable alone, what each delivered and how it was verified, then what departs from the plan, the known limits, the work left, which makes the most of the graph, and the decisions left open.
 
 ## Steps
 
@@ -36,9 +36,15 @@ A collection's port, opened by its owner from Share's *Collect replies*; a publi
 
 **Exit criterion**: the owner opens the directory's port; a published site's form sends a neighbour's proposal, with a hidden field that tries to tick the box the site's table keeps rows by; collected, it is a visitor's row of the directory itself, the box left alone, in no collection of its own, and neither the site in Jean nor the published one shows it; the owner ticks the box, and the site shows it, in Jean and online once published again; version 1's file is byte for byte what it was, and no version was added.
 
+### Step 6 — The graph whole
+
+What already linked creations outside the graph comes into it (`linksIn()`): a collection's relation to another is an edge from the collection holding it, its column's name beside it; a file a deck or a document holds by its content (`../files/sha256-…`) is an edge to that file, whose pane's head lists what holds it. Neither is a reference, so neither carries a loop (`loops()` follows references alone), nor has a version, a recipe or a certificate. Slides an answer drew and Jean then kept as a file read their task's runs as their own (`runsFor()`), a run under way included, so a recipe is paid once.
+
+**Exit criterion**: a collection that relates to the artisans is under their *Used in*, by its column, and opens them from its *Uses*; slides kept from an answer show their task's run, and keep none of their own; a picture held by those slides lists them under *Used in*.
+
 ### Budgets
 
-Built first on a main whose line budget was nearly full, each step from the second raised `loc.app` by what it measured, at the owner's word; replayed on the main it landed on, whose budget left room enough, those raises were dropped and no budget changed. Nothing was added to the first load, the core or Tables' folder; no dependency was added. Its strings are in the 54 languages Jean speaks.
+Built first on a main whose line budget was nearly full, each step from the second raised `loc.app` by what it measured, at the owner's word; replayed on the main it landed on, whose budget left room enough, those raises were dropped and no budget changed. From step 6 on, a step that needs more room than the budget leaves raises `loc.app` by what it measures, at the owner's word, in a commit of its own before it; step 6 fitted in what was left. Nothing was added to the first load, the core or Tables' folder; no dependency was added. Its strings are in the 54 languages Jean speaks.
 
 ## Where this departs from the plan, and why
 
@@ -53,6 +59,7 @@ Built first on a main whose line budget was nearly full, each step from the seco
 - **No validation column, at the owner's word.** The plan's step 5 had a validation column only the owner sets, on which public recipes filter. It was built, then taken out: what a consumer shows is its own criteria, and a collection is neither helped nor guided to judge what comes in. What remains of column rights is the port's: which columns a proposal may write.
 - **A figure is inline code, not a block.** A key figure's lead or a sentence holds no block, and the deck's editor writes inline code back as it is typed, so a formula in it survives typing on the slide where any other mark would be lost.
 - **Charts are a recipe, not a reference of their own.** A slide's `echarts` block holds its numbers, which nothing ties to a collection; the Slides skill tells the brain to chart a collection with the ```` ```table ```` block and `chart:` instead, so that the graph, the selectors, versions and provenance hold for a chart as for a table.
+- **A picture is listed, not certified.** The plan's step 6 had a picture's credential join a version's or a run's ingredients. A run's ingredients are what it read, and slides have no certificate of their own beside their runs', so a picture held by content is a link of the graph, which says where it is used, and its own credential stays its own.
 - **The commits' first lines** are in English after `composition: étape N —`, as the rest of the history is; the docs are in English, as all of Jean's are.
 
 ## Known limits
@@ -71,21 +78,11 @@ Built first on a main whose line budget was nearly full, each step from the seco
 
 ## Work left: the graph at its best
 
-Composition and the graph are one ([architecture.md](architecture.md#composition)): every way a creation shows another becomes a reference, and every reference is an edge the graph reads. The steps below follow from that, each shippable alone, its exit criterion checked in `test/compose.spec.js` or `test/compose.test.js` as before. Their order: what already links creations comes into the graph first (6), then what the graph can say at no cost (7), then the place most people read (8), then new sources and consumers (9 to 11), then what runs and what travels (12). Three rules hold for every step:
+Composition and the graph are one ([architecture.md](architecture.md#composition)): every way a creation shows another becomes a reference, and every reference is an edge the graph reads. The steps below follow from that, each shippable alone, its exit criterion checked in `test/compose.spec.js` or `test/compose.test.js` as before. Step 6, what already linked creations brought into the graph, is built (above). Then, in order: what the graph can say at no cost (7), then the place most people read (8), then new sources and consumers (9 to 11), then what runs and what travels (12). Three rules hold for every step:
 
-- **No edge outside a reference.** A kind that starts showing another's content joins `CONSUMERS` in the same change, and its test checks that the source's *Links with other creations* lists it.
+- **Nothing shown outside a reference.** A kind that starts showing another's content joins `CONSUMERS` in the same change, and its test checks that the source's *Links with other creations* lists it.
 - **Budgets first.** `loc.app` has a dozen lines left and Tables' code is at its gzip limit: each step measures what it needs, deletes first where it can, asks for a raise in a change of its own, and stays out of Tables' folder.
 - **What is paid stays opt-in.** A step that makes the graph carry more never makes a brain run, or anything leave Jean, that the person didn't choose.
-
-### Step 6 — The graph whole
-
-What already links creations outside the graph comes into it.
-
-- A relation between collections is an edge, from the collection holding the relation to the one it names, read from `collection.json`. Relations may run both ways, so these edges count for what a change touches, never for loops.
-- A picture or a file a creation holds by its content (`../files/sha256-…`, in a design, a deck, a site or a document) is an edge to that file, always pinned, since its name is its content. The picture's own credential joins a version's or a run's ingredients, so a deck's provenance reaches its pictures.
-- A deck an answer drew, then kept as a file, runs its recipes as that file rather than as its task: one run, paid once.
-
-**Exit criterion**: a collection another relates to lists it under *Used in*; a picture used by a deck and a site lists both, and the deck's saved provenance holds the picture's credential; a deck in an answer and its kept file show the same run, made once.
 
 ### Step 7 — The graph answers
 
