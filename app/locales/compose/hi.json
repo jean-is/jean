@@ -45,5 +45,11 @@
   "compose.since": "इस जवाब के बाद के बदलाव: {count}",
   "compose.now": "अभी जैसा है वैसा दिखाएँ",
   "compose.then": "जैसा था वैसा दिखाएँ",
-  "compose.answer": "जवाब में जैसा था"
+  "compose.answer": "जवाब में जैसा था",
+  "compose.document.missing": "इस प्रोजेक्ट में ऐसा कोई दस्तावेज़ नहीं है।",
+  "compose.document.unpublished": "इस दस्तावेज़ का अभी कोई संस्करण नहीं है।",
+  "compose.document.noVersion": "इस दस्तावेज़ का संस्करण {n} नहीं है।",
+  "compose.document.denied": "दस्तावेज़ बंद हैं।",
+  "compose.document.section": "इस दस्तावेज़ में ऐसा कोई खंड नहीं है।",
+  "compose.document.certified": "प्रमाणित, दस्तावेज़ के संस्करण {n} तक"
 }

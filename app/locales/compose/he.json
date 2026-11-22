@@ -45,5 +45,11 @@
   "compose.since": "שינויים מאז התשובה הזאת: {count}",
   "compose.now": "להציג כפי שזה עכשיו",
   "compose.then": "להציג כפי שזה היה",
-  "compose.answer": "כמו בתשובה"
+  "compose.answer": "כמו בתשובה",
+  "compose.document.missing": "אין בפרויקט הזה מסמך כזה.",
+  "compose.document.unpublished": "למסמך הזה עדיין אין גרסה.",
+  "compose.document.noVersion": "למסמך הזה אין גרסה {n}.",
+  "compose.document.denied": "המסמכים כבויים.",
+  "compose.document.section": "אין במסמך הזה סעיף כזה.",
+  "compose.document.certified": "מאושר, עד גרסה {n} של המסמך"
 }

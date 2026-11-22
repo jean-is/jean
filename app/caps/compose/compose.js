@@ -17,13 +17,13 @@ import { app, openFile, openConversation, notify, activeBrain, brainsHere } from
 import { markdown, declared, drawn as drawers } from '../../ui/markdown.js'
 import { held } from '../../ui/held.js'
 import { fire } from '../../core/hooks.js'
-import { isLocal } from '../../core/settings.js'
+import { isLocal, parseFrontMatter, stringifyFrontMatter } from '../../core/settings.js'
 import { icons } from '../../ui/menu-icons.js'
 import { t, useStrings, locale, intlLocales } from '../../core/i18n.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { PLACE } from '../tables/table.js'
 import '../tables/tables.js'
-import { parseRef, parseFigure, refsIn, loops, refused, versionless, tableOf, chartOf, choiceIn, choicesIn, tinted, withRef, filledPage, written as writtenWith, linksIn, further } from './refs.js'
+import { parseRef, parseFigure, refsIn, loops, refused, versionless, tableOf, chartOf, choiceIn, choicesIn, tinted, withRef, filledPage, written as writtenWith, linksIn, further, DOCUMENT, sectionOf, withId } from './refs.js'
 import { option } from '../interactive/parts.js'
 import { versionOf, loadedOf, reshaped, breaks, current, headOf, asOf, since } from './versions.js'
 import { keyOf, paceOf, askOf, lastRun, due, PROMPT, DEPTH, GATHER } from './recipes.js'
@@ -87,9 +87,34 @@ async function retyped(folder, dir) {
   known.kinds.set(folder, new Map(one.table.properties.map(({ id, type }) => [id, type])))
 }
 
-/** A collection's versions, the first first. @param {string} dir @param {string} folder @returns {Promise<Version[]>} */
-const versionsOf = async (dir, folder) => (await Promise.all((await app.fs.list(`${dir}/${folder}/versions`).catch(() => [])).filter((entry) => /^\d+\.json$/.test(entry.name))
-  .map(async (entry) => JSON.parse((await app.fs.read(`${dir}/${folder}/versions/${entry.name}`)) ?? 'null')))).filter(Boolean).sort((a, b) => a.n - b.n)
+/** Where a source's versions are kept: a collection's in its folder, a document's beside the documents, as Jean's suggestions wait (../documents/documents.js). @param {string} place */
+const versionsAt = (place) => (DOCUMENT.test(place) ? place.replace(/^documents\//, 'documents/.versions/').replace(/\.md$/, '') : `${place}/versions`)
+/** A source's versions, the first first; a document's each its whole text (`text`). @param {string} dir @param {string} place @returns {Promise<(Version & { text?: string })[]>} */
+const versionsOf = async (dir, place) => (await Promise.all((await app.fs.list(`${dir}/${versionsAt(place)}`).catch(() => [])).filter((entry) => /^\d+\.json$/.test(entry.name))
+  .map(async (entry) => JSON.parse((await app.fs.read(`${dir}/${versionsAt(place)}/${entry.name}`)) ?? 'null')))).filter(Boolean).sort((a, b) => a.n - b.n)
+
+/** A document's text, its front matter aside, as a reference reads it: as it is now, or at the version it names; null where it has none. @param {Pick<Ref, 'place' | 'at'>} ref @param {string} dir */
+const textAt = async (ref, dir) => (ref.at === 'live' ? ((text) => (text === null ? null : parseFrontMatter(text).body))(await app.fs.read(`${dir}/${ref.place}`))
+  : ((versions) => (ref.at === 'published' ? versions.at(-1) : versions.find((one) => one.n === ref.at))?.text ?? null)(await versionsOf(dir, ref.place)))
+/**
+ * What a reference to a document shows: its section's Markdown (./refs.js `sectionOf()`), or why it shows none. A section found by its heading's words gets
+ * their id written after them, once, so that a rename keeps it (the editor takes the change in). @param {Ref} ref @param {string} from @param {string} dir @returns {Promise<{ why?: string, words?: string }>}
+ */
+async function sectionShown(ref, from, dir) {
+  const why = refused({ denied: isDenied('documents'), shared: false, loop: Boolean(from && loops((await graph(dir)).edges, from, ref.place)), found: await app.fs.exists(`${dir}/${ref.place}`) }), body = why ? null : await textAt(ref, dir), found = body === null ? null : sectionOf(body, ref.recipe.section)
+  if (found && ref.recipe.section && !found.id && ref.at === 'live') void app.fs.read(`${dir}/${ref.place}`).then((text) => (text ? ((read) => app.fs.write(`${dir}/${ref.place}`, stringifyFrontMatter(read.data, withId(read.body, found.line, String(ref.recipe.section)))))(parseFrontMatter(text)) : undefined))
+  return why || body === null || !found ? { why: why || (body === null ? versionless(ref.at) : 'section') } : { words: found.text }
+}
+/** Why a document's section shows none, in words. @param {string} why @param {Ref['at']} at */
+const unsaid = (why, at) => t(why === 'loop' ? 'compose.loop' : `compose.document.${why}`, { n: Number(at) })
+/** A document's section drawn, a slide's or a document's, again as the document or its versions change while it shows. @param {HTMLElement} box @param {Ref} ref @param {string} from @param {string} dir */
+function sectionIn(box, ref, from, dir) {
+  const draw = () => sectionShown(ref, from, dir).then(({ why, words }) => render(why ? html`<p class="deck-words">${unsaid(why, ref.at)}</p>` : html`<div class="composed-section" dir="auto">${markdown(words ?? '')}</div>`, box))
+  const unwatch = app.fs.watch?.((path) => (!box.isConnected && box.firstChild ? unwatch?.() : (path === `${dir}/${ref.place}` || path.startsWith(`${dir}/${versionsAt(ref.place)}/`)) && void draw()), { all: true })
+  void draw()
+}
+/** A section's Markdown as a site's page holds it: drawn as Jean draws Markdown, its HTML read back, lit's marks left out. @param {string} words */
+const htmlOf = (words) => ((holder) => (render(markdown(words), holder), holder.innerHTML.replace(/<!--[^]*?-->/g, '')))(document.createElement('div'))
 
 /** A collection's port, while its owner keeps it open; null otherwise. @param {string} dir @param {string} folder @returns {Promise<Port | null>} */
 const portOf = async (dir, folder) => { try { return JSON.parse((await app.fs.read(`${dir}/${folder}/port.json`)) ?? 'null') } catch { return null } }
@@ -179,6 +204,7 @@ function painted({ hue, group }, box, probe = Object.assign(document.createEleme
 export async function drawn(box, source, dress) {
   const ref = parseRef(source), pane = /** @type {any} */ (box.closest('app-preview')), from = pane ? String(pane.file?.peek()?.uri ?? '') : box.closest('article.msg-jean') ? `conversations/${app.current.peek()?.id}.jsonl` : '', dir = app.projectDir
   const shared = !pane && Boolean(app.current.peek()?.records.some(({ update }) => update?.sessionUpdate === '_system_note' && update.data?.kind === 'shared'))
+  if (ref && DOCUMENT.test(ref.place)) return void sectionIn(box, ref, from, dir)
   const tables = ref && !isDenied('tables') && !shared ? await import('../tables/tables.js') : null, live = ref && tables && await tables.load(ref.place, dir).catch(() => null)
   const why = refused({ denied: isDenied('tables'), shared, loop: Boolean(ref && from && loops((await graph(dir)).edges, from, ref.place)), found: Boolean(live) })
   const chart = Boolean(ref?.recipe.chart && !ref.recipe.ask) && await unlock('charts')
@@ -236,11 +262,12 @@ customElements.define('app-composed', class extends HTMLElement { connectedCallb
 // A figure in a document's words (../documents/drawn.js), as a slide's is.
 customElements.define('app-figure', class extends HTMLElement { connectedCallback() { this.replaceChildren(Object.assign(document.createElement('code'), { textContent: this.getAttribute('source') })), this.live = liven(this, undefined, 'code') } disconnectedCallback() { this.live?.stop() } })
 
-/** A site's pages, as it is read (../sites/kind.js), each table that says `data-from` filled as its reference shows it now, those that can't be as written. @param {Map<string, Uint8Array>} files @param {string} dir */
+/** A site's pages, as it is read (../sites/kind.js), each table or section that says `data-from` filled as its reference shows it now, those that can't be as written. @param {Map<string, Uint8Array>} files @param {string} dir */
 export async function composed(files, dir) {
   const tables = isDenied('tables') ? null : await import('../tables/tables.js'), [decode, encode] = [new TextDecoder(), new TextEncoder()]
-  for (const [file, bytes] of files) if (file.endsWith('.html') && tables) files.set(file, encode.encode(filledPage(decode.decode(bytes), await Promise.all(refsIn(decode.decode(bytes)).map(async (ref) => {
-    const live = await tables.load(ref.place, dir).catch(() => null)
+  for (const [file, bytes] of files) if (file.endsWith('.html')) files.set(file, encode.encode(filledPage(decode.decode(bytes), await Promise.all(refsIn(decode.decode(bytes)).map(async (ref) => {
+    if (DOCUMENT.test(ref.place)) return ((one) => (one.words === undefined ? null : htmlOf(one.words)))(await sectionShown(ref, '', dir))
+    const live = tables && await tables.load(ref.place, dir).catch(() => null)
     return live ? (await resolved(ref, live, dir)).rows ?? null : null
   })))))
   return files
@@ -248,6 +275,7 @@ export async function composed(files, dir) {
 
 /** Markdown as it leaves Jean (../made/paper.js, ../slides/save.js), each reference as its consumer, `from`, shows it now (./refs.js). @param {string} text @param {string} from */
 export const written = (text, from, dir = app.projectDir) => writtenWith(text, async (ref) => {
+  if (DOCUMENT.test(ref.place)) return ((one) => ({ words: one.words ?? unsaid(String(one.why), ref.at) }))(await sectionShown(ref, from, dir))
   const live = isDenied('tables') ? null : await (await import('../tables/tables.js')).load(ref.place, dir).catch(() => null), why = refused({ denied: isDenied('tables'), shared: false, loop: Boolean(from && loops((await graph(dir)).edges, from, ref.place)), found: Boolean(live) })
   const one = /** @type {{ why?: string, rows?: string[][], output?: string }} */ (why || !live ? { why: why || 'missing' } : ref.recipe.ask ? await shownRun(ref, from, dir) : await resolved(ref, live, dir))
   return { rows: one.rows, words: one.why ? t(`compose.${one.why}`) : one.output }
@@ -259,6 +287,7 @@ export const written = (text, from, dir = app.projectDir) => writtenWith(text, a
  * @returns {Promise<{ version?: Version, broken?: string[] } | null>}
  */
 export async function publish(folder, why = 'published', dir = app.projectDir) {
+  if (DOCUMENT.test(folder)) return publishText(folder, dir)
   const tables = await import('../tables/tables.js'), [one, versions] = await Promise.all([tables.load(folder, dir), versionsOf(dir, folder)]), last = versions.at(-1)
   if (!one || (why === 'schema' && (!last || !reshaped(last, one.table)))) return null
   const broken = last ? breaks(last.table, one.table) : []
@@ -267,6 +296,15 @@ export async function publish(folder, why = 'published', dir = app.projectDir) {
   Object.assign(version, await certified({ kind: 'collection', creation: folder.slice(12, 38), n: version.n, at: version.at, by: version.by, content: JSON.stringify(version) }))
   await app.fs.write(`${dir}/${folder}/versions/${version.n}.json`, `${JSON.stringify(version, null, 1)}\n`)
   await tables.reread(one)
+  return { version }
+}
+/** A document's version, its whole text frozen and certified, when it differs from the last one's. @param {string} place @param {string} dir @returns {Promise<{ version: any } | null>} */
+async function publishText(place, dir) {
+  const [body, versions] = await Promise.all([textAt({ place, at: 'live' }, dir), versionsOf(dir, place)]), last = versions.at(-1)
+  if (body === null || body === last?.text) return null
+  const version = { format: 1, n: (last?.n ?? 0) + 1, at: new Date().toISOString(), by: 'user', why: 'published', text: body }
+  Object.assign(version, await certified({ kind: 'document', creation: ulidOf(place), n: version.n, at: version.at, by: version.by, content: body }))
+  await app.fs.write(`${dir}/${versionsAt(place)}/${version.n}.json`, `${JSON.stringify(version, null, 1)}\n`)
   return { version }
 }
 /**
@@ -330,13 +368,13 @@ async function choose(from, index, change) {
 }
 /** When a reference's `ask` runs again, each choice by its `refresh`: by hand, every five minutes, every hour, or as its source changes. */
 const PACES = [['', 'compose.byHand'], ['5 min', 'compose.every5'], ['60 min', 'compose.hourly'], ['auto', 'compose.auto']]
-/** What the pane's head lists for each place, once read: `source`, a collection, not a whiteboard; `runs`, each `ask`'s last run; `proofs`, the certificates of what each shows, checked. @typedef {{ source: boolean, uses: Edge[], usedIn: Edge[], further: [string, string][], names: Map<string, string>, versions: Map<string, Version[]>, old: Map<Edge, [string, string][]>, runs: Map<Edge, Run | undefined>, proofs: Map<Edge, { chain: import('../receipt/certificate.js').Sealed[], holds: boolean, n?: number } | null>, changes: number, broken: string[] }} Links */
+/** What the pane's head lists for each place, once read: `source`, a collection, not a whiteboard; `runs`, each `ask`'s last run; `proofs`, the certificates of what each shows, checked. @typedef {{ source: boolean, uses: Edge[], usedIn: Edge[], further: [string, string][], names: Map<string, string>, versions: Map<string, (Version & { text?: string })[]>, old: Map<Edge, [string, string][]>, runs: Map<Edge, Run | undefined>, proofs: Map<Edge, { chain: import('../receipt/certificate.js').Sealed[], holds: boolean, n?: number } | null>, changes: number, broken: string[] }} Links */
 const links = signal(/** @type {Map<string, Links>} */ (new Map()))
 /** Each place's links, read as its menu opens. @param {string} uri */
 async function linksOf(uri) {
   const dir = app.projectDir, tables = await import('../tables/tables.js'), { edges, names } = await graph(dir), uses = edges.filter((edge) => edge.from === uri && names.has(edge.to))
-  const versions = new Map(await Promise.all([...new Set([uri, ...uses.map((edge) => edge.to)])].map(async (place) => /** @type {[string, Version[]]} */ ([place, await versionsOf(dir, place)]))))
-  const own = PLACE.test(uri) ? await tables.load(uri, dir).then((one) => (one?.table.kind ? null : one)) : null, last = versions.get(uri)?.at(-1), old = new Map()
+  const versions = new Map(await Promise.all([...new Set([uri, ...uses.map((edge) => edge.to)])].map(async (place) => /** @type {[string, (Version & { text?: string })[]]} */ ([place, await versionsOf(dir, place)]))))
+  const own = PLACE.test(uri) ? await tables.load(uri, dir).then((one) => (one?.table.kind ? null : one)) : null, last = versions.get(uri)?.at(-1), old = new Map(), text = DOCUMENT.test(uri) ? await textAt({ place: uri, at: 'live' }, dir) : null
   fed ??= own ? await import('../sources/sources.js') : undefined
   for (const edge of uses.filter((one) => !one.kind)) { const live = await tables.load(edge.to, dir).catch(() => null); if (live) old.set(edge, current(live.table, versions.get(edge.to) ?? [], edge.recipe).old) }
   const runs = await runsOf(runsAt(dir, uri)), lastOf = (/** @type {Edge} */ edge) => runs.findLast((one) => one.key === keyOf(refOf(edge))), proofs = new Map()
@@ -346,8 +384,8 @@ async function linksOf(uri) {
     const version = all.find((one) => `v${one.n}` === read), chain = [run?.certificate, version?.certificate].filter((one) => one !== undefined)
     proofs.set(edge, chain.length ? { chain, holds: holds(await chainOf(chain)), n: version?.n } : null)
   }
-  links.value = new Map(links.peek()).set(uri, { source: Boolean(own), uses, usedIn: edges.filter((edge) => edge.to === uri), further: [...further(edges, uri, true), ...further(edges, uri, false)].filter(([place]) => names.has(place)), names, versions, old, proofs, runs: new Map(uses.map((edge) => [edge, lastOf(edge)])), broken: own && last ? breaks(last.table, own.table) : [],
-    changes: own ? own.lines.filter((line) => 'at' in line && line.at > (last?.head ?? '')).length : 0 })
+  links.value = new Map(links.peek()).set(uri, { source: Boolean(own) || text !== null, uses, usedIn: edges.filter((edge) => edge.to === uri), further: [...further(edges, uri, true), ...further(edges, uri, false)].filter(([place]) => names.has(place)), names, versions, old, proofs, runs: new Map(uses.map((edge) => [edge, lastOf(edge)])), broken: own && last ? breaks(last.table, own.table) : [],
+    changes: own ? own.lines.filter((line) => 'at' in line && line.at > (last?.head ?? '')).length : Number(text !== null && text !== last?.text) })
 }
 
 /** A creation's glyph, by its folder. */
@@ -381,7 +419,7 @@ function head({ uri }) {
       ${edge.recipe.ask ? html`${group('compose.pace', PACES.map(([refresh, key]) => choice((edge.recipe.refresh ?? '') === refresh, t(key), () => set((ref) => ({ ...ref, recipe: { ...Object.fromEntries(Object.entries(ref.recipe).filter(([what]) => what !== 'refresh')), ...(refresh && { refresh }) } })), site)))}
         <ul><li><button type="button" @click=${() => run(refOf(edge), uri, app.projectDir).then(() => linksOf(uri))}>${icons.sync}<span>${t('compose.update')}</span></button>${last ? said(last.error ? t('compose.failed') : t('compose.ran', { date: date.format(new Date(last.at)) }), last.error ? 'alert' : 'status') : nothing}</li></ul>` : nothing}
       <hr><ul>${proof ? html`<li><button type="button" @click=${async () => (await import('../../ui/save.js')).save(new Blob([JSON.stringify(proof.chain, null, 1)], { type: 'application/json' }), `${t('compose.proofFile', { name: name(uri) })}.json`)}>${icons.download}<span>${t('compose.saveProof')}</span></button>
-        ${said(proof.holds ? (proof.n ? t('compose.certified', { n: proof.n }) : t('compose.certifiedLive')) : t('compose.unproven'), proof.holds ? 'status' : 'alert')}</li>` : html`<li>${said(t('compose.uncertified'))}</li>`}<li>${open(edge.to)}</li></ul>`
+        ${said(proof.holds ? (proof.n ? t(DOCUMENT.test(edge.to) ? 'compose.document.certified' : 'compose.certified', { n: proof.n }) : t('compose.certifiedLive')) : t('compose.unproven'), proof.holds ? 'status' : 'alert')}</li>` : html`<li>${said(t('compose.uncertified'))}</li>`}<li>${open(edge.to)}</li></ul>`
   }
   const all = these?.versions.get(uri) ?? [], edge = these?.uses.find((one) => `${uri} ${one.index}` === deep.value)
   const versions = these?.source ? html`<div role="group" aria-label=${t('compose.versions')}><p class="menu-heading" aria-hidden="true">${t('compose.versions')}</p><ul>
@@ -389,7 +427,7 @@ function head({ uri }) {
       ${these.broken.length ? said(t('compose.breaks', { columns: listed(these.broken) }), 'alert') : said(t('compose.journal', { count: these.changes }), 'status')}</li>
     ${[...all].reverse().slice(0, 5).map((version) => html`<li><p class="links-past">${t(version.why === 'schema' ? 'compose.versionSchema' : 'compose.version', { n: version.n, date: date.format(new Date(version.at)) })}</p></li>`)}</ul></div>` : nothing
   const list = these && html`${group('compose.usedIn', these.usedIn.map((one) => html`<li>${open(one.from, beside(one))}</li>`))}
-    ${group('compose.uses', these.uses.map((one) => (one.kind ? html`<li>${open(one.to, beside(one))}</li>` : html`<li><button type="button" class="submenu" @click=${() => go(`${uri} ${one.index}`)}>${KIND.collections}<span dir="auto">${name(one.to)}</span>${beside(one)}${icons.chevron}</button></li>`)))}
+    ${group('compose.uses', these.uses.map((one) => (one.kind ? html`<li>${open(one.to, beside(one))}</li>` : html`<li><button type="button" class="submenu" @click=${() => go(`${uri} ${one.index}`)}>${KIND[one.to.split('/')[0]]}<span dir="auto">${name(one.to)}</span>${beside(one)}${icons.chevron}</button></li>`)))}
     ${group('compose.further', these.further.map(([place, via]) => html`<li>${open(place, html`<span class="menu-value" dir="auto">${t('compose.through', { name: name(via) })}</span>`)}</li>`))}
     ${these.source && fed ? fed.linked(uri, id) : nothing}${versions}${these.uses.length + these.usedIn.length + these.further.length || these.source ? nothing : html`<p class="menu-heading">${t('compose.none')}</p>`}`
   // Keyed by its place: a pane that shows another creation draws its menu anew, closed; closed, it opens on its list again.

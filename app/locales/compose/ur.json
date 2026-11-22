@@ -45,5 +45,11 @@
   "compose.since": "اس جواب کے بعد کی تبدیلیاں: {count}",
   "compose.now": "جیسا اب ہے ویسا دکھائیں",
   "compose.then": "جیسا تھا ویسا دکھائیں",
-  "compose.answer": "جیسا جواب میں تھا"
+  "compose.answer": "جیسا جواب میں تھا",
+  "compose.document.missing": "اس پروجیکٹ میں ایسی کوئی دستاویز نہیں ہے۔",
+  "compose.document.unpublished": "اس دستاویز کا ابھی کوئی ورژن نہیں ہے۔",
+  "compose.document.noVersion": "اس دستاویز کا ورژن {n} نہیں ہے۔",
+  "compose.document.denied": "دستاویزات بند ہیں۔",
+  "compose.document.section": "اس دستاویز میں ایسا کوئی حصہ نہیں ہے۔",
+  "compose.document.certified": "تصدیق شدہ، دستاویز کے ورژن {n} تک"
 }

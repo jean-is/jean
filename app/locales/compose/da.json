@@ -45,5 +45,11 @@
   "compose.since": "Ændringer siden dette svar: {count}",
   "compose.now": "Vis det, som det er nu",
   "compose.then": "Vis det, som det var",
-  "compose.answer": "Som i svaret"
+  "compose.answer": "Som i svaret",
+  "compose.document.missing": "Dette projekt har ikke et sådant dokument.",
+  "compose.document.unpublished": "Dette dokument har ingen version endnu.",
+  "compose.document.noVersion": "Dette dokument har ingen version {n}.",
+  "compose.document.denied": "Dokumenter er slået fra.",
+  "compose.document.section": "Dette dokument har ikke et sådant afsnit.",
+  "compose.document.certified": "Bekræftet, tilbage til version {n} af dokumentet"
 }

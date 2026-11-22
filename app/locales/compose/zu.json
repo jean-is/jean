@@ -45,5 +45,11 @@
   "compose.since": "Izinguquko kusukela kule mpendulo: {count}",
   "compose.now": "Kubonise njengoba kunjalo manje",
   "compose.then": "Kubonise njengoba kwakunjalo",
-  "compose.answer": "Njengasempendulweni"
+  "compose.answer": "Njengasempendulweni",
+  "compose.document.missing": "Le phrojekthi ayinalo idokhumenti elinjalo.",
+  "compose.document.unpublished": "Le dokhumenti ayikabi nanguqulo.",
+  "compose.document.noVersion": "Le dokhumenti ayinayo inguqulo {n}.",
+  "compose.document.denied": "Amadokhumenti avaliwe.",
+  "compose.document.section": "Le dokhumenti ayinayo ingxenye enjalo.",
+  "compose.document.certified": "Kuqinisekisiwe, kuze kufike enguqulweni {n} yedokhumenti"
 }

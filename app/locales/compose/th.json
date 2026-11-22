@@ -45,5 +45,11 @@
   "compose.since": "การเปลี่ยนแปลงหลังคำตอบนี้: {count}",
   "compose.now": "แสดงตามที่เป็นอยู่ตอนนี้",
   "compose.then": "แสดงตามที่เคยเป็น",
-  "compose.answer": "ตามในคำตอบ"
+  "compose.answer": "ตามในคำตอบ",
+  "compose.document.missing": "โปรเจกต์นี้ไม่มีเอกสารนั้น",
+  "compose.document.unpublished": "เอกสารนี้ยังไม่มีเวอร์ชันใด",
+  "compose.document.noVersion": "เอกสารนี้ไม่มีเวอร์ชัน {n}",
+  "compose.document.denied": "เอกสารถูกปิดอยู่",
+  "compose.document.section": "เอกสารนี้ไม่มีส่วนนั้น",
+  "compose.document.certified": "รับรองแล้ว ย้อนไปถึงเวอร์ชัน {n} ของเอกสาร"
 }

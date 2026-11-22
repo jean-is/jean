@@ -45,5 +45,11 @@
   "compose.since": "Změny od této odpovědi: {count}",
   "compose.now": "Ukázat, jak je to teď",
   "compose.then": "Ukázat, jak to bylo",
-  "compose.answer": "Jako v odpovědi"
+  "compose.answer": "Jako v odpovědi",
+  "compose.document.missing": "Tento projekt takový dokument nemá.",
+  "compose.document.unpublished": "Tento dokument zatím nemá žádnou verzi.",
+  "compose.document.noVersion": "Tento dokument nemá verzi {n}.",
+  "compose.document.denied": "Dokumenty jsou vypnuté.",
+  "compose.document.section": "Tento dokument takový oddíl nemá.",
+  "compose.document.certified": "Ověřeno, až k verzi {n} dokumentu"
 }

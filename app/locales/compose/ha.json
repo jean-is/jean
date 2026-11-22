@@ -45,5 +45,11 @@
   "compose.since": "Sauye-sauye tun wannan amsar: {count}",
   "compose.now": "Nuna shi yadda yake yanzu",
   "compose.then": "Nuna shi yadda yake a lokacin",
-  "compose.answer": "Kamar yadda yake a amsarsa"
+  "compose.answer": "Kamar yadda yake a amsarsa",
+  "compose.document.missing": "Wannan aikin ba shi da irin wannan takarda.",
+  "compose.document.unpublished": "Wannan takardar ba ta da wani siga tukuna.",
+  "compose.document.noVersion": "Wannan takardar ba ta da siga ta {n}.",
+  "compose.document.denied": "An kashe takardu.",
+  "compose.document.section": "Wannan takardar ba ta da irin wannan sashe.",
+  "compose.document.certified": "An tabbatar, har zuwa siga ta {n} ta takardar"
 }

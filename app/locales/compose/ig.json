@@ -45,5 +45,11 @@
   "compose.since": "Mgbanwe kemgbe azịza a: {count}",
   "compose.now": "Gosi ya ka ọ dị ugbu a",
   "compose.then": "Gosi ya ka ọ dịbu",
-  "compose.answer": "Dị ka ọ dị n’azịza ya"
+  "compose.answer": "Dị ka ọ dị n’azịza ya",
+  "compose.document.missing": "Ọrụ a enweghị akwụkwọ dị otú ahụ.",
+  "compose.document.unpublished": "Akwụkwọ a enwebeghị ụdị ọ bụla.",
+  "compose.document.noVersion": "Akwụkwọ a enweghị ụdị {n}.",
+  "compose.document.denied": "Agbanyụrụ akwụkwọ.",
+  "compose.document.section": "Akwụkwọ a enweghị ngalaba dị otú ahụ.",
+  "compose.document.certified": "Ekwenyela ya, ruo ụdị {n} nke akwụkwọ ahụ"
 }

@@ -45,5 +45,11 @@
   "compose.since": "이 답변 이후 변경: {count}",
   "compose.now": "지금 상태로 보기",
   "compose.then": "그때 상태로 보기",
-  "compose.answer": "답변 당시 그대로"
+  "compose.answer": "답변 당시 그대로",
+  "compose.document.missing": "이 프로젝트에는 그런 문서가 없습니다.",
+  "compose.document.unpublished": "이 문서에는 아직 버전이 없습니다.",
+  "compose.document.noVersion": "이 문서에는 버전 {n}이(가) 없습니다.",
+  "compose.document.denied": "문서가 꺼져 있습니다.",
+  "compose.document.section": "이 문서에는 그런 섹션이 없습니다.",
+  "compose.document.certified": "문서 버전 {n}까지 인증됨"
 }

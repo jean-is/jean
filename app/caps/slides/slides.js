@@ -76,6 +76,8 @@ export const BLOCKS = {
   },
   // A collection of the project's, read live through composition (caps/compose, D763), as a chart in the deck's colours where its recipe says `chart`; its source as it is where that is turned off.
   table: async (box, source) => ((await unlock('tables')) ? (await import('../compose/compose.js')).drawn(box, source, (option) => onSlide(box, option)) : box.classList.add('is-failed')),
+  // A document's section, read live, published or at one version, through composition too.
+  section: async (box, source) => ((await unlock('tables')) ? (await import('../compose/compose.js')).drawn(box, source) : box.classList.add('is-failed')),
 }
 /** A chart's option as a slide shows it: in the deck's colours unless it names its own; read the way the deck reads, in a language written from the right its categories starting there and its values standing on the right. @param {HTMLElement} box @param {Record<string, any>} option */
 function onSlide(box, option, look = getComputedStyle(box), series = [1, 2, 3, 4, 5, 6].map((n) => look.getPropertyValue(`--deck-series-${n}`).trim())) {

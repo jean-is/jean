@@ -45,5 +45,11 @@
   "compose.since": "Kemmoù abaoe ar respont-mañ: {count}",
   "compose.now": "Diskouez evel m’emañ bremañ",
   "compose.then": "Diskouez evel ma oa",
-  "compose.answer": "Evel en e respont"
+  "compose.answer": "Evel en e respont",
+  "compose.document.missing": "N’eus ket eus an teul-se er raktres-mañ.",
+  "compose.document.unpublished": "N’en deus stumm ebet an teul-mañ c’hoazh.",
+  "compose.document.noVersion": "N’en deus ket an teul-mañ ur stumm {n}.",
+  "compose.document.denied": "Lazhet eo an teulioù.",
+  "compose.document.section": "N’eus ket eus ar rann-se en teul-mañ.",
+  "compose.document.certified": "Testeniekaet, betek stumm {n} an teul"
 }

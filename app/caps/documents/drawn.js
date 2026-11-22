@@ -35,7 +35,7 @@ const tokenOf = (node) => (read.has(node) ? read : read.set(node, lex(blockMarkd
 /** The place of a table of the project's that a block of code of the kind table names. @param {any} token */
 const tableOf = (token) => (token.lang === 'table' && /^collections\/[0-9A-HJKMNP-TV-Z]{26}-[^/\s]+$/.test(token.text.trim()) ? token.text.trim() : null)
 /** A block of the kind table that names a collection otherwise, a version of it or a recipe, which composition draws (caps/compose, D763). @param {any} token */
-const composedOf = (token) => token.lang === 'table' && !tableOf(token) && /^collections\//.test(token.text.trim())
+const composedOf = (token) => /^(table|section)$/.test(token.lang) && !tableOf(token) && /^(collections|documents)\//.test(token.text.trim())
 /** A block as drawn: a table as Tables draws it, which loads Tables if it isn't yet, an element for each place; else as an answer draws it. @param {any} token */
 const shape = (token) => (tableOf(token) ? (unlock('tables'), keyed(tableOf(token), html`<app-table folder=${tableOf(token)}></app-table>`))
   : composedOf(token) ? (unlock('tables'), keyed(token.text, html`<app-composed source=${token.text}></app-composed>`)) : blocks([token]))

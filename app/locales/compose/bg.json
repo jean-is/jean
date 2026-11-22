@@ -45,5 +45,11 @@
   "compose.since": "Промени след този отговор: {count}",
   "compose.now": "Покажи го какъвто е сега",
   "compose.then": "Покажи го какъвто беше",
-  "compose.answer": "Както в отговора"
+  "compose.answer": "Както в отговора",
+  "compose.document.missing": "Този проект няма такъв документ.",
+  "compose.document.unpublished": "Този документ все още няма версия.",
+  "compose.document.noVersion": "Този документ няма версия {n}.",
+  "compose.document.denied": "Документите са изключени.",
+  "compose.document.section": "Този документ няма такъв раздел.",
+  "compose.document.certified": "Удостоверено, до версия {n} на документа"
 }

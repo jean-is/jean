@@ -45,5 +45,11 @@
   "compose.since": "Promjene od ovog odgovora: {count}",
   "compose.now": "Prikaži kakvo je sada",
   "compose.then": "Prikaži kakvo je bilo",
-  "compose.answer": "Kao u odgovoru"
+  "compose.answer": "Kao u odgovoru",
+  "compose.document.missing": "Ovaj projekt nema takav dokument.",
+  "compose.document.unpublished": "Ovaj dokument još nema nijednu verziju.",
+  "compose.document.noVersion": "Ovaj dokument nema verziju {n}.",
+  "compose.document.denied": "Dokumenti su isključeni.",
+  "compose.document.section": "Ovaj dokument nema takav odjeljak.",
+  "compose.document.certified": "Ovjereno, sve do verzije {n} dokumenta"
 }

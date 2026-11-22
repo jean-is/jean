@@ -45,5 +45,11 @@
   "compose.since": "Змін після цієї відповіді: {count}",
   "compose.now": "Показати, як зараз",
   "compose.then": "Показати, як було",
-  "compose.answer": "Як у відповіді"
+  "compose.answer": "Як у відповіді",
+  "compose.document.missing": "У цьому проєкті немає такого документа.",
+  "compose.document.unpublished": "Цей документ ще не має версій.",
+  "compose.document.noVersion": "Цей документ не має версії {n}.",
+  "compose.document.denied": "Документи вимкнено.",
+  "compose.document.section": "У цьому документі немає такого розділу.",
+  "compose.document.certified": "Засвідчено, аж до версії {n} документа"
 }

@@ -16,7 +16,7 @@ export const sriOf = async (text) => `sha256-${base64(new Uint8Array(await crypt
 
 /**
  * A version's credential, before its seal names its issuer, and the salts its digests were made with, which its holder keeps.
- * @param {{ kind: 'collection' | 'run', creation: string, n: number, at: string, by: string, content: string, recipe?: Record<string, string>, brain?: { provider: string, model: string, local: boolean }, ingredients?: Ingredient[] }} made
+ * @param {{ kind: 'collection' | 'document' | 'run', creation: string, n: number, at: string, by: string, content: string, recipe?: Record<string, string>, brain?: { provider: string, model: string, local: boolean }, ingredients?: Ingredient[] }} made
  */
 export async function credentialOf({ kind, creation, n, at, by, content, recipe, brain, ingredients = [] }) {
   const salts = { content: salt(), ...(recipe && { recipe: salt() }) }, held = await disclose(salts.content, 'digestSRI', await sriOf(content)), how = recipe && salts.recipe ? await disclose(salts.recipe, 'recipe', recipe) : null

@@ -45,5 +45,11 @@
   "compose.since": "Zmeny od tejto odpovede: {count}",
   "compose.now": "Ukázať, ako je to teraz",
   "compose.then": "Ukázať, ako to bolo",
-  "compose.answer": "Ako v odpovedi"
+  "compose.answer": "Ako v odpovedi",
+  "compose.document.missing": "Tento projekt taký dokument nemá.",
+  "compose.document.unpublished": "Tento dokument zatiaľ nemá žiadnu verziu.",
+  "compose.document.noVersion": "Tento dokument nemá verziu {n}.",
+  "compose.document.denied": "Dokumenty sú vypnuté.",
+  "compose.document.section": "Tento dokument taký oddiel nemá.",
+  "compose.document.certified": "Overené, až po verziu {n} dokumentu"
 }

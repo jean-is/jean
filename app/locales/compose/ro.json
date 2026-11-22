@@ -45,5 +45,11 @@
   "compose.since": "Schimbări de la acest răspuns: {count}",
   "compose.now": "Arată cum e acum",
   "compose.then": "Arată cum era",
-  "compose.answer": "Ca în răspuns"
+  "compose.answer": "Ca în răspuns",
+  "compose.document.missing": "Acest proiect nu are un asemenea document.",
+  "compose.document.unpublished": "Acest document nu are încă nicio versiune.",
+  "compose.document.noVersion": "Acest document nu are versiunea {n}.",
+  "compose.document.denied": "Documentele sunt dezactivate.",
+  "compose.document.section": "Acest document nu are o asemenea secțiune.",
+  "compose.document.certified": "Certificat, până la versiunea {n} a documentului"
 }

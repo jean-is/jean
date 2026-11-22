@@ -45,5 +45,11 @@
   "compose.since": "Wijzigingen sinds dit antwoord: {count}",
   "compose.now": "Toon het zoals het nu is",
   "compose.then": "Toon het zoals het was",
-  "compose.answer": "Zoals in het antwoord"
+  "compose.answer": "Zoals in het antwoord",
+  "compose.document.missing": "Dit project heeft zo’n document niet.",
+  "compose.document.unpublished": "Dit document heeft nog geen versie.",
+  "compose.document.noVersion": "Dit document heeft geen versie {n}.",
+  "compose.document.denied": "Documenten staan uit.",
+  "compose.document.section": "Dit document heeft zo’n onderdeel niet.",
+  "compose.document.certified": "Gecertificeerd, terug tot versie {n} van het document"
 }

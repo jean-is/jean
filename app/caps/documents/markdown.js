@@ -9,6 +9,9 @@ import { Marked } from 'marked'
 import { columns, cjk } from '../layouts/shapes.js'
 import { mathTokens } from '../../ui/markdown.js'
 
+/** A heading's id after its words, Pandoc's (caps/compose). */
+const ID = /[ \t]+\{#([\p{L}\p{N}_-]+)\}[ \t]*$/u
+
 /** @import { Token, Tokens } from 'marked' */
 /** @import { PMNode, PMMark, NodeType, Writer, Writing, Link, Spec } from './types.js' */
 
@@ -59,8 +62,9 @@ export const schema = new Schema({
     title: { content: 'text*', marks: '', defining: true, disableDropCursor: (view) => Boolean(view.dragging && !view.dragging.slice.openStart), toDOM: () => ['h1', dirAuto, 0] },
     // A paragraph in a table's cell, as Word and Google Docs copy one, is only its text.
     paragraph: { content: 'inline*', group: 'block', parseDOM: [{ tag: 'p', context: 'table_cell/|table_header/', skip: true, priority: 60 }, { tag: 'p' }], toDOM: () => ['p', dirAuto, 0] },
+    // Its id, written after its words once a reference names its section (`## FAQ {#faq}`, caps/compose), kept as its words change and never shown.
     heading: {
-      attrs: { level: { default: 1 } }, content: 'inline*', group: 'block', defining: true,
+      attrs: { level: { default: 1 }, id: { default: '' } }, content: 'inline*', group: 'block', defining: true,
       parseDOM: [1, 2, 3, 4, 5, 6].map((level) => ({ tag: `h${level}`, attrs: { level } })),
       toDOM: (node) => [`h${node.attrs.level}`, dirAuto, 0],
     },
@@ -210,7 +214,7 @@ const filled = (tokens) => ((content) => (content.length ? content : [paragraph(
 /** @param {any} token @returns {PMNode | null} */
 function block(token) {
   switch (token.type) {
-    case 'heading': return N.heading.create({ level: token.depth }, inline(token.tokens))
+    case 'heading': return ((id) => N.heading.create({ level: token.depth, id: id?.[1] ?? '' }, inline(id ? token.tokens.map((/** @type {any} */ one, /** @type {number} */ i, /** @type {any[]} */ all) => (i === all.length - 1 && one.type === 'text' ? { ...one, text: one.text.replace(ID, ''), raw: one.raw.replace(ID, '') } : one)) : token.tokens)))(ID.exec(token.text))
     case 'paragraph': return TOC.test(token.raw.trim()) ? N.toc.create({ markup: token.raw.trim() }) : paragraph(inline(token.tokens))
     case 'text': return paragraph(token.tokens ? inline(token.tokens) : inline([{ type: 'text', text: token.text }]))
     case 'code': {
@@ -331,6 +335,7 @@ const NODES = {
   heading(state, node) {
     state.write(`${state.repeat('#', node.attrs.level)} `)
     state.renderInline(node, false)
+    if (node.attrs.id) state.write(` {#${node.attrs.id}}`)
     state.closeBlock(node)
   },
   title: (state, node, parent, index) => NODES.heading(state, N.heading.create({ level: 1 }, node.content), parent, index),
@@ -581,12 +586,12 @@ export function tree(heads) {
   return path[0].kids
 }
 
-/** The document, each table of contents in it as the list of its headings, for what draws none: Word, a copy, a share. @param {PMNode} doc */
+/** The document, each table of contents in it as the list of its headings and its headings without their ids, for what draws none: Word, a copy, a share. @param {PMNode} doc */
 export function withContents(doc) {
   /** @param {Entry[]} entries @returns {PMNode} */
   const list = (entries) => N.bullet_list.create(null, entries.map(({ node, kids }) => N.list_item.create(null, [N.paragraph.create(null, node.content), ...(kids.length ? [list(kids)] : [])])))
   const entries = tree(outline(doc))
-  return N.doc.create(doc.attrs, doc.children.flatMap((node) => (node.type !== N.toc ? [node] : entries.length ? [list(entries)] : [])))
+  return N.doc.create(doc.attrs, doc.children.flatMap((node) => (node.type === N.heading && node.attrs.id ? [N.heading.create({ ...node.attrs, id: '' }, node.content)] : node.type !== N.toc ? [node] : entries.length ? [list(entries)] : [])))
 }
 
 /** A piece of the document (what is selected) as Markdown. @param {PMNode} doc @param {number} from @param {number} to */

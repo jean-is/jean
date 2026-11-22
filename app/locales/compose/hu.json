@@ -45,5 +45,11 @@
   "compose.since": "Változások e válasz óta: {count}",
   "compose.now": "Mutasd úgy, ahogy most van",
   "compose.then": "Mutasd úgy, ahogy volt",
-  "compose.answer": "Ahogy a válaszban"
+  "compose.answer": "Ahogy a válaszban",
+  "compose.document.missing": "Ebben a projektben nincs ilyen dokumentum.",
+  "compose.document.unpublished": "Ennek a dokumentumnak még nincs verziója.",
+  "compose.document.noVersion": "Ennek a dokumentumnak nincs {n}. verziója.",
+  "compose.document.denied": "A dokumentumok ki vannak kapcsolva.",
+  "compose.document.section": "Ebben a dokumentumban nincs ilyen szakasz.",
+  "compose.document.certified": "Hitelesítve, a dokumentum {n}. verziójáig"
 }

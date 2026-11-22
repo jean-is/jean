@@ -45,5 +45,11 @@
   "compose.since": "Mga pagbabago mula sa sagot na ito: {count}",
   "compose.now": "Ipakita kung ano na ngayon",
   "compose.then": "Ipakita kung ano noon",
-  "compose.answer": "Gaya ng nasa sagot"
+  "compose.answer": "Gaya ng nasa sagot",
+  "compose.document.missing": "Walang ganoong dokumento ang proyektong ito.",
+  "compose.document.unpublished": "Wala pang bersiyon ang dokumentong ito.",
+  "compose.document.noVersion": "Walang bersiyon {n} ang dokumentong ito.",
+  "compose.document.denied": "Nakapatay ang mga dokumento.",
+  "compose.document.section": "Walang ganoong seksiyon ang dokumentong ito.",
+  "compose.document.certified": "Sertipikado, hanggang sa bersiyon {n} ng dokumento"
 }

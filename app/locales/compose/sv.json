@@ -45,5 +45,11 @@
   "compose.since": "Ändringar sedan det här svaret: {count}",
   "compose.now": "Visa det som det är nu",
   "compose.then": "Visa det som det var",
-  "compose.answer": "Som i svaret"
+  "compose.answer": "Som i svaret",
+  "compose.document.missing": "Det här projektet har inget sådant dokument.",
+  "compose.document.unpublished": "Det här dokumentet har ingen version än.",
+  "compose.document.noVersion": "Det här dokumentet har ingen version {n}.",
+  "compose.document.denied": "Dokument är avstängda.",
+  "compose.document.section": "Det här dokumentet har inget sådant avsnitt.",
+  "compose.document.certified": "Intygat, tillbaka till version {n} av dokumentet"
 }

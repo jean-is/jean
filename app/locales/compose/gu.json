@@ -45,5 +45,11 @@
   "compose.since": "આ જવાબ પછીના ફેરફારો: {count}",
   "compose.now": "અત્યારે જેવું છે તેવું બતાવો",
   "compose.then": "જેવું હતું તેવું બતાવો",
-  "compose.answer": "જવાબમાં હતું તેમ"
+  "compose.answer": "જવાબમાં હતું તેમ",
+  "compose.document.missing": "આ પ્રોજેક્ટમાં આવો કોઈ દસ્તાવેજ નથી.",
+  "compose.document.unpublished": "આ દસ્તાવેજનું હજુ કોઈ સંસ્કરણ નથી.",
+  "compose.document.noVersion": "આ દસ્તાવેજનું સંસ્કરણ {n} નથી.",
+  "compose.document.denied": "દસ્તાવેજો બંધ છે.",
+  "compose.document.section": "આ દસ્તાવેજમાં આવો કોઈ વિભાગ નથી.",
+  "compose.document.certified": "પ્રમાણિત, દસ્તાવેજના સંસ્કરણ {n} સુધી"
 }

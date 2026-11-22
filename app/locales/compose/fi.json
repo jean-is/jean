@@ -45,5 +45,11 @@
   "compose.since": "Muutoksia tämän vastauksen jälkeen: {count}",
   "compose.now": "Näytä sellaisena kuin se on nyt",
   "compose.then": "Näytä sellaisena kuin se oli",
-  "compose.answer": "Kuten vastauksessa"
+  "compose.answer": "Kuten vastauksessa",
+  "compose.document.missing": "Tässä projektissa ei ole sellaista asiakirjaa.",
+  "compose.document.unpublished": "Tällä asiakirjalla ei ole vielä versiota.",
+  "compose.document.noVersion": "Tällä asiakirjalla ei ole versiota {n}.",
+  "compose.document.denied": "Asiakirjat ovat pois päältä.",
+  "compose.document.section": "Tässä asiakirjassa ei ole sellaista osiota.",
+  "compose.document.certified": "Varmennettu asiakirjan versioon {n} asti"
 }

@@ -45,5 +45,11 @@
   "compose.since": "Thay đổi kể từ câu trả lời này: {count}",
   "compose.now": "Hiện như bây giờ",
   "compose.then": "Hiện như lúc đó",
-  "compose.answer": "Như trong câu trả lời"
+  "compose.answer": "Như trong câu trả lời",
+  "compose.document.missing": "Dự án này không có tài liệu đó.",
+  "compose.document.unpublished": "Tài liệu này chưa có phiên bản nào.",
+  "compose.document.noVersion": "Tài liệu này không có phiên bản {n}.",
+  "compose.document.denied": "Tài liệu đang tắt.",
+  "compose.document.section": "Tài liệu này không có phần đó.",
+  "compose.document.certified": "Đã chứng nhận, tới phiên bản {n} của tài liệu"
 }

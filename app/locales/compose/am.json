@@ -45,5 +45,11 @@
   "compose.since": "ከዚህ መልስ በኋላ የመጡ ለውጦች፦ {count}",
   "compose.now": "አሁን እንዳለ አሳይ",
   "compose.then": "እንደነበረ አሳይ",
-  "compose.answer": "በመልሱ እንዳለው"
+  "compose.answer": "በመልሱ እንዳለው",
+  "compose.document.missing": "ይህ ፕሮጀክት እንዲህ ያለ ሰነድ የለውም።",
+  "compose.document.unpublished": "ይህ ሰነድ እስካሁን ስሪት የለውም።",
+  "compose.document.noVersion": "ይህ ሰነድ ስሪት {n} የለውም።",
+  "compose.document.denied": "ሰነዶች ጠፍተዋል።",
+  "compose.document.section": "ይህ ሰነድ እንዲህ ያለ ክፍል የለውም።",
+  "compose.document.certified": "የተረጋገጠ፣ እስከ ሰነዱ ስሪት {n} ድረስ"
 }

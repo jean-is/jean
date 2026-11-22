@@ -45,5 +45,11 @@
   "compose.since": "இந்தப் பதிலுக்குப் பிறகான மாற்றங்கள்: {count}",
   "compose.now": "இப்போது உள்ளபடி காட்டு",
   "compose.then": "அப்போது இருந்தபடி காட்டு",
-  "compose.answer": "பதிலில் உள்ளபடி"
+  "compose.answer": "பதிலில் உள்ளபடி",
+  "compose.document.missing": "இந்தத் திட்டத்தில் அப்படி ஓர் ஆவணம் இல்லை.",
+  "compose.document.unpublished": "இந்த ஆவணத்துக்கு இன்னும் பதிப்பு இல்லை.",
+  "compose.document.noVersion": "இந்த ஆவணத்துக்குப் பதிப்பு {n} இல்லை.",
+  "compose.document.denied": "ஆவணங்கள் அணைக்கப்பட்டுள்ளன.",
+  "compose.document.section": "இந்த ஆவணத்தில் அப்படி ஒரு பகுதி இல்லை.",
+  "compose.document.certified": "சான்றளிக்கப்பட்டது, ஆவணத்தின் பதிப்பு {n} வரை"
 }

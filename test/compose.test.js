@@ -3,7 +3,7 @@
 // asked at each resolution, and what a reference shows of a collection, read again from its journal.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { parseRef, placeOf, refsIn, withRef, filledPage, bare, formsTo, loops, refused, versionless, tableOf, chartOf, choiceIn, choicesIn, tinted, parseFigure, figureOf, written, linksIn, further } from '../app/caps/compose/refs.js'
+import { parseRef, placeOf, refsIn, withRef, filledPage, bare, formsTo, loops, refused, versionless, tableOf, chartOf, choiceIn, choicesIn, tinted, parseFigure, figureOf, written, linksIn, further, sectionOf, slugOf, withId } from '../app/caps/compose/refs.js'
 import { versionOf, loadedOf, headOf, reshaped, breaks, current } from '../app/caps/compose/versions.js'
 import { keyOf, paceOf, sorted, askOf, lastRun, due } from '../app/caps/compose/recipes.js'
 import { credentialOf, chainOf, holds, sriOf } from '../app/caps/compose/proof.js'
@@ -85,6 +85,29 @@ test('a site’s page refers with a table that says data-from, filled as the pag
   assert.deepEqual(refsIn(page).map(({ at, recipe }) => [at, recipe]), [['published', { where: 'Checked is yes', fields: 'Name & Trade' }], ['live', {}]])
   assert.equal(bare(filledPage(page, [[['Name'], ['Ana <3']], [['Name'], ['Bob']]])), `<main><table class="t" data-from="${PLACE}@published" data-where="Checked is yes" data-fields="Name &amp; Trade"></table><table data-from="${PLACE}"></table></main>`, 'kept, a page holds none of the rows it showed')
   assert.equal(filledPage(page, [[['Name'], ['Ana <3']], null]), `<main><table class="t" data-from="${PLACE}@published" data-where="Checked is yes" data-fields="Name &amp; Trade"><thead><tr><th>Name</th></tr></thead><tbody><tr><td>Ana &lt;3</td></tr></tbody></table><table data-from="${PLACE}"></table></main>`)
+})
+
+test('a document’s section is a source: found by the id after its heading, else by its words, as far as the next heading as high, its ids left out', () => {
+  const DOC = 'documents/01JX0000000000000000000002-help.md', body = '# Help\n\nHello.\n\n## Prices {#prices}\n\nTen euros.\n\n### Children\n\nFree.\n\n## Questions fréquentes\n\n```md\n## Not a heading\n```\n\nAsk us.\n'
+  assert.deepEqual(parseRef(`${DOC}#prices@2\nfields: x`), { place: DOC, at: 2, recipe: { section: 'prices', fields: 'x' } })
+  assert.equal(placeOf({ place: DOC, at: 'published', recipe: { section: 'prices' } }), `${DOC}#prices@published`)
+  assert.equal(parseRef('documents/nope.md#a'), null)
+  assert.deepEqual(sectionOf(body, 'prices'), { text: '## Prices\n\nTen euros.\n\n### Children\n\nFree.', line: 4, id: 'prices' }, 'by its id, its sub-sections in it')
+  assert.deepEqual(sectionOf(body, slugOf('Questions fréquentes')), { text: '## Questions fréquentes\n\n```md\n## Not a heading\n```\n\nAsk us.', line: 12, id: '' }, 'by its words, a fence’s lines no heading')
+  assert.equal(sectionOf(body, 'gone'), null)
+  assert.equal(sectionOf(body)?.text.startsWith('Hello.'), true, 'without a section, all but its title')
+  assert.equal(slugOf('Questions fréquentes'), 'questions-fréquentes')
+  assert.equal(slugOf('よくある質問 2'), 'よくある質問-2')
+  const kept = withId(body, 12, 'questions-fréquentes')
+  assert.equal(kept.split('\n')[12], '## Questions fréquentes {#questions-fréquentes}')
+  assert.equal(withId(kept, 12, 'questions-fréquentes'), kept, 'written once, however often it is asked')
+  assert.equal(sectionOf(kept.replace('## Questions fréquentes', '## FAQ'), 'questions-fréquentes')?.text.split('\n')[0], '## FAQ', 'renamed, it is found by its id')
+  const withWords = withRef(`\`\`\`section\n${DOC}#prices\n\`\`\`\n`, 0, (ref) => ({ ...ref, at: 1 }))
+  assert.equal(withWords, `\`\`\`section\n${DOC}#prices@1\n\`\`\`\n`, 'its section stays on its first line')
+  const page = `<main><section data-from="${DOC}#prices"><p>old</p></section><table data-from="${PLACE}"></table></main>`
+  assert.deepEqual(refsIn(page).map(({ place, recipe }) => [place, recipe.section]), [[DOC, 'prices'], [PLACE, undefined]])
+  assert.equal(filledPage(page, ['<p>Ten euros.</p>', null]), `<main><section data-from="${DOC}#prices"><p>Ten euros.</p></section><table data-from="${PLACE}"></table></main>`)
+  assert.equal(bare(filledPage(page, ['<p>Ten euros.</p>', null])), `<main><section data-from="${DOC}#prices"></section><table data-from="${PLACE}"></table></main>`)
 })
 
 test('what is reached further from a place goes as far as the graph does, each through the link it starts from, never back to the place', () => {

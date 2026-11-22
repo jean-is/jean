@@ -45,5 +45,11 @@
   "compose.since": "Cambios desde esta respuesta: {count}",
   "compose.now": "Mostrarlo como está ahora",
   "compose.then": "Mostrarlo como estaba",
-  "compose.answer": "Como en su respuesta"
+  "compose.answer": "Como en su respuesta",
+  "compose.document.missing": "Este proyecto no tiene ese documento.",
+  "compose.document.unpublished": "Este documento aún no tiene ninguna versión.",
+  "compose.document.noVersion": "Este documento no tiene versión {n}.",
+  "compose.document.denied": "Los documentos están desactivados.",
+  "compose.document.section": "Este documento no tiene esa sección.",
+  "compose.document.certified": "Certificado, hasta la versión {n} del documento"
 }

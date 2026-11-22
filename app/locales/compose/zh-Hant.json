@@ -45,5 +45,11 @@
   "compose.since": "此回答之後的變更：{count}",
   "compose.now": "按現在的樣子顯示",
   "compose.then": "按當時的樣子顯示",
-  "compose.answer": "同回答時一樣"
+  "compose.answer": "同回答時一樣",
+  "compose.document.missing": "此專案中沒有這份文件。",
+  "compose.document.unpublished": "此文件還沒有任何版本。",
+  "compose.document.noVersion": "此文件沒有第 {n} 版。",
+  "compose.document.denied": "文件已關閉。",
+  "compose.document.section": "此文件中沒有這一節。",
+  "compose.document.certified": "已認證，可追溯到文件的第 {n} 版"
 }

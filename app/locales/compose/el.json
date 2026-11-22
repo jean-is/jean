@@ -45,5 +45,11 @@
   "compose.since": "Αλλαγές από αυτή την απάντηση: {count}",
   "compose.now": "Δείξε το όπως είναι τώρα",
   "compose.then": "Δείξε το όπως ήταν",
-  "compose.answer": "Όπως στην απάντηση"
+  "compose.answer": "Όπως στην απάντηση",
+  "compose.document.missing": "Αυτό το έργο δεν έχει τέτοιο έγγραφο.",
+  "compose.document.unpublished": "Αυτό το έγγραφο δεν έχει ακόμη έκδοση.",
+  "compose.document.noVersion": "Αυτό το έγγραφο δεν έχει έκδοση {n}.",
+  "compose.document.denied": "Τα έγγραφα είναι απενεργοποιημένα.",
+  "compose.document.section": "Αυτό το έγγραφο δεν έχει τέτοια ενότητα.",
+  "compose.document.certified": "Πιστοποιημένο, έως την έκδοση {n} του εγγράφου"
 }

@@ -45,5 +45,11 @@
   "compose.since": "Mutationes post hoc responsum: {count}",
   "compose.now": "Ostende ut nunc est",
   "compose.then": "Ostende ut erat",
-  "compose.answer": "Ut in responso"
+  "compose.answer": "Ut in responso",
+  "compose.document.missing": "Hoc consilium tale documentum non habet.",
+  "compose.document.unpublished": "Hoc documentum nullam editionem adhuc habet.",
+  "compose.document.noVersion": "Hoc documentum editionem {n} non habet.",
+  "compose.document.denied": "Documenta exstincta sunt.",
+  "compose.document.section": "Hoc documentum talem partem non habet.",
+  "compose.document.certified": "Probatum, usque ad editionem {n} documenti"
 }

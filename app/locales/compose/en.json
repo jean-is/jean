@@ -45,5 +45,11 @@
   "compose.since": "Changes since this answer: {count}",
   "compose.now": "Show it as it is now",
   "compose.then": "Show it as it was",
-  "compose.answer": "As in its answer"
+  "compose.answer": "As in its answer",
+  "compose.document.missing": "This project has no such document.",
+  "compose.document.unpublished": "This document has no version yet.",
+  "compose.document.noVersion": "This document has no version {n}.",
+  "compose.document.denied": "Documents are turned off.",
+  "compose.document.section": "This document has no such section.",
+  "compose.document.certified": "Certified, back to version {n} of the document"
 }

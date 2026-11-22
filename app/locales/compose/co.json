@@ -45,5 +45,11 @@
   "compose.since": "Cambiamenti dapoi sta risposta: {count}",
   "compose.now": "Mustrallu cum’ellu hè avà",
   "compose.then": "Mustrallu cum’ellu era",
-  "compose.answer": "Cum’è in a so risposta"
+  "compose.answer": "Cum’è in a so risposta",
+  "compose.document.missing": "Stu prughjettu ùn hà micca un tale ducumentu.",
+  "compose.document.unpublished": "Stu ducumentu ùn hà ancu nisuna versione.",
+  "compose.document.noVersion": "Stu ducumentu ùn hà micca a versione {n}.",
+  "compose.document.denied": "I ducumenti sò disattivati.",
+  "compose.document.section": "Stu ducumentu ùn hà micca una tale sezzione.",
+  "compose.document.certified": "Certificatu, finu à a versione {n} di u ducumentu"
 }

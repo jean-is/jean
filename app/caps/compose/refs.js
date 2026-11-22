@@ -20,14 +20,35 @@ import { sorted } from './recipes.js'
  * file held by its content (`file`), always the same. @typedef {{ from: string, to: string, at: Ref['at'], recipe: Record<string, string>, index: number, kind?: 'relation' | 'file' }} Edge
  */
 
-const BLOCK = /^(`{3,}|~{3,})table[ \t]*\n([\s\S]*?)^\1[ \t]*$/gm, FIGURE = /`(=[ \t]*collections\/[^`\n]*)`/g, TABLE = /(<table\b[^>]*\bdata-from="[^"]*"[^>]*>)[\s\S]*?(<\/table>)/gi
+const BLOCK = /^(`{3,}|~{3,})(?:table|section)[ \t]*\n([\s\S]*?)^\1[ \t]*$/gm, FIGURE = /`(=[ \t]*collections\/[^`\n]*)`/g, TABLE = /(<(table|section)\b[^>]*\bdata-from="[^"]*"[^>]*>)[\s\S]*?(<\/\2>)/gi
+/** A document's place (D474), whose sections are a source (step 9). */
+export const DOCUMENT = /^documents\/[0-9A-HJKMNP-TV-Z]{26}-[^/#@]*\.md$/
+/** A heading: its marks, its words, and the id written after them once a reference names it (`## FAQ {#faq}`, Pandoc's), which a rename keeps. */
+const HEADING = /^(#{1,6})[ \t]+(.*?)(?:[ \t]+\{#([\p{L}\p{N}_-]+)\})?[ \t]*$/u, IDS = /^(#{1,6}[ \t].*?)[ \t]+\{#[\p{L}\p{N}_-]+\}[ \t]*$/gmu
 const escaped = (/** @type {string} */ text) => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 
-/** A `table` block's text read; null when its first line names no collection. @param {string} text @returns {Ref | null} */
+/** A `table` or `section` block's text read: a collection's place, or a document's and its section after `#`, the section in its recipe; null when it names neither. @param {string} text @returns {Ref | null} */
 export function parseRef(text) {
-  const [first = '', ...lines] = text.trim().split('\n').map((line) => line.trim()), [, place = '', at = 'live'] = /^(.*?)(?:@(live|published|[1-9]\d*))?$/.exec(first) ?? []
-  return PLACE.test(place) && !place.includes('@') ? { place, at: /^\d/.test(at) ? Number(at) : /** @type {'live' | 'published'} */ (at), recipe: Object.fromEntries(lines.flatMap((line) => ((kv) => (kv ? [[kv[1].toLowerCase(), kv[2].trim()]] : []))(/^(\w+):(.*)$/.exec(line)))) } : null
+  const [first = '', ...lines] = text.trim().split('\n').map((line) => line.trim()), [, named = '', at = 'live'] = /^(.*?)(?:@(live|published|[1-9]\d*))?$/.exec(first) ?? [], [place, section = ''] = named.split('#')
+  return (PLACE.test(place) || DOCUMENT.test(place)) && !place.includes('@') ? { place, at: /^\d/.test(at) ? Number(at) : /** @type {'live' | 'published'} */ (at), recipe: { ...(section && { section }), ...Object.fromEntries(lines.flatMap((line) => ((kv) => (kv ? [[kv[1].toLowerCase(), kv[2].trim()]] : []))(/^(\w+):(.*)$/.exec(line)))) } } : null
 }
+
+/** A heading's words as an id, in any script. @param {string} words */
+export const slugOf = (words) => words.normalize('NFKC').toLocaleLowerCase().replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-|-$/g, '')
+/**
+ * A section of a document's Markdown, its front matter left out: from its heading, found by its id, else by its words as an id, to the next heading as high;
+ * without one, all but its title. Its headings' ids left out, with the line it starts at and the id it has; null where there is none. @param {string} body @param {string} [section] @returns {{ text: string, line: number, id: string } | null}
+ */
+export function sectionOf(body, section = '') {
+  let fence = ''
+  const lines = body.split('\n'), heads = lines.map((line) => ((open) => (fence ? ((fence = open && open[0] === fence[0] && open.length >= fence.length ? '' : fence), null) : open ? ((fence = open), null) : HEADING.exec(line)))(/^ {0,3}(`{3,}|~{3,})/.exec(line)?.[1] ?? ''))
+  const by = heads.findIndex((head) => head?.[3] === section), at = !section ? -1 : by < 0 ? heads.findIndex((head) => head && slugOf(head[2]) === section) : by
+  if (section && at < 0) return null
+  const head = heads[at], end = head ? heads.findIndex((one, i) => i > at && one && one[1].length <= head[1].length) : -1, title = heads.findIndex(Boolean)
+  return { text: (head ? lines.slice(at, end < 0 ? undefined : end) : lines.filter((_, i) => i !== title || heads[i]?.[1] !== '#')).join('\n').replace(IDS, '$1').trim(), line: at, id: head?.[3] ?? '' }
+}
+/** A document's Markdown with a heading's id written after its words, once a reference names it by them; as it was where it has one already. @param {string} text @param {number} line its line, after the front matter's @param {string} id */
+export const withId = (text, line, id) => ((lines) => (HEADING.exec(lines[line] ?? '')?.[3] !== undefined ? text : ((lines[line] = `${lines[line].trimEnd()} {#${id}}`), lines.join('\n'))))(text.split('\n'))
 
 /** A figure's formula read, inline code's words: `=`, a collection's place and which of it, then `count`, `sum`, `average`, `min`, `max` or `percent`,
  * a column but for a count of rows, and `where …` for some rows; null when it is none. @param {string} text @returns {Ref | null} */
@@ -36,8 +57,8 @@ export function parseFigure(text) {
   return ref ? { ...ref, recipe: { total: what.toLowerCase(), ...(column && { column }), ...(where && { where: where.trim() }) } } : null
 }
 
-/** A reference's first line: its place, and which of it unless it is live. @param {Pick<Ref, 'place' | 'at'>} ref */
-export const placeOf = ({ place, at }) => (at === 'live' ? place : `${place}@${at}`)
+/** A reference's first line: its place, a document's section after `#`, and which of it unless it is live. @param {Pick<Ref, 'place' | 'at'> & { recipe?: Ref['recipe'] }} ref */
+export const placeOf = ({ place, at, recipe }) => `${place}${recipe?.section ? `#${recipe.section}` : ''}${at === 'live' ? '' : `@${at}`}`
 
 /** The references a consumer holds, in order: a Markdown file's `table` blocks, or a page's tables that say `data-from`. @param {string} text */
 export const refsIn = (text) => [...text.matchAll(BLOCK)].map(([, , inner]) => inner).concat([...text.matchAll(TABLE)].map(([, open]) => ((attrs) => [attrs.from, ...Object.entries(attrs).filter(([what]) => what !== 'from').map(([what, value]) => `${what}: ${value}`)].join('\n'))(
@@ -47,7 +68,7 @@ export const refsIn = (text) => [...text.matchAll(BLOCK)].map(([, , inner]) => i
 /** A Markdown consumer with its `index`th reference changed, written again whole: its place, which version, its recipe's lines; a figure's, after its blocks', its place and which version. @param {string} markdown @param {number} index @param {(ref: Ref) => Ref} change */
 export function withRef(markdown, index, change) {
   let n = -1
-  return markdown.replace(BLOCK, (all, fence, inner) => ((ref) => (ref && ++n === index ? ((now) => all.replace(inner, `${[placeOf(now), ...Object.entries(now.recipe).map(([what, value]) => `${what}: ${value}`)].join('\n')}\n`))(change(ref)) : all))(parseRef(inner)))
+  return markdown.replace(BLOCK, (all, fence, inner) => ((ref) => (ref && ++n === index ? ((now) => all.replace(inner, `${[placeOf(now), ...Object.entries(now.recipe).filter(([what]) => what !== 'section').map(([what, value]) => `${what}: ${value}`)].join('\n')}\n`))(change(ref)) : all))(parseRef(inner)))
     .replace(FIGURE, (all, formula) => ((ref) => (ref && ++n === index ? all.replace(/=\s*\S+/, `=${placeOf(change(ref))}`) : all))(parseFigure(formula)))
 }
 
@@ -66,12 +87,12 @@ export async function written(text, shown) {
 export const formsTo = (text) => new Map([...text.matchAll(/<form\b[^>]*>/gi)].flatMap(([open]) => ((name, to) => (name && to && PLACE.test(to) ? [[name, to]] : []))(/\sdata-form="([^"]*)"/.exec(open)?.[1], /\sdata-to="([^"]*)"/.exec(open)?.[1])))
 
 /** A site's page as it is kept: each table that says `data-from` empty, its rows filled only as the page is read, never kept in it. @param {string} page */
-export const bare = (page) => page.replace(TABLE, (all, open, close) => `${open}${close}`)
+export const bare = (page) => page.replace(TABLE, (all, open, tag, close) => `${open}${close}`)
 
-/** A site's page with each table that says `data-from` filled with what it shows, its heads then its rows, those it can't show as written. @param {string} page @param {(string[][] | null)[]} shown each one's, in order */
+/** A site's page with each table or section that says `data-from` filled with what it shows: a table its heads then its rows, a section its HTML, those it can't show as written. @param {string} page @param {(string[][] | string | null)[]} shown each one's, in order */
 export function filledPage(page, shown) {
   let n = 0
-  return page.replace(TABLE, (all, open, close) => ((rows) => (rows ? `${open}<thead><tr>${rows[0].map((head) => `<th>${escaped(head)}</th>`).join('')}</tr></thead><tbody>${rows.slice(1).map((row) => `<tr>${row.map((cell) => `<td>${escaped(cell)}</td>`).join('')}</tr>`).join('')}</tbody>${close}` : all))(shown[n++] ?? null))
+  return page.replace(TABLE, (all, open, tag, close) => ((rows) => (typeof rows === 'string' ? `${open}${rows}${close}` : rows ? `${open}<thead><tr>${rows[0].map((head) => `<th>${escaped(head)}</th>`).join('')}</tr></thead><tbody>${rows.slice(1).map((row) => `<tr>${row.map((cell) => `<td>${escaped(cell)}</td>`).join('')}</tr>`).join('')}</tbody>${close}` : all))(shown[n++] ?? null))
 }
 
 /** The links a creation holds that are no references: a collection's relations to others, by its columns (`collection.json`), and the files any text holds by their content (`../files/sha256-…`). @param {string} from @param {{ properties?: { type: string, name: string, collection?: string }[] } | null} table @param {string} [text] @returns {Edge[]} */

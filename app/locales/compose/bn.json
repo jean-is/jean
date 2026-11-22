@@ -45,5 +45,11 @@
   "compose.since": "এই উত্তরের পর থেকে পরিবর্তন: {count}",
   "compose.now": "এখন যেমন আছে দেখাও",
   "compose.then": "যেমন ছিল দেখাও",
-  "compose.answer": "উত্তরে যেমন ছিল"
+  "compose.answer": "উত্তরে যেমন ছিল",
+  "compose.document.missing": "এই প্রকল্পে এমন কোনো নথি নেই।",
+  "compose.document.unpublished": "এই নথির এখনও কোনো সংস্করণ নেই।",
+  "compose.document.noVersion": "এই নথির সংস্করণ {n} নেই।",
+  "compose.document.denied": "নথি বন্ধ আছে।",
+  "compose.document.section": "এই নথিতে এমন কোনো অংশ নেই।",
+  "compose.document.certified": "প্রত্যয়িত, নথির সংস্করণ {n} পর্যন্ত"
 }

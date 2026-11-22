@@ -45,5 +45,11 @@
   "compose.since": "Jijjiiramoota deebii kana booda: {count}",
   "compose.now": "Akkuma amma jiru agarsiisi",
   "compose.then": "Akkuma ture agarsiisi",
-  "compose.answer": "Akkuma deebii isaa keessatti"
+  "compose.answer": "Akkuma deebii isaa keessatti",
+  "compose.document.missing": "Pirojektiin kun sanada akkasii hin qabu.",
+  "compose.document.unpublished": "Sanadni kun ammaaf gosa tokkollee hin qabu.",
+  "compose.document.noVersion": "Sanadni kun gosa {n} hin qabu.",
+  "compose.document.denied": "Sanadoonni dhaamsamaniiru.",
+  "compose.document.section": "Sanadni kun kutaa akkasii hin qabu.",
+  "compose.document.certified": "Mirkanaa’eera, hanga gosa {n} sanadichaatti"
 }

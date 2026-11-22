@@ -45,5 +45,11 @@
   "compose.since": "Bu yanıttan beri değişiklikler: {count}",
   "compose.now": "Şimdiki hâliyle göster",
   "compose.then": "O zamanki hâliyle göster",
-  "compose.answer": "Yanıttaki gibi"
+  "compose.answer": "Yanıttaki gibi",
+  "compose.document.missing": "Bu projede böyle bir belge yok.",
+  "compose.document.unpublished": "Bu belgenin henüz bir sürümü yok.",
+  "compose.document.noVersion": "Bu belgenin {n}. sürümü yok.",
+  "compose.document.denied": "Belgeler kapalı.",
+  "compose.document.section": "Bu belgede böyle bir bölüm yok.",
+  "compose.document.certified": "Belgenin {n}. sürümüne kadar onaylı"
 }

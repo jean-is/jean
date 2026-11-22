@@ -45,5 +45,11 @@
   "compose.since": "此回答之后的更改：{count}",
   "compose.now": "按现在的样子显示",
   "compose.then": "按当时的样子显示",
-  "compose.answer": "同回答时一样"
+  "compose.answer": "同回答时一样",
+  "compose.document.missing": "此项目中没有这个文档。",
+  "compose.document.unpublished": "此文档还没有任何版本。",
+  "compose.document.noVersion": "此文档没有第 {n} 版。",
+  "compose.document.denied": "文档已关闭。",
+  "compose.document.section": "此文档中没有这一节。",
+  "compose.document.certified": "已认证，可追溯到文档的第 {n} 版"
 }

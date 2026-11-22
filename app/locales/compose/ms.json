@@ -45,5 +45,11 @@
   "compose.since": "Perubahan sejak jawapan ini: {count}",
   "compose.now": "Tunjukkan seperti sekarang",
   "compose.then": "Tunjukkan seperti dahulu",
-  "compose.answer": "Seperti dalam jawapannya"
+  "compose.answer": "Seperti dalam jawapannya",
+  "compose.document.missing": "Projek ini tiada dokumen sedemikian.",
+  "compose.document.unpublished": "Dokumen ini belum ada versi.",
+  "compose.document.noVersion": "Dokumen ini tiada versi {n}.",
+  "compose.document.denied": "Dokumen dimatikan.",
+  "compose.document.section": "Dokumen ini tiada bahagian sedemikian.",
+  "compose.document.certified": "Disahkan, hingga versi {n} dokumen"
 }

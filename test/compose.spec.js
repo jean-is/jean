@@ -204,6 +204,16 @@ for (const [lang, live, missing, since] of [['ar', 'مباشر', 'لا توجد 
     const answer = page.locator('article.msg-jean').last()
     await expect(answer.locator('app-composed tbody td').nth(1)).toHaveText('Baker')
     await expect(answer.locator('.composed-since')).toContainText(since)
+    // A document's section found by its heading's words in the language's own script, its id written after them in it.
+    const [title, words] = lang === 'ar' ? ['الأسعار', 'عشرة يوروهات.'] : ['料金', '十ユーロです。'], HELP = 'documents/01K85Z1T00000000000000000E-help.md', SLIDES = 'decks/01K85Z1T00000000000000000F-prices.deck.html'
+    await page.evaluate(async ({ HELP, SLIDES, title, words }) => {
+      const { app } = await import('/ui/state.js')
+      await app.fs.write(`${app.projectDir}/${HELP}`, `---\nformat: 1\nname: Help\nauthor: user\ncreated: 2026-11-21T10:00:00.000Z\nchanged: 2026-11-21T10:00:00.000Z\n---\n# Help\n\n## ${title}\n\n${words}\n`)
+      await (await import('/caps/skills/decks.js')).rewrite(SLIDES, `# ${title}\n\n---\n\n\`\`\`section\n${HELP}#${title}\n\`\`\`\n`, title, app.projectDir)
+    }, { HELP, SLIDES, title, words })
+    await show(page, SLIDES, title)
+    await expect(page.locator('app-preview .deck-slide .composed-section').first()).toContainText(words)
+    await expect.poll(() => page.evaluate(async (HELP) => String(await (await import('/ui/state.js')).app.fs.read(`${(await import('/ui/state.js')).app.projectDir}/${HELP}`)), HELP)).toContain(`## ${title} {#${title}}`)
   })
 }
 
@@ -434,6 +444,51 @@ test('an answer composes: its block and its figure show a collection as it was w
   await expect(task).toContainText('As in its answer')
   await task.click()
   await expect.poll(() => page.evaluate(() => import('/ui/state.js').then(({ app }) => app.current.peek()?.path))).toBe(path)
+})
+
+test('a document’s section is a source: slides and a site follow it through a rename, a site pinned to its version 1 doesn’t, and a loop between documents is refused', async ({ page }) => {
+  await start(page)
+  await seed(page)
+  const HELP = 'documents/01K85Z1T00000000000000000E-help.md', SLIDES = 'decks/01K85Z1T00000000000000000F-prices.deck.html', SITE = 'sites/01K85Z1T00000000000000000G-shop'
+  const write = (/** @type {string} */ path, /** @type {string} */ text) => page.evaluate(async ({ path, text }) => { const { app } = await import('/ui/state.js'); await app.fs.write(`${app.projectDir}/${path}`, text) }, { path, text })
+  const read = (/** @type {string} */ path) => page.evaluate(async (path) => { const { app } = await import('/ui/state.js'); return String(await app.fs.read(`${app.projectDir}/${path}`)) }, path)
+  const head = (/** @type {string} */ name) => `---\nformat: 1\nname: ${name}\nauthor: user\ncreated: 2026-11-21T10:00:00.000Z\nchanged: 2026-11-21T10:00:00.000Z\n---\n`
+  await page.evaluate(async () => { const { unlock } = await import('/ui/caps.js'); await Promise.all([unlock('documents'), unlock('sites')]) })
+  await write(HELP, `${head('Help')}# Help\n\n## Prices\n\nTen euros.\n\n## Questions\n\nAsk us.\n`)
+  await page.evaluate(async ({ SLIDES, HELP }) => { const { app } = await import('/ui/state.js'); await (await import('/caps/skills/decks.js')).rewrite(SLIDES, `# Prices\n\n---\n\n\`\`\`section\n${HELP}#prices\n\`\`\`\n`, 'Prices', app.projectDir) }, { SLIDES, HELP })
+  // The slides show the section, found by its words, whose id is then written after them once.
+  await show(page, SLIDES, 'Prices')
+  const slide = page.locator('app-preview .deck-slide .composed-section').first()
+  await expect(slide).toContainText('Ten euros.')
+  await expect.poll(() => read(HELP)).toContain('## Prices {#prices}')
+  // Renamed and changed, it is still found by its id; the slides follow it.
+  await write(HELP, (await read(HELP)).replace('## Prices {#prices}\n\nTen euros.', '## Our prices {#prices}\n\nTwelve euros.'))
+  await expect(slide).toContainText('Our prices')
+  await expect(slide).toContainText('Twelve euros.')
+  // Version 1, published from the document's pane, shows no id.
+  await show(page, HELP, 'Help')
+  await expect(page.locator('app-preview .doc h2').first()).toHaveText('Our prices')
+  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  const menu = page.locator('.menu:popover-open')
+  await expect(menu.getByRole('group', { name: 'Used in' }).getByRole('button', { name: /Prices/ })).toBeVisible()
+  await menu.getByRole('group', { name: 'Versions' }).getByRole('button', { name: 'Publish version 1' }).click()
+  await expect(page.locator('.toast').last()).toContainText('Version 1 published.')
+  await page.keyboard.press('Escape')
+  // A site that reads version 1 keeps it once the document changes again; one that reads it live follows.
+  await write(`${SITE}/site.json`, JSON.stringify({ format: 1, name: 'Shop', author: 'user', created: '2026-11-21T10:00:00.000Z', changed: '2026-11-21T10:00:00.000Z', source: '', files: ['index.html'] }))
+  await write(`${SITE}/index.html`, `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Shop</title></head><body><main><h1>Shop</h1><section id="then" data-from="${HELP}#prices@1"></section><section id="now" data-from="${HELP}#prices"></section></main></body></html>`)
+  await write(HELP, (await read(HELP)).replace('Twelve euros.', 'Fifteen euros.'))
+  await show(page, SITE, 'Shop')
+  const frame = page.frameLocator('app-preview app-site iframe')
+  await expect(frame.locator('#then')).toContainText('Twelve euros.')
+  await expect(frame.locator('#now')).toContainText('Fifteen euros.')
+  expect(await read(`${SITE}/index.html`)).not.toContain('euros')
+  // Two documents that would show each other: refused, said in words.
+  const OTHER = 'documents/01K85Z1T00000000000000000H-other.md'
+  await write(OTHER, `${head('Other')}# Other\n\n## Part\n\nMine.\n\n\`\`\`section\n${HELP}#prices\n\`\`\`\n`)
+  await write(HELP, `${(await read(HELP))}\n\`\`\`section\n${OTHER}#part\n\`\`\`\n`)
+  await show(page, OTHER, 'Other')
+  await expect(page.locator('app-preview app-composed')).toContainText('Not shown: each would use the other, in a loop.')
 })
 
 test('a recipe that sums up the approved artisans on a slide updates by itself once its user turns that on, and only then; a run is paid once per version read', async ({ page }) => {

@@ -50,6 +50,17 @@ test('the whole file written again says what it said, as marked draws it', async
   for (const [name, text] of await corpus()) assert.equal(html(serialize(parseDoc(text))), html(text), name)
 })
 
+test('a heading keeps the id a reference wrote after its words, never shows it, keeps it as its words change, and leaves it out of what goes out', () => {
+  const text = '# Help\n\n## Prices {#prices}\n\nTen euros.\n'
+  const { doc, sources } = parse(text), head = /** @type {import('prosemirror-model').Node} */ (doc.child(1))
+  assert.equal(head.textContent, 'Prices')
+  assert.equal(head.attrs.id, 'prices')
+  assert.equal(serialize(doc, sources), text, 'unchanged, written back as it was')
+  const state = EditorState.create({ doc }), tr = state.tr.insertText('Our prices', 1 + doc.child(0).nodeSize, 1 + doc.child(0).nodeSize + 'Prices'.length)
+  assert.equal(serialize(tr.doc, sources), '# Help\n\n## Our prices {#prices}\n\nTen euros.\n', 'renamed, it keeps its id')
+  assert.equal(serialize(withContents(doc), sources), '# Help\n\n## Prices\n\nTen euros.\n', 'Word, a copy, a share: no id')
+})
+
 test('the markers a file was written with are kept when a block is written again', () => {
   const cases = ['* one\n* two', '+ one\n+ two', '1) one\n2) two', '7. seven\n8. eight', '_em_ and __strong__ and ~~del~~', '~~~js\nx\n~~~', '- [x] done\n- [ ] to do',
     '| a | b |\n|:--|--:|\n| 1 | 2 |', 'As said [1], snake_case_name, $5 and $10, AT&T.', 'A star \\* kept text, and <b>html</b>.', 'Formula $x^2$ inline.']

@@ -45,5 +45,11 @@
   "compose.since": "या उत्तरानंतरचे बदल: {count}",
   "compose.now": "आता जसे आहे तसे दाखवा",
   "compose.then": "जसे होते तसे दाखवा",
-  "compose.answer": "उत्तरात होते तसे"
+  "compose.answer": "उत्तरात होते तसे",
+  "compose.document.missing": "या प्रकल्पात असा कोणताही दस्तऐवज नाही.",
+  "compose.document.unpublished": "या दस्तऐवजाची अजून कोणतीही आवृत्ती नाही.",
+  "compose.document.noVersion": "या दस्तऐवजाची आवृत्ती {n} नाही.",
+  "compose.document.denied": "दस्तऐवज बंद आहेत.",
+  "compose.document.section": "या दस्तऐवजात असा कोणताही विभाग नाही.",
+  "compose.document.certified": "प्रमाणित, दस्तऐवजाच्या आवृत्ती {n} पर्यंत"
 }

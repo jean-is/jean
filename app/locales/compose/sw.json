@@ -45,5 +45,11 @@
   "compose.since": "Mabadiliko tangu jibu hili: {count}",
   "compose.now": "Ionyeshe ilivyo sasa",
   "compose.then": "Ionyeshe ilivyokuwa",
-  "compose.answer": "Kama katika jibu lake"
+  "compose.answer": "Kama katika jibu lake",
+  "compose.document.missing": "Mradi huu hauna hati kama hiyo.",
+  "compose.document.unpublished": "Hati hii bado haina toleo lolote.",
+  "compose.document.noVersion": "Hati hii haina toleo la {n}.",
+  "compose.document.denied": "Hati zimezimwa.",
+  "compose.document.section": "Hati hii haina sehemu kama hiyo.",
+  "compose.document.certified": "Imethibitishwa, hadi toleo la {n} la hati"
 }

@@ -45,5 +45,11 @@
   "compose.since": "ఈ సమాధానం తర్వాతి మార్పులు: {count}",
   "compose.now": "ఇప్పుడు ఉన్నట్లు చూపించు",
   "compose.then": "అప్పుడు ఉన్నట్లు చూపించు",
-  "compose.answer": "సమాధానంలో ఉన్నట్లు"
+  "compose.answer": "సమాధానంలో ఉన్నట్లు",
+  "compose.document.missing": "ఈ ప్రాజెక్ట్‌లో అలాంటి పత్రం లేదు.",
+  "compose.document.unpublished": "ఈ పత్రానికి ఇంకా ఏ వెర్షన్ లేదు.",
+  "compose.document.noVersion": "ఈ పత్రానికి వెర్షన్ {n} లేదు.",
+  "compose.document.denied": "పత్రాలు ఆఫ్‌లో ఉన్నాయి.",
+  "compose.document.section": "ఈ పత్రంలో అలాంటి విభాగం లేదు.",
+  "compose.document.certified": "ధృవీకరించబడింది, పత్రం యొక్క వెర్షన్ {n} వరకు"
 }

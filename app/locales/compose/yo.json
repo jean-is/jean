@@ -45,5 +45,11 @@
   "compose.since": "Àwọn àyípadà láti ìdáhùn yìí: {count}",
   "compose.now": "Fi hàn bí ó ti rí báyìí",
   "compose.then": "Fi hàn bí ó ti rí nígbà náà",
-  "compose.answer": "Bí ó ti wà nínú ìdáhùn rẹ̀"
+  "compose.answer": "Bí ó ti wà nínú ìdáhùn rẹ̀",
+  "compose.document.missing": "Iṣẹ́ àkànṣe yìí kò ní irú ìwé bẹ́ẹ̀.",
+  "compose.document.unpublished": "Ìwé yìí kò tíì ní ẹ̀dà kankan.",
+  "compose.document.noVersion": "Ìwé yìí kò ní ẹ̀dà {n}.",
+  "compose.document.denied": "A ti pa àwọn ìwé.",
+  "compose.document.section": "Ìwé yìí kò ní irú apá bẹ́ẹ̀.",
+  "compose.document.certified": "A ti fọwọ́ sí i, títí dé ẹ̀dà {n} ìwé náà"
 }

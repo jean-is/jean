@@ -45,5 +45,11 @@
   "compose.since": "التغييرات منذ هذه الإجابة: {count}",
   "compose.now": "اعرضه كما هو الآن",
   "compose.then": "اعرضه كما كان",
-  "compose.answer": "كما في إجابته"
+  "compose.answer": "كما في إجابته",
+  "compose.document.missing": "لا يوجد مستند كهذا في هذا المشروع.",
+  "compose.document.unpublished": "ليس لهذا المستند أي إصدار بعد.",
+  "compose.document.noVersion": "ليس لهذا المستند إصدار {n}.",
+  "compose.document.denied": "المستندات مُعطَّلة.",
+  "compose.document.section": "ليس في هذا المستند قسم كهذا.",
+  "compose.document.certified": "موثَّق، حتى الإصدار {n} من المستند"
 }

@@ -45,5 +45,11 @@
   "compose.since": "تغییرها از این پاسخ به بعد: {count}",
   "compose.now": "همان‌طور که اکنون هست نشان بده",
   "compose.then": "همان‌طور که بود نشان بده",
-  "compose.answer": "همان‌طور که در پاسخش بود"
+  "compose.answer": "همان‌طور که در پاسخش بود",
+  "compose.document.missing": "این پروژه چنین سندی ندارد.",
+  "compose.document.unpublished": "این سند هنوز هیچ نسخه‌ای ندارد.",
+  "compose.document.noVersion": "این سند نسخهٔ {n} ندارد.",
+  "compose.document.denied": "سندها خاموش‌اند.",
+  "compose.document.section": "این سند چنین بخشی ندارد.",
+  "compose.document.certified": "تأییدشده، تا نسخهٔ {n} سند"
 }

@@ -45,5 +45,11 @@
   "compose.since": "له دې ځواب وروسته بدلونونه: {count}",
   "compose.now": "لکه اوس چې دی وې ښيه",
   "compose.then": "لکه چې و وې ښيه",
-  "compose.answer": "لکه په ځواب کې"
+  "compose.answer": "لکه په ځواب کې",
+  "compose.document.missing": "په دې پروژه کې داسې سند نشته.",
+  "compose.document.unpublished": "دا سند لا تر اوسه هېڅ نسخه نه لري.",
+  "compose.document.noVersion": "دا سند {n} نسخه نه لري.",
+  "compose.document.denied": "سندونه بند دي.",
+  "compose.document.section": "په دې سند کې داسې برخه نشته.",
+  "compose.document.certified": "تصدیق شوی، د سند تر {n} نسخې پورې"
 }

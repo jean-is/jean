@@ -45,5 +45,11 @@
   "compose.since": "ਇਸ ਜਵਾਬ ਤੋਂ ਬਾਅਦ ਦੀਆਂ ਤਬਦੀਲੀਆਂ: {count}",
   "compose.now": "ਜਿਵੇਂ ਹੁਣ ਹੈ ਤਿਵੇਂ ਦਿਖਾਓ",
   "compose.then": "ਜਿਵੇਂ ਸੀ ਤਿਵੇਂ ਦਿਖਾਓ",
-  "compose.answer": "ਜਿਵੇਂ ਜਵਾਬ ਵਿੱਚ ਸੀ"
+  "compose.answer": "ਜਿਵੇਂ ਜਵਾਬ ਵਿੱਚ ਸੀ",
+  "compose.document.missing": "ਇਸ ਪ੍ਰੋਜੈਕਟ ਵਿੱਚ ਅਜਿਹਾ ਕੋਈ ਦਸਤਾਵੇਜ਼ ਨਹੀਂ ਹੈ।",
+  "compose.document.unpublished": "ਇਸ ਦਸਤਾਵੇਜ਼ ਦਾ ਹਾਲੇ ਕੋਈ ਸੰਸਕਰਣ ਨਹੀਂ ਹੈ।",
+  "compose.document.noVersion": "ਇਸ ਦਸਤਾਵੇਜ਼ ਦਾ ਸੰਸਕਰਣ {n} ਨਹੀਂ ਹੈ।",
+  "compose.document.denied": "ਦਸਤਾਵੇਜ਼ ਬੰਦ ਹਨ।",
+  "compose.document.section": "ਇਸ ਦਸਤਾਵੇਜ਼ ਵਿੱਚ ਅਜਿਹਾ ਕੋਈ ਭਾਗ ਨਹੀਂ ਹੈ।",
+  "compose.document.certified": "ਪ੍ਰਮਾਣਿਤ, ਦਸਤਾਵੇਜ਼ ਦੇ ਸੰਸਕਰਣ {n} ਤੱਕ"
 }

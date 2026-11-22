@@ -45,5 +45,11 @@
   "compose.since": "Perubahan sejak jawaban ini: {count}",
   "compose.now": "Tampilkan seperti sekarang",
   "compose.then": "Tampilkan seperti dulu",
-  "compose.answer": "Seperti di jawabannya"
+  "compose.answer": "Seperti di jawabannya",
+  "compose.document.missing": "Proyek ini tidak punya dokumen seperti itu.",
+  "compose.document.unpublished": "Dokumen ini belum punya versi.",
+  "compose.document.noVersion": "Dokumen ini tidak punya versi {n}.",
+  "compose.document.denied": "Dokumen dimatikan.",
+  "compose.document.section": "Dokumen ini tidak punya bagian seperti itu.",
+  "compose.document.certified": "Tersertifikasi, sampai versi {n} dokumen"
 }

@@ -54,13 +54,19 @@ A ```` ```table ```` block in an answer is a reference too, drawn by the same co
 
 **Exit criterion**: an answer holding a block and a figure of the artisans keeps Ana a baker and one baker once she is a potter, says one change since, shows her a potter on a press and a baker again on the next, its file unchanged; the artisans list the task under *Used in*, *As in its answer*; in Arabic and Japanese too.
 
+### Step 9 — Documents as sources
+
+Decision 2 below, settled for documents: a document's sections are a source, as a collection's rows are. Its contract is its sections, each from its heading to the next as high (`sectionOf()`), found by the id after its heading (`## Prices {#prices}`, Pandoc's), else by its heading's words as an id (`slugOf()`, in any script); found so, the id is written after the heading once (`withId()`), and the editor keeps it as the words change (the heading's `id`), never showing it, nor writing it into a Word file, a copy or a link (`withContents()`). A reference names the document and the section after `#`, then the selector: `documents/….md#prices@published`; without a section, the whole document but its title. Slides show one with a ```` ```section ```` block (Slides' `BLOCKS`), a document with the same block (`<app-composed>`, read-only), a site with `<section data-from="documents/…#prices">`, filled as its tables are and kept empty in its files. A document's versions are published by hand from its links menu, as a collection's are: its whole text frozen, `documents/.versions/<file>/<n>.json`, certified as a `CreationVersion` of kind `document`. Loops can form now, a document showing another that shows it, and `loops()` refuses them, as it was built to.
+
+**Exit criterion**: slides show a document's section found by its words, and the document then holds its id; renamed and changed, the slides follow it; version 1 published from the document's pane, a site that reads version 1 keeps it once the document changes, while one that reads it live follows, and neither page's file holds the words; two documents that would show each other say so; in Arabic and Japanese, a section found by its heading's words in that script.
+
 ### Budgets
 
 Built first on a main whose line budget was nearly full, each step from the second raised `loc.app` by what it measured, at the owner's word; replayed on the main it landed on, whose budget left room enough, those raises were dropped and no budget changed. From step 6 on, a step that needs more room than the budget leaves raises `loc.app` by what it measures, at the owner's word, in a commit of its own before it; step 6 fitted in what was left. Nothing was added to the first load, the core or Tables' folder; no dependency was added. Its strings are in the 54 languages Jean speaks.
 
 ## Where this departs from the plan, and why
 
-- **Only collections are sources.** Slides, documents, sites and prototypes consume; no step needed a document's sections or a deck's slides as a source, so their contracts aren't built. Loops therefore can't form yet: the check runs at each resolution and is tested on a graph where they can.
+- **Collections and documents are sources.** Slides, documents, sites, prototypes and answers consume; a document's sections became a source in step 9, a deck's slides none, as no need showed. Loops can form between documents, and are refused.
 - **The journal is the one that exists.** A collection's `changes.jsonl` already says who, what and when for every write; a consumer's runs have their own (`composed/<ULID>.jsonl`). Slides and documents keep no journal of their writes: nothing reads one.
 - **A draft first.** A change of columns makes a version only once the collection has one; before its author publishes, nothing can pin it.
 - **A breaking change is refused as a version, not as a change.** Tables still lets a column change kind (and converts its values for live readers); composition makes no version of it, by hand or by itself, and says why. Refusing the change itself would mean changing Tables, whose code is at its gzip budget.
@@ -75,11 +81,13 @@ Built first on a main whose line budget was nearly full, each step from the seco
 - **No count on Creations' cards, and no `@`, yet.** The plan's step 7 put on each card of the Creations page how many creations it uses and is used in, and had `@` say what a creation uses. The page's state and `@` live in modules of the first load, which has no byte left; the links menu and `creation_links` say it meanwhile.
 - **The brain asks, rather than being told.** A tool's result saying which consumers a change of rows touches would go through Tables' code, at its gzip budget; `creation_links` is one read tool of its own, which the brain calls before changing what others show.
 - **The graph reads an answer's blocks, not its figures.** Its blocks are read as a task's tunes and apps are, by their fence; a figure, inline code in its words, is worked out as it was but is no edge yet.
+- **A section is shown, not queried.** A reference to a document's section has no recipe but the section: its Markdown is drawn as it is, and in a site its HTML as Jean draws Markdown.
 - **A picture is listed, not certified.** The plan's step 6 had a picture's credential join a version's or a run's ingredients. A run's ingredients are what it read, and slides have no certificate of their own beside their runs', so a picture held by content is a link of the graph, which says where it is used, and its own credential stays its own.
 - **The commits' first lines** are in English after `composition: étape N —`, as the rest of the history is; the docs are in English, as all of Jean's are.
 
 ## Known limits
 
+- A heading copied in a document keeps its id, so two headings may share one; a reference finds the first. A section's pictures, held by their place from the documents' folder, don't show on a site, and slides saved as PowerPoint hold a section's source.
 - What leaves Jean of an answer (its Word file, a link to it) holds its references as they are when it leaves, not as they were when it was written.
 - Slides saved as PowerPoint: a composed chart is a native chart, each bar in its choice's colour, and a composed table a table (`test/compose.spec.js`); a run's words weren't checked in the exported file. A deck's own file, opened outside Jean, draws a reference as its text, a figure as its formula: only Jean resolves one. A link to slides or a document, and a document's Word file, hold what each shows as they are made, a chart as its figures' table.
 - A whiteboard is a collection too, but has neither versions nor a port.
@@ -95,17 +103,11 @@ Built first on a main whose line budget was nearly full, each step from the seco
 
 ## Work left: the graph at its best
 
-Composition and the graph are one ([architecture.md](architecture.md#composition)): every way a creation shows another becomes a reference, and every reference is an edge the graph reads. The steps below follow from that, each shippable alone, its exit criterion checked in `test/compose.spec.js` or `test/compose.test.js` as before. Steps 6 to 8, what already linked creations brought into the graph, what it can say at no cost and the place most people read, are built (above). Then, in order: new sources and consumers (9 to 11), then what runs and what travels (12). Three rules hold for every step:
+Composition and the graph are one ([architecture.md](architecture.md#composition)): every way a creation shows another becomes a reference, and every reference is an edge the graph reads. The steps below follow from that, each shippable alone, its exit criterion checked in `test/compose.spec.js` or `test/compose.test.js` as before. Steps 6 to 9, what already linked creations brought into the graph, what it can say at no cost, the place most people read and documents as sources, are built (above). Then, in order: more consumers and sources (10 and 11), then what runs and what travels (12). Three rules hold for every step:
 
 - **Nothing shown outside a reference.** A kind that starts showing another's content joins `CONSUMERS` in the same change, and its test checks that the source's *Links with other creations* lists it.
 - **Budgets first.** `loc.app` has a dozen lines left and Tables' code is at its gzip limit: each step measures what it needs, deletes first where it can, asks for a raise in a change of its own, and stays out of Tables' folder.
 - **What is paid stays opt-in.** A step that makes the graph carry more never makes a brain run, or anything leave Jean, that the person didn't choose.
-
-### Step 9 — Documents as sources
-
-Decision 2 below, settled by a need already there: a site's FAQ, terms or privacy page is a document copied into HTML, and slides made from a report copy its sections. A document's contract is its sections, each heading's id written once beside it and kept through a rename, as a column's is; a version is published by hand, as a collection's is. Slides refer to one with a ```` ```section ```` block holding `documents/…#id`, a site with `<section data-from="documents/…#id">`, filled as its tables are. Loops can form from here on, a document showing slides that show it, and `loops()` refuses them, as it was built to.
-
-**Exit criterion**: a site's FAQ page made from a document's section follows an edit of it, while a site pinned to version 1 doesn't; a reference that would close a loop says so, in words.
 
 ### Step 10 — More consumers
 
@@ -134,7 +136,7 @@ Each kind that shows data does it through a reference, never a copy.
 ## Decisions left open
 
 1. Publishing a site again on a schedule, or as its collection changes: an outward action, which would need its own approval rule (*Do it / Ask me first*).
-2. Documents' sections and slides as sources: documents in step 9; slides when a need shows.
+2. Slides as sources, when a need shows; documents' sections are one since step 9.
 3. Whether people working on a collection together get its versions and its port: step 12 proposes they do.
 4. Whether Tables itself should refuse a breaking change of kind once a collection has versions: step 7's Undo, which says what still uses a column, is the middle way.
 5. A proof that discloses what a version or a run holds, from its kept salts.
