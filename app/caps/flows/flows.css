@@ -21,8 +21,8 @@
 .flows-menu { position: absolute; z-index: 3; inset-block-start: calc(100% + 0.3rem); inset-inline-end: 0; display: grid; min-inline-size: 11rem; margin: 0; list-style: none; padding: 0.3rem; border: 1px solid var(--line-strong); border-radius: 0.9rem; background: var(--room); box-shadow: 0 0.6rem 1.6rem oklch(0 0 0 / 0.18); }
 .flows-menu .button { justify-content: flex-start; border-radius: 0.6rem; } .flows-menu li { display: grid; }
 
-/* The stage scrolls; the plane is as large as the drawing, on a grid of dots. */
-.flows-stage { position: relative; flex: 1; min-block-size: 9rem; overflow: auto; background: radial-gradient(circle, var(--line-strong) 1px, transparent 1.2px) 0 0 / 1.5rem 1.5rem; }
+/* The stage scrolls; the plane is as large as the drawing, on a grid of dots that scrolls with it. */
+.flows-stage { position: relative; flex: 1; min-block-size: 9rem; overflow: auto; background: radial-gradient(circle, var(--line-strong) 1px, transparent 1.2px) 0 0 / 1.5rem 1.5rem local; }
 .flows-plane { position: relative; inline-size: var(--w); block-size: var(--h); margin: 1.25rem; }
 /* A task reads down the middle of the pane while it is narrower. */
 .flows-plane.is-task { margin-inline: max(1.25rem, (100% - var(--w)) / 2); }

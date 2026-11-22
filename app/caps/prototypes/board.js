@@ -174,7 +174,7 @@ customElements.define('app-prototype', class extends HTMLElement {
     const { steps, on, by } = stepsOf(pagesOf(one), one.flow), all = steps.flat(), names = named(all.map((page) => this.#title(page))), name = assistantName(), board = this.#view === 'board'
     const number = new Intl.NumberFormat(locale.value), list = new Intl.ListFormat(locale.value, { type: 'conjunction' }), percent = new Intl.NumberFormat(locale.value, { style: 'percent' })
     const changed = (/** @type {string} */ page) => one.mine && String(one.mine.get(page)) !== String(one.files.get(page))
-    this.style.setProperty('--zoom', String(this.#zoom))
+    this.style.setProperty('--zoom', String(this.#zoom)); this.style.setProperty('--dots', String(this.#zoom / 2 ** Math.floor(Math.log2(this.#zoom))))
     /** A page: on the board, under the control that leads to it; its name on the board's ground, which presses its card too, over its card, the page itself; then where it leads on, which the strip keeps for screen readers, as both keep its place. */
     const card = (/** @type {string} */ page) => {
       const i = all.indexOf(page), to = one.open ? [] : on(page)

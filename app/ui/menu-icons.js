@@ -56,7 +56,7 @@ export const icons = {
   task: icon(svg`<path d="M6 5.5h12a2.5 2.5 0 0 1 2.5 2.5v5.5a2.5 2.5 0 0 1-2.5 2.5h-7l-3.5 2.5V16H6a2.5 2.5 0 0 1-2.5-2.5V8A2.5 2.5 0 0 1 6 5.5Z"/>`, 'flip-rtl'),
   scroll: icon(svg`<path d="M17 20H6.5a3 3 0 0 1 0-6H17a3 3 0 0 0 0 6h.5a3 3 0 0 0 3-3V6.5A2.5 2.5 0 0 0 18 4h-8a2.5 2.5 0 0 0-2.5 2.5V14M11 8h6M11 11h4"/>`),
   graph: icon(svg`<circle cx="12" cy="5.5" r="2"/><circle cx="5.5" cy="18.5" r="2"/><circle cx="18.5" cy="18.5" r="2"/><path d="M12 7.5V12M6.9 17.1 12 12l5.1 5.1"/>`),
-  flow: icon(svg`<rect x="3.5" y="3.5" width="6" height="6" rx="1.5"/><rect x="14.5" y="14.5" width="6" height="6" rx="1.5"/><path d="M9.5 6.5h5a3 3 0 0 1 3 3v2.5M15 9.5l2.5 2.5L20 9.5"/>`, 'flip-rtl'),
+  flow: icon(svg`<rect x="3.5" y="3.5" width="17" height="6" rx="2.5"/><rect x="14.5" y="14.5" width="6" height="6" rx="1.5"/><path d="M6.5 9.5V15a2.5 2.5 0 0 0 2.5 2.5h3.5M10 15l2.5 2.5L10 20"/>`, 'flip-rtl'),
   plug: icon(svg`<path d="M15.9 3.85 12.7 7.05M20.15 8.1l-3.2 3.2M10.95 5.3l7.75 7.75-2.1 2.15A5.5 5.5 0 0 1 8.8 7.4ZM8.8 15.2l-3.5 3.5"/>`),
   'double-check': icon(svg`<path d="m2.75 12.5 4 4L15.25 8M11.75 15.5l1 1L21.25 8"/>`),
   badge: icon(svg`<rect x="5.5" y="3.5" width="13" height="17" rx="2.5"/><path d="M10.5 6.5h3M8.5 17.5a3.5 3.5 0 0 1 7 0"/><circle cx="12" cy="11.5" r="2.25"/>`),

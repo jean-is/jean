@@ -266,9 +266,10 @@ customElements.define('app-whiteboard', class extends HTMLElement {
   #turn() {
     const board = /** @type {HTMLElement | null} */ (this.querySelector('.wb-board'))
     if (!board) return
-    // On the layer and the dots alone: a custom property set on the board would restyle each of its thousands of elements at each step.
+    // On the layer and the dots alone: a custom property set on the board would restyle each of its thousands of elements at each step. The dots stay
+    // 40 to 80 pixels apart at any zoom, on the board's own points, those between them coming in as they part.
     Object.assign(/** @type {HTMLElement} */ (this.#layer).style, { translate: `${this.#x}px ${this.#y}px`, scale: String(this.#zoom) })
-    Object.assign(board.style, { backgroundPosition: `${this.#x}px ${this.#y}px`, backgroundSize: `${40 * this.#zoom}px ${40 * this.#zoom}px` })
+    const dots = this.#zoom / 2 ** Math.floor(Math.log2(this.#zoom)), lay = (/** @type {number} */ step) => `${this.#rtl ? `calc(100% + ${this.#x + step / 2}px)` : `${this.#x - step / 2}px`} ${this.#y - step / 2}px / ${step}px ${step}px`; board.style.background = `radial-gradient(circle, var(--line-strong) 1px, transparent 1.5px) ${lay(40 * dots)}, radial-gradient(circle, color-mix(in oklab, var(--line-strong) ${(dots - 1) * 100}%, transparent) 1px, transparent 1.5px) ${lay(20 * dots)} var(--line)`
     board.toggleAttribute('data-far', this.#zoom < 0.6)
     // A menu opened over the board stays where its button was: it closes as the board moves, not as it is drawn again.
     const at = `${this.#x} ${this.#y} ${this.#zoom}`
