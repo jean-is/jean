@@ -219,12 +219,14 @@ export const RUNTIMES = [
   {
     // Scores (D196): abcjs draws ABC notation as SVG, its minified build made a module. It empties
     // with innerHTML and styles with style attributes, which Trusted Types and the CSP refuse: the
-    // same, done with replaceChildren(), textContent and the CSSOM.
+    // same, done with replaceChildren(), textContent and the CSSOM. The style element it puts in each
+    // score, for notes dragged, which Jean's never are, the CSP refuses too: left out.
     dir: 'vendor/abcjs',
     packages: ['abcjs'],
     files: [['abcjs/dist/abcjs-basic-min.js', 'abcjs.mjs']],
     wrap: { 'abcjs.mjs': ['renderAbc'] },
-    patch: { 'abcjs.mjs': [[/\.innerHTML=""/g, '.replaceChildren()', 3], [/\.innerHTML="&nbsp;"/g, '.textContent="\\xa0"', 1], [/\.setAttribute\("style",/g, '.style.cssText=(', 7]] },
+    patch: { 'abcjs.mjs': [[/\.innerHTML=""/g, '.replaceChildren()', 3], [/\.innerHTML="&nbsp;"/g, '.textContent="\\xa0"', 1], [/\.setAttribute\("style",/g, '.style.cssText=(', 7],
+      [/\.prototype\.insertStyles=function\(\w\)\{[^}]*\}/g, '.prototype.insertStyles=function(){}', 1]] },
   },
   {
     // A score's sound (D338): spessasynth_core plays SoundFonts, in a worker; SoundFont 3's samples
