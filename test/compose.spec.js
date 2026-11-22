@@ -1022,3 +1022,24 @@ test('how each stands on the map: slides pinned to version 1 say version 3 is ou
   await expect(map.getByRole('button', { name: /Orders/ })).toContainText('Used by nothing')
   await expect(map.getByRole('button', { name: /Artisans/ })).not.toContainText('Used by nothing')
 })
+
+const CREPES = 'decks/01K85Z1T00000000000000000C-crepes.deck.html'
+/** Slides that show the artisans three times, a table of some columns, a chart and a figure, and that nothing uses. @param {import('@playwright/test').Page} page */
+const crepes = (page) => page.evaluate(async ({ COLLECTION, CREPES }) => {
+  const { app } = await import('/ui/state.js')
+  await (await import('/caps/skills/decks.js')).rewrite(CREPES, `# Crêpes\n\n---\n\n\`\`\`table\n${COLLECTION}\nfields: Name | Trade\n\`\`\`\n\n---\n\n\`\`\`table\n${COLLECTION}\nchart: bar\nby: Trade\n\`\`\`\n\n---\n\n## Artisans: \`=${COLLECTION} count\`\n`, 'Crêpes', app.projectDir)
+}, { COLLECTION, CREPES })
+
+test('slides that show one collection three times, with nothing further along, still draw their links, one line for the three', async ({ page }) => {
+  await start(page)
+  await seed(page)
+  await crepes(page)
+  await show(page, CREPES, 'Crêpes')
+  await expect(async () => {
+    if (!(await page.locator('.menu:popover-open').count())) await page.locator('app-preview .pane-head button[popovertarget^="links-"]').click()
+    await page.locator('.menu:popover-open').getByRole('button', { name: 'See them drawn' }).click({ timeout: 2000 })
+  }).toPass()
+  const map = page.locator('dialog.links-sheet[open] app-links-map')
+  await expect.poll(() => columnsOf(map)).toEqual([['Artisans'], ['Crêpes']])
+  await expect.poll(() => map.locator('.links-lines path[data-from][d]').count()).toBe(1)
+})

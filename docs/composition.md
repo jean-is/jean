@@ -86,7 +86,7 @@ A routine whose request holds a ```` ```table ```` block is a consumer of the gr
 
 ### Step 14 — One creation's map
 
-*See them drawn*, in the links menu once *Further along* holds one, opens a sheet with the map about the creation (`map.js`, `layered()`): what it uses at the start, it, what uses it further along, what is reached through those a column further, each a button that opens it with the versions it reads; pointed at or holding the keyboard, one lights its chain, and the arrows walk the links.
+*See them drawn*, in the links menu of any creation the map draws a link of, opens a sheet with the map about the creation (`map.js`, `layered()`): what it uses at the start, it, what uses it further along, what is reached through those a column further, each a button that opens it with the versions it reads; pointed at or holding the keyboard, one lights its chain, and the arrows walk the links.
 
 **Exit criterion**: the artisans' map has the orders that relate to them beside them, the slides, the report and the directory further along, and the members' site that shows the report's summary a column further; the board says *Version 1*; seven lines, the directory's form and the orders' relation dashed; the arrows go from the artisans to what uses them, back, and down to the orders; the members pointed at light the report and the artisans; the report pressed opens beside the task, the sheet closing; in Arabic the artisans are on the right, and in Arabic and Japanese at 320 px wide the columns stack and no name is cut.
 

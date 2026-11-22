@@ -437,8 +437,9 @@ async function drawingOf(dir, here = '') {
   const near = here && new Set([here, ...edges.flatMap((edge) => (edge.from === here ? [edge.to] : edge.to === here ? [edge.from] : [])), ...[...further(edges, here, true), ...further(edges, here, false)].map(([one]) => one)])
   // A consumer whose source is gone is drawn too, saying it shows nothing.
   const places = [...new Set([...edges.flatMap((edge) => [edge.from, edge.to]), ...all.filter((edge) => !edge.kind && names.has(edge.from) && !names.has(edge.to)).map((edge) => edge.from)])].filter((place) => !near || near.has(place)).sort()
+  // One line between two creations for each way they link, however many blocks hold it; each block's version said all the same.
   const drawn = edges.filter((edge) => places.includes(edge.from) && places.includes(edge.to)), stands = (/** @type {string} */ place) => standing(place, all, (one) => names.has(one), (one) => latest.get(one) ?? 0)
-  return { places, edges: drawn, here, name: (place) => names.get(place) ?? place, glyph: (place) => KIND[place.split('/')[0]] ?? icons.layers, open: (place) => opening(place, names.get(place) ?? place), alert: (place) => new Set(stands(place).filter(([key]) => /missing|loop/.test(key)).map(([key]) => t(`compose.${key}`))),
+  return { places, edges: [...new Map(drawn.map((edge) => [`${edge.from} ${edge.to} ${edge.kind ?? ''}`, edge])).values()], here, name: (place) => names.get(place) ?? place, glyph: (place) => KIND[place.split('/')[0]] ?? icons.layers, open: (place) => opening(place, names.get(place) ?? place), alert: (place) => new Set(stands(place).filter(([key]) => /missing|loop/.test(key)).map(([key]) => t(`compose.${key}`))),
     said: (place) => [...new Set([...drawn.filter((edge) => edge.from === place && !edge.kind).map((edge) => (place.startsWith('conversations/') && edge.at === 'live' ? t('compose.answer') : which(edge.at))), ...stands(place).map(([key, given]) => (key === 'brain' ? String(given.name) : t(`compose.${key}`, given)))])] }
 }
 /** The project's map, Creations' (../../ui/creations-page.js) once three creations are linked: drawn as Creations first asks, then again each time the graph is read, with the map's module. */
@@ -486,7 +487,7 @@ function head({ uri }) {
   const list = these && html`${group('compose.usedIn', these.usedIn.map((one) => html`<li>${open(one.from, beside(one))}</li>`))}
     ${group('compose.uses', these.uses.map((one) => (one.kind && one.kind !== 'kit' ? html`<li>${open(one.to, beside(one))}</li>` : html`<li><button type="button" class="submenu" @click=${() => go(`${uri} ${one.index}`)}>${KIND[one.to.split('/')[0]]}<span dir="auto">${name(one.to)}</span>${beside(one)}${icons.chevron}</button></li>`)))}
     ${group('compose.further', these.further.map(([place, via]) => html`<li>${open(place, html`<span class="menu-value" dir="auto">${t('compose.through', { name: name(via) })}</span>`)}</li>`))}
-    ${these.further.length ? html`<ul><li><button type="button" popovertarget=${id} popovertargetaction="hide" @click=${() => Promise.all([drawingOf(app.projectDir, uri), import('./map.js')]).then(([drawing, map]) => map.sheet(name(uri), drawing))}>${icons.graph}<span>${t('compose.drawn')}</span></button></li></ul>` : nothing}
+    ${these.uses.concat(these.usedIn).some((one) => one.kind !== 'file' && one.kind !== 'kit') ? html`<ul><li><button type="button" popovertarget=${id} popovertargetaction="hide" @click=${() => Promise.all([drawingOf(app.projectDir, uri), import('./map.js')]).then(([drawing, map]) => map.sheet(name(uri), drawing))}>${icons.graph}<span>${t('compose.drawn')}</span></button></li></ul>` : nothing}
     ${these.fed && fed ? fed.linked(uri, id) : nothing}${versions}`
   // Keyed by its place: a pane that shows another creation draws its menu anew, closed; closed, it opens on its list again.
   return keyed(uri, html`<button class="icon-button" popovertarget=${id} aria-label=${t('compose.links')}>${icons.graph}</button>
