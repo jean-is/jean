@@ -56,5 +56,6 @@
   "compose.kit.certified": "Засвідчено, аж до версії {n} дизайн-системи",
   "compose.kit.worn": "Її використовують: {names}",
   "compose.linkingAll": "Дивлюся, як пов’язане створене в цьому проєкті",
-  "compose.drawn": "Показати схемою"
+  "compose.drawn": "Показати схемою",
+  "compose.map": "Зв’язки"
 }

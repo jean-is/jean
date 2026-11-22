@@ -56,5 +56,6 @@
   "compose.kit.certified": "প্রত্যয়িত, ডিজাইন সিস্টেমের সংস্করণ {n} পর্যন্ত",
   "compose.kit.worn": "যারা এটি পরে আছে: {names}",
   "compose.linkingAll": "এই প্রকল্পের সৃষ্টিগুলো কীভাবে সংযুক্ত তা দেখা হচ্ছে",
-  "compose.drawn": "আঁকা অবস্থায় দেখাও"
+  "compose.drawn": "আঁকা অবস্থায় দেখাও",
+  "compose.map": "সংযোগ"
 }

@@ -56,5 +56,6 @@
   "compose.kit.certified": "Tersertifikasi, sampai versi {n} sistem desain",
   "compose.kit.worn": "Dipakai oleh: {names}",
   "compose.linkingAll": "Melihat bagaimana kreasi di proyek ini saling bertautan",
-  "compose.drawn": "Tampilkan sebagai gambar"
+  "compose.drawn": "Tampilkan sebagai gambar",
+  "compose.map": "Tautan"
 }

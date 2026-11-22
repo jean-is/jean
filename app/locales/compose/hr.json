@@ -56,5 +56,6 @@
   "compose.kit.certified": "Ovjereno, sve do verzije {n} dizajnerskog sustava",
   "compose.kit.worn": "Nose ga: {names}",
   "compose.linkingAll": "Provjeravam kako su povezane kreacije ovog projekta",
-  "compose.drawn": "Prikaži ih nacrtane"
+  "compose.drawn": "Prikaži ih nacrtane",
+  "compose.map": "Veze"
 }

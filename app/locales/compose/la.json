@@ -56,5 +56,6 @@
   "compose.kit.certified": "Probatum, usque ad editionem {n} systematis delineationis",
   "compose.kit.worn": "Induunt: {names}",
   "compose.linkingAll": "Quaeritur quomodo creationes huius incepti inter se nectantur",
-  "compose.drawn": "Delineatos ostende"
+  "compose.drawn": "Delineatos ostende",
+  "compose.map": "Nexus"
 }

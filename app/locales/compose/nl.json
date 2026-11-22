@@ -56,5 +56,6 @@
   "compose.kit.certified": "Gecertificeerd, terug tot versie {n} van het ontwerpsysteem",
   "compose.kit.worn": "Gedragen door: {names}",
   "compose.linkingAll": "Kijken hoe de creaties van dit project samenhangen",
-  "compose.drawn": "Toon ze als tekening"
+  "compose.drawn": "Toon ze als tekening",
+  "compose.map": "Koppelingen"
 }

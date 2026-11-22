@@ -56,5 +56,6 @@
   "compose.kit.certified": "Certificado, hasta la versión {n} del sistema de diseño",
   "compose.kit.worn": "Lo llevan: {names}",
   "compose.linkingAll": "Mirando cómo se vinculan las creaciones de este proyecto",
-  "compose.drawn": "Mostrarlos dibujados"
+  "compose.drawn": "Mostrarlos dibujados",
+  "compose.map": "Vínculos"
 }

@@ -56,5 +56,6 @@
   "compose.kit.certified": "Zertifiziert, zurück bis Version {n} des Gestaltungssystems",
   "compose.kit.worn": "Getragen von: {names}",
   "compose.linkingAll": "Prüfe, wie die Kreationen dieses Projekts verbunden sind",
-  "compose.drawn": "Als Zeichnung zeigen"
+  "compose.drawn": "Als Zeichnung zeigen",
+  "compose.map": "Verbindungen"
 }

@@ -56,5 +56,6 @@
   "compose.kit.certified": "Đã chứng nhận, tới phiên bản {n} của hệ thống thiết kế",
   "compose.kit.worn": "Được dùng bởi: {names}",
   "compose.linkingAll": "Đang xem các tác phẩm trong dự án này liên kết với nhau thế nào",
-  "compose.drawn": "Hiện dưới dạng hình vẽ"
+  "compose.drawn": "Hiện dưới dạng hình vẽ",
+  "compose.map": "Liên kết"
 }

@@ -56,5 +56,6 @@
   "compose.kit.certified": "Πιστοποιημένο, έως την έκδοση {n} του συστήματος σχεδίασης",
   "compose.kit.worn": "Το φορούν: {names}",
   "compose.linkingAll": "Εξετάζω πώς συνδέονται οι δημιουργίες αυτού του έργου",
-  "compose.drawn": "Δείξε τις σε σχέδιο"
+  "compose.drawn": "Δείξε τις σε σχέδιο",
+  "compose.map": "Συνδέσεις"
 }

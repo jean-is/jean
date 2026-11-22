@@ -56,5 +56,6 @@
   "compose.kit.certified": "已認證，可追溯到設計系統的第 {n} 版",
   "compose.kit.worn": "使用者：{names}",
   "compose.linkingAll": "正在查看此專案中的創作如何關聯",
-  "compose.drawn": "以圖查看"
+  "compose.drawn": "以圖查看",
+  "compose.map": "關聯"
 }

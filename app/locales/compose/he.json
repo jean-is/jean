@@ -56,5 +56,6 @@
   "compose.kit.certified": "מאושר, עד גרסה {n} של מערכת העיצוב",
   "compose.kit.worn": "לובשים אותה: {names}",
   "compose.linkingAll": "בודק איך היצירות בפרויקט הזה מקושרות",
-  "compose.drawn": "להציג כשרטוט"
+  "compose.drawn": "להציג כשרטוט",
+  "compose.map": "קישורים"
 }

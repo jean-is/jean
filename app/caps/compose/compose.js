@@ -80,6 +80,7 @@ function graph(dir = app.projectDir) {
       const ref = parseRef(source), from = path.slice(0, path.indexOf('#'))
       if (ref) names.set(from, name), edges.push({ from, to: ref.place, at: ref.at, recipe: ref.recipe, index: Number(path.slice(path.indexOf('#') + 1)) })
     }
+    if (wanted === dir) setTimeout(() => mapped(dir))
     return (known = { edges, names, kinds })
   })() }
   return /** @type {NonNullable<typeof read.graph>} */ (read.graph)
@@ -437,6 +438,10 @@ async function drawingOf(dir, here = '') {
   return { places, edges: drawn, here, name: (place) => names.get(place) ?? place, glyph: (place) => KIND[place.split('/')[0]] ?? icons.layers, open: (place) => opening(place, names.get(place) ?? place),
     said: (place) => [...new Set(drawn.filter((edge) => edge.from === place && !edge.kind).map((edge) => (place.startsWith('conversations/') && edge.at === 'live' ? t('compose.answer') : which(edge.at))))] }
 }
+/** The project's map, Creations' (../../ui/creations-page.js) once three creations are linked: drawn as Creations first asks, then again each time the graph is read, with the map's module. */
+const whole = signal(/** @type {{ dir: string, drawing: import('./map.js').Drawing, drawn: typeof import('./map.js').drawn } | null} */ (null))
+let wanted = ''
+const mapped = (dir = app.projectDir) => ((wanted = dir), Promise.all([drawingOf(dir), import('./map.js')]).then(([drawing, { drawn }]) => { whole.value = drawing.places.length > 2 ? { dir, drawing, drawn } : null }))
 /** The reference whose settings the links menu shows, as its consumer's place and its index there; the list while it is empty. */
 const deep = signal('')
 /** Sources' part of a collection's links menu, fetched as the first collection's opens. @type {typeof import('../sources/sources.js') | undefined} */
@@ -528,4 +533,6 @@ function kitPart(dir) {
     <p><button type="button" class="button" ?disabled=${!these.changes && all.length > 0} @click=${async () => { const made = await publish(KIT); if (made?.version) notify(t('compose.done', { n: made.version.n })); await linksOf(KIT) }}>${t('compose.publish', { n: (all.at(-1)?.n ?? 0) + 1 })}</button></p></section>` : nothing
 }
 
-register({ id: 'compose', tools: [linksTool], lines: [{ name: 'creation_links', line: 'what uses a creation and what it uses, before changing what others show' }], hooks: [{ on: 'turn.end', run: (e, next) => ((read.at = 0), e.routine && void routineRan(e).catch(console.warn), next(e)) }], slots: { head: { at: 1, draw: head }, answer: { at: 9, draw: (/** @type {{ text: string }} */ { text }) => (/`=\s*collections\//.test(text) ? html`<app-figures hidden></app-figures>` : nothing) }, touched: { at: 1, draw: () => null, said: touched }, kit: { at: 1, draw: kitPart } } })
+register({ id: 'compose', tools: [linksTool], lines: [{ name: 'creation_links', line: 'what uses a creation and what it uses, before changing what others show' }], hooks: [{ on: 'turn.end', run: (e, next) => ((read.at = 0), e.routine && void routineRan(e).catch(console.warn), next(e)) }], slots: { head: { at: 1, draw: head }, answer: { at: 9, draw: (/** @type {{ text: string }} */ { text }) => (/`=\s*collections\//.test(text) ? html`<app-figures hidden></app-figures>` : nothing) }, touched: { at: 1, draw: () => null, said: touched }, kit: { at: 1, draw: kitPart },
+  // Creations' map, those its kind and words keep lit (all of them when null), offered once it is drawn for this project.
+  map: { at: 1, named: () => t('compose.map'), ready: () => (wanted === app.projectDir || void mapped(), whole.value?.dir === app.projectDir), draw: (/** @type {Set<string> | null} */ lit) => ((one) => (one ? one.drawn({ ...one.drawing, lit }) : nothing))(whole.value?.dir === app.projectDir ? whole.value : null) } } })

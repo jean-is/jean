@@ -56,5 +56,6 @@
   "compose.kit.certified": "تأییدشده، تا نسخهٔ {n} سیستم طراحی",
   "compose.kit.worn": "به تن دارند: {names}",
   "compose.linkingAll": "در حال بررسی اینکه ساخته‌های این پروژه چگونه به هم پیوند دارند",
-  "compose.drawn": "به‌صورت طرح نشان بده"
+  "compose.drawn": "به‌صورت طرح نشان بده",
+  "compose.map": "پیوندها"
 }

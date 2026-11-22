@@ -56,5 +56,6 @@
   "compose.kit.certified": "Certificado, até à versão {n} do sistema de design",
   "compose.kit.worn": "Usado por: {names}",
   "compose.linkingAll": "A ver como as criações deste projeto se ligam",
-  "compose.drawn": "Mostrá-las desenhadas"
+  "compose.drawn": "Mostrá-las desenhadas",
+  "compose.map": "Ligações"
 }

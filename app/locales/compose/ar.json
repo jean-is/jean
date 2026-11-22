@@ -56,5 +56,6 @@
   "compose.kit.certified": "موثَّق، حتى الإصدار {n} من نظام التصميم",
   "compose.kit.worn": "يرتديه: {names}",
   "compose.linkingAll": "جارٍ الاطلاع على كيفية ترابط إبداعات هذا المشروع",
-  "compose.drawn": "اعرض الروابط مرسومة"
+  "compose.drawn": "اعرض الروابط مرسومة",
+  "compose.map": "الروابط"
 }

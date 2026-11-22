@@ -56,5 +56,6 @@
   "compose.kit.certified": "Overené, až po verziu {n} dizajnového systému",
   "compose.kit.worn": "Nosia ho: {names}",
   "compose.linkingAll": "Zisťujem, ako spolu súvisia výtvory tohto projektu",
-  "compose.drawn": "Ukázať ako nákres"
+  "compose.drawn": "Ukázať ako nákres",
+  "compose.map": "Prepojenia"
 }

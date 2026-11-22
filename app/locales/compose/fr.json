@@ -56,5 +56,6 @@
   "compose.kit.certified": "Certifié, jusqu’à la version {n} de la charte graphique",
   "compose.kit.worn": "Portée par {names}",
   "compose.linkingAll": "Recherche des liens entre les créations de ce projet",
-  "compose.drawn": "Les voir dessinés"
+  "compose.drawn": "Les voir dessinés",
+  "compose.map": "Liens"
 }

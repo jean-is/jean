@@ -969,3 +969,32 @@ for (const [lang, drawn] of [['ar', 'اعرض الروابط مرسومة'], ['j
     expect(await map.locator('button').evaluateAll((buttons) => buttons.filter((one) => one.scrollWidth > one.clientWidth + 1 || one.getBoundingClientRect().right > innerWidth || one.getBoundingClientRect().left < 0).length)).toBe(0)
   })
 }
+
+test('the project’s map on Creations: sources at the start and each by its depth, kept in the address, its kind’s chips keeping some lit, one pointed at lighting its chain, drawn the same once read again', async ({ page }) => {
+  await start(page)
+  await project(page)
+  const tasks = await openTasks(page)
+  await tasks.getByRole('button', { name: 'Creations', exact: true }).click()
+  await page.locator('app-creations').getByRole('button', { name: /^Sort by:/ }).click()
+  await page.locator('#creations-order:popover-open').getByRole('menuitemradio', { name: 'Links' }).click()
+  const map = page.locator('app-creations app-links-map')
+  const drawn = [['Artisans', 'Prices', 'Orders'], ['Neighbourhood', 'Board', 'Report', 'Directory', 'Proposal'], ['Members']]
+  await expect.poll(() => columnsOf(map)).toEqual(drawn)
+  await expect(page.locator('app-creations .creations-cards')).toHaveCount(0)
+  await expect.poll(() => page.url()).toContain('links')
+  // The artisans pointed at: the proposal, which shows only the prices, goes soft with them.
+  await expect.poll(() => map.locator('.links-lines path[data-from][d]').count()).toBe(8)
+  await map.getByRole('button', { name: /Artisans/ }).hover()
+  await expect(map.locator('li:not(.is-chain)')).toHaveText([/Prices/, /Proposal/])
+  // Slides alone: the three slides lit, the rest soft.
+  await page.mouse.move(0, 0)
+  await page.locator('app-creations .creations-chips').getByRole('button', { name: /^Slides/ }).click()
+  await expect(map.locator('li:not(.is-dim)')).toHaveText([/Neighbourhood/, /Board/, /Proposal/])
+  // A report written again, the graph is read again: the same map.
+  await page.evaluate(async (REPORT) => { const { app } = await import('/ui/state.js'), at = `${app.projectDir}/${REPORT}`; await app.fs.write(at, `${await app.fs.read(at)}\n`) }, REPORT)
+  await page.waitForTimeout(1500)
+  await expect.poll(() => columnsOf(map)).toEqual(drawn)
+  // Pressed, one opens beside the page.
+  await map.getByRole('button', { name: /Members/ }).click()
+  await expect(page.locator('app-preview .pane-head')).toContainText('Members')
+})

@@ -27,8 +27,8 @@ await useStrings('creations')
 /** @typedef {import('./creations.js').Creation & { kind: import('./caps.js').Slot }} Item */
 /** The one whose name is being changed, and those deleted but for Undo; the kind picked, the order and the words typed are creations.js's, which the address and a tag set. */
 const renaming = signal(''), gone = signal(/** @type {Set<string>} */ (new Set()))
-/** The orders, which creations.js checks an address's against, Sort's glyph, an arrow up beside an arrow down, and Show's, three lines narrowing. */
-export const ORDERS = /** @type {Record<string, string>} */ ({ changed: 'creations.changed', made: 'creations.made', name: 'creations.name' }), SORT = icon(svg`<path d="M8 19V5M4.5 8.5 8 5l3.5 3.5M16 5v14M12.5 15.5 16 19l3.5-3.5"/>`), SHOW = icon(svg`<path d="M4 6.5h16M7 12h10M10 17.5h4"/>`)
+/** The orders, which creations.js checks an address's against, the last how they link, the map composition draws once there is one, named by it (caps/compose); Sort's glyph, an arrow up beside an arrow down, and Show's, three lines narrowing. */
+export const ORDERS = /** @type {Record<string, string>} */ ({ changed: 'creations.changed', made: 'creations.made', name: 'creations.name', links: '' }), SORT = icon(svg`<path d="M8 19V5M4.5 8.5 8 5l3.5 3.5M16 5v14M12.5 15.5 16 19l3.5-3.5"/>`), SHOW = icon(svg`<path d="M4 6.5h16M7 12h10M10 17.5h4"/>`)
 /** Create's groups, by what a kind is for: what is written and planned, pictures and sound, and the rest, which works when pressed. @type {[string, string[]][]} */
 const GROUPS = [['write', ['documents', 'tables', 'slides', 'whiteboards']], ['picture', ['pictures', 'designs', 'films', 'music']], ['use', []]]
 /** Deletions waiting for their five seconds, done at once if the page goes away first. @type {Map<string, () => void>} */
@@ -213,6 +213,8 @@ class Page extends Element {
     // What was typed, as the words to find, each whole, a tag with its #, case and accents aside.
     const sought = [...new Set(fold(words.value.normalize('NFC')).split(/\s+/).filter(Boolean))], collator = new Intl.Collator(intlLocales()), makers = [...kinds, ...slots('starts')].filter((one) => one.make).sort((a, b) => a.at - b.at)
     const makes = picked?.make ? [picked] : makers, make = (/** @type {import('./caps.js').Slot} */ one) => () => one.make().then(reread)
+    // How they link, once composition draws a map here; an address that asks for it before then shows them by when they changed.
+    const map = slots('map').find((one) => one.ready()), by = order.value === 'links' && !map ? 'changed' : order.value, sorting = (/** @type {string} */ one) => (one === 'links' ? map?.named() : t(ORDERS[one]))
     const when = (/** @type {Item} */ item) => (order.value === 'made' ? item.created || item.changed : item.changed)
     // Those that have every word typed, of any kind, then those of the kind picked.
     const having = sought.length ? here.filter((item) => has(item, sought)) : here
@@ -240,14 +242,14 @@ class Page extends Element {
     ${!here.length && !words.value ? (read.value ? html`<div class="creations-empty">${SHAPES}<h2>${t('creations.empty')}</h2><p>${t('creations.empty.text')}</p>${create}</div>` : nothing) : html`<div class="creations-bar">
       ${here.length > 4 || words.value ? html`<label class="creations-find" for="creations-find">${icons.search}<input id="creations-find" type="search" dir="auto" placeholder=${t('creations.find')} aria-label=${t('creations.find')} title=${t('creations.find')} .value=${words.value} @input=${(/** @type {InputEvent} */ e) => { words.value = /** @type {HTMLInputElement} */ (e.target).value }}></label>` : nothing}
       ${shows.length ? choice('creations-kinds', SHOW, showing, shows, on, (one) => { kind.value = one }) : nothing}
-      ${here.length > 1 ? choice('creations-order', SORT, t('creations.sorted', { how: t(ORDERS[order.value]) }), Object.entries(ORDERS).map(([one, label]) => [one, t(label)]), order.value, (one) => { order.value = one }) : nothing}
+      ${here.length > 1 ? choice('creations-order', SORT, t('creations.sorted', { how: sorting(by) }), Object.keys(ORDERS).filter((one) => one !== 'links' || map).map((one) => [one, sorting(one)]), by, (one) => { order.value = one }) : nothing}
       ${create}
     </div>
     ${shows.length ? html`<div class="creations-chips" role="group" aria-label=${showing}>${shows.map(([one, name, many]) => html`<button type="button" class="button ${on === one ? 'primary' : ''}" aria-pressed=${String(on === one)} @click=${() => { kind.value = one }}>${name} <span>${many}</span></button>`)}</div>` : nothing}`}
     <div role="status">${list.length || !(here.length || (words.value && read.value)) ? nothing : html`<p class="creations-none">${!sought.length ? t('creations.empty')
       : having.length ? html`${showing}<button class="button" @click=${(/** @type {MouseEvent} */ e) => { kind.value = ''; land(e, '.creation-open') }}>${t('creations.all')} <span>${count.format(having.length)}</span></button>`
         : html`${t('creations.none', { words: `⁨${words.value.trim()}⁩` })}<button class="button" @click=${(/** @type {MouseEvent} */ e) => { words.value = ''; kind.value = ''; land(e, '#creations-find', '.creation-open', '.primary') }}>${t('creations.clear')}</button>`}</p>`}</div>
-    ${groups.map(([name, items]) => (!items.length ? nothing : html`${name ? html`<h2 class="creations-group">${name}</h2>` : nothing}
+    ${by === 'links' && map ? map.draw(picked || sought.length ? new Set(list.map((item) => item.path)) : null) : groups.map(([name, items]) => (!items.length ? nothing : html`${name ? html`<h2 class="creations-group">${name}</h2>` : nothing}
       <ul class="creations-cards">${virtual({ count: items.length, key: (i) => items[i].path,
       at: items.findIndex((item) => item.path === renaming.value), draw: (i) => card(items, i, sought) })}</ul>`))}
     <div id="creation-menu" class="menu task-menu" popover @toggle=${(/** @type {ToggleEvent} */ e) => { opened.value = e.newState === 'open' }}>${menuOf.value ? html`<ul>${menu(menuOf.value)}</ul>` : nothing}</div>`

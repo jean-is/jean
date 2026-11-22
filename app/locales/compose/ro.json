@@ -56,5 +56,6 @@
   "compose.kit.certified": "Certificat, până la versiunea {n} a identității vizuale",
   "compose.kit.worn": "Purtată de: {names}",
   "compose.linkingAll": "Caut cum sunt legate creațiile acestui proiect",
-  "compose.drawn": "Arată-le desenate"
+  "compose.drawn": "Arată-le desenate",
+  "compose.map": "Legături"
 }

@@ -56,5 +56,6 @@
   "compose.kit.certified": "Intygat, tillbaka till version {n} av designsystemet",
   "compose.kit.worn": "Bärs av: {names}",
   "compose.linkingAll": "Tittar på hur projektets skapelser hänger ihop",
-  "compose.drawn": "Visa dem ritade"
+  "compose.drawn": "Visa dem ritade",
+  "compose.map": "Kopplingar"
 }
