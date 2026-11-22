@@ -41,5 +41,9 @@
   "compose.retyped": "“{column}” ఇప్పుడు వేరే రకం, కాబట్టి {names}లో అది చూపేది మారుతుంది.",
   "compose.further": "ఇంకా ముందుకు",
   "compose.through": "{name} ద్వారా",
-  "compose.linking": "{name} ఎక్కడ ఉపయోగించబడుతుందో చూస్తోంది"
+  "compose.linking": "{name} ఎక్కడ ఉపయోగించబడుతుందో చూస్తోంది",
+  "compose.since": "ఈ సమాధానం తర్వాతి మార్పులు: {count}",
+  "compose.now": "ఇప్పుడు ఉన్నట్లు చూపించు",
+  "compose.then": "అప్పుడు ఉన్నట్లు చూపించు",
+  "compose.answer": "సమాధానంలో ఉన్నట్లు"
 }

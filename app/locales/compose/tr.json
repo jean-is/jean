@@ -41,5 +41,9 @@
   "compose.retyped": "“{column}” artık başka bir türde; bu, şuralarda gösterdiğini değiştirir: {names}.",
   "compose.further": "Daha ötesi",
   "compose.through": "{name} üzerinden",
-  "compose.linking": "{name} nerelerde kullanılıyor, bakılıyor"
+  "compose.linking": "{name} nerelerde kullanılıyor, bakılıyor",
+  "compose.since": "Bu yanıttan beri değişiklikler: {count}",
+  "compose.now": "Şimdiki hâliyle göster",
+  "compose.then": "O zamanki hâliyle göster",
+  "compose.answer": "Yanıttaki gibi"
 }

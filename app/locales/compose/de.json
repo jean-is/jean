@@ -41,5 +41,9 @@
   "compose.retyped": "„{column}“ hat jetzt eine andere Art, was ändert, was die Spalte in {names} zeigt.",
   "compose.further": "Weiter entfernt",
   "compose.through": "über {name}",
-  "compose.linking": "Prüfe, wo {name} verwendet wird"
+  "compose.linking": "Prüfe, wo {name} verwendet wird",
+  "compose.since": "Änderungen seit dieser Antwort: {count}",
+  "compose.now": "So zeigen, wie es jetzt ist",
+  "compose.then": "So zeigen, wie es war",
+  "compose.answer": "Wie in der Antwort"
 }

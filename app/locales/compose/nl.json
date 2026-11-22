@@ -41,5 +41,9 @@
   "compose.retyped": "‘{column}’ is nu van een ander soort, wat verandert wat de kolom in {names} toont.",
   "compose.further": "Verderop",
   "compose.through": "via {name}",
-  "compose.linking": "Kijken waar {name} gebruikt wordt"
+  "compose.linking": "Kijken waar {name} gebruikt wordt",
+  "compose.since": "Wijzigingen sinds dit antwoord: {count}",
+  "compose.now": "Toon het zoals het nu is",
+  "compose.then": "Toon het zoals het was",
+  "compose.answer": "Zoals in het antwoord"
 }

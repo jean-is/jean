@@ -41,5 +41,9 @@
   "compose.retyped": "“{column}” giờ thuộc loại khác, nên những gì nó hiển thị trong {names} sẽ thay đổi.",
   "compose.further": "Xa hơn",
   "compose.through": "qua {name}",
-  "compose.linking": "Đang xem {name} được dùng ở đâu"
+  "compose.linking": "Đang xem {name} được dùng ở đâu",
+  "compose.since": "Thay đổi kể từ câu trả lời này: {count}",
+  "compose.now": "Hiện như bây giờ",
+  "compose.then": "Hiện như lúc đó",
+  "compose.answer": "Như trong câu trả lời"
 }

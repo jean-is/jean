@@ -41,5 +41,9 @@
   "compose.retyped": "“{column}” manje luhlobo olwehlukile, okushintsha lokho elikubonisayo ku-{names}.",
   "compose.further": "Ngaphezulu",
   "compose.through": "nge-{name}",
-  "compose.linking": "Kubhekwa lapho kusetshenziswa khona i-{name}"
+  "compose.linking": "Kubhekwa lapho kusetshenziswa khona i-{name}",
+  "compose.since": "Izinguquko kusukela kule mpendulo: {count}",
+  "compose.now": "Kubonise njengoba kunjalo manje",
+  "compose.then": "Kubonise njengoba kwakunjalo",
+  "compose.answer": "Njengasempendulweni"
 }

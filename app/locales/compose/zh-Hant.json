@@ -41,5 +41,9 @@
   "compose.retyped": "「{column}」現在是另一種類型，這會改變它在{names}中顯示的內容。",
   "compose.further": "更遠處",
   "compose.through": "經由{name}",
-  "compose.linking": "正在查看{name}在哪裡被使用"
+  "compose.linking": "正在查看{name}在哪裡被使用",
+  "compose.since": "此回答之後的變更：{count}",
+  "compose.now": "按現在的樣子顯示",
+  "compose.then": "按當時的樣子顯示",
+  "compose.answer": "同回答時一樣"
 }

@@ -41,5 +41,9 @@
   "compose.retyped": "“{column}” yanzu wani nau’i ne daban, wanda ke canza abin da yake nunawa a {names}.",
   "compose.further": "Gaba da haka",
   "compose.through": "ta hanyar {name}",
-  "compose.linking": "Ana duba inda ake amfani da {name}"
+  "compose.linking": "Ana duba inda ake amfani da {name}",
+  "compose.since": "Sauye-sauye tun wannan amsar: {count}",
+  "compose.now": "Nuna shi yadda yake yanzu",
+  "compose.then": "Nuna shi yadda yake a lokacin",
+  "compose.answer": "Kamar yadda yake a amsarsa"
 }

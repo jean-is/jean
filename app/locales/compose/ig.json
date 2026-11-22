@@ -41,5 +41,9 @@
   "compose.retyped": "“{column}” bụ ụdị ọzọ ugbu a, nke na-agbanwe ihe ọ na-egosi na {names}.",
   "compose.further": "Gaa n’ihu",
   "compose.through": "site na {name}",
-  "compose.linking": "Na-ele ebe a na-eji {name}"
+  "compose.linking": "Na-ele ebe a na-eji {name}",
+  "compose.since": "Mgbanwe kemgbe azịza a: {count}",
+  "compose.now": "Gosi ya ka ọ dị ugbu a",
+  "compose.then": "Gosi ya ka ọ dịbu",
+  "compose.answer": "Dị ka ọ dị n’azịza ya"
 }

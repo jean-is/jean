@@ -41,5 +41,9 @@
   "compose.retyped": "“{column}”现在是另一种类型，这会改变它在{names}中显示的内容。",
   "compose.further": "更远处",
   "compose.through": "经由{name}",
-  "compose.linking": "正在查看{name}在哪里被使用"
+  "compose.linking": "正在查看{name}在哪里被使用",
+  "compose.since": "此回答之后的更改：{count}",
+  "compose.now": "按现在的样子显示",
+  "compose.then": "按当时的样子显示",
+  "compose.answer": "同回答时一样"
 }

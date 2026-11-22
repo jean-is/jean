@@ -41,5 +41,9 @@
   "compose.retyped": "“{column}” nunc alterius generis est, quod mutat quae in {names} ostendit.",
   "compose.further": "Ulterius",
   "compose.through": "per {name}",
-  "compose.linking": "Quaeritur ubi {name} adhibeatur"
+  "compose.linking": "Quaeritur ubi {name} adhibeatur",
+  "compose.since": "Mutationes post hoc responsum: {count}",
+  "compose.now": "Ostende ut nunc est",
+  "compose.then": "Ostende ut erat",
+  "compose.answer": "Ut in responso"
 }

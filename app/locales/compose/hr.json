@@ -41,5 +41,9 @@
   "compose.retyped": "„{column}” sada je druge vrste, što mijenja ono što prikazuje u: {names}.",
   "compose.further": "Dalje",
   "compose.through": "preko: {name}",
-  "compose.linking": "Provjeravam gdje se koristi {name}"
+  "compose.linking": "Provjeravam gdje se koristi {name}",
+  "compose.since": "Promjene od ovog odgovora: {count}",
+  "compose.now": "Prikaži kakvo je sada",
+  "compose.then": "Prikaži kakvo je bilo",
+  "compose.answer": "Kao u odgovoru"
 }

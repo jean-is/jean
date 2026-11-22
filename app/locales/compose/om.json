@@ -41,5 +41,9 @@
   "compose.retyped": "“{column}” amma gosa biraa dha, kunis waan {names} keessatti agarsiisu jijjiira.",
   "compose.further": "Achi caalaa",
   "compose.through": "karaa {name}",
-  "compose.linking": "Bakka {name} itti fayyadamamu ilaalaa jira"
+  "compose.linking": "Bakka {name} itti fayyadamamu ilaalaa jira",
+  "compose.since": "Jijjiiramoota deebii kana booda: {count}",
+  "compose.now": "Akkuma amma jiru agarsiisi",
+  "compose.then": "Akkuma ture agarsiisi",
+  "compose.answer": "Akkuma deebii isaa keessatti"
 }

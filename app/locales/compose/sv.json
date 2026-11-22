@@ -41,5 +41,9 @@
   "compose.retyped": "”{column}” har en annan typ nu, vilket ändrar vad den visar i {names}.",
   "compose.further": "Längre bort",
   "compose.through": "via {name}",
-  "compose.linking": "Tittar på var {name} används"
+  "compose.linking": "Tittar på var {name} används",
+  "compose.since": "Ändringar sedan det här svaret: {count}",
+  "compose.now": "Visa det som det är nu",
+  "compose.then": "Visa det som det var",
+  "compose.answer": "Som i svaret"
 }

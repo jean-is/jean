@@ -41,5 +41,9 @@
   "compose.retyped": "「{column}」の種類が変わったため、{names}での表示が変わります。",
   "compose.further": "その先",
   "compose.through": "{name}経由",
-  "compose.linking": "{name}が使われている場所を確認中"
+  "compose.linking": "{name}が使われている場所を確認中",
+  "compose.since": "この回答の後の変更：{count}",
+  "compose.now": "今の状態で表示",
+  "compose.then": "回答時の状態で表示",
+  "compose.answer": "回答時のまま"
 }

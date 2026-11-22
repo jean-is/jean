@@ -41,5 +41,9 @@
   "compose.retyped": "„{column}” are acum alt tip, ceea ce schimbă ce arată în {names}.",
   "compose.further": "Mai departe",
   "compose.through": "prin {name}",
-  "compose.linking": "Caut unde e folosit {name}"
+  "compose.linking": "Caut unde e folosit {name}",
+  "compose.since": "Schimbări de la acest răspuns: {count}",
+  "compose.now": "Arată cum e acum",
+  "compose.then": "Arată cum era",
+  "compose.answer": "Ca în răspuns"
 }

@@ -41,5 +41,9 @@
   "compose.retyped": "“{column}” अब दूसरे प्रकार का है, इसलिए {names} में यह जो दिखाता है वह बदल जाता है।",
   "compose.further": "और आगे",
   "compose.through": "{name} के ज़रिए",
-  "compose.linking": "देख रहे हैं कि {name} कहाँ उपयोग हो रहा है"
+  "compose.linking": "देख रहे हैं कि {name} कहाँ उपयोग हो रहा है",
+  "compose.since": "इस जवाब के बाद के बदलाव: {count}",
+  "compose.now": "अभी जैसा है वैसा दिखाएँ",
+  "compose.then": "जैसा था वैसा दिखाएँ",
+  "compose.answer": "जवाब में जैसा था"
 }

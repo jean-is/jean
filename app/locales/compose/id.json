@@ -41,5 +41,9 @@
   "compose.retyped": "“{column}” sekarang berjenis lain, sehingga yang ditampilkannya di {names} berubah.",
   "compose.further": "Lebih jauh",
   "compose.through": "lewat {name}",
-  "compose.linking": "Melihat di mana {name} dipakai"
+  "compose.linking": "Melihat di mana {name} dipakai",
+  "compose.since": "Perubahan sejak jawaban ini: {count}",
+  "compose.now": "Tampilkan seperti sekarang",
+  "compose.then": "Tampilkan seperti dulu",
+  "compose.answer": "Seperti di jawabannya"
 }

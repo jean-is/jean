@@ -7,5 +7,7 @@
 .links-said[role='alert'] { color: var(--danger); } .links-menu li > .links-said:only-child { margin: 0; padding-block: 0.6rem; }
 /* A choice in a composed table, a slide's or a document's, a pill as Tables draws it (its step's shape too), in the colour Tables gives it, tinting whatever paper it is on. */
 .composed-pill { display: inline-block; white-space: nowrap; } .composed-pill[data-hue] { background: color-mix(in oklab, var(--hue) 30%, transparent); } .composed-pill + .composed-pill { margin-inline-start: 0.25em; }
-/* A figure in a slide's or a document's words, worked out: as the words around it are, its formula as code again while they are edited. */
-:is(.deck-slide, app-figure) code[data-formula] { padding: 0; background: none; font: inherit; } .deck-slide [contenteditable='true'] code[data-formula] { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.85em; }
+/* A figure in a slide's, a document's or an answer's words, worked out: as the words around it are, its formula as code again while they are edited. */
+:is(.deck-slide, app-figure, .msg-jean .prose) code[data-formula] { padding: 0; background: none; font: inherit; } .deck-slide [contenteditable='true'] code[data-formula] { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.85em; }
+/* Under a collection's block in an answer: how many changes came since, and a way to see it as it is now. */
+.composed-since { margin: 0.35rem 0 0; color: var(--ink-soft); font-size: 0.85rem; }

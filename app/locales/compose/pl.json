@@ -41,5 +41,9 @@
   "compose.retyped": "„{column}” ma teraz inny rodzaj, co zmienia to, co pokazuje w: {names}.",
   "compose.further": "Dalej",
   "compose.through": "przez: {name}",
-  "compose.linking": "Sprawdzam, gdzie jest używane: {name}"
+  "compose.linking": "Sprawdzam, gdzie jest używane: {name}",
+  "compose.since": "Zmiany od tej odpowiedzi: {count}",
+  "compose.now": "Pokaż tak, jak jest teraz",
+  "compose.then": "Pokaż tak, jak było",
+  "compose.answer": "Jak w odpowiedzi"
 }

@@ -41,5 +41,9 @@
   "compose.retyped": "Iba na ang uri ng “{column}”, kaya nagbabago ang ipinapakita nito sa {names}.",
   "compose.further": "Mas malayo pa",
   "compose.through": "sa pamamagitan ng {name}",
-  "compose.linking": "Tinitingnan kung saan ginagamit ang {name}"
+  "compose.linking": "Tinitingnan kung saan ginagamit ang {name}",
+  "compose.since": "Mga pagbabago mula sa sagot na ito: {count}",
+  "compose.now": "Ipakita kung ano na ngayon",
+  "compose.then": "Ipakita kung ano noon",
+  "compose.answer": "Gaya ng nasa sagot"
 }

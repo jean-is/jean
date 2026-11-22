@@ -48,6 +48,12 @@ What the graph knows, said where it matters, each answer a read of edges. From t
 
 **Exit criterion**: slides that show a collection relating to the artisans are under the artisans' *Further along*, through it; the column the artisans' slides show deleted, its Undo says those slides still use it, and its kind changed, a toast says what that changes in them; `creation_links` says the same as the menu; that collection deleted from Creations, its Undo names the slides that use it.
 
+### Step 8 — Answers that compose
+
+A ```` ```table ```` block in an answer is a reference too, drawn by the same code (`<app-composed>`, which Markdown's `drawn` gets a `table` from, its kind declared as the pages' are), its task the consumer (`conversations/<id>.jsonl`). An answer is a moment (D188): a reference that reads the collection live reads it as it was when the answer was written (`asOf()`: the journal up to the time its answer's actions give, folded and worked out as Tables does), so the answer never changes by itself, a recipe's `ask` included. Under the block, how many changes came since (`since()`), and *Show it as it is now*, then *Show it as it was*, which write nothing. A figure in an answer's words is worked out so too (`<app-figures>`, from the answer's slot), as are slides an answer draws. The graph reads the answers' blocks (`held()`, as tunes and apps are read, its cache in `.cache/references.json`), again at each turn's end: the task is under the collection's *Used in*, *As in its answer*, and opens as a task.
+
+**Exit criterion**: an answer holding a block and a figure of the artisans keeps Ana a baker and one baker once she is a potter, says one change since, shows her a potter on a press and a baker again on the next, its file unchanged; the artisans list the task under *Used in*, *As in its answer*; in Arabic and Japanese too.
+
 ### Budgets
 
 Built first on a main whose line budget was nearly full, each step from the second raised `loc.app` by what it measured, at the owner's word; replayed on the main it landed on, whose budget left room enough, those raises were dropped and no budget changed. From step 6 on, a step that needs more room than the budget leaves raises `loc.app` by what it measures, at the owner's word, in a commit of its own before it; step 6 fitted in what was left. Nothing was added to the first load, the core or Tables' folder; no dependency was added. Its strings are in the 54 languages Jean speaks.
@@ -68,11 +74,13 @@ Built first on a main whose line budget was nearly full, each step from the seco
 - **Said with its Undo, not asked first.** The plan's step 7 asked before a column or a collection was deleted. Jean deletes at once and offers Undo everywhere, so the Undo's toast says what still uses it instead, which the Undo answers.
 - **No count on Creations' cards, and no `@`, yet.** The plan's step 7 put on each card of the Creations page how many creations it uses and is used in, and had `@` say what a creation uses. The page's state and `@` live in modules of the first load, which has no byte left; the links menu and `creation_links` say it meanwhile.
 - **The brain asks, rather than being told.** A tool's result saying which consumers a change of rows touches would go through Tables' code, at its gzip budget; `creation_links` is one read tool of its own, which the brain calls before changing what others show.
+- **The graph reads an answer's blocks, not its figures.** Its blocks are read as a task's tunes and apps are, by their fence; a figure, inline code in its words, is worked out as it was but is no edge yet.
 - **A picture is listed, not certified.** The plan's step 6 had a picture's credential join a version's or a run's ingredients. A run's ingredients are what it read, and slides have no certificate of their own beside their runs', so a picture held by content is a link of the graph, which says where it is used, and its own credential stays its own.
 - **The commits' first lines** are in English after `composition: étape N —`, as the rest of the history is; the docs are in English, as all of Jean's are.
 
 ## Known limits
 
+- What leaves Jean of an answer (its Word file, a link to it) holds its references as they are when it leaves, not as they were when it was written.
 - Slides saved as PowerPoint: a composed chart is a native chart, each bar in its choice's colour, and a composed table a table (`test/compose.spec.js`); a run's words weren't checked in the exported file. A deck's own file, opened outside Jean, draws a reference as its text, a figure as its formula: only Jean resolves one. A link to slides or a document, and a document's Word file, hold what each shows as they are made, a chart as its figures' table.
 - A whiteboard is a collection too, but has neither versions nor a port.
 - A recipe that runs as its source changes may meet the month's limit in the background: the question it asks then comes up unasked for.
@@ -87,17 +95,11 @@ Built first on a main whose line budget was nearly full, each step from the seco
 
 ## Work left: the graph at its best
 
-Composition and the graph are one ([architecture.md](architecture.md#composition)): every way a creation shows another becomes a reference, and every reference is an edge the graph reads. The steps below follow from that, each shippable alone, its exit criterion checked in `test/compose.spec.js` or `test/compose.test.js` as before. Steps 6 and 7, what already linked creations brought into the graph and what it can say at no cost, are built (above). Then, in order: the place most people read (8), then new sources and consumers (9 to 11), then what runs and what travels (12). Three rules hold for every step:
+Composition and the graph are one ([architecture.md](architecture.md#composition)): every way a creation shows another becomes a reference, and every reference is an edge the graph reads. The steps below follow from that, each shippable alone, its exit criterion checked in `test/compose.spec.js` or `test/compose.test.js` as before. Steps 6 to 8, what already linked creations brought into the graph, what it can say at no cost and the place most people read, are built (above). Then, in order: new sources and consumers (9 to 11), then what runs and what travels (12). Three rules hold for every step:
 
 - **Nothing shown outside a reference.** A kind that starts showing another's content joins `CONSUMERS` in the same change, and its test checks that the source's *Links with other creations* lists it.
 - **Budgets first.** `loc.app` has a dozen lines left and Tables' code is at its gzip limit: each step measures what it needs, deletes first where it can, asks for a raise in a change of its own, and stays out of Tables' folder.
 - **What is paid stays opt-in.** A step that makes the graph carry more never makes a brain run, or anything leave Jean, that the person didn't choose.
-
-### Step 8 — Answers that compose
-
-An answer is where most people read, and today it draws a collection only inside a deck. A ```` ```table ```` block and a figure in an answer become references too, drawn by the same code (`WIDGETS` in `ui/markdown.js` gains `table`), their task the consumer. An answer is a moment: its selector is the journal as it was when the answer was written (`fold()` of the lines up to then), so it never changes by itself. It says how many changes came since, and *Show as it is now* draws the collection's head without writing into the answer (D188).
-
-**Exit criterion**: an answer that charts a collection keeps its bars once a row changes, says one change since, shows the chart as it is now on a click, and the collection lists the task under *Used in*.
 
 ### Step 9 — Documents as sources
 

@@ -41,5 +41,9 @@
   "compose.retyped": "Το «{column}» έχει πλέον άλλο είδος, κάτι που αλλάζει ό,τι δείχνει σε: {names}.",
   "compose.further": "Πιο πέρα",
   "compose.through": "μέσω {name}",
-  "compose.linking": "Εξετάζω πού χρησιμοποιείται το {name}"
+  "compose.linking": "Εξετάζω πού χρησιμοποιείται το {name}",
+  "compose.since": "Αλλαγές από αυτή την απάντηση: {count}",
+  "compose.now": "Δείξε το όπως είναι τώρα",
+  "compose.then": "Δείξε το όπως ήταν",
+  "compose.answer": "Όπως στην απάντηση"
 }

@@ -41,5 +41,9 @@
   "compose.retyped": "”{column}” on nyt eri tyyppiä, mikä muuttaa sitä, mitä se näyttää kohteissa: {names}.",
   "compose.further": "Kauempana",
   "compose.through": "kohteen {name} kautta",
-  "compose.linking": "Katsotaan, missä {name} on käytössä"
+  "compose.linking": "Katsotaan, missä {name} on käytössä",
+  "compose.since": "Muutoksia tämän vastauksen jälkeen: {count}",
+  "compose.now": "Näytä sellaisena kuin se on nyt",
+  "compose.then": "Näytä sellaisena kuin se oli",
+  "compose.answer": "Kuten vastauksessa"
 }

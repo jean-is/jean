@@ -41,5 +41,9 @@
   "compose.retyped": "“{column}” ti di irú mìíràn báyìí, èyí sì yí ohun tó ń fi hàn nínú {names} padà.",
   "compose.further": "Síwájú sí i",
   "compose.through": "nípasẹ̀ {name}",
-  "compose.linking": "À ń wo ibi tí wọ́n ti ń lo {name}"
+  "compose.linking": "À ń wo ibi tí wọ́n ti ń lo {name}",
+  "compose.since": "Àwọn àyípadà láti ìdáhùn yìí: {count}",
+  "compose.now": "Fi hàn bí ó ti rí báyìí",
+  "compose.then": "Fi hàn bí ó ti rí nígbà náà",
+  "compose.answer": "Bí ó ti wà nínú ìdáhùn rẹ̀"
 }

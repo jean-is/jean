@@ -41,5 +41,9 @@
   "compose.retyped": "“{column}” sasa ni aina nyingine, jambo linalobadilisha inachoonyesha katika {names}.",
   "compose.further": "Mbele zaidi",
   "compose.through": "kupitia {name}",
-  "compose.linking": "Inaangalia mahali {name} inapotumika"
+  "compose.linking": "Inaangalia mahali {name} inapotumika",
+  "compose.since": "Mabadiliko tangu jibu hili: {count}",
+  "compose.now": "Ionyeshe ilivyo sasa",
+  "compose.then": "Ionyeshe ilivyokuwa",
+  "compose.answer": "Kama katika jibu lake"
 }

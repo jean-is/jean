@@ -41,5 +41,9 @@
   "compose.retyped": "“{column}” has another kind now, which changes what it shows in {names}.",
   "compose.further": "Further along",
   "compose.through": "through {name}",
-  "compose.linking": "Looking at what uses {name}"
+  "compose.linking": "Looking at what uses {name}",
+  "compose.since": "Changes since this answer: {count}",
+  "compose.now": "Show it as it is now",
+  "compose.then": "Show it as it was",
+  "compose.answer": "As in its answer"
 }

@@ -41,5 +41,9 @@
   "compose.retyped": "“{column}”의 종류가 바뀌어 {names}에서 보이는 내용이 달라집니다.",
   "compose.further": "더 멀리",
   "compose.through": "{name} 경유",
-  "compose.linking": "{name}이(가) 사용되는 곳 확인 중"
+  "compose.linking": "{name}이(가) 사용되는 곳 확인 중",
+  "compose.since": "이 답변 이후 변경: {count}",
+  "compose.now": "지금 상태로 보기",
+  "compose.then": "그때 상태로 보기",
+  "compose.answer": "답변 당시 그대로"
 }

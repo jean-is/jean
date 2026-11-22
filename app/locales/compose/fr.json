@@ -41,5 +41,9 @@
   "compose.retyped": "« {column} » a désormais un autre type, ce qui change ce qu’elle montre dans {names}.",
   "compose.further": "Plus loin",
   "compose.through": "par {name}",
-  "compose.linking": "Recherche de ce qui utilise {name}"
+  "compose.linking": "Recherche de ce qui utilise {name}",
+  "compose.since": "Changements depuis cette réponse : {count}",
+  "compose.now": "Montrer tel quel aujourd’hui",
+  "compose.then": "Montrer tel qu’il était",
+  "compose.answer": "Comme dans sa réponse"
 }

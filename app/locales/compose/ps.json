@@ -41,5 +41,9 @@
   "compose.retyped": "«{column}» اوس بل ډول دی، او دا هغه څه بدلوي چې په {names} کې يې ښيي.",
   "compose.further": "لا لرې",
   "compose.through": "د {name} له لارې",
-  "compose.linking": "ګورو چې {name} چېرته کارول کېږي"
+  "compose.linking": "ګورو چې {name} چېرته کارول کېږي",
+  "compose.since": "له دې ځواب وروسته بدلونونه: {count}",
+  "compose.now": "لکه اوس چې دی وې ښيه",
+  "compose.then": "لکه چې و وې ښيه",
+  "compose.answer": "لکه په ځواب کې"
 }

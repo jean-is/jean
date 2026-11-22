@@ -41,5 +41,9 @@
   "compose.retyped": "Ur rizh all en deus “{column}” bremañ, ar pezh a cheñch ar pezh a ziskouez e {names}.",
   "compose.further": "Pelloc’h",
   "compose.through": "dre {name}",
-  "compose.linking": "O sellet e pelec’h eo implijet {name}"
+  "compose.linking": "O sellet e pelec’h eo implijet {name}",
+  "compose.since": "Kemmoù abaoe ar respont-mañ: {count}",
+  "compose.now": "Diskouez evel m’emañ bremañ",
+  "compose.then": "Diskouez evel ma oa",
+  "compose.answer": "Evel en e respont"
 }

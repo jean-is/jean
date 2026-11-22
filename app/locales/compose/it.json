@@ -41,5 +41,9 @@
   "compose.retyped": "«{column}» ora è di un altro tipo, e questo cambia ciò che mostra in {names}.",
   "compose.further": "Più in là",
   "compose.through": "tramite {name}",
-  "compose.linking": "Guardo dove si usa {name}"
+  "compose.linking": "Guardo dove si usa {name}",
+  "compose.since": "Modifiche da questa risposta: {count}",
+  "compose.now": "Mostralo com’è ora",
+  "compose.then": "Mostralo com’era",
+  "compose.answer": "Come nella risposta"
 }

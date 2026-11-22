@@ -41,5 +41,9 @@
   "compose.retyped": "“{column}” አሁን ሌላ ዓይነት ነው፤ ይህም በ{names} ውስጥ የሚያሳየውን ይለውጣል።",
   "compose.further": "ከዚያ ባሻገር",
   "compose.through": "በ{name} በኩል",
-  "compose.linking": "{name} የት ጥቅም ላይ እንደዋለ በመመልከት ላይ"
+  "compose.linking": "{name} የት ጥቅም ላይ እንደዋለ በመመልከት ላይ",
+  "compose.since": "ከዚህ መልስ በኋላ የመጡ ለውጦች፦ {count}",
+  "compose.now": "አሁን እንዳለ አሳይ",
+  "compose.then": "እንደነበረ አሳይ",
+  "compose.answer": "በመልሱ እንዳለው"
 }

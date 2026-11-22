@@ -5,6 +5,9 @@
 // recipe that names it, marked old too; a column turned into a kind whose values read otherwise is a break, and no version is made of it.
 // Pure, so Node's tests run it.
 import { canonical } from '../tables/table.js'
+import { fold } from '../tables/changes.js'
+import { ordered } from '../tables/query.js'
+import { worked } from '../tables/formula.js'
 
 /** @import { Table } from '../tables/table.js' */
 /** @import { Row, Line } from '../tables/changes.js' */
@@ -24,6 +27,14 @@ export const headOf = (lines) => lines.reduce((head, line) => ((at) => (at > hea
 /** A collection frozen as a version. @param {{ table: Table, rows: Row[], lines: Line[], names?: Map<string, string> }} one @param {Pick<Version, 'n' | 'at' | 'by' | 'why'>} made @returns {Version} */
 export const versionOf = ({ table, rows, lines, names }, made) => ({ format: 1, ...made, head: headOf(lines), table: { name: table.name, properties: table.properties },
   rows: rows.map(({ id, cells, created, changed }) => ({ id, cells, created, changed })), ...(names?.size ? { names: [...names] } : {}) })
+
+/**
+ * A collection as it was at a time, an answer's (D188: an answer is a moment): its journal up to then, folded and worked out as Tables does, a
+ * compacted mark kept, since nothing before it reads apart. @template {{ table: Table, rows: Row[], lines: Line[] }} T @param {T} one @param {string} at @returns {T}
+ */
+export const asOf = (one, at) => ((lines) => ({ ...one, lines, rows: worked(one.table, ordered(fold(lines), one.table.order)) }))(one.lines.filter((line) => !('at' in line) || line.at <= at))
+/** How many lines of a journal came after a time. @param {Line[]} lines @param {string} at */
+export const since = (lines, at) => lines.filter((line) => 'at' in line && line.at > at).length
 
 /** A version as a collection loaded is, for what reads one (caps/fill). @param {Version} version */
 export const loadedOf = (version) => ({ table: /** @type {Table} */ (/** @type {unknown} */ ({ ...version.table, views: [] })), rows: /** @type {Row[]} */ (version.rows), names: new Map(version.names ?? []) })

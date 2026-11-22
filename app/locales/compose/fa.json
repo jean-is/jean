@@ -41,5 +41,9 @@
   "compose.retyped": "«{column}» اکنون نوع دیگری دارد و این آنچه را در {names} نشان می‌دهد تغییر می‌دهد.",
   "compose.further": "دورتر",
   "compose.through": "از راه {name}",
-  "compose.linking": "در حال بررسی جاهایی که {name} به کار رفته"
+  "compose.linking": "در حال بررسی جاهایی که {name} به کار رفته",
+  "compose.since": "تغییرها از این پاسخ به بعد: {count}",
+  "compose.now": "همان‌طور که اکنون هست نشان بده",
+  "compose.then": "همان‌طور که بود نشان بده",
+  "compose.answer": "همان‌طور که در پاسخش بود"
 }

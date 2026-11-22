@@ -41,5 +41,9 @@
   "compose.retyped": "“{column}” اب کسی اور قسم کا ہے، اس لیے {names} میں یہ جو دکھاتا ہے وہ بدل جاتا ہے۔",
   "compose.further": "اور آگے",
   "compose.through": "{name} کے ذریعے",
-  "compose.linking": "دیکھ رہے ہیں کہ {name} کہاں استعمال ہو رہا ہے"
+  "compose.linking": "دیکھ رہے ہیں کہ {name} کہاں استعمال ہو رہا ہے",
+  "compose.since": "اس جواب کے بعد کی تبدیلیاں: {count}",
+  "compose.now": "جیسا اب ہے ویسا دکھائیں",
+  "compose.then": "جیسا تھا ویسا دکھائیں",
+  "compose.answer": "جیسا جواب میں تھا"
 }

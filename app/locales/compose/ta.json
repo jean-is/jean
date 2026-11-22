@@ -41,5 +41,9 @@
   "compose.retyped": "“{column}” இப்போது வேறு வகை, அதனால் {names} இல் அது காட்டுவது மாறுகிறது.",
   "compose.further": "மேலும் தொலைவில்",
   "compose.through": "{name} வழியாக",
-  "compose.linking": "{name} எங்கே பயன்படுகிறது எனப் பார்க்கிறது"
+  "compose.linking": "{name} எங்கே பயன்படுகிறது எனப் பார்க்கிறது",
+  "compose.since": "இந்தப் பதிலுக்குப் பிறகான மாற்றங்கள்: {count}",
+  "compose.now": "இப்போது உள்ளபடி காட்டு",
+  "compose.then": "அப்போது இருந்தபடி காட்டு",
+  "compose.answer": "பதிலில் உள்ளபடி"
 }

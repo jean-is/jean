@@ -170,7 +170,7 @@ test('a slide’s key figures worked out from a collection follow it as it chang
   expect(slide).not.toContain('=collections')
 })
 
-for (const [lang, live, missing] of [['ar', 'مباشر', 'لا توجد مجموعة كهذه في هذا المشروع.'], ['ja', '最新', 'このプロジェクトにはそのコレクションがありません。']]) {
+for (const [lang, live, missing, since] of [['ar', 'مباشر', 'لا توجد مجموعة كهذه في هذا المشروع.', 'التغييرات منذ هذه الإجابة'], ['ja', '最新', 'このプロジェクトにはそのコレクションがありません。', 'この回答の後の変更']]) {
   test(`a slide shows a collection, and the pane says who it uses, in ${lang}`, async ({ page }) => {
     await start(page, lang)
     await seed(page)
@@ -190,6 +190,20 @@ for (const [lang, live, missing] of [['ar', 'مباشر', 'لا توجد مجم�
     await show(page, 'documents/01K85Z1T00000000000000000M-report.md', 'Report')
     await expect(page.locator('app-preview app-figure code')).toHaveText(/^[1١]$/)
     await expect(page.locator('app-preview .doc p').filter({ has: page.locator('app-figure') })).toHaveAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr')
+    // An answer's block as the collection was, and what changed since, in the user's words.
+    const path = await page.evaluate(async ({ COLLECTION }) => {
+      const [{ app, refreshConversations }, { createConversation, appendRecords }, { metaRecord, userRecord, envelope }] = await Promise.all([import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js')])
+      const { path } = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
+      await appendRecords(app.fs, path, [metaRecord(app.deviceId, { title: '—' }), userRecord('?', app.deviceId), envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: `\`\`\`table\n${COLLECTION}\n\`\`\`\n` } }, 0)])
+      await refreshConversations()
+      return path
+    }, { COLLECTION })
+    await page.waitForTimeout(20)
+    await change(page, 'Potter')
+    await page.evaluate(async (path) => (await import('/ui/state.js')).openConversation(path), path)
+    const answer = page.locator('article.msg-jean').last()
+    await expect(answer.locator('app-composed tbody td').nth(1)).toHaveText('Baker')
+    await expect(answer.locator('.composed-since')).toContainText(since)
   })
 }
 
@@ -386,6 +400,40 @@ test('the graph answers: what is reached further, what still uses a column or a 
   await card.getByRole('button', { name: 'More options' }).click()
   await page.locator('app-creations .task-menu:popover-open').getByRole('button', { name: 'Delete' }).click()
   await page.locator('.toast', { hasText: '“Orders” deleted. Still used by Book.' }).getByRole('button', { name: 'Undo' }).click()
+})
+
+test('an answer composes: its block and its figure show a collection as it was when it was written, say what changed since, show it now on a press, and its task is in the graph', async ({ page }) => {
+  await start(page)
+  await seed(page)
+  const path = await page.evaluate(async ({ COLLECTION }) => {
+    const [{ app, refreshConversations }, { createConversation, appendRecords }, { metaRecord, userRecord, envelope }] = await Promise.all([import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js')])
+    const { path } = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
+    await appendRecords(app.fs, path, [metaRecord(app.deviceId, { title: 'Who bakes' }), userRecord('Who bakes?', app.deviceId),
+      envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: `Bakers: \`=${COLLECTION} count where Trade is Baker\`.\n\n\`\`\`table\n${COLLECTION}\nfields: Name | Trade\n\`\`\`\n` } }, 0)])
+    await refreshConversations()
+    return path
+  }, { COLLECTION })
+  await page.waitForTimeout(20)
+  await change(page, 'Potter')
+  await page.evaluate(async (path) => (await import('/ui/state.js')).openConversation(path), path)
+  const answer = page.locator('article.msg-jean').last(), cells = answer.locator('app-composed tbody td')
+  // As it was: Ana a baker, one baker; one change since.
+  await expect(cells).toHaveText(['Ana', 'Baker'])
+  await expect(answer.locator('.prose code[data-formula]')).toHaveText('1')
+  await expect(answer.locator('.composed-since')).toContainText('Changes since this answer: 1')
+  // As it is now, on a press, written nowhere; and back.
+  await answer.getByRole('button', { name: 'Show it as it is now' }).click()
+  await expect(cells).toHaveText(['Ana', 'Potter'])
+  await answer.getByRole('button', { name: 'Show it as it was' }).click()
+  await expect(cells).toHaveText(['Ana', 'Baker'])
+  expect(await page.evaluate(async (path) => (await import('/ui/state.js')).app.fs.read(path), path)).not.toContain('Potter')
+  // The task is among what uses the artisans, as in its answer, and opens from there.
+  await show(page, COLLECTION, 'Artisans')
+  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  const task = page.locator('.menu:popover-open').getByRole('group', { name: 'Used in' }).getByRole('button', { name: /Who bakes/ })
+  await expect(task).toContainText('As in its answer')
+  await task.click()
+  await expect.poll(() => page.evaluate(() => import('/ui/state.js').then(({ app }) => app.current.peek()?.path))).toBe(path)
 })
 
 test('a recipe that sums up the approved artisans on a slide updates by itself once its user turns that on, and only then; a run is paid once per version read', async ({ page }) => {

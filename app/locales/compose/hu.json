@@ -41,5 +41,9 @@
   "compose.retyped": "„{column}” most már más típusú, ami megváltoztatja, mit mutat itt: {names}.",
   "compose.further": "Távolabb",
   "compose.through": "ezen keresztül: {name}",
-  "compose.linking": "Megnézem, hol használják ezt: {name}"
+  "compose.linking": "Megnézem, hol használják ezt: {name}",
+  "compose.since": "Változások e válasz óta: {count}",
+  "compose.now": "Mutasd úgy, ahogy most van",
+  "compose.then": "Mutasd úgy, ahogy volt",
+  "compose.answer": "Ahogy a válaszban"
 }

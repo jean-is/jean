@@ -41,5 +41,9 @@
   "compose.retyped": "У «{column}» теперь другой тип, и это меняет то, что показано в: {names}.",
   "compose.further": "Дальше",
   "compose.through": "через {name}",
-  "compose.linking": "Смотрю, где используется {name}"
+  "compose.linking": "Смотрю, где используется {name}",
+  "compose.since": "Изменений после этого ответа: {count}",
+  "compose.now": "Показать, как сейчас",
+  "compose.then": "Показать, как было",
+  "compose.answer": "Как в ответе"
 }

@@ -41,5 +41,9 @@
   "compose.retyped": "«{column}» hè avà d’un altru tipu, ciò chì cambia ciò ch’ella mostra in {names}.",
   "compose.further": "Più in là",
   "compose.through": "per mezu di {name}",
-  "compose.linking": "Fighjulendu induve hè adupratu {name}"
+  "compose.linking": "Fighjulendu induve hè adupratu {name}",
+  "compose.since": "Cambiamenti dapoi sta risposta: {count}",
+  "compose.now": "Mustrallu cum’ellu hè avà",
+  "compose.then": "Mustrallu cum’ellu era",
+  "compose.answer": "Cum’è in a so risposta"
 }

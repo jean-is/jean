@@ -41,5 +41,9 @@
   "compose.retyped": "„{column}“ má teď jiný druh, což mění, co ukazuje v: {names}.",
   "compose.further": "Dál",
   "compose.through": "přes {name}",
-  "compose.linking": "Zjišťuji, kde se používá {name}"
+  "compose.linking": "Zjišťuji, kde se používá {name}",
+  "compose.since": "Změny od této odpovědi: {count}",
+  "compose.now": "Ukázat, jak je to teď",
+  "compose.then": "Ukázat, jak to bylo",
+  "compose.answer": "Jako v odpovědi"
 }
