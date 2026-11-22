@@ -59,5 +59,11 @@
   "compose.drawn": "Visa dem ritade",
   "compose.map": "Kopplingar",
   "compose.out": "Version {n} har kommit",
-  "compose.unused": "Används inte av något"
+  "compose.unused": "Används inte av något",
+  "compose.shows.table": "Tabell, alla kolumner",
+  "compose.shows.columns": "Tabell: {columns}",
+  "compose.shows.chart": "Diagram per {by}",
+  "compose.shows.figure": "Tal",
+  "compose.shows.ask": "Skrivet utifrån den av en hjärna",
+  "compose.shows.section": "Avsnitt ”{section}”"
 }

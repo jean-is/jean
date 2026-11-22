@@ -59,5 +59,11 @@
   "compose.drawn": "以圖查看",
   "compose.map": "關聯",
   "compose.out": "版本 {n} 已推出",
-  "compose.unused": "沒有被任何地方使用"
+  "compose.unused": "沒有被任何地方使用",
+  "compose.shows.table": "表格，所有欄位",
+  "compose.shows.columns": "表格：{columns}",
+  "compose.shows.chart": "按{by}的圖表",
+  "compose.shows.figure": "數字",
+  "compose.shows.ask": "大腦據此寫出的內容",
+  "compose.shows.section": "節「{section}」"
 }

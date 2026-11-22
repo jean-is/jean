@@ -59,5 +59,11 @@
   "compose.drawn": "د انځور په بڼه یې وښيه",
   "compose.map": "اړیکې",
   "compose.out": "نسخه {n} خپره شوې ده",
-  "compose.unused": "هېڅ يې نه کاروي"
+  "compose.unused": "هېڅ يې نه کاروي",
+  "compose.shows.table": "جدول، ټولې ستنې",
+  "compose.shows.columns": "جدول: {columns}",
+  "compose.shows.chart": "د {by} له مخې چارټ",
+  "compose.shows.figure": "شمېره",
+  "compose.shows.ask": "له دې څخه د مغز لیکنه",
+  "compose.shows.section": "برخه «{section}»"
 }

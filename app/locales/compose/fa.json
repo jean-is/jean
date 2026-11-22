@@ -59,5 +59,11 @@
   "compose.drawn": "به‌صورت طرح نشان بده",
   "compose.map": "پیوندها",
   "compose.out": "نسخهٔ {n} منتشر شده است",
-  "compose.unused": "هیچ‌جا به کار نرفته"
+  "compose.unused": "هیچ‌جا به کار نرفته",
+  "compose.shows.table": "جدول، همهٔ ستون‌ها",
+  "compose.shows.columns": "جدول: {columns}",
+  "compose.shows.chart": "نمودار بر پایهٔ {by}",
+  "compose.shows.figure": "عدد",
+  "compose.shows.ask": "نوشتهٔ یک مغز بر پایهٔ آن",
+  "compose.shows.section": "بخش «{section}»"
 }

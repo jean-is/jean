@@ -59,5 +59,11 @@
   "compose.drawn": "Toon ze als tekening",
   "compose.map": "Koppelingen",
   "compose.out": "Versie {n} is uit",
-  "compose.unused": "Nergens gebruikt"
+  "compose.unused": "Nergens gebruikt",
+  "compose.shows.table": "Tabel, alle kolommen",
+  "compose.shows.columns": "Tabel: {columns}",
+  "compose.shows.chart": "Grafiek per {by}",
+  "compose.shows.figure": "Getal",
+  "compose.shows.ask": "Door een brein eruit geschreven",
+  "compose.shows.section": "Onderdeel ‘{section}’"
 }

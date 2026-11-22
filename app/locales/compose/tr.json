@@ -59,5 +59,11 @@
   "compose.drawn": "Çizim olarak göster",
   "compose.map": "Bağlantılar",
   "compose.out": "{n}. sürüm çıktı",
-  "compose.unused": "Hiçbir yerde kullanılmıyor"
+  "compose.unused": "Hiçbir yerde kullanılmıyor",
+  "compose.shows.table": "Tablo, tüm sütunlar",
+  "compose.shows.columns": "Tablo: {columns}",
+  "compose.shows.chart": "{by} bazında grafik",
+  "compose.shows.figure": "Sayı",
+  "compose.shows.ask": "Bir beynin buradan yazdığı",
+  "compose.shows.section": "“{section}” bölümü"
 }

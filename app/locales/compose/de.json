@@ -59,5 +59,11 @@
   "compose.drawn": "Als Zeichnung zeigen",
   "compose.map": "Verbindungen",
   "compose.out": "Version {n} ist erschienen",
-  "compose.unused": "Wird nirgends verwendet"
+  "compose.unused": "Wird nirgends verwendet",
+  "compose.shows.table": "Tabelle, alle Spalten",
+  "compose.shows.columns": "Tabelle: {columns}",
+  "compose.shows.chart": "Diagramm nach {by}",
+  "compose.shows.figure": "Kennzahl",
+  "compose.shows.ask": "Von einem Gehirn daraus geschrieben",
+  "compose.shows.section": "Abschnitt „{section}“"
 }

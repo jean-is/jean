@@ -59,5 +59,11 @@
   "compose.drawn": "በሥዕል አሳይ",
   "compose.map": "ትስስሮች",
   "compose.out": "ስሪት {n} ወጥቷል",
-  "compose.unused": "ምንም አይጠቀምበትም"
+  "compose.unused": "ምንም አይጠቀምበትም",
+  "compose.shows.table": "ሰንጠረዥ፣ ሁሉም ዓምዶች",
+  "compose.shows.columns": "ሰንጠረዥ፦ {columns}",
+  "compose.shows.chart": "ገበታ በ{by}",
+  "compose.shows.figure": "አኃዝ",
+  "compose.shows.ask": "አእምሮ ከእሱ የጻፈው",
+  "compose.shows.section": "ክፍል «{section}»"
 }

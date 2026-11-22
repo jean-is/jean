@@ -59,5 +59,11 @@
   "compose.drawn": "Показати схемою",
   "compose.map": "Зв’язки",
   "compose.out": "Вийшла версія {n}",
-  "compose.unused": "Ніде не використовується"
+  "compose.unused": "Ніде не використовується",
+  "compose.shows.table": "Таблиця, усі стовпці",
+  "compose.shows.columns": "Таблиця: {columns}",
+  "compose.shows.chart": "Діаграма за {by}",
+  "compose.shows.figure": "Число",
+  "compose.shows.ask": "Написано мозком на її основі",
+  "compose.shows.section": "Розділ «{section}»"
 }

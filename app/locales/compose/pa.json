@@ -59,5 +59,11 @@
   "compose.drawn": "ਚਿੱਤਰ ਵਜੋਂ ਦਿਖਾਓ",
   "compose.map": "ਜੋੜ",
   "compose.out": "ਵਰਜਨ {n} ਆ ਗਿਆ ਹੈ",
-  "compose.unused": "ਕਿਤੇ ਨਹੀਂ ਵਰਤਿਆ ਗਿਆ"
+  "compose.unused": "ਕਿਤੇ ਨਹੀਂ ਵਰਤਿਆ ਗਿਆ",
+  "compose.shows.table": "ਸਾਰਣੀ, ਸਾਰੇ ਕਾਲਮ",
+  "compose.shows.columns": "ਸਾਰਣੀ: {columns}",
+  "compose.shows.chart": "{by} ਅਨੁਸਾਰ ਚਾਰਟ",
+  "compose.shows.figure": "ਅੰਕੜਾ",
+  "compose.shows.ask": "ਇਸ ਤੋਂ ਦਿਮਾਗ਼ ਦਾ ਲਿਖਿਆ",
+  "compose.shows.section": "ਭਾਗ “{section}”"
 }

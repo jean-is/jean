@@ -59,5 +59,11 @@
   "compose.drawn": "Hiện dưới dạng hình vẽ",
   "compose.map": "Liên kết",
   "compose.out": "Đã có phiên bản {n}",
-  "compose.unused": "Không được dùng ở đâu"
+  "compose.unused": "Không được dùng ở đâu",
+  "compose.shows.table": "Bảng, mọi cột",
+  "compose.shows.columns": "Bảng: {columns}",
+  "compose.shows.chart": "Biểu đồ theo {by}",
+  "compose.shows.figure": "Con số",
+  "compose.shows.ask": "Do một bộ não viết từ đó",
+  "compose.shows.section": "Phần “{section}”"
 }

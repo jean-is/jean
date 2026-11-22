@@ -59,5 +59,11 @@
   "compose.drawn": "Показать схемой",
   "compose.map": "Связи",
   "compose.out": "Вышла версия {n}",
-  "compose.unused": "Нигде не используется"
+  "compose.unused": "Нигде не используется",
+  "compose.shows.table": "Таблица, все столбцы",
+  "compose.shows.columns": "Таблица: {columns}",
+  "compose.shows.chart": "Диаграмма по {by}",
+  "compose.shows.figure": "Число",
+  "compose.shows.ask": "Написано мозгом на её основе",
+  "compose.shows.section": "Раздел «{section}»"
 }

@@ -59,5 +59,11 @@
   "compose.drawn": "Pokaż jako rysunek",
   "compose.map": "Powiązania",
   "compose.out": "Wyszła wersja {n}",
-  "compose.unused": "Nic z tego nie korzysta"
+  "compose.unused": "Nic z tego nie korzysta",
+  "compose.shows.table": "Tabela, wszystkie kolumny",
+  "compose.shows.columns": "Tabela: {columns}",
+  "compose.shows.chart": "Wykres według {by}",
+  "compose.shows.figure": "Liczba",
+  "compose.shows.ask": "Napisane na jej podstawie przez mózg",
+  "compose.shows.section": "Sekcja „{section}”"
 }

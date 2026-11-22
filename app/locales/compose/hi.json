@@ -59,5 +59,11 @@
   "compose.drawn": "चित्र के रूप में दिखाएँ",
   "compose.map": "जुड़ाव",
   "compose.out": "संस्करण {n} आ गया है",
-  "compose.unused": "कहीं उपयोग नहीं"
+  "compose.unused": "कहीं उपयोग नहीं",
+  "compose.shows.table": "तालिका, सभी कॉलम",
+  "compose.shows.columns": "तालिका: {columns}",
+  "compose.shows.chart": "{by} के अनुसार चार्ट",
+  "compose.shows.figure": "आँकड़ा",
+  "compose.shows.ask": "इससे किसी दिमाग़ का लिखा",
+  "compose.shows.section": "खंड “{section}”"
 }

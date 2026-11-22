@@ -59,5 +59,11 @@
   "compose.drawn": "Prikaži ih nacrtane",
   "compose.map": "Veze",
   "compose.out": "Izašla je verzija {n}",
-  "compose.unused": "Ništa ga ne koristi"
+  "compose.unused": "Ništa ga ne koristi",
+  "compose.shows.table": "Tablica, svi stupci",
+  "compose.shows.columns": "Tablica: {columns}",
+  "compose.shows.chart": "Grafikon po {by}",
+  "compose.shows.figure": "Broj",
+  "compose.shows.ask": "Iz nje napisao mozak",
+  "compose.shows.section": "Odjeljak „{section}”"
 }

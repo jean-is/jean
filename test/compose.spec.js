@@ -1043,3 +1043,22 @@ test('slides that show one collection three times, with nothing further along, s
   await expect.poll(() => columnsOf(map)).toEqual([['Artisans'], ['Crêpes']])
   await expect.poll(() => map.locator('.links-lines path[data-from][d]').count()).toBe(1)
 })
+
+test('slides that show one collection three times say what each shows in their links menu, and the collection lists them once', async ({ page }) => {
+  await start(page)
+  await seed(page)
+  await crepes(page)
+  const menu = page.locator('.menu:popover-open'), links = () => page.locator('app-preview .pane-head button[popovertarget^="links-"]')
+  await show(page, CREPES, 'Crêpes')
+  await expect(async () => {
+    if (!(await menu.count())) await links().click()
+    await expect(menu.getByRole('group', { name: 'Uses' }).locator('.links-said')).toHaveText(['Table: Name and Trade', 'Chart by Trade', 'Figure'], { timeout: 2000 })
+  }).toPass()
+  await page.keyboard.press('Escape')
+  await show(page, COLLECTION, 'Artisans')
+  await expect(async () => {
+    if (!(await menu.count())) await links().click()
+    await expect(menu.getByRole('group', { name: 'Used in' }).getByRole('button')).toHaveCount(2, { timeout: 2000 })
+  }).toPass()
+  await expect(menu.getByRole('group', { name: 'Used in' }).getByRole('button', { name: /Crêpes/ })).toHaveCount(1)
+})

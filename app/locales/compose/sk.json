@@ -59,5 +59,11 @@
   "compose.drawn": "Ukázať ako nákres",
   "compose.map": "Prepojenia",
   "compose.out": "Vyšla verzia {n}",
-  "compose.unused": "Nič to nepoužíva"
+  "compose.unused": "Nič to nepoužíva",
+  "compose.shows.table": "Tabuľka, všetky stĺpce",
+  "compose.shows.columns": "Tabuľka: {columns}",
+  "compose.shows.chart": "Graf podľa {by}",
+  "compose.shows.figure": "Číslo",
+  "compose.shows.ask": "Napísal z toho mozog",
+  "compose.shows.section": "Oddiel „{section}“"
 }

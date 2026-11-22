@@ -59,5 +59,11 @@
   "compose.drawn": "להציג כשרטוט",
   "compose.map": "קישורים",
   "compose.out": "גרסה {n} יצאה",
-  "compose.unused": "שום דבר לא משתמש בזה"
+  "compose.unused": "שום דבר לא משתמש בזה",
+  "compose.shows.table": "טבלה, כל העמודות",
+  "compose.shows.columns": "טבלה: {columns}",
+  "compose.shows.chart": "תרשים לפי {by}",
+  "compose.shows.figure": "מספר",
+  "compose.shows.ask": "נכתב ממנו על ידי מוח",
+  "compose.shows.section": "סעיף „{section}”"
 }

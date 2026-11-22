@@ -59,5 +59,11 @@
   "compose.drawn": "Diskouez anezho treset",
   "compose.map": "Liammoù",
   "compose.out": "Embannet eo ar stumm {n}",
-  "compose.unused": "N’eo implijet gant netra"
+  "compose.unused": "N’eo implijet gant netra",
+  "compose.shows.table": "Taolenn, an holl vannoù",
+  "compose.shows.columns": "Taolenn: {columns}",
+  "compose.shows.chart": "Diervad dre {by}",
+  "compose.shows.figure": "Niver",
+  "compose.shows.ask": "Skrivet diwar-se gant un empenn",
+  "compose.shows.section": "Rann “{section}”"
 }

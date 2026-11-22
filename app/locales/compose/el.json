@@ -59,5 +59,11 @@
   "compose.drawn": "Δείξε τις σε σχέδιο",
   "compose.map": "Συνδέσεις",
   "compose.out": "Βγήκε η έκδοση {n}",
-  "compose.unused": "Δεν χρησιμοποιείται πουθενά"
+  "compose.unused": "Δεν χρησιμοποιείται πουθενά",
+  "compose.shows.table": "Πίνακας, όλες οι στήλες",
+  "compose.shows.columns": "Πίνακας: {columns}",
+  "compose.shows.chart": "Γράφημα ανά {by}",
+  "compose.shows.figure": "Αριθμός",
+  "compose.shows.ask": "Γραμμένο από εγκέφαλο με βάση αυτήν",
+  "compose.shows.section": "Ενότητα «{section}»"
 }

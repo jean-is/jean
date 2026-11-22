@@ -59,5 +59,11 @@
   "compose.drawn": "Vis dem tegnet",
   "compose.map": "Forbindelser",
   "compose.out": "Version {n} er ude",
-  "compose.unused": "Bruges ikke af noget"
+  "compose.unused": "Bruges ikke af noget",
+  "compose.shows.table": "Tabel, alle kolonner",
+  "compose.shows.columns": "Tabel: {columns}",
+  "compose.shows.chart": "Diagram efter {by}",
+  "compose.shows.figure": "Tal",
+  "compose.shows.ask": "Skrevet ud fra den af en hjerne",
+  "compose.shows.section": "Afsnit “{section}”"
 }

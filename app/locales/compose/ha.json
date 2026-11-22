@@ -59,5 +59,11 @@
   "compose.drawn": "Nuna su a zane",
   "compose.map": "Haɗi",
   "compose.out": "Siga ta {n} ta fito",
-  "compose.unused": "Babu abin da ke amfani da shi"
+  "compose.unused": "Babu abin da ke amfani da shi",
+  "compose.shows.table": "Tebur, dukkan ginshiƙai",
+  "compose.shows.columns": "Tebur: {columns}",
+  "compose.shows.chart": "Jadawali bisa {by}",
+  "compose.shows.figure": "Lamba",
+  "compose.shows.ask": "Abin da ƙwaƙwalwa ta rubuta daga gare shi",
+  "compose.shows.section": "Sashe “{section}”"
 }

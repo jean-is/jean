@@ -59,5 +59,11 @@
   "compose.drawn": "வரைபடமாகக் காட்டு",
   "compose.map": "இணைப்புகள்",
   "compose.out": "பதிப்பு {n} வந்துவிட்டது",
-  "compose.unused": "எங்கும் பயன்படவில்லை"
+  "compose.unused": "எங்கும் பயன்படவில்லை",
+  "compose.shows.table": "அட்டவணை, எல்லா நெடுவரிசைகளும்",
+  "compose.shows.columns": "அட்டவணை: {columns}",
+  "compose.shows.chart": "{by} வாரியான விளக்கப்படம்",
+  "compose.shows.figure": "எண்ணிக்கை",
+  "compose.shows.ask": "இதிலிருந்து ஒரு மூளை எழுதியது",
+  "compose.shows.section": "பகுதி “{section}”"
 }

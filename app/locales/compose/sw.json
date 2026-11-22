@@ -59,5 +59,11 @@
   "compose.drawn": "Vionyeshe kwa mchoro",
   "compose.map": "Viungo",
   "compose.out": "Toleo la {n} limetoka",
-  "compose.unused": "Haitumiki popote"
+  "compose.unused": "Haitumiki popote",
+  "compose.shows.table": "Jedwali, safu zote",
+  "compose.shows.columns": "Jedwali: {columns}",
+  "compose.shows.chart": "Chati kwa {by}",
+  "compose.shows.figure": "Tarakimu",
+  "compose.shows.ask": "Kilichoandikwa na ubongo kutokana nayo",
+  "compose.shows.section": "Sehemu “{section}”"
 }

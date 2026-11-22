@@ -59,5 +59,11 @@
   "compose.drawn": "Näytä piirroksena",
   "compose.map": "Yhteydet",
   "compose.out": "Versio {n} on julkaistu",
-  "compose.unused": "Ei käytössä missään"
+  "compose.unused": "Ei käytössä missään",
+  "compose.shows.table": "Taulukko, kaikki sarakkeet",
+  "compose.shows.columns": "Taulukko: {columns}",
+  "compose.shows.chart": "Kaavio sarakkeen {by} mukaan",
+  "compose.shows.figure": "Luku",
+  "compose.shows.ask": "Aivon siitä kirjoittama",
+  "compose.shows.section": "Osio ”{section}”"
 }

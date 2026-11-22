@@ -59,5 +59,11 @@
   "compose.drawn": "చిత్రంగా చూపించు",
   "compose.map": "లింకులు",
   "compose.out": "వెర్షన్ {n} వచ్చింది",
-  "compose.unused": "ఎక్కడా ఉపయోగించబడలేదు"
+  "compose.unused": "ఎక్కడా ఉపయోగించబడలేదు",
+  "compose.shows.table": "పట్టిక, అన్ని కాలమ్‌లు",
+  "compose.shows.columns": "పట్టిక: {columns}",
+  "compose.shows.chart": "{by} వారీగా చార్ట్",
+  "compose.shows.figure": "సంఖ్య",
+  "compose.shows.ask": "దీని నుంచి ఒక మెదడు రాసినది",
+  "compose.shows.section": "విభాగం “{section}”"
 }

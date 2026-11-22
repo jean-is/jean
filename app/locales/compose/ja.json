@@ -59,5 +59,11 @@
   "compose.drawn": "図で見る",
   "compose.map": "つながり",
   "compose.out": "バージョン {n} が出ています",
-  "compose.unused": "どこにも使われていません"
+  "compose.unused": "どこにも使われていません",
+  "compose.shows.table": "表（すべての列）",
+  "compose.shows.columns": "表：{columns}",
+  "compose.shows.chart": "{by}別のグラフ",
+  "compose.shows.figure": "数値",
+  "compose.shows.ask": "頭脳がここから書いたもの",
+  "compose.shows.section": "節「{section}」"
 }

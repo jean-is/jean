@@ -59,5 +59,11 @@
   "compose.drawn": "اعرض الروابط مرسومة",
   "compose.map": "الروابط",
   "compose.out": "صدر الإصدار {n}",
-  "compose.unused": "لا يستخدمه شيء"
+  "compose.unused": "لا يستخدمه شيء",
+  "compose.shows.table": "جدول، كل الأعمدة",
+  "compose.shows.columns": "جدول: {columns}",
+  "compose.shows.chart": "مخطط حسب {by}",
+  "compose.shows.figure": "رقم",
+  "compose.shows.ask": "ما يكتبه عقل منه",
+  "compose.shows.section": "القسم «{section}»"
 }

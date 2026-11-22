@@ -59,5 +59,11 @@
   "compose.drawn": "Kubonise njengomdwebo",
   "compose.map": "Izixhumanisi",
   "compose.out": "Inguqulo {n} isiphumile",
-  "compose.unused": "Akukho okukusebenzisayo"
+  "compose.unused": "Akukho okukusebenzisayo",
+  "compose.shows.table": "Ithebula, onke amakholomu",
+  "compose.shows.columns": "Ithebula: {columns}",
+  "compose.shows.chart": "Ishadi ngokwe-{by}",
+  "compose.shows.figure": "Inani",
+  "compose.shows.ask": "Okubhalwe ingqondo ngakho",
+  "compose.shows.section": "Ingxenye “{section}”"
 }

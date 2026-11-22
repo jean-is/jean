@@ -59,5 +59,11 @@
   "compose.drawn": "Gosi ha dị ka eserese",
   "compose.map": "Njikọ",
   "compose.out": "Mbipụta {n} apụtala",
-  "compose.unused": "Ọ dịghị ihe na-eji ya"
+  "compose.unused": "Ọ dịghị ihe na-eji ya",
+  "compose.shows.table": "Tebụl, kọlụm niile",
+  "compose.shows.columns": "Tebụl: {columns}",
+  "compose.shows.chart": "Chaatị site na {by}",
+  "compose.shows.figure": "Ọnụọgụ",
+  "compose.shows.ask": "Ihe ụbụrụ dere site na ya",
+  "compose.shows.section": "Ngalaba “{section}”"
 }

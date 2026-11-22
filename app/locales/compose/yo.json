@@ -59,5 +59,11 @@
   "compose.drawn": "Fi wọ́n hàn bí àwòrán",
   "compose.map": "Ìsopọ̀",
   "compose.out": "Ẹ̀dà {n} ti jáde",
-  "compose.unused": "Kò sí ohun tó ń lò ó"
+  "compose.unused": "Kò sí ohun tó ń lò ó",
+  "compose.shows.table": "Tábìlì, gbogbo òpó",
+  "compose.shows.columns": "Tábìlì: {columns}",
+  "compose.shows.chart": "Àwòrán ìṣirò nípa {by}",
+  "compose.shows.figure": "Nọ́ńbà",
+  "compose.shows.ask": "Ohun tí ọpọlọ kọ láti inú rẹ̀",
+  "compose.shows.section": "Apá “{section}”"
 }

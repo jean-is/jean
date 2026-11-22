@@ -59,5 +59,11 @@
   "compose.drawn": "Tampilkan sebagai gambar",
   "compose.map": "Tautan",
   "compose.out": "Versi {n} sudah terbit",
-  "compose.unused": "Tidak dipakai di mana pun"
+  "compose.unused": "Tidak dipakai di mana pun",
+  "compose.shows.table": "Tabel, semua kolom",
+  "compose.shows.columns": "Tabel: {columns}",
+  "compose.shows.chart": "Bagan menurut {by}",
+  "compose.shows.figure": "Angka",
+  "compose.shows.ask": "Ditulis otak dari sini",
+  "compose.shows.section": "Bagian “{section}”"
 }

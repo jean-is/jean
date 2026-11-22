@@ -59,5 +59,11 @@
   "compose.drawn": "แสดงเป็นภาพ",
   "compose.map": "การเชื่อมโยง",
   "compose.out": "เวอร์ชัน {n} ออกแล้ว",
-  "compose.unused": "ไม่มีอะไรใช้"
+  "compose.unused": "ไม่มีอะไรใช้",
+  "compose.shows.table": "ตาราง ทุกคอลัมน์",
+  "compose.shows.columns": "ตาราง: {columns}",
+  "compose.shows.chart": "แผนภูมิตาม {by}",
+  "compose.shows.figure": "ตัวเลข",
+  "compose.shows.ask": "สิ่งที่สมองเขียนจากข้อมูลนี้",
+  "compose.shows.section": "ส่วน “{section}”"
 }

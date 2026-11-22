@@ -59,5 +59,11 @@
   "compose.drawn": "चित्ररूपात दाखवा",
   "compose.map": "जोडण्या",
   "compose.out": "आवृत्ती {n} आली आहे",
-  "compose.unused": "कुठेही वापरले जात नाही"
+  "compose.unused": "कुठेही वापरले जात नाही",
+  "compose.shows.table": "तक्ता, सर्व स्तंभ",
+  "compose.shows.columns": "तक्ता: {columns}",
+  "compose.shows.chart": "{by} नुसार आलेख",
+  "compose.shows.figure": "आकडा",
+  "compose.shows.ask": "त्यावरून मेंदूने लिहिलेले",
+  "compose.shows.section": "विभाग “{section}”"
 }

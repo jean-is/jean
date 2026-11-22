@@ -59,5 +59,11 @@
   "compose.drawn": "ચિત્રરૂપે બતાવો",
   "compose.map": "કડીઓ",
   "compose.out": "વર્ઝન {n} આવી ગયું છે",
-  "compose.unused": "ક્યાંય વપરાતું નથી"
+  "compose.unused": "ક્યાંય વપરાતું નથી",
+  "compose.shows.table": "કોષ્ટક, બધા કૉલમ",
+  "compose.shows.columns": "કોષ્ટક: {columns}",
+  "compose.shows.chart": "{by} મુજબ ચાર્ટ",
+  "compose.shows.figure": "આંકડો",
+  "compose.shows.ask": "તેના પરથી મગજે લખેલું",
+  "compose.shows.section": "વિભાગ “{section}”"
 }

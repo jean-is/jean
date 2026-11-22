@@ -59,5 +59,11 @@
   "compose.drawn": "See them drawn",
   "compose.map": "Links",
   "compose.out": "Version {n} is out",
-  "compose.unused": "Used by nothing"
+  "compose.unused": "Used by nothing",
+  "compose.shows.table": "Table, all columns",
+  "compose.shows.columns": "Table: {columns}",
+  "compose.shows.chart": "Chart by {by}",
+  "compose.shows.figure": "Figure",
+  "compose.shows.ask": "Written from it by a brain",
+  "compose.shows.section": "Section “{section}”"
 }

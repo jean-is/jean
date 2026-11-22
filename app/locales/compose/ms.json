@@ -59,5 +59,11 @@
   "compose.drawn": "Tunjukkan sebagai lukisan",
   "compose.map": "Pautan",
   "compose.out": "Versi {n} sudah diterbitkan",
-  "compose.unused": "Tidak digunakan di mana-mana"
+  "compose.unused": "Tidak digunakan di mana-mana",
+  "compose.shows.table": "Jadual, semua lajur",
+  "compose.shows.columns": "Jadual: {columns}",
+  "compose.shows.chart": "Carta mengikut {by}",
+  "compose.shows.figure": "Angka",
+  "compose.shows.ask": "Ditulis otak daripadanya",
+  "compose.shows.section": "Bahagian “{section}”"
 }

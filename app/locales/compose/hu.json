@@ -59,5 +59,11 @@
   "compose.drawn": "Mutasd rajzban",
   "compose.map": "Kapcsolatok",
   "compose.out": "Megjelent a(z) {n}. verzió",
-  "compose.unused": "Semmi sem használja"
+  "compose.unused": "Semmi sem használja",
+  "compose.shows.table": "Táblázat, minden oszlop",
+  "compose.shows.columns": "Táblázat: {columns}",
+  "compose.shows.chart": "Diagram {by} szerint",
+  "compose.shows.figure": "Szám",
+  "compose.shows.ask": "Egy agy írta belőle",
+  "compose.shows.section": "„{section}” szakasz"
 }

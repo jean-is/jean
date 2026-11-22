@@ -59,5 +59,11 @@
   "compose.drawn": "Fakkiidhaan agarsiisi",
   "compose.map": "Walitti hidhamiinsa",
   "compose.out": "Veershiniin {n} ba’eera",
-  "compose.unused": "Wanti itti fayyadamu hin jiru"
+  "compose.unused": "Wanti itti fayyadamu hin jiru",
+  "compose.shows.table": "Gabatee, utuboota hunda",
+  "compose.shows.columns": "Gabatee: {columns}",
+  "compose.shows.chart": "Chaartii {by}n",
+  "compose.shows.figure": "Lakkoofsa",
+  "compose.shows.ask": "Kan sammuun irraa barreesse",
+  "compose.shows.section": "Kutaa “{section}”"
 }

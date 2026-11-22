@@ -59,5 +59,11 @@
   "compose.drawn": "تصویر کی صورت دکھائیں",
   "compose.map": "روابط",
   "compose.out": "ورژن {n} آ گیا ہے",
-  "compose.unused": "کہیں استعمال نہیں"
+  "compose.unused": "کہیں استعمال نہیں",
+  "compose.shows.table": "جدول، سبھی کالم",
+  "compose.shows.columns": "جدول: {columns}",
+  "compose.shows.chart": "{by} کے لحاظ سے چارٹ",
+  "compose.shows.figure": "عدد",
+  "compose.shows.ask": "اس سے کسی دماغ کا لکھا",
+  "compose.shows.section": "حصہ “{section}”"
 }

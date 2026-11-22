@@ -59,5 +59,11 @@
   "compose.drawn": "Mustralli disegnati",
   "compose.map": "Ligami",
   "compose.out": "Hè surtita a versione {n}",
-  "compose.unused": "Nunda ùn l’adupra"
+  "compose.unused": "Nunda ùn l’adupra",
+  "compose.shows.table": "Tavula, tutte e culonne",
+  "compose.shows.columns": "Tavula: {columns}",
+  "compose.shows.chart": "Graficu per {by}",
+  "compose.shows.figure": "Cifra",
+  "compose.shows.ask": "Scrittu da un cervellu à partesi da quessa",
+  "compose.shows.section": "Sezzione «{section}»"
 }

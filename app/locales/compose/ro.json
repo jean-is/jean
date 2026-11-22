@@ -59,5 +59,11 @@
   "compose.drawn": "Arată-le desenate",
   "compose.map": "Legături",
   "compose.out": "A apărut versiunea {n}",
-  "compose.unused": "Fără nicio utilizare"
+  "compose.unused": "Fără nicio utilizare",
+  "compose.shows.table": "Tabel, toate coloanele",
+  "compose.shows.columns": "Tabel: {columns}",
+  "compose.shows.chart": "Grafic după {by}",
+  "compose.shows.figure": "Cifră",
+  "compose.shows.ask": "Scris de un creier pornind de aici",
+  "compose.shows.section": "Secțiunea „{section}”"
 }

@@ -59,5 +59,11 @@
   "compose.drawn": "Mostrali disegnati",
   "compose.map": "Collegamenti",
   "compose.out": "È uscita la versione {n}",
-  "compose.unused": "Nessun utilizzo"
+  "compose.unused": "Nessun utilizzo",
+  "compose.shows.table": "Tabella, tutte le colonne",
+  "compose.shows.columns": "Tabella: {columns}",
+  "compose.shows.chart": "Grafico per {by}",
+  "compose.shows.figure": "Cifra",
+  "compose.shows.ask": "Scritto da un cervello a partire da qui",
+  "compose.shows.section": "Sezione «{section}»"
 }

@@ -59,5 +59,11 @@
   "compose.drawn": "Mostrá-las desenhadas",
   "compose.map": "Ligações",
   "compose.out": "Já saiu a versão {n}",
-  "compose.unused": "Sem uso"
+  "compose.unused": "Sem uso",
+  "compose.shows.table": "Tabela, todas as colunas",
+  "compose.shows.columns": "Tabela: {columns}",
+  "compose.shows.chart": "Gráfico por {by}",
+  "compose.shows.figure": "Número",
+  "compose.shows.ask": "Escrito por um cérebro a partir dela",
+  "compose.shows.section": "Secção «{section}»"
 }

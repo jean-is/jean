@@ -59,5 +59,11 @@
   "compose.drawn": "그림으로 보기",
   "compose.map": "연결",
   "compose.out": "버전 {n}이(가) 나왔습니다",
-  "compose.unused": "사용되는 곳 없음"
+  "compose.unused": "사용되는 곳 없음",
+  "compose.shows.table": "표, 모든 열",
+  "compose.shows.columns": "표: {columns}",
+  "compose.shows.chart": "{by}별 차트",
+  "compose.shows.figure": "수치",
+  "compose.shows.ask": "두뇌가 이를 바탕으로 쓴 글",
+  "compose.shows.section": "섹션 ‘{section}’"
 }

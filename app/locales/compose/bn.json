@@ -59,5 +59,11 @@
   "compose.drawn": "আঁকা অবস্থায় দেখাও",
   "compose.map": "সংযোগ",
   "compose.out": "সংস্করণ {n} এসেছে",
-  "compose.unused": "কোথাও ব্যবহৃত নয়"
+  "compose.unused": "কোথাও ব্যবহৃত নয়",
+  "compose.shows.table": "সারণি, সব কলাম",
+  "compose.shows.columns": "সারণি: {columns}",
+  "compose.shows.chart": "{by} অনুযায়ী চার্ট",
+  "compose.shows.figure": "সংখ্যা",
+  "compose.shows.ask": "এ থেকে একটি মস্তিষ্কের লেখা",
+  "compose.shows.section": "অংশ “{section}”"
 }

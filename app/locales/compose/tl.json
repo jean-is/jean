@@ -59,5 +59,11 @@
   "compose.drawn": "Ipakita bilang guhit",
   "compose.map": "Mga ugnay",
   "compose.out": "Lumabas na ang bersyon {n}",
-  "compose.unused": "Walang gumagamit"
+  "compose.unused": "Walang gumagamit",
+  "compose.shows.table": "Talahanayan, lahat ng kolum",
+  "compose.shows.columns": "Talahanayan: {columns}",
+  "compose.shows.chart": "Tsart ayon sa {by}",
+  "compose.shows.figure": "Bilang",
+  "compose.shows.ask": "Isinulat ng isang utak mula rito",
+  "compose.shows.section": "Seksiyong “{section}”"
 }

@@ -59,5 +59,11 @@
   "compose.drawn": "Delineatos ostende",
   "compose.map": "Nexus",
   "compose.out": "Versio {n} edita est",
-  "compose.unused": "Nihil eo utitur"
+  "compose.unused": "Nihil eo utitur",
+  "compose.shows.table": "Tabula, omnes columnae",
+  "compose.shows.columns": "Tabula: {columns}",
+  "compose.shows.chart": "Diagramma per {by}",
+  "compose.shows.figure": "Numerus",
+  "compose.shows.ask": "Ab cerebro inde scriptum",
+  "compose.shows.section": "Pars «{section}»"
 }

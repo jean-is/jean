@@ -59,5 +59,11 @@
   "compose.drawn": "ပုံဖြင့် ပြပါ",
   "compose.map": "ချိတ်ဆက်မှုများ",
   "compose.out": "ဗားရှင်း {n} ထွက်ပြီ",
-  "compose.unused": "မည်သည့်နေရာတွင်မျှ အသုံးမပြုပါ"
+  "compose.unused": "မည်သည့်နေရာတွင်မျှ အသုံးမပြုပါ",
+  "compose.shows.table": "ဇယား၊ ကော်လံအားလုံး",
+  "compose.shows.columns": "ဇယား- {columns}",
+  "compose.shows.chart": "{by} အလိုက် ဇယားကွက်",
+  "compose.shows.figure": "ကိန်းဂဏန်း",
+  "compose.shows.ask": "၎င်းမှ ဦးနှောက်က ရေးသားထားသည်",
+  "compose.shows.section": "အပိုင်း “{section}”"
 }
