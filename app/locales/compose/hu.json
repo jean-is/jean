@@ -55,5 +55,6 @@
   "compose.kit": "Arculat",
   "compose.kit.certified": "Hitelesítve, az arculat {n}. verziójáig",
   "compose.kit.worn": "Ezt viselik: {names}",
-  "compose.linkingAll": "Megnézem, hogyan kapcsolódnak a projekt alkotásai"
+  "compose.linkingAll": "Megnézem, hogyan kapcsolódnak a projekt alkotásai",
+  "compose.drawn": "Mutasd rajzban"
 }

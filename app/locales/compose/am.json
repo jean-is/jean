@@ -55,5 +55,6 @@
   "compose.kit": "የንድፍ ሥርዓት",
   "compose.kit.certified": "የተረጋገጠ፣ እስከ የንድፍ ሥርዓቱ ስሪት {n} ድረስ",
   "compose.kit.worn": "የሚለብሱት፦ {names}",
-  "compose.linkingAll": "የዚህ ፕሮጀክት ፈጠራዎች እንዴት እንደተሳሰሩ በመመልከት ላይ"
+  "compose.linkingAll": "የዚህ ፕሮጀክት ፈጠራዎች እንዴት እንደተሳሰሩ በመመልከት ላይ",
+  "compose.drawn": "በሥዕል አሳይ"
 }

@@ -55,5 +55,6 @@
   "compose.kit": "Suunnittelujärjestelmä",
   "compose.kit.certified": "Varmennettu suunnittelujärjestelmän versioon {n} asti",
   "compose.kit.worn": "Käytössä: {names}",
-  "compose.linkingAll": "Katsotaan, miten tämän projektin luomukset liittyvät toisiinsa"
+  "compose.linkingAll": "Katsotaan, miten tämän projektin luomukset liittyvät toisiinsa",
+  "compose.drawn": "Näytä piirroksena"
 }

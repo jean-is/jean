@@ -55,5 +55,6 @@
   "compose.kit": "디자인 시스템",
   "compose.kit.certified": "디자인 시스템 버전 {n}까지 인증됨",
   "compose.kit.worn": "사용 중: {names}",
-  "compose.linkingAll": "이 프로젝트의 창작물이 어떻게 연결되는지 확인 중"
+  "compose.linkingAll": "이 프로젝트의 창작물이 어떻게 연결되는지 확인 중",
+  "compose.drawn": "그림으로 보기"
 }

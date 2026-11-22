@@ -423,6 +423,20 @@ async function linksOf(uri) {
 
 /** A creation's glyph, by its folder. */
 const KIND = /** @type {Record<string, unknown>} */ ({ conversations: icons.task, collections: icons.table, decks: icons.slides, documents: icons.note, sites: icons.code, prototypes: icons.code, games: icons.play, designs: icons.palette, [KIT]: icons.palette, routines: icons.sync })
+/** A creation opened from the graph, as its kind opens: the design system's page or the routines' in Settings, a task, else beside the task. @param {string} place @param {string} name */
+const opening = (place, name) => (place === KIT || ROUTINE.test(place) ? import('../../ui/dialogs.js').then(({ openSettings }) => openSettings(ROUTINE.test(place) ? 'routines' : app.project.peek().data.default === true ? 'appearance/kit' : 'appearance/kit-project')) : place.startsWith('conversations/') ? openConversation(`${app.projectDir}/${place}`) : openFile({ type: 'resource_link', uri: place, name }))
+/**
+ * What the map draws (./map.js): the creations that references, relations and forms link, by their places so that the same graph is laid out the same, those
+ * about `here` alone when it names one (what it uses and what uses it, as far as they go); each by its name and glyph, a consumer with the versions it reads.
+ * @param {string} dir @param {string} [here] @returns {Promise<import('./map.js').Drawing>}
+ */
+async function drawingOf(dir, here = '') {
+  const { edges: all, names } = await graph(dir), edges = all.filter((edge) => edge.kind !== 'file' && edge.kind !== 'kit' && names.has(edge.from) && names.has(edge.to))
+  const near = here && new Set([here, ...edges.flatMap((edge) => (edge.from === here ? [edge.to] : edge.to === here ? [edge.from] : [])), ...[...further(edges, here, true), ...further(edges, here, false)].map(([one]) => one)])
+  const places = [...new Set(edges.flatMap((edge) => [edge.from, edge.to]))].filter((place) => !near || near.has(place)).sort(), drawn = edges.filter((edge) => places.includes(edge.from) && places.includes(edge.to))
+  return { places, edges: drawn, here, name: (place) => names.get(place) ?? place, glyph: (place) => KIND[place.split('/')[0]] ?? icons.layers, open: (place) => opening(place, names.get(place) ?? place),
+    said: (place) => [...new Set(drawn.filter((edge) => edge.from === place && !edge.kind).map((edge) => (place.startsWith('conversations/') && edge.at === 'live' ? t('compose.answer') : which(edge.at))))] }
+}
 /** The reference whose settings the links menu shows, as its consumer's place and its index there; the list while it is empty. */
 const deep = signal('')
 /** Sources' part of a collection's links menu, fetched as the first collection's opens. @type {typeof import('../sources/sources.js') | undefined} */
@@ -439,7 +453,7 @@ function head({ uri }) {
   if (!checked.has(uri) && !asking.has(uri)) void within(uri)
   if (!inside.value.get(uri)) return nothing
   const id = `links-${uri}`, these = links.value.get(uri), date = new Intl.DateTimeFormat(intlLocales(locale.value), { dateStyle: 'medium', timeStyle: 'short' }), name = (/** @type {string} */ place) => these?.names.get(place) ?? place
-  const open = (/** @type {string} */ place, /** @type {unknown} */ value = nothing) => html`<button type="button" popovertarget=${id} popovertargetaction="hide" @click=${() => (place === KIT || ROUTINE.test(place) ? import('../../ui/dialogs.js').then(({ openSettings }) => openSettings(ROUTINE.test(place) ? 'routines' : app.project.peek().data.default === true ? 'appearance/kit' : 'appearance/kit-project')) : place.startsWith('conversations/') ? openConversation(`${app.projectDir}/${place}`) : openFile({ type: 'resource_link', uri: place, name: name(place) }))}>${KIND[place.split('/')[0]] ?? icons.layers}<span dir="auto">${name(place)}</span>${value}</button>`
+  const open = (/** @type {string} */ place, /** @type {unknown} */ value = nothing) => html`<button type="button" popovertarget=${id} popovertargetaction="hide" @click=${() => opening(place, name(place))}>${KIND[place.split('/')[0]] ?? icons.layers}<span dir="auto">${name(place)}</span>${value}</button>`
   const group = (/** @type {string} */ key, /** @type {unknown[]} */ rows) => (rows.length ? html`<div role="group" aria-label=${t(key)}><p class="menu-heading" aria-hidden="true">${t(key)}</p><ul>${rows}</ul></div>` : nothing)
   /** A line under the row it is about. @param {string} words @param {string} [role] */
   const said = (words, role) => html`<p class="links-said" role=${role ?? nothing}>${words}</p>`
@@ -464,6 +478,7 @@ function head({ uri }) {
   const list = these && html`${group('compose.usedIn', these.usedIn.map((one) => html`<li>${open(one.from, beside(one))}</li>`))}
     ${group('compose.uses', these.uses.map((one) => (one.kind && one.kind !== 'kit' ? html`<li>${open(one.to, beside(one))}</li>` : html`<li><button type="button" class="submenu" @click=${() => go(`${uri} ${one.index}`)}>${KIND[one.to.split('/')[0]]}<span dir="auto">${name(one.to)}</span>${beside(one)}${icons.chevron}</button></li>`)))}
     ${group('compose.further', these.further.map(([place, via]) => html`<li>${open(place, html`<span class="menu-value" dir="auto">${t('compose.through', { name: name(via) })}</span>`)}</li>`))}
+    ${these.further.length ? html`<ul><li><button type="button" popovertarget=${id} popovertargetaction="hide" @click=${() => Promise.all([drawingOf(app.projectDir, uri), import('./map.js')]).then(([drawing, map]) => map.sheet(name(uri), drawing))}>${icons.graph}<span>${t('compose.drawn')}</span></button></li></ul>` : nothing}
     ${these.fed && fed ? fed.linked(uri, id) : nothing}${versions}`
   // Keyed by its place: a pane that shows another creation draws its menu anew, closed; closed, it opens on its list again.
   return keyed(uri, html`<button class="icon-button" popovertarget=${id} aria-label=${t('compose.links')}>${icons.graph}</button>

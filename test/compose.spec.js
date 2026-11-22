@@ -911,3 +911,61 @@ test('the graph whole, in words: every creation that uses another, the version e
   // Of the artisans alone, the directory is among what uses them, by its form too; deleted from Creations, they would say so with their Undo.
   expect(await links(page, COLLECTION)).toContain(`Directory (${DIRECTORY}), proposing rows to it through its form propose`)
 })
+
+/** The artisans' links menu opened from their pane, then its row that draws them. @param {import('@playwright/test').Page} page @param {string} drawn its row's words */
+async function drawMap(page, drawn) {
+  await show(page, COLLECTION, 'Artisans')
+  await expect(async () => {
+    if (!(await page.locator('.menu:popover-open').count())) await page.locator('app-preview .pane-head button[popovertarget^="links-"]').click()
+    await page.locator('.menu:popover-open').getByRole('button', { name: drawn }).click({ timeout: 2000 })
+  }).toPass()
+  return page.locator('dialog.links-sheet[open] app-links-map')
+}
+/** A map's columns, each its creations' names. @param {import('@playwright/test').Locator} map */
+const columnsOf = (map) => map.locator('.links-columns > ul').evaluateAll((lists) => lists.map((list) => [...list.querySelectorAll('button > span')].map((name) => name.textContent)))
+
+test('one creation’s map: what it uses at the start, it, what uses it further along, a column further what is reached through those, each with the version it reads; the arrows walk its links', async ({ page }) => {
+  await start(page)
+  await project(page)
+  const map = await drawMap(page, 'See them drawn')
+  await expect(page.locator('dialog.links-sheet[open] h2')).toHaveText('Artisans')
+  await expect.poll(() => columnsOf(map)).toEqual([['Artisans', 'Orders'], ['Neighbourhood', 'Board', 'Report', 'Directory'], ['Members']])
+  await expect(map.locator('li.is-here')).toHaveText('Artisans')
+  await expect(map.getByRole('button', { name: /Board/ })).toContainText('Version 1')
+  await expect(map.getByRole('button', { name: /Neighbourhood/ })).toContainText('Live')
+  // Each line drawn, the form's dashed from the directory to the artisans, the relation dashed with no arrow.
+  await expect.poll(() => map.locator('.links-lines path[data-from][d]').count()).toBe(7)
+  await expect(map.locator(`.links-lines path[data-from="${DIRECTORY}"][data-to="${COLLECTION}"]`)).toHaveClass('is-dashed')
+  await expect(map.locator(`.links-lines path[data-from="${COLLECTION}"][data-to="${ORDERS}"]`)).not.toHaveAttribute('marker-end')
+  // The keyboard on the artisans lights their chain; along a link to what uses them, back, and down their column.
+  await map.getByRole('button', { name: /Artisans/ }).focus()
+  await expect(map).toHaveAttribute('data-chain', '')
+  await page.keyboard.press('ArrowRight')
+  await expect(map.locator('.links-columns > ul').nth(1).locator('button:focus')).toHaveCount(1)
+  await page.keyboard.press('ArrowLeft')
+  await expect(map.getByRole('button', { name: /Artisans/ })).toBeFocused()
+  await page.keyboard.press('ArrowDown')
+  await expect(map.getByRole('button', { name: /Orders/ })).toBeFocused()
+  // The members pointed at: the report and the artisans lit with them, the board soft.
+  await map.getByRole('button', { name: /Members/ }).hover()
+  await expect(map.locator('li.is-chain')).toHaveText([/Artisans/, /Report/, /Members/])
+  // Pressed, one opens beside the task, the sheet closing.
+  await map.getByRole('button', { name: /Report/ }).click()
+  await expect(page.locator('dialog.links-sheet')).toHaveCount(0)
+  await expect(page.locator('app-preview .pane-head')).toContainText('Report')
+})
+
+for (const [lang, drawn] of [['ar', 'اعرض الروابط مرسومة'], ['ja', '図で見る']]) {
+  test(`one creation’s map turns with the page and fits at 320 px wide, in ${lang}`, async ({ page }) => {
+    await start(page, lang)
+    await project(page)
+    const map = await drawMap(page, drawn), first = map.locator('.links-columns > ul').first(), next = map.locator('.links-columns > ul').nth(1)
+    await expect.poll(() => map.locator('.links-lines path[data-from][d]').count()).toBe(7)
+    const [a, b] = [await first.boundingBox(), await next.boundingBox()]
+    expect(lang === 'ar' ? (a?.x ?? 0) > (b?.x ?? 0) : (a?.x ?? 0) < (b?.x ?? 0)).toBe(true)
+    // Narrow, its columns stack, the start at the top, and no name is cut.
+    await page.setViewportSize({ width: 320, height: 800 })
+    await expect.poll(async () => ((await next.boundingBox())?.y ?? 0) > ((await first.boundingBox())?.y ?? 0)).toBe(true)
+    expect(await map.locator('button').evaluateAll((buttons) => buttons.filter((one) => one.scrollWidth > one.clientWidth + 1 || one.getBoundingClientRect().right > innerWidth || one.getBoundingClientRect().left < 0).length)).toBe(0)
+  })
+}

@@ -55,5 +55,6 @@
   "compose.kit": "Tasarım sistemi",
   "compose.kit.certified": "Tasarım sisteminin {n}. sürümüne kadar onaylı",
   "compose.kit.worn": "Kullananlar: {names}",
-  "compose.linkingAll": "Bu projedeki oluşturulanların nasıl bağlandığına bakılıyor"
+  "compose.linkingAll": "Bu projedeki oluşturulanların nasıl bağlandığına bakılıyor",
+  "compose.drawn": "Çizim olarak göster"
 }

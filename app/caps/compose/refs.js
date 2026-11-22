@@ -114,6 +114,22 @@ export function further(edges, place, down) {
   return [...seen].filter(([, via]) => via)
 }
 
+/**
+ * The map's columns (D764): each creation by the longest way of references that reaches it from a source, sources first, a loop a file holds anyway cut
+ * where it closes, a relation or a form placing nothing; in each column, those linked to the columns before it by where what they link to stands, then
+ * the sources by what they feed, those that feed none last, and again, ties staying in the order they came, so that the same graph is laid out the same. @param {Edge[]} edges @param {string[]} places @returns {string[][]}
+ */
+export function layered(edges, places) {
+  const depth = /** @type {Map<string, number>} */ (new Map()), on = new Set(), columns = /** @type {string[][]} */ ([])
+  const deep = /** @type {(place: string) => number} */ ((place) => { if (depth.has(place) || on.has(place)) return depth.get(place) ?? -1; on.add(place); const d = Math.max(-1, ...edges.filter((edge) => !edge.kind && edge.from === place && places.includes(edge.to)).map((edge) => deep(edge.to))) + 1; on.delete(place); return depth.set(place, d), d })
+  for (const place of places) (columns[deep(place)] ??= []).push(place)
+  const near = (/** @type {string} */ place, /** @type {(d: number) => boolean} */ where) => edges.flatMap((edge) => (edge.from === place ? [edge.to] : edge.to === place ? [edge.from] : [])).filter((one) => depth.has(one) && where(Number(depth.get(one))))
+  const mean = (/** @type {string[]} */ ones) => (ones.length ? ones.reduce((sum, one) => sum + columns[Number(depth.get(one))].indexOf(one), 0) / ones.length : Infinity)
+  const order = (/** @type {number} */ c, /** @type {(d: number) => boolean} */ where) => { columns[c] = columns[c].map((place) => /** @type {[string, number]} */ ([place, mean(near(place, where))])).sort((a, b) => a[1] - b[1] || 0).map(([place]) => place) }
+  for (const pass of [0, 1]) { if (pass && columns.length > 1) order(0, (d) => d === 1); for (let c = 1; c < columns.length; c++) order(c, (d) => d < c) }
+  return columns
+}
+
 /** Whether a reference from `from` to `to` closes a loop: whether `from` is reached from `to`. @param {Edge[]} edges @param {string} from @param {string} to */
 export function loops(edges, from, to) {
   const seen = new Set(), next = [to]

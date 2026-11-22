@@ -3,7 +3,7 @@
 // asked at each resolution, and what a reference shows of a collection, read again from its journal.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { parseRef, placeOf, refsIn, withRef, filledPage, bare, formsTo, loops, refused, versionless, tableOf, chartOf, choiceIn, choicesIn, tinted, parseFigure, figureOf, written, linksIn, further, sectionOf, slugOf, withId, notesIn } from '../app/caps/compose/refs.js'
+import { parseRef, placeOf, refsIn, withRef, filledPage, bare, formsTo, loops, refused, versionless, tableOf, chartOf, choiceIn, choicesIn, tinted, parseFigure, figureOf, written, linksIn, further, layered, sectionOf, slugOf, withId, notesIn } from '../app/caps/compose/refs.js'
 import { filledWith } from '../app/caps/designs/layout.js'
 import { versionOf, loadedOf, headOf, reshaped, breaks, current } from '../app/caps/compose/versions.js'
 import { keyOf, paceOf, sorted, askOf, lastRun, due } from '../app/caps/compose/recipes.js'
@@ -128,6 +128,17 @@ test('what is reached further from a place goes as far as the graph does, each t
   assert.deepEqual(further(edges, 'artisans', true), [['deck', 'orders'], ['report', 'orders']], 'what uses what uses it')
   assert.deepEqual(further(edges, 'report', false), [['orders', 'deck'], ['artisans', 'deck']], 'what feeds what it uses')
   assert.deepEqual(further([edge('a', 'b')], 'b', true), [], 'nothing beyond its own links')
+})
+
+test('the map lays creations out by depth, sources first, each in its column beside what it links to, the same graph the same, a loop drawn all the same', () => {
+  const edge = (/** @type {string} */ from, /** @type {string} */ to, /** @type {any} */ kind) => ({ from, to, at: /** @type {const} */ ('live'), recipe: {}, index: 0, ...(kind && { kind }) })
+  const edges = [edge('deck', 'artisans'), edge('report', 'artisans'), edge('members', 'report'), edge('orders', 'artisans', 'relation'), edge('site', 'artisans', 'form')]
+  assert.deepEqual(layered(edges, ['artisans', 'deck', 'members', 'orders', 'report', 'site']), [['artisans', 'orders', 'site'], ['deck', 'report'], ['members']], 'by the longest way of references; a relation and a form place nothing')
+  assert.deepEqual(layered(edges, ['artisans', 'deck', 'members', 'orders', 'report', 'site']), layered(edges, ['artisans', 'deck', 'members', 'orders', 'report', 'site']), 'the same')
+  const crossed = [edge('first', 'one'), edge('second', 'two')]
+  assert.deepEqual(layered(crossed, ['one', 'two', 'second', 'first']), [['one', 'two'], ['first', 'second']], 'each beside what it reads, no line crossing')
+  assert.deepEqual(layered([edge('a', 'b'), edge('b', 'a')], ['a', 'b']).flat().sort(), ['a', 'b'], 'a loop a file holds anyway is drawn, cut where it closes')
+  assert.deepEqual(layered([edge('deck', 'gone')], ['deck']), [['deck']], 'a source not drawn places nothing')
 })
 
 test('what leaves Jean holds each reference as it shows: a block its rows’ table or its words, a figure its value, any other block as it was', async () => {

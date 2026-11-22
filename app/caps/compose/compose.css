@@ -11,3 +11,14 @@
 :is(.deck-slide, app-figure, .msg-jean .prose) code[data-formula] { padding: 0; background: none; font: inherit; } .deck-slide [contenteditable='true'] code[data-formula] { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.85em; }
 /* Under a collection's block in an answer: how many changes came since, and a way to see it as it is now. */
 .composed-since { margin: 0.35rem 0 0; color: var(--ink-soft); font-size: 0.85rem; }
+/* How creations link, drawn (./map.js): its columns side by side in the page's direction, stacked where the map is narrow, each creation a button over the lines; one pointed at lights its chain and the
+   rest goes soft, still read at AA; those a search left out go soft too. A sheet holds the map about one creation. */
+app-links-map { position: relative; display: block; container-type: inline-size; } .links-sheet { inline-size: min(100% - 2rem, 60rem); }
+.links-columns { position: relative; display: flex; align-items: center; gap: 3rem; padding-block: 0.5rem; padding-inline: 2.75rem 0; } .links-columns ul { display: flex; flex: 1 1 0; flex-direction: column; gap: 0.75rem; min-inline-size: 0; max-inline-size: 17rem; margin: 0; padding: 0; list-style: none; }
+app-links-map button { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 0.1rem 0.5rem; inline-size: 100%; padding: 0.55rem 0.75rem; border: 1px solid var(--line-strong); border-radius: 0.75rem; background: var(--room-2, var(--room)); color: inherit; font: inherit; text-align: start; cursor: pointer; }
+app-links-map button > span { font-weight: 600; overflow-wrap: anywhere; } app-links-map small { grid-column: 2; color: var(--ink-soft); font-size: 0.8rem; overflow-wrap: anywhere; } app-links-map small.is-alert { color: var(--danger); } app-links-map .is-here button { border: 2px solid var(--flame); }
+:is(app-links-map[data-chain] li:not(.is-chain), app-links-map li.is-dim) button { border-color: var(--line); background: none; color: var(--ink-soft); }
+.links-lines { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; overflow: visible; fill: none; stroke: oklch(from var(--ink) l c h / 0.4); stroke-width: 1.5; } .links-lines marker path { fill: oklch(from var(--ink) l c h / 0.5); stroke: none; } .links-lines .is-dashed { stroke-dasharray: 4 5; }
+app-links-map[data-chain] .links-lines path:not(.is-chain) { stroke-opacity: 0.35; } .links-lines path.is-chain { stroke: var(--flame); stroke-width: 2; }
+@container (inline-size < 34rem) { .links-columns { flex-direction: column; align-items: stretch; gap: 1.25rem; } .links-columns ul { max-inline-size: none; } }
+@media (forced-colors: active) { .links-lines, .links-lines path.is-chain { stroke: CanvasText; } .links-lines marker path { fill: CanvasText; } app-links-map .is-here button { border-color: Highlight; } }

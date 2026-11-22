@@ -55,5 +55,6 @@
   "compose.kit": "د ډیزاین سیسټم",
   "compose.kit.certified": "تصدیق شوی، د ډیزاین سیسټم تر {n} نسخې پورې",
   "compose.kit.worn": "اغوستونکي یې: {names}",
-  "compose.linkingAll": "ګورو چې د دې پروژې جوړونې څنګه سره تړلې دي"
+  "compose.linkingAll": "ګورو چې د دې پروژې جوړونې څنګه سره تړلې دي",
+  "compose.drawn": "د انځور په بڼه یې وښيه"
 }

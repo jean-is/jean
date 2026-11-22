@@ -55,5 +55,6 @@
   "compose.kit": "Designsystem",
   "compose.kit.certified": "Bekræftet, tilbage til version {n} af designsystemet",
   "compose.kit.worn": "Bæres af: {names}",
-  "compose.linkingAll": "Ser på, hvordan projektets kreationer hænger sammen"
+  "compose.linkingAll": "Ser på, hvordan projektets kreationer hænger sammen",
+  "compose.drawn": "Vis dem tegnet"
 }

@@ -55,5 +55,6 @@
   "compose.kit": "Design system",
   "compose.kit.certified": "Certified, back to version {n} of the design system",
   "compose.kit.worn": "Worn by {names}",
-  "compose.linkingAll": "Looking at how this project’s creations link"
+  "compose.linkingAll": "Looking at how this project’s creations link",
+  "compose.drawn": "See them drawn"
 }
