@@ -39,9 +39,9 @@ const THINGS = /** @type {Record<string, string>} */ ({ documents: 'documents', 
  * @typedef {{ format: 1, relay: string, kind: Kind, place: import('./collection.js').Place | null, title: string, owner: string, ownerHash: string, ownerToken?: string,
  *   epoch: number, keys: Record<string, string>, read: string, write?: string, links: boolean, role?: 'edit' | 'view' }} Kept
  * A circle followed: who is in, what the journal holds of the thing, this device's counter, who is here and, by member and device, where
- * their carets are, the next word from here due, and how to stop.
+ * their carets are, the next word from here due, when the last went and how long until the next may, and how to stop.
  * @typedef {{ id: string, kept: Kept, me: string, state: circle.State, held: import('./collection.js').Held, n: number, members: Set<string>,
- *   here: Map<string, number>, carets: Map<string, { at: number, carets: any }>, soon?: ReturnType<typeof setTimeout>, ready: Promise<void>, caught: () => void,
+ *   here: Map<string, number>, carets: Map<string, { at: number, carets: any }>, soon?: ReturnType<typeof setTimeout>, said?: number, gap?: number, ready: Promise<void>, caught: () => void,
  *   settled?: true, stop: () => void, unwatch?: () => void, joining?: { name: string, invite?: object },
  *   baton: { holder: string | null, at: number, queue: string[] }, waits: Map<string, () => void> }} Live
  */
@@ -373,8 +373,14 @@ export async function here(live) {
   const said = Object.fromEntries([...carets].flatMap(([path, spots]) => ((doc) => (doc === null ? [] : [[doc, spots]]))(docIn(live, path))))
   return journal.say(whereOf(live), await circle.sealChange(at, (await me()).key, { member: live.me, device: app.deviceId, n: 0, kind: 'here', body: { carets: said } }))
 }
-/** `here` said in a moment, once for all that asks it meanwhile, and again while the relay says it's too much at once. @param {Live} live */
-const soon = (live) => { live.soon ??= setTimeout(() => { delete live.soon; here(live).then((answer) => answer?.status === 429 && soon(live)) }, 200) }
+/** Milliseconds between two words that this person is here, as a pointer or a caret moves: some twelve a second, the others' boards gliding between them. */
+const GAP = 80
+/**
+ * `here` said at once, or a gap after the last, once for all that asks it meanwhile, with where the carets are by then. The gap is GAP, half as
+ * long again each time the relay says it's too much at once, as another relay's limits or many people behind one address make it, up to two
+ * seconds, and 3% shorter with each word it takes: a pointer slows to its share rather than stops. @param {Live} live
+ */
+const soon = (live) => { live.soon ??= setTimeout(() => { delete live.soon; live.said = Date.now(); here(live).then((answer) => { const over = answer?.status === 429; live.gap = over ? Math.min(2_000, (live.gap ?? GAP) * 1.5) : Math.max(GAP, (live.gap ?? GAP) * 0.97); if (over) soon(live) }) }, Math.max(0, (live.said ?? 0) + (live.gap ?? GAP) - Date.now())) }
 
 /** This person's carets, by the document's path (./carets.js). @type {Map<string, any>} */
 const carets = new Map()

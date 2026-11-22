@@ -43,10 +43,10 @@ export const JOURNAL = Object.freeze({
   days: 7,
   tombstones: 90,
   settle: 10,
-  /** Changes a journal takes in a minute; fleeting messages it passes on in a second, and from one network. */
+  /** Changes a journal takes in a minute; fleeting messages it passes on in a second, ten people's pointers moving at once, some twelve each, and from one network, four's. */
   perMinute: 600,
-  fleetingPerSecond: 30,
-  fleetingPerNetwork: 10,
+  fleetingPerSecond: 120,
+  fleetingPerNetwork: 50,
   /** Streams open on one journal, and from one network; seconds a stream lasts, between its clock's lines, and a long poll waits at most. */
   streams: 32,
   streamsPerNetwork: 4,

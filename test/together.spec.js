@@ -158,6 +158,14 @@ async function written(ana, bob, folder) {
   }, folder)
   await expect(anas.locator('.wb-area .wb-note .wb-words')).toHaveText(['Shipped the beta', 'Fewer meetings'])
   await expect.poll(() => shelf(anas)).toEqual(['Book the offsite'])
+  // Each one's pointer shows on the other's board as they move it, with their name and their face among who is here, whichever board
+  // was open before Together came.
+  for (const [mover, board, name] of /** @type {const} */ ([[bob, anas, 'Bob'], [ana, bobs, 'Ana']])) {
+    const box = /** @type {{ x: number, y: number, width: number, height: number }} */ (await mover.locator('app-whiteboard .wb-board').boundingBox())
+    await mover.mouse.move(box.x + box.width / 2, box.y + box.height / 2, { steps: 4 })
+    await expect(board.locator('.wb-pointer')).toHaveText([name])
+    await expect(board.getByRole('button', { name: '1 other person here' })).toBeVisible()
+  }
 }
 
 /** A whiteboard of a project's, a section with a note in it, written as Whiteboards writes one; its folder. @param {Page} page @param {string} [dir] */

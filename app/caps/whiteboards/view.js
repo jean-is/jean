@@ -110,9 +110,6 @@ customElements.define('app-whiteboard', class extends HTMLElement {
   #table = null
   /** The fingers on the board, for a pinch. @type {Map<number, { x: number, y: number }>} */
   #fingers = new Map()
-  /** This person's pointer as Together last said it, and when, at two a second at most. */
-  #pointer = { x: 0, y: 0, at: 0 }
-  #later = /** @type {ReturnType<typeof setTimeout> | undefined} */ (undefined)
   /** Cards' pictures, drawn only while near the screen, so that a large board's out of sight cost nothing (a deck, an app). */
   #near = new IntersectionObserver((all) => { for (const { target, isIntersecting } of all) this.#paint(/** @type {HTMLElement} */ (target), isIntersecting) }, { rootMargin: '25%' })
 
@@ -136,24 +133,19 @@ customElements.define('app-whiteboard', class extends HTMLElement {
     sized.observe(this)
     holds.push(() => sized.disconnect())
     holds.push(() => { this.as.value = '' })
-    // Worked on together: the others' pointers, drawn on a layer of their own, and this person's, gone with the pane.
-    const together = slots('pointers')[0], path = `${one.dir}/${one.folder}`
-    if (together) holds.push(computed(() => together.of(path)).subscribe((list) => this.#others(list)), () => { clearTimeout(this.#later); together.say(path, null) })
+    // Worked on together: the others' pointers, drawn on a layer of their own from when Together comes, as the board's sharing starts it, and this person's, gone with the pane.
+    const path = `${one.dir}/${one.folder}`
+    holds.push(computed(() => slots('pointers')[0]?.of(path) ?? []).subscribe((list) => this.#others(list)), () => slots('pointers')[0]?.say(path, null))
   }
 
   /**
-   * This person's pointer said to the others, with the note they write and the box around what they selected, at two a second at most, the
-   * last place always going. @param {{ x: number, y: number }} at
+   * This person's pointer said to the others at each move, with the note they write and the box around what they selected: Together sends
+   * the latest as it comes, some twelve times a second at most (caps/together). @param {{ x: number, y: number }} at
    */
   #tell(at) {
     const together = slots('pointers')[0], one = this.where.peek()
     if (!together || !one) return
-    Object.assign(this.#pointer, at)
-    clearTimeout(this.#later)
-    const wait = 500 - (Date.now() - this.#pointer.at)
-    if (wait > 0) return void (this.#later = setTimeout(() => this.#tell(this.#pointer), wait))
-    this.#pointer.at = Date.now()
-    const { items } = layout(one.rows), chosen = items.filter((item) => this.#selected.has(item.row.id)), box = chosen.length ? [Math.min(...chosen.map((item) => item.x)), Math.min(...chosen.map((item) => item.y)), Math.max(...chosen.map((item) => item.x + item.w)), Math.max(...chosen.map((item) => item.y + item.h))] : []
+    const { items } = this.#selected.size ? layout(one.rows) : { items: [] }, chosen = items.filter((item) => this.#selected.has(item.row.id)), box = chosen.length ? [Math.min(...chosen.map((item) => item.x)), Math.min(...chosen.map((item) => item.y)), Math.max(...chosen.map((item) => item.x + item.w)), Math.max(...chosen.map((item) => item.y + item.h))] : []
     together.say(`${one.dir}/${one.folder}`, [[Math.round(at.x), Math.round(at.y), this.#draft?.row ?? ''], box.map(Math.round)])
   }
 
