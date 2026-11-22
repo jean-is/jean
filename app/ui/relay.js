@@ -49,11 +49,57 @@ export const send = async (base, id, bytes) => (await (await ask(`${base}v1/m/${
 export async function read(base, token, { after = 0, wait = 0, signal } = {}) {
   const address = await addressOf(base, token)
   /** @type {{ messages: { seq: number, at: number, body?: string }[], now: number, next?: number }} */
-  const { messages, now, next } = await (await ask(`${address}?after=${after}&wait=${wait}`, bearer(token, { signal }))).json()
+  const { messages, now, next } = wait ? await waiting(base, token, after, signal) : await (await ask(`${address}?after=${after}`, bearer(token, { signal }))).json()
   // A large one gone as it is fetched (past its days, or its body lost) is passed over, never the whole batch failed for it.
   const all = await Promise.all(messages.map(async ({ seq, at, body }) => ({ seq, at, bytes: body ? bytesOf(body)
     : await ask(`${address}/${seq}`, bearer(token, { signal })).then(async (one) => new Uint8Array(await one.arrayBuffer()), (/** @type {any} */ error) => { if (error?.status !== 404) throw error }) })))
   return { now, next, messages: /** @type {Message[]} */ (all.filter((one) => one.bytes)) }
+}
+
+/**
+ * A relay's waiting reads, all of a tab's in one request (D737), so that People's and Your devices' take one of the six connections a
+ * browser opens to an HTTP/1.1 relay however many mailboxes they wait on, the others left to journals and what is sent: each read's token,
+ * the point it reads after and how it settles; the request under way, and its opening again a moment after a read comes or goes.
+ * @typedef {{ token: string, after: number, settle: (error: unknown, answer?: any) => void }} Waiting
+ * @type {Map<string, { reads: Set<Waiting>, control?: AbortController, again?: ReturnType<typeof setTimeout> }>}
+ */
+const groups = new Map()
+/** Mailboxes one request reads at most, as the relay takes. */
+const READS = 64
+
+/** A waiting read joined to its relay's, settled once its mailbox holds something or can't be read, or the wait is up for them all. @param {string} base @param {string} token @param {number} after @param {AbortSignal} [signal] */
+function waiting(base, token, after, signal) {
+  const group = groups.get(base) ?? /** @type {NonNullable<ReturnType<typeof groups.get>>} */ (groups.set(base, { reads: new Set() }).get(base))
+  return new Promise((resolve, reject) => {
+    if (signal?.aborted) return reject(signal.reason)
+    /** @type {Waiting} */
+    const one = { token, after, settle: (error, answer) => { group.reads.delete(one); signal?.removeEventListener('abort', gone); if (error) reject(error); else resolve(answer) } }
+    const gone = () => { one.settle(signal?.reason); soon(base, group) }
+    signal?.addEventListener('abort', gone, { once: true })
+    group.reads.add(one)
+    soon(base, group)
+  })
+}
+/** A relay's request opened again in a moment, with the reads waiting then. @param {string} base @param {NonNullable<ReturnType<typeof groups.get>>} group */
+const soon = (base, group) => { clearTimeout(group.again); group.again = setTimeout(() => { group.control?.abort(); together(base, group) }, 50) }
+/**
+ * One request for a relay's waiting reads: those whose mailbox holds something or can't be read are settled, the others wait on in the
+ * next, unless the wait was up for them all; a failure settles them all, each read's own pause deciding when it comes again.
+ * @param {string} base @param {NonNullable<ReturnType<typeof groups.get>>} group
+ */
+async function together(base, group) {
+  const [reads, control] = [[...group.reads].slice(0, READS), (group.control = new AbortController())]
+  if (!reads.length) return
+  try {
+    /** @type {{ reads: ({ messages: any[], next: number } & { status?: number, error?: string })[], now: number }} */
+    const { reads: answers, now } = await (await ask(`${base}v1/m?wait=${WAIT}`, { method: 'POST', body: JSON.stringify(reads.map(({ token, after }) => ({ token, after }))), signal: control.signal })).json()
+    const said = reads.filter((_, i) => answers[i].status || answers[i].messages.length)
+    for (const one of said.length ? said : reads) ((answer) => one.settle(answer.status && Object.assign(new Error(answer.error), { status: answer.status }), { ...answer, now }))(answers[reads.indexOf(one)])
+  } catch (error) {
+    if (control.signal.aborted) return
+    for (const one of reads) one.settle(error)
+  }
+  if (group.reads.size && group.control === control) soon(base, group)
 }
 
 /** Removes a mailbox and all it holds. @param {string} base @param {string} token */

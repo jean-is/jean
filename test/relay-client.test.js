@@ -185,6 +185,25 @@ test('a pairing’s reader hands out one message at a time, and only what it han
   assert.equal(clock.length, 1)
 })
 
+test('a relay’s waiting reads go in one request (D737): each message to its own mailbox’s reader, and a reader that stops leaves the others waiting', async () => {
+  const { asked } = relayed()
+  const boxes = await Promise.all([mailbox(), mailbox(), mailbox()])
+  for (const { token } of boxes) await open(BASE, token)
+  const [reading, stopping] = [new AbortController(), new AbortController()]
+  const [a, b, c] = [reader(BASE, boxes[0].token, reading.signal), reader(BASE, boxes[1].token, reading.signal), reader(BASE, boxes[2].token, stopping.signal)]
+  const [first, second, third] = [a(), b(), c()]
+  await new Promise((resolve) => setTimeout(resolve, 100))
+  assert.deepEqual(asked.filter((one) => one.endsWith('/v1/m') || one.startsWith('GET ')), ['POST /v1/m'])
+  stopping.abort()
+  assert.equal((await refusal(third)).name, 'AbortError')
+  await send(BASE, boxes[1].id, bytes('to b'))
+  assert.equal(text(await second), 'to b')
+  await send(BASE, boxes[0].id, bytes('to a'))
+  assert.equal(text(await first), 'to a')
+  assert.equal(asked.filter((one) => one.startsWith('GET ')).length, 0)
+  reading.abort()
+})
+
 test('listening hears the relay’s clock at each read, opens its mailbox again when the relay lost it, and reads it from the start', { timeout: 10_000 }, async (t) => {
   const { store } = relayed()
   const { token, id } = await mailbox()
@@ -273,7 +292,7 @@ test('listening holds back while `quiet` is true: nothing read, a wait under way
   const quiet = signal(true)
   /** @type {string[]} */
   const heard = []
-  const reads = () => asked.filter((one) => one.startsWith('GET ')).length
+  const reads = () => asked.filter((one) => one === 'POST /v1/m').length
   const until = async (/** @type {() => boolean} */ done) => { while (!done()) await new Promise((resolve) => setTimeout(resolve, 10)) }
   const stop = listen({ base: BASE, token, lock: 'relay-quiet', quiet, onMessages: (messages) => { heard.push(...messages.map((message) => text(message.bytes))) } })
   await send(BASE, id, bytes('one'))

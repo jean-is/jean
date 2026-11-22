@@ -19,6 +19,9 @@
 //                               for one; what is at or before seq has been read, and goes:
 //                               { messages: [{ seq, at, size, body? }], now, next }, now the relay's clock, next the next
 //                               message's number; a seq at or above it, a reader's from before a rollback, reads from the start
+//   POST   /v1/m?wait=<seconds> mailboxes read together, all of a tab's over one connection (D737): [{ token, after }] as its body, 64 at
+//                               most, sent without a header, each read as GET reads it: { reads: [{ messages, next } or { status, error }], now }
+//                               in the order asked, at once where one holds something or can't be read, else once a message comes or the wait is up
 //   GET    /v1/m/<id>/<seq>     with the token: a large message's bytes
 //   DELETE /v1/m/<id>           with the token: the mailbox and all it holds
 //   PUT    /v1/m/<id>/push      with the token: { endpoint }, a device's push subscription, nudged when a message comes (below)
@@ -129,8 +132,9 @@ export function nudges(config, { fetch: post, now }) {
   }
 }
 
-/** Seconds a read waits at most. */
+/** Seconds a read waits at most; mailboxes one read names at most, as many as a tab's journals over one connection (journal.js). */
 const WAIT = 25
+const READS = 64
 const HOUR = 3_600_000
 const DAY = 86_400_000
 const PATH = /^\/v1\/m\/([\w-]{22})(?:\/(\d{1,9}|push))?$/
@@ -227,9 +231,11 @@ export function relay(config) {
     const shelf = kept && url.pathname.startsWith('/v1/s/')
     const page = book && /^\/v1\/j(\/|$)/.test(url.pathname)
     const people = listed && listed.handles(url.pathname)
-    if (!id && !shelf && !page && !people) return answer(404, { error: 'Nothing is here.' })
+    const all = url.pathname === '/v1/m'
+    if (!id && !shelf && !page && !people && !all) return answer(404, { error: 'Nothing is here.' })
     // Only the Jeans it serves, which a browser always names.
     if (!ours) return answer(403, { error: 'This relay does not serve this origin.' })
+    if (all) return request.method === 'POST' ? together(request, url, answer) : answer(405, { error: 'Not here.' })
     if (shelf) return kept.handle(request, client, { network: networkOf(client.address), answer, cors })
     if (page) return book.handle(request, client, { network: networkOf(client.address), answer, cors })
     if (people) return listed.handle(request, client, { answer })
@@ -378,54 +384,93 @@ export function relay(config) {
       cors.set('content-type', 'application/octet-stream')
       return new Response(/** @type {BodyInit} */ (body), { headers: cors })
     }
-    let after = Math.max(0, Math.floor(Number(url.searchParams.get('after')) || 0))
     const wait = Math.min(WAIT, Math.max(0, Number(url.searchParams.get('wait')) || 0))
     // What was read goes.
-    const opened = await inTurn(id, async () => {
-      const box = await live(id, at)
-      if (!box || box.token !== hash) return box
-      if (after >= box.next) after = 0
-      const read = box.messages.filter((entry) => entry.seq <= after)
-      if (read.length) await store?.drop(id, read.map((entry) => entry.seq))
-      const kept = { ...box, messages: box.messages.filter((entry) => entry.seq > after), touched: at }
-      await store?.save(id, kept)
-      return kept
-    })
+    const { box: opened, after } = await opening(id, hash, Math.max(0, Math.floor(Number(url.searchParams.get('after')) || 0)), at)
     if (!opened) return answer(404, { error: 'No mailbox is open here.' })
     if (opened.token !== hash) return answer(403, { error: 'This mailbox is someone else’s.' })
-    /** What a mailbox holds past `after`, each small one whole; an entry whose body is gone (an older sweep) is dropped from it. @param {Box} box */
-    const handed = async (box) => {
-      const out = await Promise.all(box.messages.filter((entry) => entry.seq > after).map(async (entry) => {
-        if (entry.size > limits.inline) return { seq: entry.seq, at: entry.at, size: entry.size }
-        const body = await store?.read(id, entry.seq)
-        return body ? { seq: entry.seq, at: entry.at, size: entry.size, body: base64url(body) } : entry.seq
-      }))
-      const gone = out.filter((one) => typeof one === 'number')
-      if (gone.length) await inTurn(id, async () => { const held = await store?.box(id); if (held) await store?.save(id, { ...held, messages: held.messages.filter((entry) => !gone.includes(entry.seq)) }) })
-      return out.filter((one) => typeof one !== 'number')
-    }
-    let [box, messages] = [opened, await handed(opened)]
-    // Nothing to hand out: the read waits for what comes, outside the mailbox's turn, so others go on.
+    let [box, messages] = [opened, await handed(id, opened, after)]
+    // Nothing to hand out: the read waits for what comes.
     if (!messages.length && wait > 0) {
-      await new Promise((resolve) => {
-        // One device too many: the oldest wait ends, empty, as its device has likely gone, before this one takes its place.
-        if ((waiting.get(id)?.size ?? 0) >= limits.waits) [...waiting.get(id) ?? []][0]()
-        const set = waiting.get(id) ?? new Set()
-        waiting.set(id, set)
-        const done = () => {
-          clearTimeout(timer)
-          set.delete(done)
-          if (!set.size && waiting.get(id) === set) waiting.delete(id)
-          resolve(undefined)
-        }
-        const timer = setTimeout(done, wait * 1000)
-        set.add(done)
-        // A device gone, its tab closed, reads no more: it no longer holds back a nudge.
-        request.signal?.addEventListener('abort', done, { once: true })
-      })
+      await waitOn([id], wait, request.signal)
       box = await store?.box(id) ?? { ...box, messages: [] }
-      messages = await handed(box)
+      messages = await handed(id, box, after)
     }
     return answer(200, { messages, now: now(), next: box.next })
   }, { tidy, ...(kept && { tidyStore: kept.tidy, stores: kept.ids }), ...(book && { tidyJournal: book.tidy, journalIds: book.ids }), ...(listed && { tidyPeople: listed.tidy }) })
+
+  /**
+   * A mailbox read with its token's hash past `after`, what is at or before it read and gone: the mailbox, none where none is open, or
+   * someone else's; and the point it is read from, the start for one at or past its next number, a reader's from before a rollback.
+   * @param {string} id @param {string} hash @param {number} after @param {number} at @returns {Promise<{ box: Box | null, after: number }>}
+   */
+  function opening(id, hash, after, at) {
+    return inTurn(id, async () => {
+      const box = await live(id, at)
+      if (!box || box.token !== hash) return { box, after }
+      const from = after >= box.next ? 0 : after, read = box.messages.filter((entry) => entry.seq <= from)
+      if (read.length) await store?.drop(id, read.map((entry) => entry.seq))
+      const kept = { ...box, messages: box.messages.filter((entry) => entry.seq > from), touched: at }
+      await store?.save(id, kept)
+      return { box: kept, after: from }
+    })
+  }
+  /** What a mailbox holds past `after`, each small one whole; an entry whose body is gone (an older sweep) is dropped from it. @param {string} id @param {Box} box @param {number} after */
+  async function handed(id, box, after) {
+    const out = await Promise.all(box.messages.filter((entry) => entry.seq > after).map(async (entry) => {
+      if (entry.size > limits.inline) return { seq: entry.seq, at: entry.at, size: entry.size }
+      const body = await store?.read(id, entry.seq)
+      return body ? { seq: entry.seq, at: entry.at, size: entry.size, body: base64url(body) } : entry.seq
+    }))
+    const gone = out.filter((one) => typeof one === 'number')
+    if (gone.length) await inTurn(id, async () => { const held = await store?.box(id); if (held) await store?.save(id, { ...held, messages: held.messages.filter((entry) => !gone.includes(entry.seq)) }) })
+    return out.filter((one) => typeof one !== 'number')
+  }
+  /**
+   * A read waiting on its mailboxes, outside their turns, so others go on, until a message comes to one of them, `wait` seconds pass or its
+   * reader goes: a device gone, its tab closed, no longer holds back a nudge. @param {string[]} ids each once @param {number} wait @param {AbortSignal} [signal]
+   */
+  function waitOn(ids, wait, signal) {
+    return new Promise((resolve) => {
+      const done = () => {
+        clearTimeout(timer)
+        signal?.removeEventListener('abort', done)
+        for (const id of ids) { const set = waiting.get(id); set?.delete(done); if (set && !set.size) waiting.delete(id) }
+        resolve(undefined)
+      }
+      for (const id of ids) {
+        // One device too many: the oldest wait ends, empty, as its device has likely gone, before this one takes its place.
+        if ((waiting.get(id)?.size ?? 0) >= limits.waits) [...waiting.get(id) ?? []][0]()
+        waiting.set(id, (waiting.get(id) ?? new Set()).add(done))
+      }
+      const timer = setTimeout(done, wait * 1000)
+      signal?.addEventListener('abort', done, { once: true })
+    })
+  }
+  /**
+   * Mailboxes read together, all of a tab's over one connection (D737): their tokens and the points they are read after, sent without a
+   * header, so with no preflight, each read as GET reads it, in the order asked; at once where one holds something or can't be read, else
+   * once a message comes to one of them or the wait is up. @param {Request} request @param {URL} url @param {(status: number, body?: object) => Response} answer
+   */
+  async function together(request, url, answer) {
+    /** @type {any} */
+    let asked = null
+    try { asked = JSON.parse(new TextDecoder().decode(await within(request, 100 * READS) ?? new Uint8Array())) } catch {}
+    if (!Array.isArray(asked) || !asked.length || asked.length > READS || !asked.every((one) => /^[\w-]{43}$/.test(one?.token))) return answer(400, { error: 'A read names mailboxes by their tokens.' })
+    const [at, wait] = [now(), Math.min(WAIT, Math.max(0, Number(url.searchParams.get('wait')) || 0))]
+    const reads = await Promise.all(asked.map(async (/** @type {{ token: string, after: unknown }} */ { token, after }) => {
+      const [id, hash] = [await idOf(token), await hashOf(token)]
+      return { id, hash, ...await opening(id, hash, Math.max(0, Math.floor(Number(after) || 0)), at) }
+    }))
+    /** Each read's answer: what its mailbox holds past its point, or why it can't be read. */
+    const said = () => Promise.all(reads.map(async ({ id, hash, box, after }) => (!box ? { status: 404, error: 'No mailbox is open here.' }
+      : box.token !== hash ? { status: 403, error: 'This mailbox is someone else’s.' } : { messages: await handed(id, box, after), next: box.next })))
+    let answers = await said()
+    if (wait > 0 && answers.every((one) => one.messages?.length === 0)) {
+      await waitOn([...new Set(reads.map((one) => one.id))], wait, request.signal)
+      for (const one of reads) if (one.box?.token === one.hash) one.box = await store?.box(one.id) ?? { ...one.box, messages: [] }
+      answers = await said()
+    }
+    return answer(200, { reads: answers, now: now() })
+  }
 }

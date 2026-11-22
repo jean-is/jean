@@ -883,8 +883,8 @@ test('the last other device removed, the store goes from the relay: what is made
   await deviceA(page)
   const b = await device(browser)
   const { dir, settings } = await pair(page, b)
-  // B reads its mailbox no more, the read under way ended with a reload, so only the store can keep it out.
-  await b.context().route('**/v1/m/**', (route) => route.abort())
+  // B reads its mailbox no more, alone or with others (D737), the read under way ended with a reload, so only the store can keep it out.
+  await b.context().route((url) => /^\/v1\/m(\/|$)/.test(url.pathname), (route) => route.abort())
   await b.reload()
   await expect.poll(() => here(b), { timeout: 20_000 }).toBe(dir)
   const before = await taskOn(page, 'Before', 'Plan the trip')

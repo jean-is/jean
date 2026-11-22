@@ -135,6 +135,54 @@ test('a read waits for a message, and several devices may wait on one mailbox', 
   assert.ok(Date.now() - started >= 40)
 })
 
+test('mailboxes read together over one connection (D737): each as GET reads it, in the order asked, waiting until a message comes to one', async () => {
+  const { ask, open, send, store } = relayOn()
+  const [a, b, never, theirs] = await Promise.all([mailbox(), mailbox(), mailbox(), mailbox()])
+  await Promise.all([open(a.id, a.token), open(b.id, b.token)])
+  /** @param {object[]} reads @param {string} [query] */
+  const together = async (reads, query = '?wait=25') => { const response = await ask(`/v1/m${query}`, { method: 'POST', body: JSON.stringify(reads) }); return { status: response.status, body: await response.json() } }
+  // Nothing in either: the read waits, and a message to one of them answers it, each in the order asked.
+  const waiting = together([{ token: a.token, after: 0 }, { token: b.token, after: 0 }])
+  await new Promise((resolve) => setTimeout(resolve, 20))
+  await send(b.id, 'to b')
+  const { status, body } = await waiting
+  assert.equal(status, 200)
+  assert.deepEqual(body.reads.map((/** @type {any} */ one) => [one.messages.map((/** @type {any} */ m) => Buffer.from(m.body, 'base64url').toString()), one.next]), [[[], 1], [['to b'], 2]])
+  assert.equal(typeof body.now, 'number')
+  // What a read is past was read, and goes, as GET has it; one that holds something answers at once.
+  await send(a.id, 'to a')
+  const started = Date.now()
+  const again = await together([{ token: a.token, after: 0 }, { token: b.token, after: 1 }])
+  assert.ok(Date.now() - started < 1_000)
+  assert.deepEqual(again.body.reads.map((/** @type {any} */ one) => one.messages.length), [1, 0])
+  assert.equal(store.bodies.has(`${b.id}/1`), false)
+  // A mailbox not open, or a token that names none, says so in its place, at once, and the others are read all the same.
+  const gone = await together([{ token: never.token, after: 0 }, { token: a.token, after: 1 }])
+  assert.deepEqual(gone.body.reads.map((/** @type {any} */ one) => one.status ?? one.messages.length), [404, 0])
+  await open(theirs.id, theirs.token)
+  store.boxes.set(theirs.id, { ...store.boxes.get(theirs.id), token: 'someone else’s hash' })
+  assert.equal((await together([{ token: theirs.token, after: 0 }], '')).body.reads[0].status, 403)
+  // A short wait ends empty; a read that names no mailbox, too many, or no token, is refused, and only a POST reads them.
+  assert.deepEqual((await together([{ token: a.token, after: 1 }], '?wait=0.05')).body.reads, [{ messages: [], next: 2 }])
+  for (const reads of [[], Array.from({ length: 65 }, () => ({ token: a.token, after: 0 })), [{ after: 0 }]]) assert.equal((await together(reads)).status, 400)
+  assert.equal((await ask('/v1/m')).status, 405)
+  assert.equal((await ask('/v1/m', { method: 'POST', body: JSON.stringify([{ token: a.token }]), origin: 'https://evil.example' })).status, 403)
+})
+
+test('a mailbox read together with others counts as read: it nudges nobody meanwhile, and a device too many ends the oldest wait', async () => {
+  const { ask, open, send } = relayOn({ limits: { waits: 1 } })
+  const [a, b] = await Promise.all([mailbox(), mailbox()])
+  await Promise.all([open(a.id, a.token), open(b.id, b.token)])
+  const together = (/** @type {object[]} */ reads) => ask('/v1/m?wait=25', { method: 'POST', body: JSON.stringify(reads) }).then((response) => response.json())
+  const first = together([{ token: a.token, after: 0 }, { token: b.token, after: 0 }])
+  await new Promise((resolve) => setTimeout(resolve, 20))
+  // Another device waits on a: the first read, its device likely gone, ends empty for both, and the second still hears what comes.
+  const second = together([{ token: a.token, after: 0 }])
+  assert.deepEqual((await first).reads.map((/** @type {any} */ one) => one.messages.length), [0, 0])
+  await send(a.id, 'here')
+  assert.deepEqual((await second).reads.map((/** @type {any} */ one) => one.messages.length), [1])
+})
+
 test('a mailbox opened once takes one message, then refuses', async () => {
   const { open, send } = relayOn()
   const box = await mailbox()

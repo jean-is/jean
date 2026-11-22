@@ -96,9 +96,16 @@ test('Ana and Bob work on a collection together: a link and a name, each one’s
   expect(await items(bob, folder)).toEqual(['Flat', 'Flights', 'Museum', 'Taxi'])
 })
 
-test('Ana and Bob work on a whiteboard together: what each writes on it shows on the other’s board as it is, no reload', async ({ browser }) => {
+test('Ana and Bob work on a whiteboard together: what each writes on it shows on the other’s board as it is, no reload, however many of People’s invitations wait', async ({ browser }) => {
   const [ana, bob] = await Promise.all([person(browser, 'Ana'), person(browser, 'Bob')])
   await Promise.all([ana, bob].map((page) => page.setViewportSize({ width: 1440, height: 960 })))
+  // Six invitations nobody answered yet, each a mailbox Ana's Jean waits on: read in one request with her own (D737), they leave the
+  // relay's other connections, six to an HTTP/1.1 relay as the tests' is, to what she works on together.
+  await ana.evaluate(async () => {
+    await (await import('/ui/caps.js')).unlock('people')
+    const people = await import('/caps/people/people.js')
+    for (const name of ['Cleo', 'Dan', 'Eve', 'Finn', 'Gus', 'Hana']) await people.invite(name, 'link')
+  })
   // Ana's whiteboard, a section with a note in it, open beside her task.
   const folder = await retro(ana)
   await board(ana, folder)
