@@ -36,5 +36,10 @@
   "compose.uncertified": "Raderna som de är nu: ingen version, alltså inget certifikat",
   "compose.unproven": "Dess certifikat håller inte: ändrade, eller inte förseglade med nyckeln de nämner",
   "compose.saveProof": "Spara ursprunget",
-  "compose.proofFile": "Ursprung för {name}"
+  "compose.proofFile": "Ursprung för {name}",
+  "compose.touched": "{said} Används fortfarande i {names}.",
+  "compose.retyped": "”{column}” har en annan typ nu, vilket ändrar vad den visar i {names}.",
+  "compose.further": "Längre bort",
+  "compose.through": "via {name}",
+  "compose.linking": "Tittar på var {name} används"
 }

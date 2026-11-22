@@ -36,5 +36,10 @@
   "compose.uncertified": "Редовете, каквито са сега: няма версия, значи няма удостоверение",
   "compose.unproven": "Удостоверенията му не издържат: променени или не подпечатани с ключа, който назовават",
   "compose.saveProof": "Запазване на произхода",
-  "compose.proofFile": "Произход на {name}"
+  "compose.proofFile": "Произход на {name}",
+  "compose.touched": "{said} Все още се използва в {names}.",
+  "compose.retyped": "„{column}“ вече е от друг вид, което променя какво показва в {names}.",
+  "compose.further": "По-нататък",
+  "compose.through": "чрез {name}",
+  "compose.linking": "Проверявам къде се използва {name}"
 }

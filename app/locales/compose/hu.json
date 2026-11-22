@@ -36,5 +36,10 @@
   "compose.uncertified": "A sorok, ahogy most vannak: nincs verzió, így tanúsítvány sincs",
   "compose.unproven": "A tanúsítványai nem érvényesek: módosultak, vagy nem a megnevezett kulccsal pecsételték őket",
   "compose.saveProof": "Eredet mentése",
-  "compose.proofFile": "{name} eredete"
+  "compose.proofFile": "{name} eredete",
+  "compose.touched": "{said} Még használja: {names}.",
+  "compose.retyped": "„{column}” most már más típusú, ami megváltoztatja, mit mutat itt: {names}.",
+  "compose.further": "Távolabb",
+  "compose.through": "ezen keresztül: {name}",
+  "compose.linking": "Megnézem, hol használják ezt: {name}"
 }

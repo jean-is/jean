@@ -36,5 +36,10 @@
   "compose.uncertified": "当前的行：没有版本，因此没有证书",
   "compose.unproven": "其证书不成立：已被更改，或未用所述密钥封印",
   "compose.saveProof": "保存其来源",
-  "compose.proofFile": "{name} 的来源"
+  "compose.proofFile": "{name} 的来源",
+  "compose.touched": "{said}{names}仍在使用它。",
+  "compose.retyped": "“{column}”现在是另一种类型，这会改变它在{names}中显示的内容。",
+  "compose.further": "更远处",
+  "compose.through": "经由{name}",
+  "compose.linking": "正在查看{name}在哪里被使用"
 }

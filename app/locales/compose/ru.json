@@ -36,5 +36,10 @@
   "compose.uncertified": "Строки как есть сейчас: нет версии, значит, нет сертификата",
   "compose.unproven": "Его сертификаты не подтверждаются: изменены или запечатаны не тем ключом, который в них назван",
   "compose.saveProof": "Сохранить происхождение",
-  "compose.proofFile": "Происхождение: {name}"
+  "compose.proofFile": "Происхождение: {name}",
+  "compose.touched": "{said} Всё ещё используется в: {names}.",
+  "compose.retyped": "У «{column}» теперь другой тип, и это меняет то, что показано в: {names}.",
+  "compose.further": "Дальше",
+  "compose.through": "через {name}",
+  "compose.linking": "Смотрю, где используется {name}"
 }

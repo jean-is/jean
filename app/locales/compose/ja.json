@@ -36,5 +36,10 @@
   "compose.uncertified": "現在の行です：バージョンがないため証明書はありません",
   "compose.unproven": "証明書が有効ではありません：変更されているか、記された鍵で封印されていません",
   "compose.saveProof": "出どころを保存",
-  "compose.proofFile": "{name} の出どころ"
+  "compose.proofFile": "{name} の出どころ",
+  "compose.touched": "{said}{names}でまだ使われています。",
+  "compose.retyped": "「{column}」の種類が変わったため、{names}での表示が変わります。",
+  "compose.further": "その先",
+  "compose.through": "{name}経由",
+  "compose.linking": "{name}が使われている場所を確認中"
 }

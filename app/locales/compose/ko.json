@@ -36,5 +36,10 @@
   "compose.uncertified": "현재 행: 버전이 없어 인증서도 없습니다",
   "compose.unproven": "인증서가 유효하지 않습니다: 변경되었거나 명시된 키로 봉인되지 않았습니다",
   "compose.saveProof": "출처 저장",
-  "compose.proofFile": "{name}의 출처"
+  "compose.proofFile": "{name}의 출처",
+  "compose.touched": "{said} {names}에서 아직 사용 중입니다.",
+  "compose.retyped": "“{column}”의 종류가 바뀌어 {names}에서 보이는 내용이 달라집니다.",
+  "compose.further": "더 멀리",
+  "compose.through": "{name} 경유",
+  "compose.linking": "{name}이(가) 사용되는 곳 확인 중"
 }

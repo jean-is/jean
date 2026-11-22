@@ -36,5 +36,10 @@
   "compose.uncertified": "De rijen zoals ze nu zijn: geen versie, dus geen certificaat",
   "compose.unproven": "De certificaten kloppen niet: gewijzigd, of niet verzegeld met de sleutel die ze noemen",
   "compose.saveProof": "Herkomst opslaan",
-  "compose.proofFile": "Herkomst van {name}"
+  "compose.proofFile": "Herkomst van {name}",
+  "compose.touched": "{said} Nog gebruikt in {names}.",
+  "compose.retyped": "‘{column}’ is nu van een ander soort, wat verandert wat de kolom in {names} toont.",
+  "compose.further": "Verderop",
+  "compose.through": "via {name}",
+  "compose.linking": "Kijken waar {name} gebruikt wordt"
 }

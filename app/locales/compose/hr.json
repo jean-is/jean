@@ -36,5 +36,10 @@
   "compose.uncertified": "Retci kakvi su sada: nema verzije, pa nema ni potvrde",
   "compose.unproven": "Njegove potvrde ne vrijede: promijenjene ili nisu zapečaćene ključem koji navode",
   "compose.saveProof": "Spremi podrijetlo",
-  "compose.proofFile": "Podrijetlo: {name}"
+  "compose.proofFile": "Podrijetlo: {name}",
+  "compose.touched": "{said} Još se koristi u: {names}.",
+  "compose.retyped": "„{column}” sada je druge vrste, što mijenja ono što prikazuje u: {names}.",
+  "compose.further": "Dalje",
+  "compose.through": "preko: {name}",
+  "compose.linking": "Provjeravam gdje se koristi {name}"
 }

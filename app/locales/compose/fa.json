@@ -36,5 +36,10 @@
   "compose.uncertified": "ردیف‌ها همان‌طور که اکنون هستند: نسخه‌ای نیست، پس گواهی‌ای نیست",
   "compose.unproven": "گواهی‌هایش معتبر نیستند: تغییر کرده‌اند یا با کلیدی که نام می‌برند مهر نشده‌اند",
   "compose.saveProof": "ذخیرهٔ خاستگاه آن",
-  "compose.proofFile": "خاستگاه {name}"
+  "compose.proofFile": "خاستگاه {name}",
+  "compose.touched": "{said} هنوز در {names} به کار رفته است.",
+  "compose.retyped": "«{column}» اکنون نوع دیگری دارد و این آنچه را در {names} نشان می‌دهد تغییر می‌دهد.",
+  "compose.further": "دورتر",
+  "compose.through": "از راه {name}",
+  "compose.linking": "در حال بررسی جاهایی که {name} به کار رفته"
 }

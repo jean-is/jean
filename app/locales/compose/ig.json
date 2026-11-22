@@ -36,5 +36,10 @@
   "compose.uncertified": "Ahịrị dịka ha dị ugbu a: enweghị mbipụta, ya mere enweghị asambodo",
   "compose.unproven": "Asambodo ya anaghị eguzo: agbanwere ha, ma ọ bụ e jighị igodo ha kpọrọ akara ha",
   "compose.saveProof": "Chekwaa ebe o si",
-  "compose.proofFile": "Ebe {name} si"
+  "compose.proofFile": "Ebe {name} si",
+  "compose.touched": "{said} A ka na-eji ya na {names}.",
+  "compose.retyped": "“{column}” bụ ụdị ọzọ ugbu a, nke na-agbanwe ihe ọ na-egosi na {names}.",
+  "compose.further": "Gaa n’ihu",
+  "compose.through": "site na {name}",
+  "compose.linking": "Na-ele ebe a na-eji {name}"
 }

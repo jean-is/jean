@@ -36,5 +36,10 @@
   "compose.uncertified": "Baris seperti sekarang: tidak ada versi, jadi tidak ada sertifikat",
   "compose.unproven": "Sertifikatnya tidak berlaku: diubah, atau tidak disegel dengan kunci yang disebutkan",
   "compose.saveProof": "Simpan asal-usulnya",
-  "compose.proofFile": "Asal-usul {name}"
+  "compose.proofFile": "Asal-usul {name}",
+  "compose.touched": "{said} Masih dipakai di {names}.",
+  "compose.retyped": "“{column}” sekarang berjenis lain, sehingga yang ditampilkannya di {names} berubah.",
+  "compose.further": "Lebih jauh",
+  "compose.through": "lewat {name}",
+  "compose.linking": "Melihat di mana {name} dipakai"
 }

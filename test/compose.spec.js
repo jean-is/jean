@@ -9,7 +9,7 @@
 // journal, and show where they meet what the site's own table keeps, no version changing. In Arabic and Japanese too.
 import { test, expect } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
-import { start, connectFakeBrain, ask, answered, SHARE_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, SHARE_URL, openTasks } from './helpers.js'
 
 const COLLECTION = 'collections/01K85Z1T00000000000000000A-artisans', DECK = 'decks/01K85Z1T00000000000000000D-neighbourhood.deck.html', ROW = '01K8000000000000000000000A'
 
@@ -346,6 +346,46 @@ test('the graph whole: a collection that relates to another, a picture held by i
   await show(page, PICTURE, 'Ana')
   await page.getByRole('button', { name: 'Links with other creations' }).click()
   await expect(menu.getByRole('group', { name: 'Used in' }).getByRole('button')).toHaveText([/Kept/])
+})
+
+test('the graph answers: what is reached further, what still uses a column or a collection deleted or a kind changed, and the brain’s tool', async ({ page }) => {
+  await start(page)
+  await seed(page)
+  const ORDERS = 'collections/01K85Z1T00000000000000000B-orders', BOOK = 'decks/01K85Z1T00000000000000000O-book.deck.html'
+  await page.evaluate(async ({ COLLECTION, ORDERS, BOOK }) => {
+    const { app } = await import('/ui/state.js'), at = '2026-11-21T10:00:00.000Z'
+    await app.fs.write(`${app.projectDir}/${ORDERS}/collection.json`, JSON.stringify({ format: 1, id: ORDERS.slice(12, 38), name: 'Orders', author: 'user', created: at, changed: at,
+      properties: [{ id: 'item', name: 'Item', type: 'text' }, { id: 'maker', name: 'Maker', type: 'relation', collection: COLLECTION }], views: [{ id: 'table', type: 'table' }] }))
+    await (await import('/caps/skills/decks.js')).rewrite(BOOK, `# Book\n\n---\n\n\`\`\`table\n${ORDERS}\nfields: Item\n\`\`\`\n`, 'Book', app.projectDir)
+  }, { COLLECTION, ORDERS, BOOK })
+  // The slides that show the orders are reached from the artisans, through the orders that relate to them.
+  await show(page, COLLECTION, 'Artisans')
+  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  const menu = page.locator('.menu:popover-open')
+  await expect(menu.getByRole('group', { name: 'Further along' }).getByRole('button')).toHaveText([/Book.*through Orders/])
+  await page.keyboard.press('Escape')
+  // A column deleted: its Undo says what still reads it; a kind changed: what it changes.
+  await page.locator('app-preview .table-grid .table-head').filter({ hasText: 'Trade' }).click()
+  await page.locator('.table-menu:popover-open').getByRole('button', { name: 'Delete' }).click()
+  const toast = page.locator('.toast', { hasText: 'Column “Trade” deleted. Still used by Neighbourhood.' })
+  await toast.getByRole('button', { name: 'Undo' }).click()
+  await expect(page.locator('app-preview .table-grid .table-head').filter({ hasText: 'Trade' })).toHaveCount(1)
+  await retype(page, { type: 'number' })
+  await expect(page.locator('.toast', { hasText: '“Trade” has another kind now, which changes what it shows in Neighbourhood.' })).toBeVisible()
+  // The brain reads the same graph.
+  const said = await page.evaluate(async (COLLECTION) => (await import('/ui/caps.js')).loaded.peek().get('compose')?.tools?.[0].run({ place: COLLECTION }, /** @type {any} */ ({})), COLLECTION)
+  expect(said).toContain(`Artisans (${COLLECTION}) is used in: `)
+  expect(said).toContain(`Neighbourhood (${DECK}), reading it as it is now`)
+  expect(said).toContain(`Orders (${ORDERS}), by its column Maker`)
+  expect(said).toContain(`Further: Book (${BOOK}) through Orders.`)
+  // A collection deleted from Creations: its Undo says what still uses it.
+  const tasks = await openTasks(page)
+  await tasks.getByRole('button', { name: 'Creations', exact: true }).click()
+  const card = page.locator('app-creations .creation').filter({ has: page.locator('.creation-open', { hasText: /^Orders$/ }) })
+  await card.hover()
+  await card.getByRole('button', { name: 'More options' }).click()
+  await page.locator('app-creations .task-menu:popover-open').getByRole('button', { name: 'Delete' }).click()
+  await page.locator('.toast', { hasText: '“Orders” deleted. Still used by Book.' }).getByRole('button', { name: 'Undo' }).click()
 })
 
 test('a recipe that sums up the approved artisans on a slide updates by itself once its user turns that on, and only then; a run is paid once per version read', async ({ page }) => {

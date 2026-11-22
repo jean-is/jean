@@ -36,5 +36,10 @@
   "compose.uncertified": "แถวตามที่เป็นอยู่ตอนนี้: ไม่มีเวอร์ชัน จึงไม่มีใบรับรอง",
   "compose.unproven": "ใบรับรองไม่ถูกต้อง: ถูกเปลี่ยน หรือไม่ได้ประทับด้วยกุญแจที่ระบุ",
   "compose.saveProof": "บันทึกที่มา",
-  "compose.proofFile": "ที่มาของ {name}"
+  "compose.proofFile": "ที่มาของ {name}",
+  "compose.touched": "{said} ยังถูกใช้ใน {names}",
+  "compose.retyped": "“{column}” เป็นชนิดอื่นแล้ว ซึ่งเปลี่ยนสิ่งที่แสดงใน {names}",
+  "compose.further": "ไกลออกไป",
+  "compose.through": "ผ่าน {name}",
+  "compose.linking": "กำลังดูว่า {name} ถูกใช้ที่ไหน"
 }

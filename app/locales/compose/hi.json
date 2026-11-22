@@ -36,5 +36,10 @@
   "compose.uncertified": "पंक्तियाँ जैसी अभी हैं: कोई संस्करण नहीं, इसलिए कोई प्रमाणपत्र नहीं",
   "compose.unproven": "इसके प्रमाणपत्र टिकते नहीं: बदले गए, या उस कुंजी से मुहरबंद नहीं जिसका वे नाम लेते हैं",
   "compose.saveProof": "इसका स्रोत सहेजें",
-  "compose.proofFile": "{name} का स्रोत"
+  "compose.proofFile": "{name} का स्रोत",
+  "compose.touched": "{said} अब भी {names} में उपयोग हो रहा है।",
+  "compose.retyped": "“{column}” अब दूसरे प्रकार का है, इसलिए {names} में यह जो दिखाता है वह बदल जाता है।",
+  "compose.further": "और आगे",
+  "compose.through": "{name} के ज़रिए",
+  "compose.linking": "देख रहे हैं कि {name} कहाँ उपयोग हो रहा है"
 }

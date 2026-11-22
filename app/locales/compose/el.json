@@ -36,5 +36,10 @@
   "compose.uncertified": "Οι γραμμές όπως είναι τώρα: καμία έκδοση, άρα κανένα πιστοποιητικό",
   "compose.unproven": "Τα πιστοποιητικά του δεν ισχύουν: άλλαξαν ή δεν σφραγίστηκαν με το κλειδί που αναφέρουν",
   "compose.saveProof": "Αποθήκευση προέλευσης",
-  "compose.proofFile": "Προέλευση του {name}"
+  "compose.proofFile": "Προέλευση του {name}",
+  "compose.touched": "{said} Χρησιμοποιείται ακόμη σε: {names}.",
+  "compose.retyped": "Το «{column}» έχει πλέον άλλο είδος, κάτι που αλλάζει ό,τι δείχνει σε: {names}.",
+  "compose.further": "Πιο πέρα",
+  "compose.through": "μέσω {name}",
+  "compose.linking": "Εξετάζω πού χρησιμοποιείται το {name}"
 }

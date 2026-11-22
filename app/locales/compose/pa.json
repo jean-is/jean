@@ -36,5 +36,10 @@
   "compose.uncertified": "ਕਤਾਰਾਂ ਜਿਵੇਂ ਹੁਣ ਹਨ: ਕੋਈ ਵਰਜਨ ਨਹੀਂ, ਇਸ ਲਈ ਕੋਈ ਸਰਟੀਫਿਕੇਟ ਨਹੀਂ",
   "compose.unproven": "ਇਸਦੇ ਸਰਟੀਫਿਕੇਟ ਟਿਕਦੇ ਨਹੀਂ: ਬਦਲੇ ਗਏ ਹਨ, ਜਾਂ ਦੱਸੀ ਕੁੰਜੀ ਨਾਲ ਮੋਹਰਬੰਦ ਨਹੀਂ",
   "compose.saveProof": "ਇਸਦਾ ਸਰੋਤ ਸੰਭਾਲੋ",
-  "compose.proofFile": "{name} ਦਾ ਸਰੋਤ"
+  "compose.proofFile": "{name} ਦਾ ਸਰੋਤ",
+  "compose.touched": "{said} ਹਾਲੇ ਵੀ {names} ਵਿੱਚ ਵਰਤਿਆ ਜਾ ਰਿਹਾ ਹੈ।",
+  "compose.retyped": "“{column}” ਹੁਣ ਕਿਸੇ ਹੋਰ ਕਿਸਮ ਦਾ ਹੈ, ਜਿਸ ਨਾਲ {names} ਵਿੱਚ ਇਹ ਜੋ ਦਿਖਾਉਂਦਾ ਹੈ ਉਹ ਬਦਲ ਜਾਂਦਾ ਹੈ।",
+  "compose.further": "ਹੋਰ ਅੱਗੇ",
+  "compose.through": "{name} ਰਾਹੀਂ",
+  "compose.linking": "ਦੇਖ ਰਹੇ ਹਾਂ ਕਿ {name} ਕਿੱਥੇ ਵਰਤਿਆ ਜਾਂਦਾ ਹੈ"
 }

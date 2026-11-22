@@ -36,5 +36,10 @@
   "compose.uncertified": "Àwọn ìlà bí wọ́n ṣe wà báyìí: kò sí ẹ̀dà, nítorí náà kò sí ìwé ẹ̀rí",
   "compose.unproven": "Àwọn ìwé ẹ̀rí rẹ̀ kò dúró: a ti yí wọn padà, tàbí a kò fi kọ́kọ́rọ́ tí wọ́n dárúkọ dí wọn",
   "compose.saveProof": "Fi orísun rẹ̀ pamọ́",
-  "compose.proofFile": "Orísun {name}"
+  "compose.proofFile": "Orísun {name}",
+  "compose.touched": "{said} Wọ́n ṣì ń lò ó nínú {names}.",
+  "compose.retyped": "“{column}” ti di irú mìíràn báyìí, èyí sì yí ohun tó ń fi hàn nínú {names} padà.",
+  "compose.further": "Síwájú sí i",
+  "compose.through": "nípasẹ̀ {name}",
+  "compose.linking": "À ń wo ibi tí wọ́n ti ń lo {name}"
 }

@@ -74,7 +74,7 @@ async function like(item) {
   box.focus(); box.setSelectionRange(box.value.length, box.value.length)
 }
 
-/** Taken off at once, then deleted, or a score taken off the page, five seconds later unless Undo is pressed. @param {Item} item @param {boolean} [keyed] pressed from the keyboard */
+/** Taken off at once, then deleted, or a score taken off the page, five seconds later unless Undo is pressed, its toast saying what still uses it (caps/compose). @param {Item} item @param {boolean} [keyed] pressed from the keyboard */
 function drop(item, keyed = false) {
   const back = () => { gone.value = new Set([...gone.value].filter((path) => path !== item.path)) }
   const now = () => {
@@ -86,7 +86,7 @@ function drop(item, keyed = false) {
   let timer = setTimeout(later, 5000)
   gone.value = new Set(gone.value).add(item.path)
   waiting.set(item.path, now)
-  notify(t(item.kind.remove ? 'creations.deleted' : 'creations.removed', { name: item.name }), { label: t('memory.undo'), run: () => { clearTimeout(timer); waiting.delete(item.path); back(); requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector(`.creation[data-path="${CSS.escape(item.path)}"] .creation-open`))?.focus()) }, undo: true }, 5000)
+  notify(slots('touched').reduce((said, part) => part.said(said, item.path), t(item.kind.remove ? 'creations.deleted' : 'creations.removed', { name: item.name })), { label: t('memory.undo'), run: () => { clearTimeout(timer); waiting.delete(item.path); back(); requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector(`.creation[data-path="${CSS.escape(item.path)}"] .creation-open`))?.focus()) }, undo: true }, 5000)
   if (keyed) requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector('app-toasts .toast .button'))?.focus())
 }
 

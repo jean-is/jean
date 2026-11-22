@@ -36,5 +36,10 @@
   "compose.uncertified": "قطاریں جیسی اب ہیں: کوئی ورژن نہیں، اس لیے کوئی سند نہیں",
   "compose.unproven": "اس کی اسناد درست نہیں: بدلی گئیں، یا اُس چابی سے مہر بند نہیں جس کا وہ نام لیتی ہیں",
   "compose.saveProof": "اس کا ماخذ محفوظ کریں",
-  "compose.proofFile": "{name} کا ماخذ"
+  "compose.proofFile": "{name} کا ماخذ",
+  "compose.touched": "{said} اب بھی {names} میں استعمال ہو رہا ہے۔",
+  "compose.retyped": "“{column}” اب کسی اور قسم کا ہے، اس لیے {names} میں یہ جو دکھاتا ہے وہ بدل جاتا ہے۔",
+  "compose.further": "اور آگے",
+  "compose.through": "{name} کے ذریعے",
+  "compose.linking": "دیکھ رہے ہیں کہ {name} کہاں استعمال ہو رہا ہے"
 }

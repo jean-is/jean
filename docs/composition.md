@@ -42,6 +42,12 @@ What already linked creations outside the graph comes into it (`linksIn()`): a c
 
 **Exit criterion**: a collection that relates to the artisans is under their *Used in*, by its column, and opens them from its *Uses*; slides kept from an answer show their task's run, and keep none of their own; a picture held by those slides lists them under *Used in*.
 
+### Step 7 — The graph answers
+
+What the graph knows, said where it matters, each answer a read of edges. From the graph as last read (`known`, read again a second after a creation changes): a column deleted in Tables, or a creation deleted from Creations, says with its Undo what still uses it (the `touched` slot, `usersOf()`: references that name the column or show every column, any link for a creation); a column whose kind changed, here or by Sync, says where that changes what shows (`retyped()`). The links menu adds *Further along*, what is reached through the creation's own links, each with the one it is reached through (`further()`). The brain reads the same graph with `creation_links`, a read tool: what uses a creation and what it uses, each with the version it reads and its recipe, then what is further.
+
+**Exit criterion**: slides that show a collection relating to the artisans are under the artisans' *Further along*, through it; the column the artisans' slides show deleted, its Undo says those slides still use it, and its kind changed, a toast says what that changes in them; `creation_links` says the same as the menu; that collection deleted from Creations, its Undo names the slides that use it.
+
 ### Budgets
 
 Built first on a main whose line budget was nearly full, each step from the second raised `loc.app` by what it measured, at the owner's word; replayed on the main it landed on, whose budget left room enough, those raises were dropped and no budget changed. From step 6 on, a step that needs more room than the budget leaves raises `loc.app` by what it measures, at the owner's word, in a commit of its own before it; step 6 fitted in what was left. Nothing was added to the first load, the core or Tables' folder; no dependency was added. Its strings are in the 54 languages Jean speaks.
@@ -59,6 +65,9 @@ Built first on a main whose line budget was nearly full, each step from the seco
 - **No validation column, at the owner's word.** The plan's step 5 had a validation column only the owner sets, on which public recipes filter. It was built, then taken out: what a consumer shows is its own criteria, and a collection is neither helped nor guided to judge what comes in. What remains of column rights is the port's: which columns a proposal may write.
 - **A figure is inline code, not a block.** A key figure's lead or a sentence holds no block, and the deck's editor writes inline code back as it is typed, so a formula in it survives typing on the slide where any other mark would be lost.
 - **Charts are a recipe, not a reference of their own.** A slide's `echarts` block holds its numbers, which nothing ties to a collection; the Slides skill tells the brain to chart a collection with the ```` ```table ```` block and `chart:` instead, so that the graph, the selectors, versions and provenance hold for a chart as for a table.
+- **Said with its Undo, not asked first.** The plan's step 7 asked before a column or a collection was deleted. Jean deletes at once and offers Undo everywhere, so the Undo's toast says what still uses it instead, which the Undo answers.
+- **No count on Creations' cards, and no `@`, yet.** The plan's step 7 put on each card of the Creations page how many creations it uses and is used in, and had `@` say what a creation uses. The page's state and `@` live in modules of the first load, which has no byte left; the links menu and `creation_links` say it meanwhile.
+- **The brain asks, rather than being told.** A tool's result saying which consumers a change of rows touches would go through Tables' code, at its gzip budget; `creation_links` is one read tool of its own, which the brain calls before changing what others show.
 - **A picture is listed, not certified.** The plan's step 6 had a picture's credential join a version's or a run's ingredients. A run's ingredients are what it read, and slides have no certificate of their own beside their runs', so a picture held by content is a link of the graph, which says where it is used, and its own credential stays its own.
 - **The commits' first lines** are in English after `composition: étape N —`, as the rest of the history is; the docs are in English, as all of Jean's are.
 
@@ -78,22 +87,11 @@ Built first on a main whose line budget was nearly full, each step from the seco
 
 ## Work left: the graph at its best
 
-Composition and the graph are one ([architecture.md](architecture.md#composition)): every way a creation shows another becomes a reference, and every reference is an edge the graph reads. The steps below follow from that, each shippable alone, its exit criterion checked in `test/compose.spec.js` or `test/compose.test.js` as before. Step 6, what already linked creations brought into the graph, is built (above). Then, in order: what the graph can say at no cost (7), then the place most people read (8), then new sources and consumers (9 to 11), then what runs and what travels (12). Three rules hold for every step:
+Composition and the graph are one ([architecture.md](architecture.md#composition)): every way a creation shows another becomes a reference, and every reference is an edge the graph reads. The steps below follow from that, each shippable alone, its exit criterion checked in `test/compose.spec.js` or `test/compose.test.js` as before. Steps 6 and 7, what already linked creations brought into the graph and what it can say at no cost, are built (above). Then, in order: the place most people read (8), then new sources and consumers (9 to 11), then what runs and what travels (12). Three rules hold for every step:
 
 - **Nothing shown outside a reference.** A kind that starts showing another's content joins `CONSUMERS` in the same change, and its test checks that the source's *Links with other creations* lists it.
 - **Budgets first.** `loc.app` has a dozen lines left and Tables' code is at its gzip limit: each step measures what it needs, deletes first where it can, asks for a raise in a change of its own, and stays out of Tables' folder.
 - **What is paid stays opt-in.** A step that makes the graph carry more never makes a brain run, or anything leave Jean, that the person didn't choose.
-
-### Step 7 — The graph answers
-
-What the graph knows, said where it matters. Each answer below is a read of edges, and costs nothing.
-
-- **Before something breaks.** Deleting a collection or a column, or changing a column's kind, names what uses it (*Used by Q3 review and Report*) and asks first. Today only a version is refused, after the fact.
-- **The whole chain, not one hop.** The links menu shows what feeds what feeds this, as far as it goes, each with the version it reads.
-- **On the Creations page**, each card says how many creations it uses and is used in, and a creation's links narrow the page to them.
-- **To the brain**: a tool that changes a collection's columns or rows returns the consumers it touches, so that "update everything that shows the Q3 figures" is one request, and `@` on a creation says what it uses.
-
-**Exit criterion**: deleting a column a deck charts asks first, naming the deck; a deck showing a collection that relates to another shows both, the second through the first; the Creations page narrowed to a collection shows its consumers alone; a column renamed through `table_change` returns the consumers that read it by its old name.
 
 ### Step 8 — Answers that compose
 
@@ -136,5 +134,5 @@ Each kind that shows data does it through a reference, never a copy.
 1. Publishing a site again on a schedule, or as its collection changes: an outward action, which would need its own approval rule (*Do it / Ask me first*).
 2. Documents' sections and slides as sources: documents in step 9; slides when a need shows.
 3. Whether people working on a collection together get its versions and its port: step 12 proposes they do.
-4. Whether Tables itself should refuse a breaking change of kind once a collection has versions: step 7's question before the change is the middle way.
+4. Whether Tables itself should refuse a breaking change of kind once a collection has versions: step 7's Undo, which says what still uses a column, is the middle way.
 5. A proof that discloses what a version or a run holds, from its kept salts.

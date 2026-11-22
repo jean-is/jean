@@ -36,5 +36,10 @@
   "compose.uncertified": "Imigqa njengoba injalo manje: ayikho inguqulo, ngakho asikho isitifiketi",
   "compose.unproven": "Izitifiketi zayo azimi: zishintshiwe, noma azivalwanga ngokhiye ezibala wona",
   "compose.saveProof": "Gcina umsuka wayo",
-  "compose.proofFile": "Umsuka ka-{name}"
+  "compose.proofFile": "Umsuka ka-{name}",
+  "compose.touched": "{said} Kusasetshenziswa ku-{names}.",
+  "compose.retyped": "“{column}” manje luhlobo olwehlukile, okushintsha lokho elikubonisayo ku-{names}.",
+  "compose.further": "Ngaphezulu",
+  "compose.through": "nge-{name}",
+  "compose.linking": "Kubhekwa lapho kusetshenziswa khona i-{name}"
 }

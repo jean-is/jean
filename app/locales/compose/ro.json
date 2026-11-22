@@ -36,5 +36,10 @@
   "compose.uncertified": "Rândurile așa cum sunt acum: nicio versiune, deci niciun certificat",
   "compose.unproven": "Certificatele sale nu se confirmă: modificate sau nesigilate cu cheia pe care o numesc",
   "compose.saveProof": "Salvează proveniența",
-  "compose.proofFile": "Proveniența pentru {name}"
+  "compose.proofFile": "Proveniența pentru {name}",
+  "compose.touched": "{said} Încă în uz în {names}.",
+  "compose.retyped": "„{column}” are acum alt tip, ceea ce schimbă ce arată în {names}.",
+  "compose.further": "Mai departe",
+  "compose.through": "prin {name}",
+  "compose.linking": "Caut unde e folosit {name}"
 }

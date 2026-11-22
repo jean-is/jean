@@ -36,5 +36,10 @@
   "compose.uncertified": "Die Zeilen, wie sie jetzt sind: keine Version, also kein Zertifikat",
   "compose.unproven": "Seine Zertifikate halten nicht: geändert oder nicht mit dem genannten Schlüssel versiegelt",
   "compose.saveProof": "Herkunft speichern",
-  "compose.proofFile": "Herkunft von {name}"
+  "compose.proofFile": "Herkunft von {name}",
+  "compose.touched": "{said} Wird noch verwendet in {names}.",
+  "compose.retyped": "„{column}“ hat jetzt eine andere Art, was ändert, was die Spalte in {names} zeigt.",
+  "compose.further": "Weiter entfernt",
+  "compose.through": "über {name}",
+  "compose.linking": "Prüfe, wo {name} verwendet wird"
 }

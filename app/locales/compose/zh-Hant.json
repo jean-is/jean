@@ -36,5 +36,10 @@
   "compose.uncertified": "目前的列：沒有版本，因此沒有證書",
   "compose.unproven": "其證書不成立：已被更改，或未用所述金鑰封印",
   "compose.saveProof": "儲存其來源",
-  "compose.proofFile": "{name} 的來源"
+  "compose.proofFile": "{name} 的來源",
+  "compose.touched": "{said}{names}仍在使用它。",
+  "compose.retyped": "「{column}」現在是另一種類型，這會改變它在{names}中顯示的內容。",
+  "compose.further": "更遠處",
+  "compose.through": "經由{name}",
+  "compose.linking": "正在查看{name}在哪裡被使用"
 }

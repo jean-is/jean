@@ -36,5 +36,10 @@
   "compose.uncertified": "வரிசைகள் இப்போது உள்ளபடி: பதிப்பு இல்லை, எனவே சான்றிதழ் இல்லை",
   "compose.unproven": "இதன் சான்றிதழ்கள் செல்லாது: மாற்றப்பட்டுள்ளன, அல்லது குறிப்பிடும் விசையால் முத்திரையிடப்படவில்லை",
   "compose.saveProof": "இதன் மூலத்தைச் சேமி",
-  "compose.proofFile": "{name} இன் மூலம்"
+  "compose.proofFile": "{name} இன் மூலம்",
+  "compose.touched": "{said} இன்னும் {names} இல் பயன்படுகிறது.",
+  "compose.retyped": "“{column}” இப்போது வேறு வகை, அதனால் {names} இல் அது காட்டுவது மாறுகிறது.",
+  "compose.further": "மேலும் தொலைவில்",
+  "compose.through": "{name} வழியாக",
+  "compose.linking": "{name} எங்கே பயன்படுகிறது எனப் பார்க்கிறது"
 }

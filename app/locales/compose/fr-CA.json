@@ -36,5 +36,10 @@
   "compose.uncertified": "Les lignes telles qu’elles sont : pas de version, donc pas de certificat",
   "compose.unproven": "Ses certificats ne tiennent pas : modifiés, ou pas scellés par la clé qu’ils nomment",
   "compose.saveProof": "Enregistrer sa provenance",
-  "compose.proofFile": "Provenance de {name}"
+  "compose.proofFile": "Provenance de {name}",
+  "compose.touched": "{said} Encore en usage dans {names}.",
+  "compose.retyped": "« {column} » a désormais un autre type, ce qui change ce qu’elle montre dans {names}.",
+  "compose.further": "Plus loin",
+  "compose.through": "par {name}",
+  "compose.linking": "Recherche de ce qui utilise {name}"
 }

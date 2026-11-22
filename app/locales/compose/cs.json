@@ -36,5 +36,10 @@
   "compose.uncertified": "Řádky, jak jsou teď: žádná verze, tedy žádný certifikát",
   "compose.unproven": "Jeho certifikáty neplatí: změněné, nebo nezapečetěné klíčem, který uvádějí",
   "compose.saveProof": "Uložit jeho původ",
-  "compose.proofFile": "Původ: {name}"
+  "compose.proofFile": "Původ: {name}",
+  "compose.touched": "{said} Stále se používá v: {names}.",
+  "compose.retyped": "„{column}“ má teď jiný druh, což mění, co ukazuje v: {names}.",
+  "compose.further": "Dál",
+  "compose.through": "přes {name}",
+  "compose.linking": "Zjišťuji, kde se používá {name}"
 }

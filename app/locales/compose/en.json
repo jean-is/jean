@@ -36,5 +36,10 @@
   "compose.uncertified": "The rows as they are now: no version, so no certificate",
   "compose.unproven": "Its certificates don’t hold: changed, or not sealed by the key they name",
   "compose.saveProof": "Save its provenance",
-  "compose.proofFile": "Provenance of {name}"
+  "compose.proofFile": "Provenance of {name}",
+  "compose.touched": "{said} Still used by {names}.",
+  "compose.retyped": "“{column}” has another kind now, which changes what it shows in {names}.",
+  "compose.further": "Further along",
+  "compose.through": "through {name}",
+  "compose.linking": "Looking at what uses {name}"
 }

@@ -36,5 +36,10 @@
   "compose.uncertified": "Sarara akka amma jiranitti: veershiniin hin jiru, kanaaf ragaan hin jiru",
   "compose.unproven": "Ragaaleen isaa hin dhaabatan: jijjiiramaniiru, ykn furtuu isaan maqaa dhahaniin hin chaappaa’amne",
   "compose.saveProof": "Madda isaa olkaa’i",
-  "compose.proofFile": "Madda {name}"
+  "compose.proofFile": "Madda {name}",
+  "compose.touched": "{said} Ammas {names} keessatti itti fayyadamama.",
+  "compose.retyped": "“{column}” amma gosa biraa dha, kunis waan {names} keessatti agarsiisu jijjiira.",
+  "compose.further": "Achi caalaa",
+  "compose.through": "karaa {name}",
+  "compose.linking": "Bakka {name} itti fayyadamamu ilaalaa jira"
 }

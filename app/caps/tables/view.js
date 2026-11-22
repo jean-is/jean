@@ -486,10 +486,10 @@ function grid(one, columns, shown, rows, calculate, fresh, state, words, top) {
     const row = option.bind(null, menu)
     /** Moved before or after the column shown beside it, as far as it goes, the keyboard on its head. @param {Property | undefined} to @param {boolean} after */
     const moved = (to, after) => () => to && Promise.resolve(shift(property.id, to.id, after)).then(() => focus(`${head(property.id)} .table-head`))
-    /** Deleted, said with an Undo, the keyboard on the head in its place. */
+    /** Deleted, said with an Undo and what still reads it (caps/compose), the keyboard on the head in its place. */
     const gone = () => shape(one, { remove: property.id }).then((table) => {
       if (!table) return
-      notify(t('tables.columnDeleted', { name: property.name }), { label: t('memory.undo'), run: () => shape(one, { restore: property.id }) })
+      notify(slots('touched').reduce((said, part) => part.said(said, one.folder, property.name), t('tables.columnDeleted', { name: property.name })), { label: t('memory.undo'), run: () => shape(one, { restore: property.id }) })
       requestAnimationFrame(() => { const all = box.querySelectorAll('thead .table-head'); /** @type {HTMLElement | undefined} */ (all[Math.min(i, all.length - 1)])?.focus() })
     })
     /** A kind, or a collection a relation is to, ticked when it is the column's. @param {unknown} glyph @param {unknown} label @param {boolean} on @param {() => Promise<unknown>} act */

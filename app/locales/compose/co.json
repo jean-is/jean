@@ -36,5 +36,10 @@
   "compose.uncertified": "E linee cum’elle sò avà: nisuna versione, dunque nisun certificatu",
   "compose.unproven": "I so certificati ùn tenenu micca: cambiati, o micca sigillati cù a chjave ch’elli nominanu",
   "compose.saveProof": "Arregistrà a so pruvenienza",
-  "compose.proofFile": "Pruvenienza di {name}"
+  "compose.proofFile": "Pruvenienza di {name}",
+  "compose.touched": "{said} Sempre in usu in {names}.",
+  "compose.retyped": "«{column}» hè avà d’un altru tipu, ciò chì cambia ciò ch’ella mostra in {names}.",
+  "compose.further": "Più in là",
+  "compose.through": "per mezu di {name}",
+  "compose.linking": "Fighjulendu induve hè adupratu {name}"
 }

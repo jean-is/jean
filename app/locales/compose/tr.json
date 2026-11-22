@@ -36,5 +36,10 @@
   "compose.uncertified": "Satırlar şu anki hâliyle: sürüm yok, bu yüzden sertifika yok",
   "compose.unproven": "Sertifikaları geçerli değil: değiştirilmiş ya da belirttikleri anahtarla mühürlenmemiş",
   "compose.saveProof": "Kaynağını kaydet",
-  "compose.proofFile": "{name} kaynağı"
+  "compose.proofFile": "{name} kaynağı",
+  "compose.touched": "{said} Hâlâ kullanıldığı yerler: {names}.",
+  "compose.retyped": "“{column}” artık başka bir türde; bu, şuralarda gösterdiğini değiştirir: {names}.",
+  "compose.further": "Daha ötesi",
+  "compose.through": "{name} üzerinden",
+  "compose.linking": "{name} nerelerde kullanılıyor, bakılıyor"
 }

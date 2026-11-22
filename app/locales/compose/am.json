@@ -36,5 +36,10 @@
   "compose.uncertified": "ረድፎቹ አሁን እንዳሉ፦ ስሪት የለም፣ ስለዚህ የምስክር ወረቀት የለም",
   "compose.unproven": "የምስክር ወረቀቶቹ አይጸኑም፦ ተቀይረዋል ወይም በሚጠቅሱት ቁልፍ አልታተሙም",
   "compose.saveProof": "መነሻውን አስቀምጥ",
-  "compose.proofFile": "የ{name} መነሻ"
+  "compose.proofFile": "የ{name} መነሻ",
+  "compose.touched": "{said} አሁንም በ{names} ውስጥ ጥቅም ላይ ነው።",
+  "compose.retyped": "“{column}” አሁን ሌላ ዓይነት ነው፤ ይህም በ{names} ውስጥ የሚያሳየውን ይለውጣል።",
+  "compose.further": "ከዚያ ባሻገር",
+  "compose.through": "በ{name} በኩል",
+  "compose.linking": "{name} የት ጥቅም ላይ እንደዋለ በመመልከት ላይ"
 }

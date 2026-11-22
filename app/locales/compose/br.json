@@ -36,5 +36,10 @@
   "compose.uncertified": "Al linennoù evel m’emaint bremañ: stumm ebet, neuze testeni ebet",
   "compose.unproven": "N’eo ket mat e destenioù: kemmet, pe n’int ket siellet gant an alc’hwez a envelont",
   "compose.saveProof": "Enrollañ e orin",
-  "compose.proofFile": "Orin {name}"
+  "compose.proofFile": "Orin {name}",
+  "compose.touched": "{said} Implijet e vez c’hoazh e {names}.",
+  "compose.retyped": "Ur rizh all en deus “{column}” bremañ, ar pezh a cheñch ar pezh a ziskouez e {names}.",
+  "compose.further": "Pelloc’h",
+  "compose.through": "dre {name}",
+  "compose.linking": "O sellet e pelec’h eo implijet {name}"
 }

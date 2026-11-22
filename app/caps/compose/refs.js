@@ -78,6 +78,17 @@ export function filledPage(page, shown) {
 export const linksIn = (from, table, text = '') => [...(table?.properties ?? []).flatMap(({ type, name, collection = '' }) => (type === 'relation' && collection !== from && PLACE.test(collection) ? [{ kind: /** @type {Edge['kind']} */ ('relation'), to: collection, recipe: { relation: name } }] : [])),
   ...[...new Set(text.match(/\bfiles\/sha256-[0-9a-f]{64}\.\w+/g))].map((to) => ({ kind: /** @type {Edge['kind']} */ ('file'), to, recipe: {} }))].map((link, index) => ({ from, at: /** @type {Ref['at']} */ ('live'), index, ...link }))
 
+/**
+ * What is reached from a place beyond its own links, each with the one of them it is reached through: what uses what uses it (`down`), else what
+ * feeds what it uses, as far as it goes. @param {Edge[]} edges @param {string} place @param {boolean} down @returns {[string, string][]}
+ */
+export function further(edges, place, down) {
+  const step = (/** @type {string} */ at) => edges.flatMap((edge) => ((down ? edge.to : edge.from) === at ? [down ? edge.from : edge.to] : []))
+  const seen = new Map(step(place).map((one) => [one, ''])), next = [...seen.keys()].map((one) => [one, one])
+  for (let [at, via] = next.shift() ?? []; at; [at, via] = next.shift() ?? []) for (const one of step(at)) if (one !== place && !seen.has(one)) seen.set(one, via), next.push([one, via])
+  return [...seen].filter(([, via]) => via)
+}
+
 /** Whether a reference from `from` to `to` closes a loop: whether `from` is reached from `to`. @param {Edge[]} edges @param {string} from @param {string} to */
 export function loops(edges, from, to) {
   const seen = new Set(), next = [to]

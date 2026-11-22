@@ -36,5 +36,10 @@
   "compose.uncertified": "వరుసలు ఇప్పుడు ఉన్నట్లు: వెర్షన్ లేదు, కాబట్టి సర్టిఫికెట్ లేదు",
   "compose.unproven": "దీని సర్టిఫికెట్‌లు నిలవవు: మార్చబడ్డాయి, లేదా పేర్కొన్న కీతో ముద్రించబడలేదు",
   "compose.saveProof": "దీని మూలాన్ని సేవ్ చేయి",
-  "compose.proofFile": "{name} మూలం"
+  "compose.proofFile": "{name} మూలం",
+  "compose.touched": "{said} ఇంకా {names}లో ఉపయోగంలో ఉంది.",
+  "compose.retyped": "“{column}” ఇప్పుడు వేరే రకం, కాబట్టి {names}లో అది చూపేది మారుతుంది.",
+  "compose.further": "ఇంకా ముందుకు",
+  "compose.through": "{name} ద్వారా",
+  "compose.linking": "{name} ఎక్కడ ఉపయోగించబడుతుందో చూస్తోంది"
 }

@@ -36,5 +36,10 @@
   "compose.uncertified": "Wiersze takie, jakie są teraz: brak wersji, więc brak certyfikatu",
   "compose.unproven": "Jego certyfikaty nie są ważne: zmienione albo niezapieczętowane kluczem, który wskazują",
   "compose.saveProof": "Zapisz pochodzenie",
-  "compose.proofFile": "Pochodzenie: {name}"
+  "compose.proofFile": "Pochodzenie: {name}",
+  "compose.touched": "{said} Nadal używane w: {names}.",
+  "compose.retyped": "„{column}” ma teraz inny rodzaj, co zmienia to, co pokazuje w: {names}.",
+  "compose.further": "Dalej",
+  "compose.through": "przez: {name}",
+  "compose.linking": "Sprawdzam, gdzie jest używane: {name}"
 }

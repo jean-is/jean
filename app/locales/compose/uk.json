@@ -36,5 +36,10 @@
   "compose.uncertified": "Рядки, як вони є зараз: немає версії, отже немає сертифіката",
   "compose.unproven": "Його сертифікати не підтверджуються: змінені або запечатані не тим ключем, що в них названо",
   "compose.saveProof": "Зберегти походження",
-  "compose.proofFile": "Походження: {name}"
+  "compose.proofFile": "Походження: {name}",
+  "compose.touched": "{said} Досі використовується в: {names}.",
+  "compose.retyped": "«{column}» тепер іншого типу, і це змінює те, що показано в: {names}.",
+  "compose.further": "Далі",
+  "compose.through": "через {name}",
+  "compose.linking": "Дивлюся, де використовується {name}"
 }

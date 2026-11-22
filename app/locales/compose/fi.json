@@ -36,5 +36,10 @@
   "compose.uncertified": "Rivit sellaisina kuin ne nyt ovat: ei versiota, joten ei varmennetta",
   "compose.unproven": "Sen varmenteet eivät pidä: muutettu tai ei sinetöity mainitulla avaimella",
   "compose.saveProof": "Tallenna alkuperä",
-  "compose.proofFile": "Kohteen {name} alkuperä"
+  "compose.proofFile": "Kohteen {name} alkuperä",
+  "compose.touched": "{said} Yhä käytössä: {names}.",
+  "compose.retyped": "”{column}” on nyt eri tyyppiä, mikä muuttaa sitä, mitä se näyttää kohteissa: {names}.",
+  "compose.further": "Kauempana",
+  "compose.through": "kohteen {name} kautta",
+  "compose.linking": "Katsotaan, missä {name} on käytössä"
 }

@@ -36,5 +36,10 @@
   "compose.uncertified": "সারিগুলো এখন যেমন আছে: কোনো সংস্করণ নেই, তাই কোনো সনদ নেই",
   "compose.unproven": "এর সনদগুলো টেকে না: বদলানো হয়েছে, বা যে চাবির কথা বলে তা দিয়ে সিল করা হয়নি",
   "compose.saveProof": "এর উৎস সংরক্ষণ করুন",
-  "compose.proofFile": "{name}-এর উৎস"
+  "compose.proofFile": "{name}-এর উৎস",
+  "compose.touched": "{said} এখনও {names}-এ ব্যবহৃত হচ্ছে।",
+  "compose.retyped": "“{column}” এখন অন্য ধরনের, তাই {names}-এ এটি যা দেখায় তা বদলে যায়।",
+  "compose.further": "আরও দূরে",
+  "compose.through": "{name}-এর মাধ্যমে",
+  "compose.linking": "{name} কোথায় ব্যবহৃত হচ্ছে দেখা হচ্ছে"
 }

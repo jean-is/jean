@@ -36,5 +36,10 @@
   "compose.uncertified": "Ordines ut nunc sunt: nulla versio, itaque nullum testimonium",
   "compose.unproven": "Testimonia eius non valent: mutata, aut non obsignata clave quam nominant",
   "compose.saveProof": "Originem eius serva",
-  "compose.proofFile": "Origo: {name}"
+  "compose.proofFile": "Origo: {name}",
+  "compose.touched": "{said} Adhuc in usu est in {names}.",
+  "compose.retyped": "“{column}” nunc alterius generis est, quod mutat quae in {names} ostendit.",
+  "compose.further": "Ulterius",
+  "compose.through": "per {name}",
+  "compose.linking": "Quaeritur ubi {name} adhibeatur"
 }

@@ -3,7 +3,7 @@
 // asked at each resolution, and what a reference shows of a collection, read again from its journal.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { parseRef, placeOf, refsIn, withRef, filledPage, bare, formsTo, loops, refused, versionless, tableOf, chartOf, choiceIn, choicesIn, tinted, parseFigure, figureOf, written, linksIn } from '../app/caps/compose/refs.js'
+import { parseRef, placeOf, refsIn, withRef, filledPage, bare, formsTo, loops, refused, versionless, tableOf, chartOf, choiceIn, choicesIn, tinted, parseFigure, figureOf, written, linksIn, further } from '../app/caps/compose/refs.js'
 import { versionOf, loadedOf, headOf, reshaped, breaks, current } from '../app/caps/compose/versions.js'
 import { keyOf, paceOf, sorted, askOf, lastRun, due } from '../app/caps/compose/recipes.js'
 import { credentialOf, chainOf, holds, sriOf } from '../app/caps/compose/proof.js'
@@ -85,6 +85,14 @@ test('a site’s page refers with a table that says data-from, filled as the pag
   assert.deepEqual(refsIn(page).map(({ at, recipe }) => [at, recipe]), [['published', { where: 'Checked is yes', fields: 'Name & Trade' }], ['live', {}]])
   assert.equal(bare(filledPage(page, [[['Name'], ['Ana <3']], [['Name'], ['Bob']]])), `<main><table class="t" data-from="${PLACE}@published" data-where="Checked is yes" data-fields="Name &amp; Trade"></table><table data-from="${PLACE}"></table></main>`, 'kept, a page holds none of the rows it showed')
   assert.equal(filledPage(page, [[['Name'], ['Ana <3']], null]), `<main><table class="t" data-from="${PLACE}@published" data-where="Checked is yes" data-fields="Name &amp; Trade"><thead><tr><th>Name</th></tr></thead><tbody><tr><td>Ana &lt;3</td></tr></tbody></table><table data-from="${PLACE}"></table></main>`)
+})
+
+test('what is reached further from a place goes as far as the graph does, each through the link it starts from, never back to the place', () => {
+  const edge = (/** @type {string} */ from, /** @type {string} */ to) => ({ from, to, at: /** @type {const} */ ('live'), recipe: {}, index: 0 })
+  const edges = [edge('deck', 'orders'), edge('orders', 'artisans'), edge('report', 'deck'), edge('site', 'artisans'), edge('artisans', 'orders')]
+  assert.deepEqual(further(edges, 'artisans', true), [['deck', 'orders'], ['report', 'orders']], 'what uses what uses it')
+  assert.deepEqual(further(edges, 'report', false), [['orders', 'deck'], ['artisans', 'deck']], 'what feeds what it uses')
+  assert.deepEqual(further([edge('a', 'b')], 'b', true), [], 'nothing beyond its own links')
 })
 
 test('what leaves Jean holds each reference as it shows: a block its rows’ table or its words, a figure its value, any other block as it was', async () => {

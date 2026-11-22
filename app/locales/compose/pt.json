@@ -36,5 +36,10 @@
   "compose.uncertified": "As linhas como estão agora: sem versão, logo sem certificado",
   "compose.unproven": "Os seus certificados não se confirmam: alterados, ou não selados pela chave que indicam",
   "compose.saveProof": "Guardar a proveniência",
-  "compose.proofFile": "Proveniência de {name}"
+  "compose.proofFile": "Proveniência de {name}",
+  "compose.touched": "{said} Ainda em uso em {names}.",
+  "compose.retyped": "«{column}» agora é de outro tipo, o que muda o que mostra em {names}.",
+  "compose.further": "Mais adiante",
+  "compose.through": "através de {name}",
+  "compose.linking": "A ver onde se usa {name}"
 }

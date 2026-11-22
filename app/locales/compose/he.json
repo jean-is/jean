@@ -36,5 +36,10 @@
   "compose.uncertified": "השורות כפי שהן עכשיו: אין גרסה, ולכן אין אישור",
   "compose.unproven": "האישורים שלו לא תקפים: שונו, או לא נחתמו במפתח שהם מזכירים",
   "compose.saveProof": "שמירת המקור",
-  "compose.proofFile": "המקור של {name}"
+  "compose.proofFile": "המקור של {name}",
+  "compose.touched": "{said} עדיין בשימוש ב{names}.",
+  "compose.retyped": "„{column}” הוא עכשיו מסוג אחר, וזה משנה את מה שמוצג ממנו ב{names}.",
+  "compose.further": "הלאה",
+  "compose.through": "דרך {name}",
+  "compose.linking": "בודק היכן {name} בשימוש"
 }

@@ -36,5 +36,10 @@
   "compose.uncertified": "ယခုအတိုင်း အတန်းများ- ဗားရှင်း မရှိ၍ လက်မှတ် မရှိပါ",
   "compose.unproven": "၎င်း၏ လက်မှတ်များ မမှန်ပါ- ပြောင်းထားသည်၊ သို့မဟုတ် ဖော်ပြထားသော သော့ဖြင့် တံဆိပ်မခတ်ထားပါ",
   "compose.saveProof": "မူလအစကို သိမ်းရန်",
-  "compose.proofFile": "{name} ၏ မူလအစ"
+  "compose.proofFile": "{name} ၏ မူလအစ",
+  "compose.touched": "{said} {names} တွင် ယခုထိ အသုံးပြုနေဆဲဖြစ်သည်။",
+  "compose.retyped": "“{column}” သည် ယခု အမျိုးအစားအသစ်ဖြစ်သွားသဖြင့် {names} တွင် ပြသသည့်အရာ ပြောင်းလဲသွားသည်။",
+  "compose.further": "ထို့ထက်ဝေးသောနေရာ",
+  "compose.through": "{name} မှတစ်ဆင့်",
+  "compose.linking": "{name} ကို အသုံးပြုထားသောနေရာများကို ကြည့်နေသည်"
 }
