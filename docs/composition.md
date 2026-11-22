@@ -78,6 +78,30 @@ A routine whose request holds a ```` ```table ```` block is a consumer of the gr
 
 **Exit criterion**: a routine that reads the bakers is under the artisans' *Used in*; a baker added sets it off by itself, its note holds the bakers' rows and its run is certified back to what it read; a source routine's run, which adds a baker, is certified, naming the routine and the collection it wrote; on Ana's second device, the collection's version 1 and its port arrive, and the port shut there shuts it on the first.
 
+### Step 13 — The graph whole, in words
+
+`creation_links` given no place says every creation of the graph with what it uses, each at the version it reads, then what shows nothing and why (no such creation, or a loop). A site's form that proposes into a collection (`formsTo()`) is a link of the graph, read by `linksIn()` as a relation is, since a column its port fills, renamed, changes what the form writes; like a relation, it carries no loop. The guide says that Jean tells how a project's creations link, and draws it as a flowchart when asked.
+
+**Exit criterion**: `creation_links` given no place names the slides, the document, the sites and the collection that use the artisans, the version each reads, the directory's form as proposing into them, and slides whose other collection is gone as showing nothing.
+
+### Step 14 — One creation's map
+
+*See them drawn*, in the links menu once *Further along* holds one, opens a sheet with the map about the creation (`map.js`, `layered()`): what it uses at the start, it, what uses it further along, what is reached through those a column further, each a button that opens it with the versions it reads; pointed at or holding the keyboard, one lights its chain, and the arrows walk the links.
+
+**Exit criterion**: the artisans' map has the orders that relate to them beside them, the slides, the report and the directory further along, and the members' site that shows the report's summary a column further; the board says *Version 1*; seven lines, the directory's form and the orders' relation dashed; the arrows go from the artisans to what uses them, back, and down to the orders; the members pointed at light the report and the artisans; the report pressed opens beside the task, the sheet closing; in Arabic the artisans are on the right, and in Arabic and Japanese at 320 px wide the columns stack and no name is cut.
+
+### Step 15 — The project's map
+
+Once three creations are linked, Creations' Sort offers Links, which draws the whole project's map in place of the cards, kept in the address as any order is (the `map` slot, read again each time the graph is); its chips and its words keep those they find lit and the rest soft.
+
+**Exit criterion**: the artisans, the prices and the orders at the start, the slides, the report, the directory and the proposal further along, the members' site a column further; the address holds it; the artisans pointed at leave the prices and the proposal soft; *Slides* keeps the three slides lit; the report written again, the graph is read again and the map drawn the same; the members pressed open beside the page.
+
+### Step 16 — How each stands
+
+Each creation's line says what needs seeing (`standing()`): that a later version is out, beside one pinned to an earlier; how often a recipe runs by itself, and on which brain; that it shows nothing and why, that line alone in the danger colour; that nothing uses it, on a collection no reference reads. A consumer whose only source is gone is drawn too.
+
+**Exit criterion**: slides pinned to version 1 say version 3 is out once it is published; slides that follow the collection say *As the collection changes* and their brain; a site whose collection is gone, and the neighbourhood's slides for their second block, say *This project has no such collection.*; the orders say *Used by nothing*, the artisans don't.
+
 ### Budgets
 
 Built first on a main whose line budget was nearly full, each step from the second raised `loc.app` by what it measured, at the owner's word; replayed on the main it landed on, whose budget left room enough, those raises were dropped and no budget changed. From step 6 on, a step that needs more room than the budget leaves raises `loc.app` by what it measures, at the owner's word, in a commit of its own before it; step 6 fitted in what was left. Nothing was added to the first load, the core or Tables' folder; no dependency was added. Its strings are in the 54 languages Jean speaks.
@@ -108,6 +132,10 @@ Built first on a main whose line budget was nearly full, each step from the seco
 - **A section is shown, not queried.** A reference to a document's section has no recipe but the section: its Markdown is drawn as it is, and in a site its HTML as Jean draws Markdown.
 - **A picture is listed, not certified.** The plan's step 6 had a picture's credential join a version's or a run's ingredients. A run's ingredients are what it read, and slides have no certificate of their own beside their runs', so a picture held by content is a link of the graph, which says where it is used, and its own credential stays its own.
 - **The commits' first lines** are in English after `composition: étape N —`, as the rest of the history is; the docs are in English, as all of Jean's are.
+- **Pictures and the design system stay off the map.** The plan made them marks on what holds them; a mark of each on nearly every deck said nothing new, and the links menu and the design system's page say what holds them.
+- **Links is a way to sort Creations, not a switch of its own.** The address keeps it as it keeps any order, and `creations.js`, in the first load, has no byte to spare: Creations' own module and composition's `map` slot carry it.
+- **Soft, not dimmed.** What a chain or a search leaves out keeps its words in the colour a note's are (`--ink-soft`), its border and lines fainter, since dimmed words would fall under AA.
+- **A consumer whose only source is gone stands at the start.** It reads nothing that is there, so nothing places it further along.
 
 ## Known limits
 
@@ -122,12 +150,14 @@ Built first on a main whose line budget was nearly full, each step from the seco
 - The salts of a version's or a run's digests are kept, but nothing in Jean yet makes a proof that discloses what it holds.
 - The consumer's menu draws its choices as Jean's full-width selects; a denser layout would cost style lines.
 - The check page's introduction still speaks of answers only.
-- The 45 translations of the new strings are Claude's, not a native speaker's.
+- The translations of the new strings, the map's too, are Claude's, not a native speaker's.
+- Where the map stacks, at 34rem and under, its lines all run along the start edge and can cross; it reads best wide. It is laid out for tens of creations, not hundreds, which would want columns that fold.
+- On a touch screen nothing is pointed at: a tap opens a creation, and a chain lights from the keyboard alone. An arrowhead keeps the lines' own colour when its chain lights.
 - WebKit doesn't run `test/compose.spec.js` (in `CHROMIUM_ONLY`: what it checks is Jean's own JavaScript).
 
 ## Work left
 
-Composition and the graph are one ([architecture.md](architecture.md#composition)): every way a creation shows another becomes a reference, and every reference is an edge the graph reads. Steps 6 to 12 built the graph out from that; what is left of their plan is in the departures above: a flow's step reading a reference, a link carrying its ingredients' certificates, apps and a design's figures, counts on Creations' cards and `@`, an answer's figures as edges. Drawing the graph comes first ([The map](#the-map)). Three rules hold for what comes next:
+Composition and the graph are one ([architecture.md](architecture.md#composition)): every way a creation shows another becomes a reference, and every reference is an edge the graph reads. Steps 6 to 12 built the graph out from that; what is left of their plan is in the departures above: a flow's step reading a reference, a link carrying its ingredients' certificates, apps and a design's figures, counts on Creations' cards and `@`, an answer's figures as edges; of the map's ([below](#the-map)), the help article and the job page that would show it. Three rules hold for what comes next:
 
 - **Nothing shown outside a reference.** A kind that starts showing another's content joins `CONSUMERS` in the same change, and its test checks that the source's *Links with other creations* lists it.
 - **Budgets first.** Each step measures what it needs, deletes first where it can, asks for a raise in a change of its own, and stays out of Tables' folder and the first load, at their limits.
@@ -135,41 +165,12 @@ Composition and the graph are one ([architecture.md](architecture.md#composition
 
 ## The map
 
-The graph is said in words where it matters, the links menu, an Undo's toast, `creation_links`, and drawn nowhere: what a project holds together is seen one creation at a time. The map draws it (D764), in four steps planned below, each shippable alone and checked by `test/compose.spec.js`, as the steps above were.
+The graph was said in words where it matters, the links menu, an Undo's toast, `creation_links`, and drawn nowhere, so that what a project holds together was seen one creation at a time. Steps 13 to 16 draw it (D764, [architecture.md](architecture.md#composition)).
 
-- **What it answers.** Along the links, what a change touches before it is made: what uses this, and what uses that. Back along them, where what shows comes from, to the version it reads and its certificate. Across a project: what is behind (pinned to version 1 while version 3 is out), what runs by itself and on which brain, what shows nothing (a source deleted, a loop, a right refused: `refused()`), and what nothing uses.
-- **Its form.** Sources at the start, each consumer a column further along, by the longest way of references that reaches it, so that it reads in the page's direction and turns with it; in a column, each sits beside what it links to, ordered once by its neighbours' places. The references alone set the columns, which `loops()` keeps one way; a loop a file holds anyway, written by hand, is drawn as it shows, refused. A relation between collections and a form proposing into one are dashed lines, which place nothing; pictures held by content and the design system are marks on what holds them, not places of their own, since they would link to nearly everything. Each creation is a button that opens it: its kind's glyph, its name, and a line of how it stands. One picked keeps its chain lit, what it uses and what uses it as far as they go (`further()`), and dims the rest. Nothing is dragged and nothing moves: the same graph is laid out the same, though it is read again at every change. Arrow keys walk the links, along them and within a column; at 320 px wide the columns stack, the start at the top.
-- **How it is built.** As Your data's map is (D728, `ui/map.js`): the words HTML in a grid that turns with the page, the lines SVG drawn between them once they land. The layout is pure, `layered()` in `refs.js`, under `node --test`; the drawing is `caps/compose/map.js`, imported as it first opens. No dependency, no ECharts, no Pele.
-- **Where it is reached.** From the links menu, *See it drawn*: the map around one creation, once its *Further along* holds one at least, the menu saying the rest until then. From Creations, the whole project's beside the cards, once three creations are linked, through a slot `creations-page.js` reads, never through `creations.js`, which the first load holds. The brain reads the whole graph from `creation_links` given no place, and draws it in an answer as a ```` ```mermaid ```` flowchart when asked, an answer being a moment (D188).
-- **How people hear of it.** No page of jean.is is about the map: people look for what composition does, a price changed everywhere at once, not for a graph. A job page for composition, when one is written, plays the map as its demo; the help gets an article on how creations link; the guide says it from step 13.
-
-### Step 13 — The graph whole, in words (built)
-
-`creation_links` given no place: every creation of the graph with what it uses, each at the version it reads, then what shows nothing and why. A site's form that proposes into a collection (`formsTo()`) becomes a link of the graph, read by `linksIn()` as a relation is, since a column its port fills, renamed, changes what the form writes; like a relation, it carries no loop. The guide (`caps/own-skills/guide.txt`) says that Jean tells how a project's creations link, and draws it.
-
-**Exit criterion**: `creation_links` given no place names the artisans, the slides, the document and the site that use them, the version each reads, the site's form as proposing into the artisans, and slides whose collection was deleted as showing nothing.
-
-### Step 14 — One creation's map
-
-*See it drawn* in the links menu: what the creation uses at the start, the creation, what uses it at the end, *Further along* a column further each way, each with the version it reads.
-
-**Exit criterion**: the artisans' map has the slides, the site and the document at the end, and a site that shows the document's section a column further, through it; arrow keys go from the artisans to the slides and back; in Arabic the artisans are on the right, in Japanese every name fits, and at 320 px wide nothing is cut.
-
-### Step 15 — The project's map
-
-The whole project's map from Creations: its chips and its words keep the creations they find lit and dim the others, and a creation picked lights its chain.
-
-**Exit criterion**: a project of the artisans, a document of prices and what shows them draws both at the start and each consumer by its depth, no line crossing a creation; the artisans picked dim a proposal that shows only the prices; *Sites* keeps the sites lit; a row changed, the map is read again and drawn the same.
-
-### Step 16 — How each stands
-
-Each creation's line on the map says how it stands: that a later version is out, beside one pinned to an earlier; that it runs by itself, with its brain; that it shows nothing, and why; that nothing uses it, on a source no one reads.
-
-**Exit criterion**: slides pinned to version 1 say version 3 is out once it is published; slides that follow the collection say they run by themselves, on their brain; a site whose collection was deleted says it shows nothing; a collection nothing uses says so.
-
-### Its budget
-
-Steps 14 to 16 need more lines than `loc.app` leaves, and step 13 should fit in what is left; each step that needs room raises it by what it measures, at the owner's word, in a commit of its own before it. Nothing goes into the first load, the core or Tables' folder, and the map's few rules go into compose's own sheet.
+- **What it answers.** Along the links, what a change touches before it is made: what uses this, and what uses that. Back along them, where what shows comes from, to the version it reads. Across a project: what is behind, what runs by itself and on which brain, what shows nothing and why, and what nothing uses.
+- **Its form.** Sources at the start, each consumer a column further along, by the longest way of references that reaches it, so that it reads in the page's direction and turns with it. Nothing is dragged and nothing moves: the same graph is laid out the same, though it is read again at every change.
+- **Where it is reached.** From the links menu, the map about one creation; on Creations, the whole project's, as a way to sort them; and the brain reads the whole graph from `creation_links` given no place, drawing it in an answer as a ```` ```mermaid ```` flowchart when asked, an answer being a moment (D188).
+- **How people hear of it.** No page of jean.is is about the map: people look for what composition does, a price changed everywhere at once, not for a graph. The guide says where it is; a help article on how creations link, and a job page for composition that plays the map as its demo, are still to write.
 
 ## Decisions left open
 
@@ -178,4 +179,3 @@ Steps 14 to 16 need more lines than `loc.app` leaves, and step 13 should fit in 
 3. Whether Tables itself should refuse a breaking change of kind once a collection has versions: step 7's Undo, which says what still uses a column, is the middle way.
 4. A proof that discloses what a version or a run holds, from its kept salts.
 5. Whether a routine that writes a collection's rows is a link drawn into it, as a site's form is: its runs say which collections they wrote (`wrote`), but only once it has run, and brains and connections stay out of the graph (D763).
-6. The map's name on screen: *Map* already names Your data's, and a place's.
