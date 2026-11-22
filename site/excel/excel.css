@@ -21,6 +21,9 @@
 .job-hero.is-made .site-hero-text { max-inline-size: 60rem; gap: 1.1rem; }
 .site-creation { display: block; inline-size: 100%; block-size: var(--creation, min(44rem, 82dvh)); border: 0; border-block: 1px solid var(--line); }
 .site-creation.is-whiteboard { --creation: min(34rem, 82dvh); }
+/* A project's map: its columns side by side, or stacked where the page is narrow, every creation in sight */
+.site-creation.is-map { --creation: min(30rem, 82dvh); }
+@media (width < 40rem) { .site-creation.is-map { --creation: min(46rem, 88dvh); } }
 /* A game's screen is as wide as it is drawn: sixteen by nine */
 .site-creation.is-game { block-size: auto; max-block-size: 82dvh; aspect-ratio: 16 / 9; }
 .job-try { display: flex; align-items: center; gap: 0.6rem; margin-inline: 1.1rem; color: var(--ink-soft); font-size: 0.9375rem; }

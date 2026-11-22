@@ -1,0 +1,111 @@
+{
+  "title": "Update a price everywhere at once, from one list · {name}",
+  "description": "Keep prices or products in one list, and show it in slides, documents and a website that follows it. Change it once, and every place that shows it follows.",
+  "eyebrow": "Links with other creations",
+  "h1": "Change a price once. It changes everywhere it shows.",
+  "h1.mark": "everywhere it shows",
+  "acts": [["task", "Change a price once."], ["trust", "It changes everywhere it shows."]],
+  "lede": "Keep your prices, products or opening hours in one list, and show it in slides, documents and a website. Change a row, and every place that shows it follows, or stays on the version you chose. {name} draws what uses what, so you see what a change touches before you make it.",
+  "cta": "Try it with a sample price list",
+  "see": "See how it went",
+  "facts": [
+    "Free and open source",
+    "Nothing to install",
+    "One list, no copies"
+  ],
+  "try.ask": "Make a collection of our five coffees and their prices per bag, then a price list document and a one-page website that both show it, so that a price changed in the collection changes everywhere.",
+  "pane.brain": "The AI you chose",
+  "pane.ask": "Show our coffee prices in the price list, the trade fair slides, the newsletter and the shop’s website, from one collection.",
+  "pane.title": "A project’s creations and how they link, drawn by {name}, live",
+  "pane.try": "This is the map itself, as {name} draws it. Point at a creation to light what it uses and what uses it, follow the links with the arrow keys, or press one.",
+  "pane.asked": "In {name}, it opens beside your task.",
+  "made.name": "The coffee roaster’s project",
+  "made.prices": "Coffee prices",
+  "made.orders": "Orders",
+  "made.flyer": "Old flyer",
+  "made.list": "Price list",
+  "made.slides": "Trade fair slides",
+  "made.letter": "Newsletter",
+  "made.shop": "Shop website",
+  "made.delivery": "Delivery",
+  "made.product": "Product",
+  "made.ask": "In two sentences, say which prices changed this month.",
+  "made.brain": "The AI you chose",
+  "replay.title": "One request, step by step.",
+  "replay.why": "A coffee roaster’s prices, as {name} sets them up: one collection, and a price list and a website that show it.",
+  "step.read": "{name} reads",
+  "replay.reads": [
+    "Your request: five coffees and their prices, a price list, a website",
+    "What {name} knows of collections: show one where it’s needed, never copy its rows"
+  ],
+  "replay.works": [
+    "Made a collection, Coffee prices, a row for each coffee",
+    "Wrote the price list, its table naming the collection rather than holding its rows",
+    "Made a one-page website whose table is filled from the same collection each time it’s read"
+  ],
+  "replay.got": "Three creations, linked: the collection, the price list and the website, each opening beside your request.",
+  "replay.icon": "table",
+  "replay.chip": "Coffee prices",
+  "step.again": "You change one price",
+  "replay.again": "The Ethiopia now costs {new} a bag, not {old}.",
+  "step.made": "It changes everywhere",
+  "replay.made": "One row changes, in the collection. The price list and the website show the new price at once; online, the website shows it once you publish it again.",
+  "replay.madeIcon": "app",
+  "replay.madeChip": "Shop website",
+  "asks.title": "Then ask your own",
+  "asks.items": [
+    "Show our prices on the trade fair slides, as they are today, and keep them so.",
+    "Put our opening hours in one place, and show them on the website and in the newsletter.",
+    "At the top of the newsletter, sum up what changed in the prices, each time they change.",
+    "What would renaming the Product column touch?",
+    "How do this project’s creations link? Draw them."
+  ],
+  "io.title": "What goes in. What shows it.",
+  "io.why": "Keep it once, in a collection or a section of a document. Then ask for it wherever it should show.",
+  "io.in": "In",
+  "io.out": "Out",
+  "io.ins": [
+    ["table", "A collection you keep", "Prices, products, people, events: rows you change in one place"],
+    ["file", "A spreadsheet", "Excel or CSV, made into a collection on this device"],
+    ["file", "A section of a document", "Opening hours or terms, written once"]
+  ],
+  "io.outs": [
+    ["slides", "Slides", "A table, a chart or a figure that follows the collection"],
+    ["file", "Documents", "A table, a figure or a section, as it is now or at a version"],
+    ["app", "Websites and prototypes", "Pages whose tables are filled from it each time they’re read or published"],
+    ["chart", "Answers", "A table as it was when the answer was written, with how many changes came since"],
+    ["clock", "Routines", "Tasks run on a schedule, or each time the collection changes"]
+  ],
+  "exact.title": "Shown, not copied.",
+  "exact.why": "Copy a price into five files, and one of them goes stale. {name} keeps one list and shows it where you ask, at the version you choose.",
+  "exact.cards": [
+    ["One place to change", "Slides, a document or a website hold a link to the collection, never its rows. Change a row, and each shows it the next time it’s drawn, at once where it’s open."],
+    ["The version you choose", "As it is now, the latest version you published, or one you keep: trade fair slides can stay on last month’s prices, and say when a later version is out."],
+    ["What a change touches, first", "{links}, at the top of each creation, lists what uses it, and {drawn} draws it as a map. Delete a column, and the message that lets you undo it says what still uses it."]
+  ],
+  "where.title": "Where your list lives.",
+  "where.why": "On your device. What links one creation to another is worked out there, and nothing is sent to show it.",
+  "where.cards": [
+    ["Kept on your devices", "Your collections and what shows them are plain files in your browser, encrypted. Nothing we can read reaches us."],
+    ["Sent to an AI only when you ask", "A table or a figure is filled on this device. Only an instruction you add, such as a summary of the rows, sends them to the AI you name."],
+    ["Online only when you say so", "A website shows a new price online once you publish it again. {name} never publishes by itself."]
+  ],
+  "catch.items": [
+    "{name} is free; the AI behind it may not be. Without a sign-up, only the AI on this computer answers.",
+    "What other creations show is a collection, or a section of a document or a whiteboard. Slides and websites show them; nothing shows slides or a website.",
+    "A website online shows a change once you publish it again: {name} never puts anything online by itself.",
+    "An instruction carried out on the rows, such as a summary, costs what its AI costs each time it runs, and runs by itself only while {name} is open.",
+    "A link or a Word file made from a document holds the prices as they were when it was made: only {name} reads a collection.",
+    "Your work lives in this browser. Clear its data without a backup and it’s gone."
+  ],
+  "faq.items": [
+    ["Is it free?", "Yes, with no account at {name}. The AI that answers may want one: {free} opens a free one, or use a plan you already pay for, or the AI on this computer, with no account at all."],
+    ["Is it a copy, or the same list?", "The same list. Slides, a document or a website hold a link to the collection, not its rows, so there is one place to change."],
+    ["Can slides keep last month’s prices?", "Yes. Publish a version of the collection, and choose it for the slides in {links}: they stay on it until you move them, and say when a later version is out."],
+    ["How do I see what a change will touch?", "Press {links} at the top of the collection, then {drawn} for the map. On Creations, sorted by {map}, the whole project is drawn."],
+    ["Does my website follow by itself?", "In {name}, at once. Online, once you publish it again: {name} never publishes by itself."],
+    ["Can I start from my spreadsheet?", "Yes. In Creations, Create makes a collection from a CSV file or an Excel workbook’s first sheet, read on this device."]
+  ],
+  "end.title": "Start with the roaster’s prices.",
+  "end.why": "The request opens in {name} and is answered at once, or as soon as you choose an AI. Then link your own."
+}

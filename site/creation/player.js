@@ -10,10 +10,11 @@
 // mute and full screen, buttons on a touch screen, its saves kept for the visit. A collection is in Tables' own view
 // (caps/tables/view.js), as a table, a board or cards, and a document in its editor (caps/documents/editor.js), each
 // with Jean's changes of it waiting to be accepted or rejected; a design in its view (caps/designs/view.js), its takes
-// above its page, each part picked, moved and retyped. Nothing is kept or sent (./state.js); what a view would ask Jean, which no
+// above its page, each part picked, moved and retyped. A project's map is drawn as Creations draws it (caps/compose/map.js),
+// each creation saying the versions it reads and how it stands. Nothing is kept or sent (./state.js); what a view would ask Jean, which no
 // brain answers here, is said in the creation's own words under it (./room.js).
 import { html, render } from 'lit-html'
-import { dir, useStrings } from '#app/core/i18n.js'
+import { dir, t, useStrings } from '#app/core/i18n.js'
 import { configureCapabilities } from '#app/ui/caps.js'
 import { styleSheet } from '#app/ui/sheet.js'
 
@@ -29,6 +30,7 @@ import { styleSheet } from '#app/ui/sheet.js'
  * @typedef {{ kind: 'collection', name: string, folder: string, files: Record<string, string> }} Collection
  * @typedef {{ kind: 'document', name: string, markdown: string, held: { markdown: string, notes: string[] } }} Doc
  * @typedef {{ kind: 'design', name: string, asked: string, path: string, file: string }} Design
+ * @typedef {{ kind: 'map', name: string, asked: string, creations: { place: string, name: string }[], edges: import('#app/caps/compose/refs.js').Edge[], latest: Record<string, number> }} Links
  */
 
 const params = new URLSearchParams(location.hash.slice(1))
@@ -49,7 +51,7 @@ const main = /** @type {HTMLElement} */ (document.getElementById('main'))
 const said = /** @type {HTMLElement} */ (document.getElementById('said'))
 const response = await fetch(new URL(params.get('src') ?? '', location.href))
 if (!response.ok) throw new Error(`creation: ${response.status} for ${params.get('src')}`)
-/** @type {Pages | Board | Game | Collection | Doc | Design} */
+/** @type {Pages | Board | Game | Collection | Doc | Design | Links} */
 const shown = await response.json()
 // Its name, the document's and its heading's, which only a screen reader meets: a game's frame holds no words of its own.
 document.title = /** @type {HTMLElement} */ (document.getElementById('name')).textContent = shown.name
@@ -143,5 +145,22 @@ async function design (one) {
   main.append(await editor({ uri: one.path }, []))
 }
 
+/**
+ * A project's map, as Creations draws it: its creations by their places, the links between those it has, one line for each
+ * way two link, each creation saying the versions it reads and how it stands, as caps/compose/compose.js's drawingOf() says
+ * them, a consumer whose only source is gone drawn too; a creation pressed says what Jean would do. @param {Links} one
+ */
+async function map (one) {
+  await Promise.all([useStrings('compose'), sheet('caps/compose/compose.css')])
+  const [{ drawn }, { standing }, { icons }] = await Promise.all([import('#app/caps/compose/map.js'), import('#app/caps/compose/refs.js'), import('#app/ui/menu-icons.js')])
+  const KIND = /** @type {Record<string, unknown>} */ ({ conversations: icons.task, collections: icons.table, decks: icons.slides, documents: icons.note, sites: icons.code, prototypes: icons.code, games: icons.play, designs: icons.palette, routines: icons.sync })
+  const names = new Map(one.creations.map(({ place, name }) => [place, name])), edges = one.edges.filter((edge) => names.has(edge.from) && names.has(edge.to))
+  const which = (/** @type {import('#app/caps/compose/refs.js').Ref['at']} */ at) => (typeof at === 'number' ? t('compose.pinned', { n: at }) : t(`compose.${at}`))
+  const stands = (/** @type {string} */ place) => standing(place, one.edges, (other) => names.has(other), (other) => one.latest[other] ?? 0)
+  render(drawn({ places: [...names.keys()].sort(), edges: [...new Map(edges.map((edge) => [`${edge.from} ${edge.to} ${edge.kind ?? ''}`, edge])).values()], name: (place) => names.get(place) ?? place,
+    glyph: (place) => KIND[place.split('/')[0]] ?? icons.layers, open: say, alert: (place) => new Set(stands(place).filter(([key]) => /missing|loop/.test(key)).map(([key]) => t(`compose.${key}`))),
+    said: (place) => [...new Set([...edges.filter((edge) => edge.from === place && !edge.kind).map((edge) => which(edge.at)), ...stands(place).map(([key, given]) => (key === 'brain' ? String(given.name) : t(`compose.${key}`, given)))])] }), main)
+}
+
 document.addEventListener('asked', () => { if (shown.kind !== 'whiteboard') say() })
-await ({ whiteboard: board, game, collection, document: page, design, site: pages, prototype: pages })[shown.kind](/** @type {any} */ (shown))
+await ({ whiteboard: board, game, collection, document: page, design, map, site: pages, prototype: pages })[shown.kind](/** @type {any} */ (shown))

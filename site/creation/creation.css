@@ -12,3 +12,7 @@ html > .shown > main > * { flex: 1; min-block-size: 0; }
 /* A design's mark, the dot on a part that needs a look, as large as a finger needs (24 px, WCAG 2.5.8) wherever it lies: in the
    app it is smaller, and counts on the room around it. */
 .design .design-dot { min-inline-size: 24px; min-block-size: 24px; }
+/* A project's map (caps/compose/map.js) in the frame's middle, the frame scrolling where the map is taller: the map itself
+   never scrolls, so its lines stay on the creations they join */
+.creation > main:has(> app-links-map) { overflow: auto; padding: clamp(1rem, 4vw, 2rem); }
+.creation > main > app-links-map { flex: none; margin-block: auto; }

@@ -36,8 +36,8 @@ export const REPOSITORY = 'https://github.com/jean-is/jean'
 /** Where people write when help and Ask Jean aren't enough. */
 export const SUPPORT = 'arnaud@jean.is'
 
-/** What people use Jean for, each a page: every AI in one place, the jobs, bringing one's history, the AI offline, as the foot lists them. */
-export const USES = ['all-ai', 'excel', 'pdf', 'slides', 'diagrams', 'import', 'offline']
+/** What people use Jean for, each a page: every AI in one place, the jobs, one list shown everywhere, bringing one's history, the AI offline, as the foot lists them. */
+export const USES = ['all-ai', 'excel', 'pdf', 'slides', 'diagrams', 'everywhere', 'import', 'offline']
 
 /**
  * What Jean makes and keeps, each kind a page, by the kind's name in the app (`creations.kind.<kind>`), in the order Create's

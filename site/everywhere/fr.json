@@ -1,0 +1,111 @@
+{
+  "title": "Mettre à jour un prix partout à la fois, depuis une liste · {name}",
+  "description": "Gardez vos prix ou vos produits dans une seule liste, et affichez-la dans des diapos, des documents et un site qui la suit. Modifiez-la une fois : tout suit.",
+  "eyebrow": "Liens avec d’autres créations",
+  "h1": "Changez un prix une fois. Il change partout où il s’affiche.",
+  "h1.mark": "partout où il s’affiche",
+  "acts": [["task", "Changez un prix une fois."], ["trust", "Il change partout où il s’affiche."]],
+  "lede": "Gardez vos prix, vos produits ou vos horaires dans une seule liste, et affichez-la dans des diapos, des documents et un site. Modifiez une ligne : tout ce qui l’affiche suit, ou reste sur la version choisie. {name} dessine qui utilise quoi, pour voir ce qu’une modification touche avant de la faire.",
+  "cta": "Essayer avec une grille de prix d’exemple",
+  "see": "Voir comment ça s’est passé",
+  "facts": [
+    "Gratuit et open source",
+    "Rien à installer",
+    "Une liste, aucune copie"
+  ],
+  "try.ask": "Crée une collection de nos cinq cafés avec leur prix au paquet, puis un document de grille tarifaire et un site d’une page qui l’affichent tous les deux, pour qu’un prix modifié dans la collection change partout.",
+  "pane.brain": "L’IA que vous avez choisie",
+  "pane.ask": "Affiche nos prix de cafés dans la grille tarifaire, les diapos du salon, la lettre d’information et le site de la boutique, depuis une seule collection.",
+  "pane.title": "Les créations d’un projet et leurs liens, dessinés par {name}, en direct",
+  "pane.try": "C’est la carte elle-même, telle que {name} la dessine. Pointez une création pour allumer ce qu’elle utilise et ce qui l’utilise, suivez les liens avec les flèches du clavier, ou appuyez sur l’une d’elles.",
+  "pane.asked": "Dans {name}, elle s’ouvre à côté de votre tâche.",
+  "made.name": "Le projet du torréfacteur",
+  "made.prices": "Prix des cafés",
+  "made.orders": "Commandes",
+  "made.flyer": "Ancien prospectus",
+  "made.list": "Grille tarifaire",
+  "made.slides": "Diapos du salon",
+  "made.letter": "Lettre d’information",
+  "made.shop": "Site de la boutique",
+  "made.delivery": "Livraison",
+  "made.product": "Produit",
+  "made.ask": "En deux phrases, dis quels prix ont changé ce mois-ci.",
+  "made.brain": "L’IA que vous avez choisie",
+  "replay.title": "Une demande, pas à pas.",
+  "replay.why": "Les prix d’un torréfacteur, tels que {name} les met en place : une collection, et une grille tarifaire et un site qui l’affichent.",
+  "step.read": "{name} lit",
+  "replay.reads": [
+    "Votre demande : cinq cafés et leurs prix, une grille tarifaire, un site",
+    "Ce que {name} sait des collections : en afficher une là où il faut, sans jamais copier ses lignes"
+  ],
+  "replay.works": [
+    "A créé une collection, Prix des cafés, une ligne par café",
+    "A écrit la grille tarifaire, son tableau nommant la collection au lieu d’en contenir les lignes",
+    "A fait un site d’une page dont le tableau se remplit à partir de la même collection à chaque lecture"
+  ],
+  "replay.got": "Trois créations, liées : la collection, la grille tarifaire et le site, chacune s’ouvrant à côté de votre demande.",
+  "replay.icon": "table",
+  "replay.chip": "Prix des cafés",
+  "step.again": "Vous changez un prix",
+  "replay.again": "L’Éthiopie coûte maintenant {new} le paquet, et non plus {old}.",
+  "step.made": "Il change partout",
+  "replay.made": "Une ligne change, dans la collection. La grille tarifaire et le site affichent le nouveau prix aussitôt ; en ligne, le site l’affiche une fois que vous le publiez à nouveau.",
+  "replay.madeIcon": "app",
+  "replay.madeChip": "Site de la boutique",
+  "asks.title": "Puis demandez les vôtres",
+  "asks.items": [
+    "Affiche nos prix sur les diapos du salon, tels qu’ils sont aujourd’hui, et garde-les ainsi.",
+    "Mets nos horaires à un seul endroit, et affiche-les sur le site et dans la lettre d’information.",
+    "En haut de la lettre d’information, résume ce qui a changé dans les prix, à chaque changement.",
+    "Que toucherait le changement de nom de la colonne Produit ?",
+    "Comment les créations de ce projet sont-elles liées ? Dessine-les."
+  ],
+  "io.title": "Ce qui entre. Ce qui l’affiche.",
+  "io.why": "Gardez-la une fois, dans une collection ou une section de document. Puis demandez-la partout où elle doit s’afficher.",
+  "io.in": "Entrée",
+  "io.out": "Sortie",
+  "io.ins": [
+    ["table", "Une collection à vous", "Prix, produits, personnes, événements : des lignes que vous modifiez à un seul endroit"],
+    ["file", "Un tableur", "Excel ou CSV, transformé en collection sur cet appareil"],
+    ["file", "Une section de document", "Des horaires ou des conditions, écrits une fois"]
+  ],
+  "io.outs": [
+    ["slides", "Des diapos", "Un tableau, un graphique ou un chiffre qui suit la collection"],
+    ["file", "Des documents", "Un tableau, un chiffre ou une section, tels qu’ils sont maintenant ou à une version"],
+    ["app", "Des sites et des prototypes", "Des pages dont les tableaux se remplissent à chaque lecture ou publication"],
+    ["chart", "Des réponses", "Un tableau tel qu’il était quand la réponse a été écrite, avec le nombre de modifications depuis"],
+    ["clock", "Des routines", "Des tâches lancées à heure fixe, ou à chaque changement de la collection"]
+  ],
+  "exact.title": "Affiché, pas copié.",
+  "exact.why": "Copiez un prix dans cinq fichiers, et l’un d’eux finit par dater. {name} garde une seule liste et l’affiche là où vous le demandez, à la version que vous choisissez.",
+  "exact.cards": [
+    ["Un seul endroit à modifier", "Des diapos, un document ou un site contiennent un lien vers la collection, jamais ses lignes. Modifiez une ligne : chacun l’affiche la prochaine fois qu’il est dessiné, aussitôt s’il est ouvert."],
+    ["La version que vous choisissez", "Telle qu’elle est maintenant, la dernière version publiée, ou une version que vous gardez : les diapos d’un salon peuvent rester sur les prix du mois dernier, et signaler qu’une version plus récente est sortie."],
+    ["Ce qu’une modification touche, d’abord", "{links}, en haut de chaque création, liste ce qui l’utilise, et {drawn} le dessine en carte. Supprimez une colonne : le message qui permet d’annuler dit ce qui l’utilise encore."]
+  ],
+  "where.title": "Où vit votre liste.",
+  "where.why": "Sur votre appareil. Ce qui relie une création à une autre est calculé là, et rien n’est envoyé pour l’afficher.",
+  "where.cards": [
+    ["Gardée sur vos appareils", "Vos collections et ce qui les affiche sont de simples fichiers dans votre navigateur, chiffrés. Rien de lisible ne nous parvient."],
+    ["Envoyée à une IA seulement si vous le demandez", "Un tableau ou un chiffre se remplit sur cet appareil. Seule une instruction que vous ajoutez, comme un résumé des lignes, les envoie à l’IA que vous nommez."],
+    ["En ligne seulement quand vous le dites", "Un site affiche un nouveau prix en ligne une fois que vous le publiez à nouveau. {name} ne publie jamais rien sans vous."]
+  ],
+  "catch.items": [
+    "{name} est gratuit ; l’IA derrière ne l’est pas toujours. Sans inscription, seule l’IA de cet ordinateur répond.",
+    "Ce que d’autres créations affichent, c’est une collection, ou une section d’un document ou d’un tableau blanc. Les diapos et les sites l’affichent ; rien n’affiche des diapos ni un site.",
+    "Un site en ligne affiche une modification une fois que vous le publiez à nouveau : {name} ne met jamais rien en ligne sans vous.",
+    "Une instruction appliquée aux lignes, comme un résumé, coûte ce que coûte son IA à chaque exécution, et ne s’exécute d’elle-même que lorsqu’un onglet de {name} est ouvert.",
+    "Un lien ou un fichier Word fait à partir d’un document garde les prix tels qu’ils étaient à ce moment-là : seul {name} lit une collection.",
+    "Votre travail vit dans ce navigateur. Effacez ses données sans sauvegarde, et il disparaît."
+  ],
+  "faq.items": [
+    ["Est-ce gratuit ?", "Oui, sans compte chez {name}. L’IA qui répond peut en demander un : {free} en ouvre un gratuit, ou utilisez un forfait que vous payez déjà, ou l’IA de cet ordinateur, sans aucun compte."],
+    ["Est-ce une copie, ou la même liste ?", "La même liste. Des diapos, un document ou un site contiennent un lien vers la collection, pas ses lignes : il n’y a qu’un endroit à modifier."],
+    ["Des diapos peuvent-elles garder les prix du mois dernier ?", "Oui. Publiez une version de la collection, et choisissez-la pour les diapos dans {links} : elles y restent jusqu’à ce que vous les changiez, et signalent quand une version plus récente est sortie."],
+    ["Comment voir ce qu’une modification touchera ?", "Appuyez sur {links} en haut de la collection, puis sur {drawn} pour la carte. Dans Créations, triées par {map}, tout le projet est dessiné."],
+    ["Mon site suit-il tout seul ?", "Dans {name}, aussitôt. En ligne, une fois que vous le publiez à nouveau : {name} ne publie jamais rien sans vous."],
+    ["Puis-je partir de mon tableur ?", "Oui. Dans Créations, Créer fait une collection à partir d’un fichier CSV ou de la première feuille d’un classeur Excel, lu sur cet appareil."]
+  ],
+  "end.title": "Commencez par les prix du torréfacteur.",
+  "end.why": "La demande s’ouvre dans {name} et reçoit une réponse aussitôt, ou dès que vous choisissez une IA. Puis liez les vôtres."
+}

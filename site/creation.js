@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // A pane that frames a creation as Jean itself shows one beside a task, where a page's pane is no conversation but
 // what Jean made: a site, a prototype, a whiteboard, a game, a collection, a document or a design, live, in Jean's own
-// view (creation/player.js). Beside the page,
+// view (creation/player.js), or a project's map, as Creations draws how its creations link (caps/compose/map.js). Beside the page,
 // from its words as text, this writes the creation's file; and once, whatever page asks, the document that shows
 // one, creation.html, a document of its own as demo.html is, with its code and look under creations/. Its policy is
 // demo.html's; its import map is demo.html's too, with the few modules of the room the views ask for stood in for
@@ -85,6 +85,10 @@ const player = (kit) => /* html */ `<!doctype html>
  * design as `design` is given it.
  * @typedef {{ kind: 'document', name: string, markdown: string, held: { markdown: string, notes: string[] } }} Doc
  * @typedef {{ kind: 'design', name: string, asked: string, args: Record<string, unknown> }} Design
+ *
+ * Or a project's map: its creations by their places and names, the links Jean's graph reads from their files
+ * (caps/compose/refs.js), those to a creation the project no longer has among them, and each source's latest version.
+ * @typedef {{ kind: 'map', name: string, asked: string, creations: { place: string, name: string }[], edges: import('../app/caps/compose/refs.js').Edge[], latest: Record<string, number> }} Links
  */
 
 /** Ids as ULIDs are written, in order, the same at each build: the creation's files change only with its words. @param {number} from */
@@ -173,7 +177,7 @@ const pathOf = (kit, page = kit.name) => `creations/${page}.${kit.lang}.json`
 
 /**
  * The files a page writes beside itself for the creation its pane shows, by their paths: the creation, and the
- * document that shows one with its code. @param {import('./site.js').Kit} kit @param {Pages | Board | Game | Collection | Doc | Design} creation @param {string} [page]
+ * document that shows one with its code. @param {import('./site.js').Kit} kit @param {Pages | Board | Game | Collection | Doc | Design | Links} creation @param {string} [page]
  */
 export function creationFiles (kit, creation, page = kit.name) {
   const { kind, name } = creation, asked = 'asked' in creation ? creation.asked : '', made = new Date(at(0)).toISOString()
@@ -181,6 +185,7 @@ export function creationFiles (kit, creation, page = kit.name) {
     : creation.kind === 'collection' ? { kind, name, ...collectionFiles(creation) }
     : creation.kind === 'document' ? { kind, name, markdown: creation.markdown, held: creation.held }
     : creation.kind === 'design' ? { kind, name, asked, ...designFile(creation, kit.lang) }
+    : creation.kind === 'map' ? { kind, name, asked, creations: creation.creations, edges: creation.edges, latest: creation.latest }
     : creation.kind === 'game' ? { kind, path: `games/${ids(1)()}-${page}.game.html`, name, card: creation.card, code: creation.code, meta: { engine: creation.engine, actions: creation.actions.join(' '), author: 'jean', created: made, changed: made } }
     : { kind, path: `${creation.kind}s/${ids(1)()}-${page}`, name, label: creation.label, asked, files: creation.files, ...(creation.look && { look: creation.look }),
       ...(creation.kind === 'prototype' && { shape: creation.shape ?? 'phone', flow: flowOf(creation.files) }) }
@@ -189,7 +194,7 @@ export function creationFiles (kit, creation, page = kit.name) {
 
 /**
  * The frame that shows it in the page's pane, loaded once it is near, as tall as its kind takes (excel.css).
- * @param {import('./site.js').Kit} kit @param {(Pages | Board | Game | Collection | Doc | Design)['kind']} kind
+ * @param {import('./site.js').Kit} kit @param {(Pages | Board | Game | Collection | Doc | Design | Links)['kind']} kind
  * @param {{ page?: string, title?: string }} [creation]  whose creation, and the frame's name, as text
  */
 export function creationFrame (kit, kind, { page = kit.name, title = kit.text('pane.title') } = {}) {
