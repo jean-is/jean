@@ -52,5 +52,8 @@
   "compose.document.denied": "દસ્તાવેજો બંધ છે.",
   "compose.document.section": "આ દસ્તાવેજમાં આવો કોઈ વિભાગ નથી.",
   "compose.document.certified": "પ્રમાણિત, દસ્તાવેજના સંસ્કરણ {n} સુધી",
-  "compose.area": "આ વ્હાઇટબોર્ડમાં આવો કોઈ વિભાગ નથી."
+  "compose.area": "આ વ્હાઇટબોર્ડમાં આવો કોઈ વિભાગ નથી.",
+  "compose.kit": "ડિઝાઇન સિસ્ટમ",
+  "compose.kit.certified": "પ્રમાણિત, ડિઝાઇન સિસ્ટમના સંસ્કરણ {n} સુધી",
+  "compose.kit.worn": "જે તેને પહેરે છે: {names}"
 }

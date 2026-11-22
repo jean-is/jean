@@ -52,5 +52,8 @@
   "compose.document.denied": "ሰነዶች ጠፍተዋል።",
   "compose.document.section": "ይህ ሰነድ እንዲህ ያለ ክፍል የለውም።",
   "compose.document.certified": "የተረጋገጠ፣ እስከ ሰነዱ ስሪት {n} ድረስ",
-  "compose.area": "ይህ ነጭ ሰሌዳ እንዲህ ያለ ክፍል የለውም።"
+  "compose.area": "ይህ ነጭ ሰሌዳ እንዲህ ያለ ክፍል የለውም።",
+  "compose.kit": "የንድፍ ሥርዓት",
+  "compose.kit.certified": "የተረጋገጠ፣ እስከ የንድፍ ሥርዓቱ ስሪት {n} ድረስ",
+  "compose.kit.worn": "የሚለብሱት፦ {names}"
 }

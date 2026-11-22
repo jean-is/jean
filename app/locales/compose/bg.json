@@ -52,5 +52,8 @@
   "compose.document.denied": "Документите са изключени.",
   "compose.document.section": "Този документ няма такъв раздел.",
   "compose.document.certified": "Удостоверено, до версия {n} на документа",
-  "compose.area": "Тази дъска няма такъв раздел."
+  "compose.area": "Тази дъска няма такъв раздел.",
+  "compose.kit": "Дизайн система",
+  "compose.kit.certified": "Удостоверено, до версия {n} на дизайн системата",
+  "compose.kit.worn": "Носят я: {names}"
 }

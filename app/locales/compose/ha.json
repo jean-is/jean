@@ -52,5 +52,8 @@
   "compose.document.denied": "An kashe takardu.",
   "compose.document.section": "Wannan takardar ba ta da irin wannan sashe.",
   "compose.document.certified": "An tabbatar, har zuwa siga ta {n} ta takardar",
-  "compose.area": "Wannan farin allo ba shi da irin wannan sashe."
+  "compose.area": "Wannan farin allo ba shi da irin wannan sashe.",
+  "compose.kit": "Tsarin zane",
+  "compose.kit.certified": "An tabbatar, har zuwa siga ta {n} ta tsarin zane",
+  "compose.kit.worn": "Masu sanye da shi: {names}"
 }

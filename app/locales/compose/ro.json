@@ -52,5 +52,8 @@
   "compose.document.denied": "Documentele sunt dezactivate.",
   "compose.document.section": "Acest document nu are o asemenea secțiune.",
   "compose.document.certified": "Certificat, până la versiunea {n} a documentului",
-  "compose.area": "Această tablă nu are o asemenea secțiune."
+  "compose.area": "Această tablă nu are o asemenea secțiune.",
+  "compose.kit": "Identitate vizuală",
+  "compose.kit.certified": "Certificat, până la versiunea {n} a identității vizuale",
+  "compose.kit.worn": "Purtată de: {names}"
 }

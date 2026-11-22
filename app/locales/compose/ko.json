@@ -52,5 +52,8 @@
   "compose.document.denied": "문서가 꺼져 있습니다.",
   "compose.document.section": "이 문서에는 그런 섹션이 없습니다.",
   "compose.document.certified": "문서 버전 {n}까지 인증됨",
-  "compose.area": "이 화이트보드에는 그런 구역이 없습니다."
+  "compose.area": "이 화이트보드에는 그런 구역이 없습니다.",
+  "compose.kit": "디자인 시스템",
+  "compose.kit.certified": "디자인 시스템 버전 {n}까지 인증됨",
+  "compose.kit.worn": "사용 중: {names}"
 }

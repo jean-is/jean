@@ -52,5 +52,8 @@
   "compose.document.denied": "নথি বন্ধ আছে।",
   "compose.document.section": "এই নথিতে এমন কোনো অংশ নেই।",
   "compose.document.certified": "প্রত্যয়িত, নথির সংস্করণ {n} পর্যন্ত",
-  "compose.area": "এই হোয়াইটবোর্ডে এমন কোনো অংশ নেই।"
+  "compose.area": "এই হোয়াইটবোর্ডে এমন কোনো অংশ নেই।",
+  "compose.kit": "ডিজাইন সিস্টেম",
+  "compose.kit.certified": "প্রত্যয়িত, ডিজাইন সিস্টেমের সংস্করণ {n} পর্যন্ত",
+  "compose.kit.worn": "যারা এটি পরে আছে: {names}"
 }

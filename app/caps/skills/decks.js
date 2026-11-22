@@ -23,8 +23,8 @@ import { t, locale, dir as dirOf } from '../../core/i18n.js'
 
 const PLACE = /^decks\/[^/]+\.deck\.html$/
 /** What Jean keeps of a deck in its page's head, beside its title: with its task, the print of the project's look it was given (D601). */
-const KEYS = ['author', 'created', 'changed', 'pinned', 'source', 'look']
-/** @typedef {{ author: string, created: string, changed: string, pinned?: string, source?: string, look?: string }} Meta */
+const KEYS = ['author', 'created', 'changed', 'pinned', 'source', 'look', 'kit']
+/** @typedef {{ author: string, created: string, changed: string, pinned?: string, source?: string, look?: string, kit?: string }} Meta */
 /** @typedef {{ dir: string, path: string, name: string, source: string, theirs: string | null, meta: Meta }} One */
 
 /** Where Jean's version of a deck waits for the user (D505). @param {string} path */
@@ -72,6 +72,9 @@ async function update(path, change, dir) {
 export const rewrite = async (path, source, name, dir) => (await update(path, (now) => ({ ...now, source }), dir))
   ?? write({ dir, path, name, source, theirs: null, meta: { author: 'user', created: new Date().toISOString(), changed: new Date().toISOString() } })
 
+/** A deck made to wear a version of its project's design system (caps/compose), or its design system as it is (`live`). @param {string} path @param {string | number} at @param {string} [dir] */
+export const wear = (path, at, dir) => update(path, (one) => ({ ...one, meta: { ...one.meta, kit: at === 'live' ? '' : String(at) } }), dir)
+
 /** Open beside the task, when it is on screen. @param {One} one @param {boolean} [asked] by the person, not kept from an answer */
 const open = (one, asked) => import('../../ui/preview.js').then(({ preview }) => preview({ uri: one.path, name: one.name, title: one.name, mimeType: 'text/html' }, asked))
 
@@ -112,11 +115,12 @@ export async function editor({ uri }) {
 
 /**
  * A deck whose project's look changed since it was given one (D601), with nothing of Jean's waiting: the deck in the new kit is
- * Jean's version, for the user to accept or reject as any (D505); the look it was offered kept, so that it is offered once.
+ * Jean's version, for the user to accept or reject as any (D505); the look it was offered kept, so that it is offered once. One that wears a version of
+ * the project's design system (`kit`, caps/compose) is offered none.
  * @param {One | null} one
  */
 async function offered(one) {
-  if (!one || one.theirs) return one
+  if (!one || one.theirs || one.meta.kit) return one
   const [{ kitHere, copyOf, lookPrint }, { withKit }] = await Promise.all([import('../slides/kit.js'), import('../slides/edit.js')])
   const look = await lookPrint(one.dir)
   if (one.meta.look === look) return one

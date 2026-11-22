@@ -52,5 +52,8 @@
   "compose.document.denied": "A dokumentumok ki vannak kapcsolva.",
   "compose.document.section": "Ebben a dokumentumban nincs ilyen szakasz.",
   "compose.document.certified": "Hitelesítve, a dokumentum {n}. verziójáig",
-  "compose.area": "Ezen a táblán nincs ilyen szakasz."
+  "compose.area": "Ezen a táblán nincs ilyen szakasz.",
+  "compose.kit": "Arculat",
+  "compose.kit.certified": "Hitelesítve, az arculat {n}. verziójáig",
+  "compose.kit.worn": "Ezt viselik: {names}"
 }

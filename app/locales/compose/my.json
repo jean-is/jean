@@ -52,5 +52,8 @@
   "compose.document.denied": "စာရွက်စာတမ်းများကို ပိတ်ထားသည်။",
   "compose.document.section": "ဤစာရွက်စာတမ်းတွင် ထိုအပိုင်း မရှိပါ။",
   "compose.document.certified": "စာရွက်စာတမ်း၏ ဗားရှင်း {n} အထိ အတည်ပြုထားသည်",
-  "compose.area": "ဤဘုတ်တွင် ထိုအပိုင်း မရှိပါ။"
+  "compose.area": "ဤဘုတ်တွင် ထိုအပိုင်း မရှိပါ။",
+  "compose.kit": "ဒီဇိုင်းစနစ်",
+  "compose.kit.certified": "ဒီဇိုင်းစနစ်၏ ဗားရှင်း {n} အထိ အတည်ပြုထားသည်",
+  "compose.kit.worn": "အသုံးပြုထားသည်- {names}"
 }

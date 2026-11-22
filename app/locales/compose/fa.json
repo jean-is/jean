@@ -52,5 +52,8 @@
   "compose.document.denied": "سندها خاموش‌اند.",
   "compose.document.section": "این سند چنین بخشی ندارد.",
   "compose.document.certified": "تأییدشده، تا نسخهٔ {n} سند",
-  "compose.area": "این تخته چنین بخشی ندارد."
+  "compose.area": "این تخته چنین بخشی ندارد.",
+  "compose.kit": "سیستم طراحی",
+  "compose.kit.certified": "تأییدشده، تا نسخهٔ {n} سیستم طراحی",
+  "compose.kit.worn": "به تن دارند: {names}"
 }

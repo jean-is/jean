@@ -52,5 +52,8 @@
   "compose.document.denied": "Dokument är avstängda.",
   "compose.document.section": "Det här dokumentet har inget sådant avsnitt.",
   "compose.document.certified": "Intygat, tillbaka till version {n} av dokumentet",
-  "compose.area": "Den här tavlan har ingen sådan sektion."
+  "compose.area": "Den här tavlan har ingen sådan sektion.",
+  "compose.kit": "Designsystem",
+  "compose.kit.certified": "Intygat, tillbaka till version {n} av designsystemet",
+  "compose.kit.worn": "Bärs av: {names}"
 }

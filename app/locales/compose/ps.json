@@ -52,5 +52,8 @@
   "compose.document.denied": "سندونه بند دي.",
   "compose.document.section": "په دې سند کې داسې برخه نشته.",
   "compose.document.certified": "تصدیق شوی، د سند تر {n} نسخې پورې",
-  "compose.area": "په دې تخته کې داسې برخه نشته."
+  "compose.area": "په دې تخته کې داسې برخه نشته.",
+  "compose.kit": "د ډیزاین سیسټم",
+  "compose.kit.certified": "تصدیق شوی، د ډیزاین سیسټم تر {n} نسخې پورې",
+  "compose.kit.worn": "اغوستونکي یې: {names}"
 }

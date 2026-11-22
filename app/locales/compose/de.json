@@ -52,5 +52,8 @@
   "compose.document.denied": "Dokumente sind ausgeschaltet.",
   "compose.document.section": "Dieses Dokument hat keinen solchen Abschnitt.",
   "compose.document.certified": "Zertifiziert, zurück bis Version {n} des Dokuments",
-  "compose.area": "Dieses Whiteboard hat keinen solchen Bereich."
+  "compose.area": "Dieses Whiteboard hat keinen solchen Bereich.",
+  "compose.kit": "Gestaltungssystem",
+  "compose.kit.certified": "Zertifiziert, zurück bis Version {n} des Gestaltungssystems",
+  "compose.kit.worn": "Getragen von: {names}"
 }

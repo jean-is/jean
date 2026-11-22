@@ -52,5 +52,8 @@
   "compose.document.denied": "Amadokhumenti avaliwe.",
   "compose.document.section": "Le dokhumenti ayinayo ingxenye enjalo.",
   "compose.document.certified": "Kuqinisekisiwe, kuze kufike enguqulweni {n} yedokhumenti",
-  "compose.area": "Leli bhodi elimhlophe alinaso isigaba esinjalo."
+  "compose.area": "Leli bhodi elimhlophe alinaso isigaba esinjalo.",
+  "compose.kit": "Uhlelo lwedizayini",
+  "compose.kit.certified": "Kuqinisekisiwe, kuze kufike enguqulweni {n} yohlelo lwedizayini",
+  "compose.kit.worn": "Lugqokwe ngu: {names}"
 }

@@ -52,5 +52,8 @@
   "compose.document.denied": "Dokumenti su isključeni.",
   "compose.document.section": "Ovaj dokument nema takav odjeljak.",
   "compose.document.certified": "Ovjereno, sve do verzije {n} dokumenta",
-  "compose.area": "Ova ploča nema takav odjeljak."
+  "compose.area": "Ova ploča nema takav odjeljak.",
+  "compose.kit": "Dizajnerski sustav",
+  "compose.kit.certified": "Ovjereno, sve do verzije {n} dizajnerskog sustava",
+  "compose.kit.worn": "Nose ga: {names}"
 }

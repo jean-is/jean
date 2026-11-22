@@ -52,5 +52,8 @@
   "compose.document.denied": "Belgeler kapalı.",
   "compose.document.section": "Bu belgede böyle bir bölüm yok.",
   "compose.document.certified": "Belgenin {n}. sürümüne kadar onaylı",
-  "compose.area": "Bu panoda böyle bir bölüm yok."
+  "compose.area": "Bu panoda böyle bir bölüm yok.",
+  "compose.kit": "Tasarım sistemi",
+  "compose.kit.certified": "Tasarım sisteminin {n}. sürümüne kadar onaylı",
+  "compose.kit.worn": "Kullananlar: {names}"
 }

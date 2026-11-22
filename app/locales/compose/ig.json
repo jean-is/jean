@@ -52,5 +52,8 @@
   "compose.document.denied": "Agbanyụrụ akwụkwọ.",
   "compose.document.section": "Akwụkwọ a enweghị ngalaba dị otú ahụ.",
   "compose.document.certified": "Ekwenyela ya, ruo ụdị {n} nke akwụkwọ ahụ",
-  "compose.area": "Bọọdụ ọcha a enweghị ngalaba dị otú ahụ."
+  "compose.area": "Bọọdụ ọcha a enweghị ngalaba dị otú ahụ.",
+  "compose.kit": "Usoro imewe",
+  "compose.kit.certified": "Ekwenyela ya, ruo ụdị {n} nke usoro imewe",
+  "compose.kit.worn": "Ndị yi ya: {names}"
 }

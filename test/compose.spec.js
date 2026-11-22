@@ -551,6 +551,51 @@ test('more consumers: one badge per baker and one more for another, a game given
   await expect(menu.getByRole('group', { name: 'Used in' })).toContainText('Quiz')
 })
 
+test('the design system is a source: a site that wears it follows it, slides pinned to its version 1 are offered no change and say they are certified back to it', async ({ page }) => {
+  await start(page)
+  await seed(page)
+  const SITE = 'sites/01K85Z1T00000000000000000G-shop', OTHER = 'decks/01K85Z1T00000000000000000J-other.deck.html'
+  const write = (/** @type {string} */ path, /** @type {string} */ text) => page.evaluate(async ({ path, text }) => { const { app } = await import('/ui/state.js'); await app.fs.write(`${app.projectDir}/${path}`, text) }, { path, text })
+  const kit = (/** @type {string} */ primary) => page.evaluate(async (primary) => { const { app } = await import('/ui/state.js'); await (await import('/ui/kit.js')).keepKit(app.projectDir, { tokens: { primary } }) }, primary)
+  await page.evaluate(async () => { const { unlock } = await import('/ui/caps.js'); await Promise.all([unlock('sites'), unlock('receipt')]) })
+  await kit('#cc2200')
+  await write(`${SITE}/site.json`, JSON.stringify({ format: 1, name: 'Shop', author: 'user', created: '2026-11-21T10:00:00.000Z', changed: '2026-11-21T10:00:00.000Z', source: '', files: ['index.html', 'look.css'], look: { id: 'project', voice: 'calm' } }))
+  await write(`${SITE}/look.css`, ':root { --accent: #000000; }')
+  await write(`${SITE}/index.html`, '<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Shop</title><link rel="stylesheet" href="look.css"></head><body><main><h1>Shop</h1></main></body></html>')
+  await page.evaluate(async (OTHER) => { const { app } = await import('/ui/state.js'); await (await import('/caps/skills/decks.js')).rewrite(OTHER, '# Other\n\n---\n\n## Hello\n', 'Other', app.projectDir) }, OTHER)
+  const accent = async () => { await show(page, SITE, 'Shop'); return page.frameLocator('app-preview app-site iframe').locator('html').evaluate((html) => getComputedStyle(html).getPropertyValue('--accent').trim()) }
+  await expect.poll(accent).toBe('#cc2200')
+  // Version 1 of the design system; the slides pinned to it from their menu.
+  expect(await page.evaluate(async () => (await (await import('/caps/compose/compose.js')).publish('kit.json'))?.version?.n)).toBe(1)
+  await show(page, DECK, 'Neighbourhood')
+  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  const menu = page.locator('.menu:popover-open')
+  await menu.getByRole('group', { name: 'Uses' }).getByRole('button', { name: /Design system/ }).click()
+  await menu.getByRole('button', { name: 'Version 1', exact: true }).click()
+  await expect.poll(() => page.evaluate(async (DECK) => (await (await import('/caps/skills/decks.js')).load(DECK))?.meta.kit, DECK)).toBe('1')
+  await expect(menu.getByRole('status').filter({ hasText: 'Certified, back to version 1 of the design system' })).toHaveCount(1)
+  await page.keyboard.press('Escape')
+  const waiting = (/** @type {string} */ deck) => page.evaluate(async (deck) => { const { app } = await import('/ui/state.js'); return app.fs.read(`${app.projectDir}/${deck.replace(/^decks\//, 'decks/.suggested/').replace(/\.deck\.html$/, '.md')}`) }, deck)
+  const offered = await waiting(DECK)
+  // The design system changed: the site follows it; the pinned slides are offered nothing, the others their change.
+  await kit('#1d4ed8')
+  await expect.poll(accent).toBe('#1d4ed8')
+  await show(page, DECK, 'Neighbourhood')
+  await show(page, OTHER, 'Other')
+  await expect.poll(() => waiting(OTHER)).toContain('#1d4ed8')
+  expect(await waiting(DECK), 'what was offered before it was pinned, and nothing since').toBe(offered)
+  // The design system lists what wears it.
+  const said = await page.evaluate(async () => (await import('/ui/caps.js')).loaded.peek().get('compose')?.tools?.[0].run({ place: 'kit.json' }, /** @type {any} */ ({})))
+  expect(said).toContain('Neighbourhood')
+  expect(said).toContain('Shop')
+  // Its page says what wears it, and publishes the next version.
+  await page.evaluate(async () => (await import('/ui/dialogs.js')).openSettings('appearance/kit-project'))
+  const part = page.locator('.settings section').filter({ has: page.getByRole('heading', { name: 'Versions' }) })
+  await expect(part).toContainText(/Worn by .*Neighbourhood/)
+  await part.getByRole('button', { name: 'Publish version 2' }).click()
+  await expect(page.locator('.toast').last()).toContainText('Version 2 published.')
+})
+
 test('a recipe that sums up the approved artisans on a slide updates by itself once its user turns that on, and only then; a run is paid once per version read', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)

@@ -52,5 +52,8 @@
   "compose.document.denied": "Dokumen dimatikan.",
   "compose.document.section": "Dokumen ini tiada bahagian sedemikian.",
   "compose.document.certified": "Disahkan, hingga versi {n} dokumen",
-  "compose.area": "Papan putih ini tiada bahagian sedemikian."
+  "compose.area": "Papan putih ini tiada bahagian sedemikian.",
+  "compose.kit": "Sistem reka bentuk",
+  "compose.kit.certified": "Disahkan, hingga versi {n} sistem reka bentuk",
+  "compose.kit.worn": "Dipakai oleh: {names}"
 }

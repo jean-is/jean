@@ -52,5 +52,8 @@
   "compose.document.denied": "المستندات مُعطَّلة.",
   "compose.document.section": "ليس في هذا المستند قسم كهذا.",
   "compose.document.certified": "موثَّق، حتى الإصدار {n} من المستند",
-  "compose.area": "ليس في هذه السبورة قسم كهذا."
+  "compose.area": "ليس في هذه السبورة قسم كهذا.",
+  "compose.kit": "نظام التصميم",
+  "compose.kit.certified": "موثَّق، حتى الإصدار {n} من نظام التصميم",
+  "compose.kit.worn": "يرتديه: {names}"
 }

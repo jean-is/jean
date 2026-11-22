@@ -52,5 +52,8 @@
   "compose.document.denied": "Dokumenty jsou vypnuté.",
   "compose.document.section": "Tento dokument takový oddíl nemá.",
   "compose.document.certified": "Ověřeno, až k verzi {n} dokumentu",
-  "compose.area": "Tato tabule takovou sekci nemá."
+  "compose.area": "Tato tabule takovou sekci nemá.",
+  "compose.kit": "Designový systém",
+  "compose.kit.certified": "Ověřeno, až k verzi {n} designového systému",
+  "compose.kit.worn": "Nosí ho: {names}"
 }

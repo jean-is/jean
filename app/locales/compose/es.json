@@ -52,5 +52,8 @@
   "compose.document.denied": "Los documentos están desactivados.",
   "compose.document.section": "Este documento no tiene esa sección.",
   "compose.document.certified": "Certificado, hasta la versión {n} del documento",
-  "compose.area": "Esta pizarra no tiene esa sección."
+  "compose.area": "Esta pizarra no tiene esa sección.",
+  "compose.kit": "Sistema de diseño",
+  "compose.kit.certified": "Certificado, hasta la versión {n} del sistema de diseño",
+  "compose.kit.worn": "Lo llevan: {names}"
 }

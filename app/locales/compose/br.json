@@ -52,5 +52,8 @@
   "compose.document.denied": "Lazhet eo an teulioù.",
   "compose.document.section": "N’eus ket eus ar rann-se en teul-mañ.",
   "compose.document.certified": "Testeniekaet, betek stumm {n} an teul",
-  "compose.area": "N’eus ket eus ar rann-se war an daolenn-mañ."
+  "compose.area": "N’eus ket eus ar rann-se war an daolenn-mañ.",
+  "compose.kit": "Karta grafek",
+  "compose.kit.certified": "Testeniekaet, betek stumm {n} ar garta grafek",
+  "compose.kit.worn": "Gwisket gant: {names}"
 }

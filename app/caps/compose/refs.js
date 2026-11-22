@@ -17,7 +17,7 @@ import { sorted } from './recipes.js'
 /**
  * An edge of the graph: a consumer's place, the source's, which of it, the recipe, and its place among the consumer's references; or, with `kind`, a link
  * that is no reference but still says what a change touches: a collection's relation to another (`relation`, its column's name its recipe's), or a
- * file held by its content (`file`), always the same. @typedef {{ from: string, to: string, at: Ref['at'], recipe: Record<string, string>, index: number, kind?: 'relation' | 'file' }} Edge
+ * file held by its content (`file`), always the same; or the project's design system a deck, a site or a design wears (`kit`), live or at a version. @typedef {{ from: string, to: string, at: Ref['at'], recipe: Record<string, string>, index: number, kind?: 'relation' | 'file' | 'kit' }} Edge
  */
 
 const BLOCK = /^(`{3,}|~{3,})(?:table|section)[ \t]*\n([\s\S]*?)^\1[ \t]*$/gm, FIGURE = /`(=[ \t]*collections\/[^`\n]*)`/g, TABLE = /(<(table|section)\b[^>]*\bdata-from="[^"]*"[^>]*>)[\s\S]*?(<\/\2>)/gi

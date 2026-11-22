@@ -52,5 +52,8 @@
   "compose.document.denied": "I documenti sono disattivati.",
   "compose.document.section": "Questo documento non ha questa sezione.",
   "compose.document.certified": "Certificato, fino alla versione {n} del documento",
-  "compose.area": "Questa lavagna non ha questa sezione."
+  "compose.area": "Questa lavagna non ha questa sezione.",
+  "compose.kit": "Sistema di design",
+  "compose.kit.certified": "Certificato, fino alla versione {n} del sistema di design",
+  "compose.kit.worn": "Lo indossano: {names}"
 }

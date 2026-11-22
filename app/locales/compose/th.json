@@ -52,5 +52,8 @@
   "compose.document.denied": "เอกสารถูกปิดอยู่",
   "compose.document.section": "เอกสารนี้ไม่มีส่วนนั้น",
   "compose.document.certified": "รับรองแล้ว ย้อนไปถึงเวอร์ชัน {n} ของเอกสาร",
-  "compose.area": "ไวต์บอร์ดนี้ไม่มีส่วนนั้น"
+  "compose.area": "ไวต์บอร์ดนี้ไม่มีส่วนนั้น",
+  "compose.kit": "ระบบการออกแบบ",
+  "compose.kit.certified": "รับรองแล้ว ย้อนไปถึงเวอร์ชัน {n} ของระบบการออกแบบ",
+  "compose.kit.worn": "ใช้โดย: {names}"
 }

@@ -52,5 +52,8 @@
   "compose.document.denied": "दस्तावेज़ बंद हैं।",
   "compose.document.section": "इस दस्तावेज़ में ऐसा कोई खंड नहीं है।",
   "compose.document.certified": "प्रमाणित, दस्तावेज़ के संस्करण {n} तक",
-  "compose.area": "इस व्हाइटबोर्ड में ऐसा कोई खंड नहीं है।"
+  "compose.area": "इस व्हाइटबोर्ड में ऐसा कोई खंड नहीं है।",
+  "compose.kit": "डिज़ाइन सिस्टम",
+  "compose.kit.certified": "प्रमाणित, डिज़ाइन सिस्टम के संस्करण {n} तक",
+  "compose.kit.worn": "इसे पहनने वाले: {names}"
 }

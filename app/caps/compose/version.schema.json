@@ -27,8 +27,8 @@
       "type": "object",
       "required": ["kind", "creation", "version", "author", "where", "content", "ingredients"],
       "properties": {
-        "kind": { "description": "A collection's or a document's version, or a run of a consumer's recipe", "enum": ["collection", "document", "run"] },
-        "creation": { "description": "The creation's ULID: the collection's, the document's, or the consumer's", "$ref": "#/$defs/ulid" },
+        "kind": { "description": "A collection's, a document's or the project's design system's version, or a run of a consumer's recipe", "enum": ["collection", "document", "kit", "run"] },
+        "creation": { "description": "The creation's ULID: the collection's, the document's, the project's for its design system, or the consumer's", "$ref": "#/$defs/ulid" },
         "version": { "description": "The version's number, or the run's", "type": "integer", "minimum": 1 },
         "author": { "description": "user: the person; jean: Jean, running a recipe", "type": "string", "minLength": 1 },
         "where": { "enum": ["device", "cloud"] },

@@ -52,5 +52,8 @@
   "compose.document.denied": "Документы выключены.",
   "compose.document.section": "В этом документе нет такого раздела.",
   "compose.document.certified": "Заверено, вплоть до версии {n} документа",
-  "compose.area": "На этой доске нет такого раздела."
+  "compose.area": "На этой доске нет такого раздела.",
+  "compose.kit": "Дизайн-система",
+  "compose.kit.certified": "Заверено, вплоть до версии {n} дизайн-системы",
+  "compose.kit.worn": "Её используют: {names}"
 }

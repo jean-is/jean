@@ -52,5 +52,8 @@
   "compose.document.denied": "文書はオフになっています。",
   "compose.document.section": "この文書にはその節がありません。",
   "compose.document.certified": "文書の第{n}版まで証明済み",
-  "compose.area": "このホワイトボードにはそのセクションがありません。"
+  "compose.area": "このホワイトボードにはそのセクションがありません。",
+  "compose.kit": "デザインシステム",
+  "compose.kit.certified": "デザインシステムの第{n}版まで証明済み",
+  "compose.kit.worn": "使っているもの：{names}"
 }

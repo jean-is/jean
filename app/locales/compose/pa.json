@@ -52,5 +52,8 @@
   "compose.document.denied": "ਦਸਤਾਵੇਜ਼ ਬੰਦ ਹਨ।",
   "compose.document.section": "ਇਸ ਦਸਤਾਵੇਜ਼ ਵਿੱਚ ਅਜਿਹਾ ਕੋਈ ਭਾਗ ਨਹੀਂ ਹੈ।",
   "compose.document.certified": "ਪ੍ਰਮਾਣਿਤ, ਦਸਤਾਵੇਜ਼ ਦੇ ਸੰਸਕਰਣ {n} ਤੱਕ",
-  "compose.area": "ਇਸ ਵ੍ਹਾਈਟਬੋਰਡ ’ਤੇ ਅਜਿਹਾ ਕੋਈ ਭਾਗ ਨਹੀਂ ਹੈ।"
+  "compose.area": "ਇਸ ਵ੍ਹਾਈਟਬੋਰਡ ’ਤੇ ਅਜਿਹਾ ਕੋਈ ਭਾਗ ਨਹੀਂ ਹੈ।",
+  "compose.kit": "ਡਿਜ਼ਾਈਨ ਸਿਸਟਮ",
+  "compose.kit.certified": "ਪ੍ਰਮਾਣਿਤ, ਡਿਜ਼ਾਈਨ ਸਿਸਟਮ ਦੇ ਸੰਸਕਰਣ {n} ਤੱਕ",
+  "compose.kit.worn": "ਇਸਨੂੰ ਪਹਿਨਣ ਵਾਲੇ: {names}"
 }

@@ -52,5 +52,8 @@
   "compose.document.denied": "Dokumenty są wyłączone.",
   "compose.document.section": "Ten dokument nie ma takiej sekcji.",
   "compose.document.certified": "Poświadczone, aż do wersji {n} dokumentu",
-  "compose.area": "Ta tablica nie ma takiej sekcji."
+  "compose.area": "Ta tablica nie ma takiej sekcji.",
+  "compose.kit": "System projektowy",
+  "compose.kit.certified": "Poświadczone, aż do wersji {n} systemu projektowego",
+  "compose.kit.worn": "Noszą go: {names}"
 }

@@ -52,5 +52,8 @@
   "compose.document.denied": "Asiakirjat ovat pois päältä.",
   "compose.document.section": "Tässä asiakirjassa ei ole sellaista osiota.",
   "compose.document.certified": "Varmennettu asiakirjan versioon {n} asti",
-  "compose.area": "Tällä taululla ei ole sellaista osiota."
+  "compose.area": "Tällä taululla ei ole sellaista osiota.",
+  "compose.kit": "Suunnittelujärjestelmä",
+  "compose.kit.certified": "Varmennettu suunnittelujärjestelmän versioon {n} asti",
+  "compose.kit.worn": "Käytössä: {names}"
 }
