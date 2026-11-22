@@ -57,5 +57,7 @@
   "compose.kit.worn": "Được dùng bởi: {names}",
   "compose.linkingAll": "Đang xem các tác phẩm trong dự án này liên kết với nhau thế nào",
   "compose.drawn": "Hiện dưới dạng hình vẽ",
-  "compose.map": "Liên kết"
+  "compose.map": "Liên kết",
+  "compose.out": "Đã có phiên bản {n}",
+  "compose.unused": "Không được dùng ở đâu"
 }

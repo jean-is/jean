@@ -57,5 +57,7 @@
   "compose.kit.worn": "Kullananlar: {names}",
   "compose.linkingAll": "Bu projedeki oluşturulanların nasıl bağlandığına bakılıyor",
   "compose.drawn": "Çizim olarak göster",
-  "compose.map": "Bağlantılar"
+  "compose.map": "Bağlantılar",
+  "compose.out": "{n}. sürüm çıktı",
+  "compose.unused": "Hiçbir yerde kullanılmıyor"
 }

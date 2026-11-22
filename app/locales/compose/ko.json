@@ -57,5 +57,7 @@
   "compose.kit.worn": "사용 중: {names}",
   "compose.linkingAll": "이 프로젝트의 창작물이 어떻게 연결되는지 확인 중",
   "compose.drawn": "그림으로 보기",
-  "compose.map": "연결"
+  "compose.map": "연결",
+  "compose.out": "버전 {n}이(가) 나왔습니다",
+  "compose.unused": "사용되는 곳 없음"
 }

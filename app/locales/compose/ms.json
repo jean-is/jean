@@ -57,5 +57,7 @@
   "compose.kit.worn": "Dipakai oleh: {names}",
   "compose.linkingAll": "Melihat bagaimana ciptaan dalam projek ini berpaut",
   "compose.drawn": "Tunjukkan sebagai lukisan",
-  "compose.map": "Pautan"
+  "compose.map": "Pautan",
+  "compose.out": "Versi {n} sudah diterbitkan",
+  "compose.unused": "Tidak digunakan di mana-mana"
 }

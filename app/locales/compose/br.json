@@ -57,5 +57,7 @@
   "compose.kit.worn": "Gwisket gant: {names}",
   "compose.linkingAll": "O sellet penaos eo liammet krouidigezhioù ar raktres-mañ",
   "compose.drawn": "Diskouez anezho treset",
-  "compose.map": "Liammoù"
+  "compose.map": "Liammoù",
+  "compose.out": "Embannet eo ar stumm {n}",
+  "compose.unused": "N’eo implijet gant netra"
 }

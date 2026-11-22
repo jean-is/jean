@@ -12,8 +12,8 @@ import { icons } from '../../ui/menu-icons.js'
 /** @import { Edge } from './refs.js' */
 /**
  * What a map draws: its creations and the links between them, the one it is about (`here`), those a search kept (`lit`, all of them when null), and for each
- * its name, glyph, the lines of how it stands, whether they say it shows nothing, and how it opens.
- * @typedef {{ places: string[], edges: Edge[], here?: string, lit?: Set<string> | null, name: (place: string) => string, glyph: (place: string) => unknown, said: (place: string) => string[], alert?: (place: string) => boolean, open: (place: string) => unknown }} Drawing
+ * its name, glyph, the lines of how it stands, those that say it shows nothing, and how it opens.
+ * @typedef {{ places: string[], edges: Edge[], here?: string, lit?: Set<string> | null, name: (place: string) => string, glyph: (place: string) => unknown, said: (place: string) => string[], alert?: (place: string) => Set<string>, open: (place: string) => unknown }} Drawing
  */
 
 /** Where a line goes, from one creation's button to another's, in the map's frame: across between two columns, else round their start side. @param {DOMRect} a @param {DOMRect} b @param {DOMRect} box @param {boolean} rtl */
@@ -45,7 +45,7 @@ customElements.define('app-links-map', class extends HTMLElement {
       <div class="links-columns" @pointerover=${(/** @type {Event} */ e) => placeOf(e) && this.light(placeOf(e))} @focusin=${(/** @type {Event} */ e) => this.light(placeOf(e))} @keydown=${(/** @type {KeyboardEvent} */ e) => this.walk(e)}
         @pointerleave=${() => this.light(/** @type {HTMLElement | null} */ (this.querySelector('button:focus'))?.dataset.place ?? '')} @focusout=${(/** @type {FocusEvent} */ e) => this.contains(/** @type {Node | null} */ (e.relatedTarget)) || this.light('')}>
         ${layered(one.edges, one.places).map((column) => html`<ul>${column.map((place) => html`<li class="${place === one.here ? 'is-here' : ''} ${one.lit && !one.lit.has(place) ? 'is-dim' : ''}"><button type="button" data-place=${place} @click=${() => one.open(place)}>
-          ${one.glyph(place)}<span dir="auto">${one.name(place)}</span>${one.said(place).map((line) => html`<small dir="auto" class=${one.alert?.(place) ? 'is-alert' : ''}>${line}</small>`)}</button></li>`)}</ul>`)}</div>`, this)
+          ${one.glyph(place)}<span dir="auto">${one.name(place)}</span>${one.said(place).map((line) => html`<small dir="auto" class=${one.alert?.(place).has(line) ? 'is-alert' : ''}>${line}</small>`)}</button></li>`)}</ul>`)}</div>`, this)
     requestAnimationFrame(() => this.lines())
   }
   lines() {

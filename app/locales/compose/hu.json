@@ -57,5 +57,7 @@
   "compose.kit.worn": "Ezt viselik: {names}",
   "compose.linkingAll": "Megnézem, hogyan kapcsolódnak a projekt alkotásai",
   "compose.drawn": "Mutasd rajzban",
-  "compose.map": "Kapcsolatok"
+  "compose.map": "Kapcsolatok",
+  "compose.out": "Megjelent a(z) {n}. verzió",
+  "compose.unused": "Semmi sem használja"
 }

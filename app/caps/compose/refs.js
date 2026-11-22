@@ -9,7 +9,7 @@ import { PLACE, propertyOf, hueOf, kindOf } from '../tables/table.js'
 import { fill, rules } from '../fill/fill.js'
 import { query, total } from '../tables/query.js'
 import { amount } from '../tables/export.js'
-import { sorted } from './recipes.js'
+import { sorted, paceOf } from './recipes.js'
 
 /** @import { Table } from '../tables/table.js' */
 /** @import { Row } from '../tables/changes.js' */
@@ -128,6 +128,18 @@ export function layered(edges, places) {
   const order = (/** @type {number} */ c, /** @type {(d: number) => boolean} */ where) => { columns[c] = columns[c].map((place) => /** @type {[string, number]} */ ([place, mean(near(place, where))])).sort((a, b) => a[1] - b[1] || 0).map(([place]) => place) }
   for (const pass of [0, 1]) { if (pass && columns.length > 1) order(0, (d) => d === 1); for (let c = 1; c < columns.length; c++) order(c, (d) => d < c) }
   return columns
+}
+
+/**
+ * How a creation on the map stands (step 16), each a key its capability says in words with what they need: a reference whose source is gone, or that would
+ * close a loop, shows nothing; one pinned to a version older than its source's latest says the latest is out; one whose `ask` runs by itself says how often,
+ * then the brain it names (`brain`, its words as written); a collection no reference reads says nothing uses it.
+ * @param {string} place @param {Edge[]} edges every edge of the graph @param {(place: string) => boolean} found @param {(place: string) => number} latest a source's latest version, 0 for none @returns {[string, Record<string, string | number>][]}
+ */
+export function standing(place, edges, found, latest) {
+  const refs = edges.filter((edge) => !edge.kind && edge.from === place), pace = (/** @type {Edge} */ edge) => ((one) => (one.auto ? 'auto' : one.every === 5 ? 'every5' : one.every === 60 ? 'hourly' : ''))(paceOf(edge.recipe))
+  return /** @type {[string, Record<string, string | number>][]} */ ([...refs.flatMap((edge) => (!found(edge.to) ? [[DOCUMENT.test(edge.to) ? 'document.missing' : 'missing', {}]] : loops(edges, place, edge.to) ? [['loop', {}]] : typeof edge.at === 'number' && latest(edge.to) > edge.at ? [['out', { n: latest(edge.to) }]] : [])),
+    ...refs.flatMap((edge) => (edge.recipe.ask && pace(edge) ? [[pace(edge), {}], ...(edge.recipe.brain ? [['brain', { name: edge.recipe.brain }]] : [])] : [])), ...(PLACE.test(place) && !edges.some((edge) => !edge.kind && edge.to === place) ? [['unused', {}]] : [])])
 }
 
 /** Whether a reference from `from` to `to` closes a loop: whether `from` is reached from `to`. @param {Edge[]} edges @param {string} from @param {string} to */

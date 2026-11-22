@@ -57,5 +57,7 @@
   "compose.kit.worn": "اغوستونکي یې: {names}",
   "compose.linkingAll": "ګورو چې د دې پروژې جوړونې څنګه سره تړلې دي",
   "compose.drawn": "د انځور په بڼه یې وښيه",
-  "compose.map": "اړیکې"
+  "compose.map": "اړیکې",
+  "compose.out": "نسخه {n} خپره شوې ده",
+  "compose.unused": "هېڅ يې نه کاروي"
 }

@@ -57,5 +57,7 @@
   "compose.kit.worn": "Gedragen door: {names}",
   "compose.linkingAll": "Kijken hoe de creaties van dit project samenhangen",
   "compose.drawn": "Toon ze als tekening",
-  "compose.map": "Koppelingen"
+  "compose.map": "Koppelingen",
+  "compose.out": "Versie {n} is uit",
+  "compose.unused": "Nergens gebruikt"
 }

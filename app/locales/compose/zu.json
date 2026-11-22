@@ -57,5 +57,7 @@
   "compose.kit.worn": "Lugqokwe ngu: {names}",
   "compose.linkingAll": "Kubhekwa ukuthi okwakhiwe kule phrojekthi kuxhumene kanjani",
   "compose.drawn": "Kubonise njengomdwebo",
-  "compose.map": "Izixhumanisi"
+  "compose.map": "Izixhumanisi",
+  "compose.out": "Inguqulo {n} isiphumile",
+  "compose.unused": "Akukho okukusebenzisayo"
 }

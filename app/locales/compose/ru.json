@@ -57,5 +57,7 @@
   "compose.kit.worn": "Её используют: {names}",
   "compose.linkingAll": "Смотрю, как связано созданное в этом проекте",
   "compose.drawn": "Показать схемой",
-  "compose.map": "Связи"
+  "compose.map": "Связи",
+  "compose.out": "Вышла версия {n}",
+  "compose.unused": "Нигде не используется"
 }

@@ -57,5 +57,7 @@
   "compose.kit.worn": "የሚለብሱት፦ {names}",
   "compose.linkingAll": "የዚህ ፕሮጀክት ፈጠራዎች እንዴት እንደተሳሰሩ በመመልከት ላይ",
   "compose.drawn": "በሥዕል አሳይ",
-  "compose.map": "ትስስሮች"
+  "compose.map": "ትስስሮች",
+  "compose.out": "ስሪት {n} ወጥቷል",
+  "compose.unused": "ምንም አይጠቀምበትም"
 }

@@ -57,5 +57,7 @@
   "compose.kit.worn": "Purtata da: {names}",
   "compose.linkingAll": "Fighjulendu cumu sò ligate e creazioni di stu prughjettu",
   "compose.drawn": "Mustralli disegnati",
-  "compose.map": "Ligami"
+  "compose.map": "Ligami",
+  "compose.out": "Hè surtita a versione {n}",
+  "compose.unused": "Nunda ùn l’adupra"
 }

@@ -57,5 +57,7 @@
   "compose.kit.worn": "যারা এটি পরে আছে: {names}",
   "compose.linkingAll": "এই প্রকল্পের সৃষ্টিগুলো কীভাবে সংযুক্ত তা দেখা হচ্ছে",
   "compose.drawn": "আঁকা অবস্থায় দেখাও",
-  "compose.map": "সংযোগ"
+  "compose.map": "সংযোগ",
+  "compose.out": "সংস্করণ {n} এসেছে",
+  "compose.unused": "কোথাও ব্যবহৃত নয়"
 }

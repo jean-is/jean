@@ -57,5 +57,7 @@
   "compose.kit.worn": "Το φορούν: {names}",
   "compose.linkingAll": "Εξετάζω πώς συνδέονται οι δημιουργίες αυτού του έργου",
   "compose.drawn": "Δείξε τις σε σχέδιο",
-  "compose.map": "Συνδέσεις"
+  "compose.map": "Συνδέσεις",
+  "compose.out": "Βγήκε η έκδοση {n}",
+  "compose.unused": "Δεν χρησιμοποιείται πουθενά"
 }

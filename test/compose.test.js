@@ -3,7 +3,7 @@
 // asked at each resolution, and what a reference shows of a collection, read again from its journal.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { parseRef, placeOf, refsIn, withRef, filledPage, bare, formsTo, loops, refused, versionless, tableOf, chartOf, choiceIn, choicesIn, tinted, parseFigure, figureOf, written, linksIn, further, layered, sectionOf, slugOf, withId, notesIn } from '../app/caps/compose/refs.js'
+import { parseRef, placeOf, refsIn, withRef, filledPage, bare, formsTo, loops, refused, versionless, tableOf, chartOf, choiceIn, choicesIn, tinted, parseFigure, figureOf, written, linksIn, further, layered, standing, sectionOf, slugOf, withId, notesIn } from '../app/caps/compose/refs.js'
 import { filledWith } from '../app/caps/designs/layout.js'
 import { versionOf, loadedOf, headOf, reshaped, breaks, current } from '../app/caps/compose/versions.js'
 import { keyOf, paceOf, sorted, askOf, lastRun, due } from '../app/caps/compose/recipes.js'
@@ -319,4 +319,19 @@ test('a port lets in what a site’s form proposes: the port’s columns alone, 
 
 test('a site’s form proposes into the collection its data-to names', () => {
   assert.deepEqual([...formsTo(`<form method="post" data-form="propose" data-to="${PLACE}"><input name="n"></form><form data-form="orders" method="post"></form><form data-form="x" data-to="decks/a.deck.html">`)], [['propose', PLACE]])
+})
+
+test('how each creation on the map stands: a source gone or a loop shows nothing, a later version is out, a recipe that runs by itself on its brain, a collection nothing reads', () => {
+  const edge = (/** @type {string} */ from, /** @type {string} */ to, /** @type {any} */ at = 'live', recipe = {}, /** @type {any} */ kind = undefined) => ({ from, to, at, recipe, index: 0, ...(kind && { kind }) })
+  const ORDERS = 'collections/01JX0000000000000000000001-orders', GONE = 'documents/01JX0000000000000000000002-gone.md'
+  const edges = [edge('decks/board', PLACE, 1), edge('decks/digest', PLACE, 'live', { ask: 'Sum it up', refresh: 'auto', brain: 'Local' }), edge('decks/hourly', PLACE, 'live', { ask: 'Sum it up', refresh: '60 min' }),
+    edge('decks/old', 'collections/01JX0000000000000000000009-gone'), edge('decks/old', GONE), edge(ORDERS, PLACE, 'live', { relation: 'Maker' }, 'relation'), edge('decks/x', 'decks/y'), edge('decks/y', 'decks/x')]
+  const found = (/** @type {string} */ place) => [PLACE, ORDERS, 'decks/x', 'decks/y'].includes(place), latest = (/** @type {string} */ place) => (place === PLACE ? 3 : 0)
+  assert.deepEqual(standing('decks/board', edges, found, latest), [['out', { n: 3 }]])
+  assert.deepEqual(standing('decks/digest', edges, found, latest), [['auto', {}], ['brain', { name: 'Local' }]])
+  assert.deepEqual(standing('decks/hourly', edges, found, latest), [['hourly', {}]])
+  assert.deepEqual(standing('decks/old', edges, found, latest), [['missing', {}], ['document.missing', {}]])
+  assert.deepEqual(standing('decks/x', edges, found, latest), [['loop', {}]])
+  assert.deepEqual(standing(ORDERS, edges, found, latest), [['unused', {}]], 'a relation reads nothing')
+  assert.deepEqual(standing(PLACE, edges, found, latest), [], 'read by references, it stands well')
 })

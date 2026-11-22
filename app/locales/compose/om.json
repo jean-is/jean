@@ -57,5 +57,7 @@
   "compose.kit.worn": "Kan uffatan: {names}",
   "compose.linkingAll": "Uumamoonni pirojektii kanaa akkamitti walitti hidhaman ilaalaa jira",
   "compose.drawn": "Fakkiidhaan agarsiisi",
-  "compose.map": "Walitti hidhamiinsa"
+  "compose.map": "Walitti hidhamiinsa",
+  "compose.out": "Veershiniin {n} ba’eera",
+  "compose.unused": "Wanti itti fayyadamu hin jiru"
 }

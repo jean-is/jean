@@ -57,5 +57,7 @@
   "compose.kit.worn": "Nose ga: {names}",
   "compose.linkingAll": "Provjeravam kako su povezane kreacije ovog projekta",
   "compose.drawn": "Prikaži ih nacrtane",
-  "compose.map": "Veze"
+  "compose.map": "Veze",
+  "compose.out": "Izašla je verzija {n}",
+  "compose.unused": "Ništa ga ne koristi"
 }

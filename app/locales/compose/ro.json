@@ -57,5 +57,7 @@
   "compose.kit.worn": "Purtată de: {names}",
   "compose.linkingAll": "Caut cum sunt legate creațiile acestui proiect",
   "compose.drawn": "Arată-le desenate",
-  "compose.map": "Legături"
+  "compose.map": "Legături",
+  "compose.out": "A apărut versiunea {n}",
+  "compose.unused": "Fără nicio utilizare"
 }

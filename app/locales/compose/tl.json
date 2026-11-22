@@ -57,5 +57,7 @@
   "compose.kit.worn": "Suot ng: {names}",
   "compose.linkingAll": "Tinitingnan kung paano magkakaugnay ang mga likha sa proyektong ito",
   "compose.drawn": "Ipakita bilang guhit",
-  "compose.map": "Mga ugnay"
+  "compose.map": "Mga ugnay",
+  "compose.out": "Lumabas na ang bersyon {n}",
+  "compose.unused": "Walang gumagamit"
 }

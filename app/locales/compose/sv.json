@@ -57,5 +57,7 @@
   "compose.kit.worn": "Bärs av: {names}",
   "compose.linkingAll": "Tittar på hur projektets skapelser hänger ihop",
   "compose.drawn": "Visa dem ritade",
-  "compose.map": "Kopplingar"
+  "compose.map": "Kopplingar",
+  "compose.out": "Version {n} har kommit",
+  "compose.unused": "Används inte av något"
 }

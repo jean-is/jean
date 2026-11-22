@@ -24,7 +24,7 @@ import { t, useStrings, locale, intlLocales } from '../../core/i18n.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { PLACE } from '../tables/table.js'
 import '../tables/tables.js'
-import { parseRef, parseFigure, refsIn, loops, refused, versionless, tableOf, chartOf, choiceIn, choicesIn, tinted, withRef, filledPage, written as writtenWith, linksIn, further, DOCUMENT, sectionOf, withId, notesIn } from './refs.js'
+import { parseRef, parseFigure, refsIn, loops, refused, versionless, tableOf, chartOf, choiceIn, choicesIn, tinted, withRef, filledPage, written as writtenWith, linksIn, further, standing, DOCUMENT, sectionOf, withId, notesIn } from './refs.js'
 import { option } from '../interactive/parts.js'
 import { versionOf, loadedOf, reshaped, breaks, current, headOf, asOf, since } from './versions.js'
 import { keyOf, paceOf, askOf, lastRun, due, PROMPT, DEPTH, GATHER } from './recipes.js'
@@ -433,10 +433,13 @@ const opening = (place, name) => (place === KIT || ROUTINE.test(place) ? import(
  */
 async function drawingOf(dir, here = '') {
   const { edges: all, names } = await graph(dir), edges = all.filter((edge) => edge.kind !== 'file' && edge.kind !== 'kit' && names.has(edge.from) && names.has(edge.to))
+  const latest = new Map(await Promise.all([...new Set(all.filter((edge) => typeof edge.at === 'number').map((edge) => edge.to))].map(async (place) => /** @type {[string, number]} */ ([place, (await versionsOf(dir, place)).at(-1)?.n ?? 0]))))
   const near = here && new Set([here, ...edges.flatMap((edge) => (edge.from === here ? [edge.to] : edge.to === here ? [edge.from] : [])), ...[...further(edges, here, true), ...further(edges, here, false)].map(([one]) => one)])
-  const places = [...new Set(edges.flatMap((edge) => [edge.from, edge.to]))].filter((place) => !near || near.has(place)).sort(), drawn = edges.filter((edge) => places.includes(edge.from) && places.includes(edge.to))
-  return { places, edges: drawn, here, name: (place) => names.get(place) ?? place, glyph: (place) => KIND[place.split('/')[0]] ?? icons.layers, open: (place) => opening(place, names.get(place) ?? place),
-    said: (place) => [...new Set(drawn.filter((edge) => edge.from === place && !edge.kind).map((edge) => (place.startsWith('conversations/') && edge.at === 'live' ? t('compose.answer') : which(edge.at))))] }
+  // A consumer whose source is gone is drawn too, saying it shows nothing.
+  const places = [...new Set([...edges.flatMap((edge) => [edge.from, edge.to]), ...all.filter((edge) => !edge.kind && names.has(edge.from) && !names.has(edge.to)).map((edge) => edge.from)])].filter((place) => !near || near.has(place)).sort()
+  const drawn = edges.filter((edge) => places.includes(edge.from) && places.includes(edge.to)), stands = (/** @type {string} */ place) => standing(place, all, (one) => names.has(one), (one) => latest.get(one) ?? 0)
+  return { places, edges: drawn, here, name: (place) => names.get(place) ?? place, glyph: (place) => KIND[place.split('/')[0]] ?? icons.layers, open: (place) => opening(place, names.get(place) ?? place), alert: (place) => new Set(stands(place).filter(([key]) => /missing|loop/.test(key)).map(([key]) => t(`compose.${key}`))),
+    said: (place) => [...new Set([...drawn.filter((edge) => edge.from === place && !edge.kind).map((edge) => (place.startsWith('conversations/') && edge.at === 'live' ? t('compose.answer') : which(edge.at))), ...stands(place).map(([key, given]) => (key === 'brain' ? String(given.name) : t(`compose.${key}`, given)))])] }
 }
 /** The project's map, Creations' (../../ui/creations-page.js) once three creations are linked: drawn as Creations first asks, then again each time the graph is read, with the map's module. */
 const whole = signal(/** @type {{ dir: string, drawing: import('./map.js').Drawing, drawn: typeof import('./map.js').drawn } | null} */ (null))

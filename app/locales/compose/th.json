@@ -57,5 +57,7 @@
   "compose.kit.worn": "ใช้โดย: {names}",
   "compose.linkingAll": "กำลังดูว่าผลงานในโปรเจกต์นี้เชื่อมโยงกันอย่างไร",
   "compose.drawn": "แสดงเป็นภาพ",
-  "compose.map": "การเชื่อมโยง"
+  "compose.map": "การเชื่อมโยง",
+  "compose.out": "เวอร์ชัน {n} ออกแล้ว",
+  "compose.unused": "ไม่มีอะไรใช้"
 }

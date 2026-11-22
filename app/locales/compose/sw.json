@@ -57,5 +57,7 @@
   "compose.kit.worn": "Unatumiwa na: {names}",
   "compose.linkingAll": "Inaangalia jinsi vilivyoundwa katika mradi huu vinavyounganika",
   "compose.drawn": "Vionyeshe kwa mchoro",
-  "compose.map": "Viungo"
+  "compose.map": "Viungo",
+  "compose.out": "Toleo la {n} limetoka",
+  "compose.unused": "Haitumiki popote"
 }

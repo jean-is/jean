@@ -57,5 +57,7 @@
   "compose.kit.worn": "Getragen von: {names}",
   "compose.linkingAll": "Prüfe, wie die Kreationen dieses Projekts verbunden sind",
   "compose.drawn": "Als Zeichnung zeigen",
-  "compose.map": "Verbindungen"
+  "compose.map": "Verbindungen",
+  "compose.out": "Version {n} ist erschienen",
+  "compose.unused": "Wird nirgends verwendet"
 }

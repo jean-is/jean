@@ -57,5 +57,7 @@
   "compose.kit.worn": "Masu sanye da shi: {names}",
   "compose.linkingAll": "Ana duba yadda abubuwan da aka ƙirƙira a wannan aikin suke haɗe",
   "compose.drawn": "Nuna su a zane",
-  "compose.map": "Haɗi"
+  "compose.map": "Haɗi",
+  "compose.out": "Siga ta {n} ta fito",
+  "compose.unused": "Babu abin da ke amfani da shi"
 }

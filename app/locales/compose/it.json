@@ -57,5 +57,7 @@
   "compose.kit.worn": "Lo indossano: {names}",
   "compose.linkingAll": "Guardo come sono collegate le creazioni di questo progetto",
   "compose.drawn": "Mostrali disegnati",
-  "compose.map": "Collegamenti"
+  "compose.map": "Collegamenti",
+  "compose.out": "È uscita la versione {n}",
+  "compose.unused": "Nessun utilizzo"
 }

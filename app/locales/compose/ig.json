@@ -57,5 +57,7 @@
   "compose.kit.worn": "Ndị yi ya: {names}",
   "compose.linkingAll": "Na-ele otú ihe e kere n’ọrụ a si jikọọ",
   "compose.drawn": "Gosi ha dị ka eserese",
-  "compose.map": "Njikọ"
+  "compose.map": "Njikọ",
+  "compose.out": "Mbipụta {n} apụtala",
+  "compose.unused": "Ọ dịghị ihe na-eji ya"
 }

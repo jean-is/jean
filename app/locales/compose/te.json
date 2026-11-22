@@ -57,5 +57,7 @@
   "compose.kit.worn": "దీనిని ధరించినవి: {names}",
   "compose.linkingAll": "ఈ ప్రాజెక్ట్‌లో సృష్టించినవి ఎలా లింక్ అయ్యాయో చూస్తోంది",
   "compose.drawn": "చిత్రంగా చూపించు",
-  "compose.map": "లింకులు"
+  "compose.map": "లింకులు",
+  "compose.out": "వెర్షన్ {n} వచ్చింది",
+  "compose.unused": "ఎక్కడా ఉపయోగించబడలేదు"
 }

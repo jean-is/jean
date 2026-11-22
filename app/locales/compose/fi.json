@@ -57,5 +57,7 @@
   "compose.kit.worn": "Käytössä: {names}",
   "compose.linkingAll": "Katsotaan, miten tämän projektin luomukset liittyvät toisiinsa",
   "compose.drawn": "Näytä piirroksena",
-  "compose.map": "Yhteydet"
+  "compose.map": "Yhteydet",
+  "compose.out": "Versio {n} on julkaistu",
+  "compose.unused": "Ei käytössä missään"
 }

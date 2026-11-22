@@ -57,5 +57,7 @@
   "compose.kit.worn": "Bæres af: {names}",
   "compose.linkingAll": "Ser på, hvordan projektets kreationer hænger sammen",
   "compose.drawn": "Vis dem tegnet",
-  "compose.map": "Forbindelser"
+  "compose.map": "Forbindelser",
+  "compose.out": "Version {n} er ude",
+  "compose.unused": "Bruges ikke af noget"
 }

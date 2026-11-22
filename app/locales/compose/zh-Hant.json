@@ -57,5 +57,7 @@
   "compose.kit.worn": "使用者：{names}",
   "compose.linkingAll": "正在查看此專案中的創作如何關聯",
   "compose.drawn": "以圖查看",
-  "compose.map": "關聯"
+  "compose.map": "關聯",
+  "compose.out": "版本 {n} 已推出",
+  "compose.unused": "沒有被任何地方使用"
 }

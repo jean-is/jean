@@ -57,5 +57,7 @@
   "compose.kit.worn": "Induunt: {names}",
   "compose.linkingAll": "Quaeritur quomodo creationes huius incepti inter se nectantur",
   "compose.drawn": "Delineatos ostende",
-  "compose.map": "Nexus"
+  "compose.map": "Nexus",
+  "compose.out": "Versio {n} edita est",
+  "compose.unused": "Nihil eo utitur"
 }

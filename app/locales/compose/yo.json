@@ -57,5 +57,7 @@
   "compose.kit.worn": "Àwọn tó wọ̀ ọ́: {names}",
   "compose.linkingAll": "À ń wo bí àwọn ìṣẹ̀dá inú iṣẹ́ yìí ṣe so pọ̀",
   "compose.drawn": "Fi wọ́n hàn bí àwòrán",
-  "compose.map": "Ìsopọ̀"
+  "compose.map": "Ìsopọ̀",
+  "compose.out": "Ẹ̀dà {n} ti jáde",
+  "compose.unused": "Kò sí ohun tó ń lò ó"
 }

@@ -57,5 +57,7 @@
   "compose.kit.worn": "使っているもの：{names}",
   "compose.linkingAll": "このプロジェクトの作成物のつながりを確認中",
   "compose.drawn": "図で見る",
-  "compose.map": "つながり"
+  "compose.map": "つながり",
+  "compose.out": "バージョン {n} が出ています",
+  "compose.unused": "どこにも使われていません"
 }

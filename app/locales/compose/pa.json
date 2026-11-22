@@ -57,5 +57,7 @@
   "compose.kit.worn": "ਇਸਨੂੰ ਪਹਿਨਣ ਵਾਲੇ: {names}",
   "compose.linkingAll": "ਦੇਖ ਰਹੇ ਹਾਂ ਕਿ ਇਸ ਪ੍ਰੋਜੈਕਟ ਦੀਆਂ ਰਚਨਾਵਾਂ ਕਿਵੇਂ ਜੁੜੀਆਂ ਹਨ",
   "compose.drawn": "ਚਿੱਤਰ ਵਜੋਂ ਦਿਖਾਓ",
-  "compose.map": "ਜੋੜ"
+  "compose.map": "ਜੋੜ",
+  "compose.out": "ਵਰਜਨ {n} ਆ ਗਿਆ ਹੈ",
+  "compose.unused": "ਕਿਤੇ ਨਹੀਂ ਵਰਤਿਆ ਗਿਆ"
 }

@@ -57,5 +57,7 @@
   "compose.kit.worn": "Nosí ho: {names}",
   "compose.linkingAll": "Zjišťuji, jak spolu souvisejí výtvory tohoto projektu",
   "compose.drawn": "Ukázat jako nákres",
-  "compose.map": "Vazby"
+  "compose.map": "Vazby",
+  "compose.out": "Vyšla verze {n}",
+  "compose.unused": "Nic to nepoužívá"
 }
