@@ -174,7 +174,6 @@ customElements.define('app-prototype', class extends HTMLElement {
     const { steps, on, by } = stepsOf(pagesOf(one), one.flow), all = steps.flat(), names = named(all.map((page) => this.#title(page))), name = assistantName(), board = this.#view === 'board'
     const number = new Intl.NumberFormat(locale.value), list = new Intl.ListFormat(locale.value, { type: 'conjunction' }), percent = new Intl.NumberFormat(locale.value, { style: 'percent' })
     const changed = (/** @type {string} */ page) => one.mine && String(one.mine.get(page)) !== String(one.files.get(page))
-    this.style.setProperty('--zoom', String(this.#zoom)); this.style.setProperty('--dots', String(this.#zoom / 2 ** Math.floor(Math.log2(this.#zoom))))
     /** A page: on the board, under the control that leads to it; its name on the board's ground, which presses its card too, over its card, the page itself; then where it leads on, which the strip keeps for screen readers, as both keep its place. */
     const card = (/** @type {string} */ page) => {
       const i = all.indexOf(page), to = one.open ? [] : on(page)
@@ -192,6 +191,8 @@ customElements.define('app-prototype', class extends HTMLElement {
       : html`<div class="proto-play"><div class="proto-strip"><button type="button" class="button subtle" @click=${() => this.show('board')}>${icons.board}${t('prototypes.board')}</button>
           <ol aria-label=${t('prototypes.pages', { name: one.name })} @keydown=${this.keys}>${all.map(card)}</ol></div>
         <app-site class="beside" .site=${one} @input=${() => { this.#at = this.#live?.page ?? this.#at; this.draw() }}></app-site></div>`, this)
+    // Its zoom, and dots that stick to its pages: one at each step's start and on its first pages' tops, 1.5 to 3rem apart however wide the steps, those between coming in as they part.
+    this.style.setProperty('--zoom', String(this.#zoom)); const step = this.querySelector('.proto-step'), shot = step?.querySelector('.proto-card'), dot = 1.5 * parseFloat(getComputedStyle(document.documentElement).fontSize), pitch = step ? step.getBoundingClientRect().width + parseFloat(getComputedStyle(/** @type {Element} */ (step.parentElement)).columnGap) : dot; this.style.setProperty('--dots', String(pitch / 2 ** Math.floor(Math.log2(pitch / dot)) / dot)); this.style.setProperty('--top', `${shot && step ? shot.getBoundingClientRect().top - step.getBoundingClientRect().top : 0}px`)
     if (board && !this.#fitted) (this.#fitted = true), this.fit()
   }
 })
