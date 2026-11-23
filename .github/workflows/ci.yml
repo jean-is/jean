@@ -207,15 +207,15 @@ jobs:
         include:
           - image: jean
             target: ''
-            description: Jean, served by nginx without root on port 8080
+            description: Jean, rootless nginx :8080
             licenses: MIT AND Elastic-2.0
           - image: jean-gateway
             target: gateway
-            description: Jean's gateway, on Node on port 8787, for the services a browser can't reach
+            description: Node :8787
             licenses: MIT
           - image: jean-relay
             target: relay
-            description: Jean's relay, on Node on port 8791, where a person's devices and the people they send to meet
+            description: Node :8791
             licenses: MIT
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
