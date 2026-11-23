@@ -24,7 +24,7 @@ import { discover, registerClient, authorization, finish, refresh } from './auth
 import { known, knownFor, covers, logoAt, everyone } from './directory.js'
 import { slug, serviceURL } from '../../core/settings.js'
 import { LLMError, PROVIDERS, mayTrain, mayRead } from '../../core/llm.js'
-import { checkTerms, checkAll } from './terms.js'
+import { checkTerms, checkAll, unsure } from './terms.js'
 import { STRICT } from '../../core/rules.js'
 import { loadConversation } from '../../core/conversations.js'
 import { identifier, takes } from '../../core/deferred.js'
@@ -212,7 +212,7 @@ function asTool(connection, tool) {
     // its row offers it. Refused once signed in, it is what the sign-in didn't allow (D344). Google's services mark the task,
     // and run only for a brain whose service doesn't train on what it reads, as its terms say or a check of its plan finds (D440).
     run: async (args, ctx) => {
-      if (limited(connection) && (ctx.meta.limitedUse = true) && mayTrain(ctx.brain, app.policy) && !(await checkTerms(ctx.brain))) throw new Error(`${called(connection)} isn't read by this brain: what Google's services bring in goes only to brains whose service never trains on it. Ask the user to pick one in the box, or to ask again with Auto, which picks one.`)
+      if (limited(connection) && (ctx.meta.limitedUse = true) && mayTrain(ctx.brain, app.policy) && !(await checkTerms(ctx.brain))) throw new Error(`${called(connection)} isn't read by this brain: what Google's services bring in goes only to brains whose service never trains on it. Ask the user to pick one in the box, or to ask again with Auto, which picks one${ctx.brain.provider === 'gemini' ? ", or to turn billing on for this Gemini key's Google Cloud project" : ''}.`)
       return answer(connection, label, await call(args, ctx.signal).catch(async (error) => {
         if (!(error instanceof MCPError && error.auth)) throw new Error(withArguments(error.message, takes(spec)))
         if (connection.auth === 'none' || (connection.auth === 'oidc' && error.status === 401)) {
@@ -289,12 +289,17 @@ effect(() => register({
 }))
 /**
  * A request refused, which a turn's step says, naming the brain and those that would read the task, with the picker open
- * on the brains that may answer, each brain's plan checked first. @param {BrainConfig | false} brain
+ * on the brains that may answer, each brain's plan checked first. A Gemini key is told what makes it one: billing on for its
+ * project, which its check found off or couldn't tell, or its owner saying so on its page, which Settings opens. @param {BrainConfig | false} brain
  */
 async function* refused(brain) {
-  if (brain) await Promise.all([useStrings('connections'), checkAll(brain)]).then(() => (notify(t('connections.untrained', { brain: t(`provider.${brain.provider}`), brains: untrained() }), { alert: true }), import('../../ui/picker.js'))).then((picker) => picker.openPicker())
+  if (brain) await Promise.all([useStrings('connections'), checkAll(brain)]).then(() => (notify(...said(brain)), import('../../ui/picker.js'))).then((picker) => picker.openPicker())
   throw new LLMError('This task used Google’s services, and this brain’s service may train on what it reads.', { code: 'aborted' })
 }
+
+/** What a refusal says of a brain, and for a Gemini key, Settings at its page. @param {BrainConfig} brain @returns {Parameters<typeof notify>} */
+const said = (brain, name = t(`provider.${brain.provider}`)) => (brain.provider !== 'gemini' ? [t('connections.untrained', { brain: name, brains: untrained() }), { alert: true }]
+  : [t(unsure.has(brain.id) ? 'connections.geminiUnsure' : 'connections.gemini', { brain: name }), { label: t('settings.title'), run: () => openSettings(`brains/${brain.id}`), alert: true }])
 
 /** Every connection's tools, asked for once this module loads (a brief waits for them). */
 export const listed = list()

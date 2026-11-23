@@ -13,7 +13,7 @@
 // worker as theirs, umT5's three graphs a worker each, the film's frames checked as pictures are.
 import { signal } from '@preact/signals-core'
 import { app, weightsHost, updateSettings } from '../../ui/state.js'
-import { modelWorker, downloading, holdStill } from '../../ui/model.js'
+import { modelWorker, downloading, holdStill, failed } from '../../ui/model.js'
 import { scriptURL } from '../../ui/trusted.js'
 import { SIZES } from './flux.js'
 import * as fastwan from './fastwan.js'
@@ -167,10 +167,7 @@ export async function prepare(maker) {
     download.value = { state: 'ready' }
     kept.value = new Set([...kept.value, maker])
     if (maker !== 'fastwan') await use(maker)
-  } catch (error) {
-    download.value = { state: 'failed', message: error instanceof Error ? error.message : String(error) }
-    throw error
-  }
+  } catch (error) { failed(download, error) }
 }
 
 /** Removes one's files from this device, but for those another one here shares (the check's). @param {Maker} maker */

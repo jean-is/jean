@@ -1161,18 +1161,37 @@ describe('what Google’s services bring in goes only to brains that don’t tra
     assert.equal(commercial(null), false)
   })
 
-  test('a Gemini key is found billed when a model with no free tier answers it, and only then', async () => {
+  test('a Gemini key is found billed when a model with no free tier answers it, unbilled when its free tier refuses it, and else not known', async () => {
     /** @type {any[]} */
     const asked = []
-    const answering = (/** @type {number} */ status) => /** @type {typeof fetch} */ (async (url, init) => { asked.push([url, init]); return new Response('{}', { status }) })
-    assert.equal(await billed({ baseURL: gemini.baseURL, apiKey: 'k', fetch: answering(200) }), true)
+    /** Each model asked answered in turn, by status and body. @param {...[number, string?]} answers */
+    const answering = (...answers) => /** @type {typeof fetch} */ (async (url, init) => {
+      const [status, body = '{}'] = answers[Math.min(asked.push([url, init]) - 1, answers.length - 1)]
+      return new Response(body, { status })
+    })
+    const check = async (/** @type {typeof fetch} */ fetch) => { asked.length = 0; return billed({ baseURL: gemini.baseURL, apiKey: 'k', fetch }) }
+    assert.equal(await check(answering([200])), true)
     const [url, init] = asked[0]
     assert.equal(url, `${gemini.baseURL}/chat/completions`)
     assert.equal(init.headers.authorization, 'Bearer k')
-    assert.equal(JSON.parse(init.body).model, PAID_ONLY)
-    // An unbilled project's key is refused at its free tier's limit of 0; a retired model, a wrong key or no network say nothing either.
-    for (const status of [429, 404, 400, 401, 402, 500]) assert.equal(await billed({ baseURL: gemini.baseURL, apiKey: 'k', fetch: answering(status) }), false, String(status))
-    assert.equal(await billed({ baseURL: gemini.baseURL, apiKey: 'k', fetch: async () => { throw new TypeError('offline') } }), false)
+    assert.equal(JSON.parse(init.body).model, PAID_ONLY[0])
+    // An unbilled project's key is refused at its free tier's quota, whose limit is 0, as Google says it on its OpenAI-compatible address.
+    const free = JSON.stringify([{ error: { code: 429, status: 'RESOURCE_EXHAUSTED', message: 'Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-3.1-pro' } }])
+    assert.equal(await check(answering([429, free])), false)
+    assert.equal(asked.length, 1)
+    // A model Google retired answers 404, and the next is asked, until one says; with every one retired, nothing is known.
+    assert.equal(await check(answering([404], [200])), true)
+    assert.deepEqual(asked.map(([, each]) => JSON.parse(each.body).model), PAID_ONLY.slice(0, 2))
+    assert.equal(await check(answering([404], [429, free])), false)
+    assert.equal(await check(answering([404])), null)
+    assert.equal(asked.length, PAID_ONLY.length)
+    // A billed project's own quota, a busy service, a wrong key or no network say nothing of billing either, and nothing more is asked.
+    const busy = JSON.stringify([{ error: { code: 429, status: 'RESOURCE_EXHAUSTED', message: 'Resource has been exhausted (e.g. check quota).' } }])
+    for (const [status, body] of /** @type {[number, string?][]} */ ([[429, busy], [400], [401], [403], [500], [503]])) {
+      assert.equal(await check(answering([status, body])), null, String(status))
+      assert.equal(asked.length, 1, String(status))
+    }
+    assert.equal(await check(async () => { throw new TypeError('offline') }), null)
   })
 
   test('a task that holds it goes only to such a brain', () => {

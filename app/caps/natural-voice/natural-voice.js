@@ -9,7 +9,7 @@ import { signal, effect } from '@preact/signals-core'
 import { nothing } from 'lit-html'
 import { register } from '../../ui/caps.js'
 import { effective, notify, weightsHost } from '../../ui/state.js'
-import { modelWorker, downloading } from '../../ui/model.js'
+import { modelWorker, downloading, failed } from '../../ui/model.js'
 import { unpinned } from '../../ui/weights.js'
 import { speaking } from '../../ui/speech.js'
 import { natural, NATURAL } from '../../ui/voices.js'
@@ -58,10 +58,7 @@ export async function prepare(lang = natural.wanted ?? (NATURAL.includes(locale.
   download.value = { state: 'downloading', loaded: 0, total }
   getting.value = lang
   navigator.storage?.persist?.().catch(() => {})
-  await worker.call({ type: 'load', host: weightsHost(), manifest: MANIFEST, lang }, { onMessage: (message) => { download.value = downloading(message, total) } }).catch((error) => {
-    download.value = { state: 'failed', message: error instanceof Error ? error.message : String(error) }
-    throw error
-  }).finally(() => { getting.value = '' })
+  await worker.call({ type: 'load', host: weightsHost(), manifest: MANIFEST, lang }, { onMessage: (message) => { download.value = downloading(message, total) } }).catch((error) => failed(download, error)).finally(() => { getting.value = '' })
   here.value = new Set([...here.value, lang])
   ready()
 }

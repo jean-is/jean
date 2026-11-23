@@ -10,12 +10,12 @@
 import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { app, effective, updateSettings } from '../../ui/state.js'
-import { sectionOpen, lockedBy, placeable, where, projectName, goPage } from '../../ui/dialogs.js'
+import { sectionOpen, lockedBy, placeable, where, projectName, goPage, openSettings } from '../../ui/dialogs.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { loadConversation } from '../../core/conversations.js'
 import { ALPHABET } from '../../core/ulid.js'
 import { resolveRule, STRICT } from '../../core/rules.js'
-import { t, locale, relativeTime, intlLocales } from '../../core/i18n.js'
+import { t, tParts, locale, relativeTime, intlLocales } from '../../core/i18n.js'
 import { byName } from '../../core/search.js'
 import { BRAND } from '../../brand.js'
 import { icons } from '../../ui/menu-icons.js'
@@ -89,15 +89,25 @@ const listOf = (names) => new Intl.ListFormat(intlLocales(), { type: 'conjunctio
 const said = () => (message.value ? html`<p class="status is-${message.value.kind}" role=${message.value.kind === 'error' ? 'alert' : 'status'}>${message.value.text}</p>` : nothing)
 /** Whether the brains' plans were checked since Jean opened, once a Google service's page was first drawn. */
 let checking = false
+/** A brain's page, as Settings' own list opens it, its name taking the keyboard once drawn: a few frames the first time, its module loading. @param {string} id */
+const toBrain = (id) => (openSettings(`brains/${id}`), focusDrawn('.brain-head h2'))
+/** Gives the keyboard to what a selector finds once it is drawn, trying each frame for half a second. @param {string} selector */
+const focusDrawn = (selector, tries = 30) => requestAnimationFrame(() => {
+  const found = /** @type {HTMLElement | null} */ (document.querySelector(selector))
+  return found ? found.focus() : tries && focusDrawn(selector, tries - 1)
+})
 /**
  * What Google's services bring in goes only to brains that never train on it (D440): where every brain the user has may, their
- * plans checked, which would read it. @param {Pick<Connection, 'url' | 'servers'>} one @param {string} service
+ * plans checked, which would read it, or for a Gemini key, what makes it one, its name opening its page.
+ * @param {Pick<Connection, 'url' | 'servers'>} one @param {string} service
  */
 function trains(one, service) {
   if (!limited(one)) return nothing
   checking ||= Boolean(checkAll())
   const brains = (rechecked.value, untrained(effective.value.settings.brains))
-  return html`<p class="${brains ? 'status' : 'hint'} connection-trains">${icons.shield} ${brains ? t('connections.noBrain', { service, brains }) : t('connections.trains', { service })}</p>`
+  const gemini = brains && effective.value.settings.brains.find((brain) => brain.provider === 'gemini')
+  return html`<p class="${brains ? 'status' : 'hint'} connection-trains">${icons.shield} ${gemini ? tParts('connections.noBrainGemini', { service, brain: html`<button class="link-button" @click=${() => toBrain(gemini.id)}>${t('provider.gemini')}</button>` })
+    : brains ? t('connections.noBrain', { service, brains }) : t('connections.trains', { service })}</p>`
 }
 /**
  * A name like an address may wrap before its dot ("monday" ".com"), one in two words where its capital starts the second ("Service" "Now"),

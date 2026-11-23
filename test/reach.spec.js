@@ -45,13 +45,16 @@ test('what Google’s services bring in goes only to brains whose service never 
       : { messages: Object.keys(emails).map((each) => ({ id: each })) } })
   })
   // The fake brain stands behind Gemini's address, whose free tier trains on what it's sent, and behind OpenAI's, which doesn't.
-  // Gemini's model with no free tier refuses the key, as Google refuses an unbilled project's, until its project is billed.
+  // Gemini's model with no free tier refuses the key, as Google refuses an unbilled project's, until its project is billed;
+  // while Google is down, it says nothing either way.
   let billing = false
+  let down = false
   const PAID_ONLY = 'gemini-3.1-pro-preview'
   const probe = (/** @type {import('@playwright/test').Request} */ request) => request.method() === 'POST' && request.postDataJSON()?.model === PAID_ONLY
   for (const base of ['https://generativelanguage.googleapis.com/v1beta/openai', 'https://api.openai.com/v1']) {
     await page.route(`${base}/**`, async (route) => (probe(route.request())
-      ? route.fulfill(billing ? { json: { choices: [{ index: 0, message: { role: 'assistant', content: 'Hi' }, finish_reason: 'length' }] } }
+      ? route.fulfill(down ? { status: 503, json: [{ error: { code: 503, status: 'UNAVAILABLE', message: 'The model is overloaded. Please try again later.' } }] }
+        : billing ? { json: { choices: [{ index: 0, message: { role: 'assistant', content: 'Hi' }, finish_reason: 'length' }] } }
         : { status: 429, json: [{ error: { code: 429, status: 'RESOURCE_EXHAUSTED', message: 'Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0' } }] })
       : route.fulfill({ response: await route.fetch({ url: route.request().url().replace(base, BRAIN_URL) }) })))
   }
@@ -63,17 +66,20 @@ test('what Google’s services bring in goes only to brains whose service never 
   }, GMAIL)
   await turnOn(page, 'Connections')
   await expect(page.locator('app-settings [data-page="gmail"]')).toContainText('4 actions')
-  // Its page says no brain the user has may read what it brings in, and which would.
+  // Its page says the user's one brain, a Gemini key, may not read what it brings in, and what makes it one, its name opening its page.
   await page.locator('app-settings [data-page="gmail"]').click()
-  await expect(page.locator('app-settings .connection-trains')).toContainText('every brain you have may train on what it reads')
-  await expect(page.locator('app-settings .connection-trains')).toContainText('Anthropic, Vertex AI')
+  await expect(page.locator('app-settings .connection-trains')).toContainText('Google trains on what Google Gemini reads unless billing is on for its key’s Google Cloud project')
+  await expect(page.locator('app-settings .connection-trains')).toContainText('Turn billing on in Google AI Studio')
+  await page.locator('app-settings .connection-trains .link-button', { hasText: 'Google Gemini' }).click()
+  await expect(page.locator('app-settings .brain-head h2')).toBeFocused()
+  await expect(page.locator('app-settings #brain-billed')).not.toBeChecked()
   await closeSettings(page)
 
   // Gemini's call to Gmail is refused, though allowed: the task is marked, and the picker offers no brain that may read it.
   await ask(page, 'Summarise my latest emails')
   await page.locator('.approval .button.primary').click()
-  await expect(page.locator('.toast')).toContainText('This task used Google services, whose data must never train AI, and Google Gemini may train on what it reads.')
-  await expect(page.locator('.toast')).toContainText('such as OpenRouter, OpenAI')
+  await expect(page.locator('.toast')).toContainText('This task used Google services, whose data must never train AI, and Google trains on what Google Gemini reads unless billing is on')
+  await expect(page.locator('.toast .button', { hasText: 'Settings' })).toBeVisible()
   await expect(page.locator('#brain-menu')).toBeVisible()
   await expect(page.locator('#brain-menu button', { hasText: 'fake-brain-1' })).toHaveCount(0)
   const marked = () => page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.some((record) => record.update?._meta?.limitedUse))
@@ -100,10 +106,13 @@ test('what Google’s services bring in goes only to brains whose service never 
   const asked = []
   const checks = []
   page.on('request', (request) => request.url().startsWith('https://generativelanguage.googleapis.com/') && request.method() === 'POST' && (probe(request) ? checks : asked).push(request.url()))
+  // Google down, its project's billing can't be checked, which the refusal says.
+  down = true
   await ask(page, 'Thanks, and the next ones?')
   // Refused, the picker opens again on the brains that may answer.
   await expect(page.locator('#brain-menu')).toBeVisible()
-  await expect(page.locator('.toast').last()).toContainText('This task used Google services')
+  await expect(page.locator('.toast').last()).toContainText('whether billing is on for the Google Cloud project of Google Gemini’s key couldn’t be checked')
+  down = false
   await expect(page.locator('.msg-jean .prose', { hasText: 'Your 2 latest emails' })).toHaveCount(1)
   expect(answers).toBeGreaterThan(0)
   expect(asked).toEqual([])

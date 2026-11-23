@@ -79,3 +79,5 @@ export async function holdStill(work) {
  * @param {number} bytes what they are expected to weigh @returns {{ state: 'loading' } | { state: 'downloading', loaded: number, total: number }}
  */
 export const downloading = ({ loaded, total }, bytes) => (loaded >= total * 0.999 ? { state: 'loading' } : { state: 'downloading', loaded, total: Math.max(total, bytes) })
+/** A download that failed, its state saying why, the error thrown on. @param {{ value: unknown }} download @param {unknown} error @returns {never} */
+export const failed = (download, error) => { download.value = { state: 'failed', message: error instanceof Error ? error.message : String(error) }; throw error }

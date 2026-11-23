@@ -6,7 +6,7 @@ import { signal } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
 import { weightsHost, effective } from '../../ui/state.js'
 import { memoryTotal } from '../../ui/host.js'
-import { modelWorker, downloading, holdStill, handheld } from '../../ui/model.js'
+import { modelWorker, downloading, holdStill, handheld, failed } from '../../ui/model.js'
 import { openaiMessages, LLMError } from '../../core/llm.js'
 import { t, formatBytes } from '../../core/i18n.js'
 import { gemmaParser } from './gemma.js'
@@ -102,10 +102,7 @@ export async function prepare() {
       if (download.value.state === 'loading') { localStorage.setItem(LOADING, 'loading'); addEventListener('pagehide', unmark) }
     } }))
     download.value = { state: 'ready' }
-  } catch (error) {
-    download.value = { state: 'failed', message: error instanceof Error ? error.message : String(error) }
-    throw error
-  } finally {
+  } catch (error) { failed(download, error) } finally {
     unmark()
   }
 }

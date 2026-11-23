@@ -7,7 +7,7 @@
 import { signal, effect } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
 import { app, weightsHost } from '../../ui/state.js'
-import { modelWorker, downloading } from '../../ui/model.js'
+import { modelWorker, downloading, failed } from '../../ui/model.js'
 import { library } from '../../ui/complete.js'
 import { indexed } from '../files/search.js'
 import { isPicture } from '../../core/events.js'
@@ -55,10 +55,7 @@ export async function prepare() {
     await worker.call({ type: 'load', host: weightsHost(), model: EMBEDDER.model, device, dtype }, { onMessage: (message) => { download.value = downloading(message, EMBEDDER.bytes) } })
     download.value = { state: 'ready' }
     register({ id: 'meaning', ready: true })
-  } catch (error) {
-    download.value = { state: 'failed', message: error instanceof Error ? error.message : String(error) }
-    throw error
-  }
+  } catch (error) { failed(download, error) }
 }
 
 /** Texts' vectors, a batch at a time. @param {string[]} texts @returns {Promise<Vectors>} */
