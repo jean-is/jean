@@ -23,6 +23,9 @@
 .site-creation.is-whiteboard { --creation: min(34rem, 82dvh); }
 /* A project's map: its columns side by side, or stacked where the page is narrow, every creation in sight */
 .site-creation.is-map { --creation: min(30rem, 82dvh); }
+/* A form beside its collection: one under the other on a narrow window, so taller there. */
+.site-creation.is-form { --creation: min(42rem, 82dvh); }
+@media (width < 44rem) { .site-creation.is-form { --creation: min(52rem, 88dvh); } }
 @media (width < 40rem) { .site-creation.is-map { --creation: min(46rem, 88dvh); } }
 /* A game's screen is as wide as it is drawn: sixteen by nine */
 .site-creation.is-game { block-size: auto; max-block-size: 82dvh; aspect-ratio: 16 / 9; }
@@ -76,6 +79,9 @@
 .job-table :is(th:first-child) { text-align: start; }
 .job-table :is(th, td):last-child { padding-inline-end: 1rem; }
 .job-table tbody th { font-weight: 500; }
+/* What was said, a line a row (/meeting-notes): words, read from their start, each under its time. */
+.job-table.is-said :is(th, td) { text-align: start; }
+.job-table.is-said th { vertical-align: top; white-space: nowrap; }
 .job-deck { display: grid; grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr)); gap: 0.5rem; inline-size: 100%; }
 .job-deck li { display: flex; align-items: center; min-block-size: 4.6rem; padding: 0.5rem 0.65rem; border: 1px solid var(--line); border-radius: 0.5rem; background: var(--room); font-size: 0.8125rem; font-weight: 600; line-height: 1.3; }
 .job-deck li.is-lead { background: var(--site-fill); color: var(--site-on-fill); border-color: var(--site-fill); }

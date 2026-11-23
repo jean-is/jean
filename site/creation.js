@@ -8,14 +8,16 @@
 // (creation/state.js, creation/room.js), since no project, brain or service is there.
 // A whiteboard's collection is made here by Whiteboards' own code (caps/whiteboards/tool.js), as `whiteboard` makes
 // one and `whiteboard_change` sorts it, a collection by Tables' (caps/tables/table.js) and a design by Designs'
-// (caps/designs/layout.js), so the page shows what Jean would make of the same call.
+// (caps/designs/layout.js), so the page shows what Jean would make of the same call. A collection's own form (caps/collect)
+// is shown with it: the collection as its replies and the person left it, and the columns its form asks.
 import { createHash } from 'node:crypto'
 import { readFile } from 'node:fs/promises'
 import { xml } from './site.js'
 import { made, rowsOf, changed, editsOf } from '../app/caps/whiteboards/tool.js'
 import { layout } from '../app/caps/whiteboards/layout.js'
 import { stamp, fold, stringifyChanges } from '../app/caps/tables/changes.js'
-import { folderOf, notesOf, createTable, checkCell } from '../app/caps/tables/table.js'
+import { folderOf, notesOf, createTable, checkCell, titleOf } from '../app/caps/tables/table.js'
+import { askable } from '../app/caps/collect/form.js'
 import { repair } from '../app/caps/designs/tool.js'
 import { designOf } from '../app/caps/designs/layout.js'
 import { toSvg } from '../app/caps/designs/format.js'
@@ -89,6 +91,10 @@ const player = (kit) => /* html */ `<!doctype html>
  * Or a project's map: its creations by their places and names, the links Jean's graph reads from their files
  * (caps/compose/refs.js), those to a creation the project no longer has among them, and each source's latest version.
  * @typedef {{ kind: 'map', name: string, asked: string, creations: { place: string, name: string }[], edges: import('../app/caps/compose/refs.js').Edge[], latest: Record<string, number> }} Links
+ *
+ * Or a collection with its own form, as Share's Collect replies puts one online (caps/collect): its columns, those the form
+ * asks, by their names, and its rows, each as a visitor sent it, with what the person noted in the other columns since.
+ * @typedef {{ kind: 'form', name: string, asked: string, columns: { name: string, type: string, options?: string[] }[], asks: string[], rows: Record<string, string | boolean>[] }} Form
  */
 
 /** Ids as ULIDs are written, in order, the same at each build: the creation's files change only with its words. @param {number} from */
@@ -164,6 +170,27 @@ function collectionFiles ({ name, columns, rows, then, why }) {
   return { folder: folderOf(table), files: { 'collection.json': `${JSON.stringify({ ...table, kept: kept[0].at }, null, 2)}\n`, 'changes.jsonl': stringifyChanges([...kept, ...theirs]) } }
 }
 
+/**
+ * A collection's files with its own form, as a project keeps them: the table `table_create` makes of its columns, each row as
+ * a visitor's reply brought it, the columns its form asks alone, then what the person noted in the others; and the columns
+ * the form asks, by their ids, each one Collect replies can ask (caps/collect/form.js), the row's name always. @param {Form} form
+ */
+function formFiles ({ name, columns, asks, rows }) {
+  const next = ids(1), table = createTable({ name, columns }, { id: next(), author: 'jean', at: new Date(at(0)).toISOString() })
+  const asked = askable(table).filter((field) => field.title || asks.includes(field.name)), missing = asks.filter((column) => !asked.some((field) => field.name === column))
+  if (missing.length || !asks.includes(titleOf(table).name)) throw new Error(`site/creation.js: ${name}'s form can't ask ${missing.join(', ') || 'no row by its name'}`)
+  /** A row's cells by their columns' ids, each one its column takes, those the form asks or the others. @param {Record<string, string | boolean>} cells @param {boolean} sent */
+  const set = (cells, sent) => Object.fromEntries(Object.entries(cells).filter(([column]) => asks.includes(column) === sent).map(([column, value]) => {
+    const property = table.properties.find((one) => one.name === column), wrong = property ? checkCell(property, value) : `${name} has no column ${column}`
+    if (!property || wrong) throw new Error(`site/creation.js: ${wrong}`)
+    return [property.id, value]
+  }))
+  const rowIds = rows.map(() => next())
+  const came = stamp([], rows.map((cells, i) => ({ row: rowIds[i], set: set(cells, true) })), { by: 'visitor', now: at(1) })
+  const noted = stamp(came, rows.map((cells, i) => ({ row: rowIds[i], set: set(cells, false) })).filter((edit) => Object.keys(edit.set).length), { by: 'user', now: at(2) })
+  return { folder: folderOf(table), files: { 'collection.json': `${JSON.stringify(table, null, 2)}\n`, 'changes.jsonl': stringifyChanges([...came, ...noted]) }, asks: asked.map((field) => field.id) }
+}
+
 /** A design's file, as a project keeps one: what `design` is given, laid out as Jean's first take. @param {Design} design @param {string} lang */
 function designFile ({ args }, lang) {
   const read = repair(args, lang)
@@ -177,12 +204,13 @@ const pathOf = (kit, page = kit.name) => `creations/${page}.${kit.lang}.json`
 
 /**
  * The files a page writes beside itself for the creation its pane shows, by their paths: the creation, and the
- * document that shows one with its code. @param {import('./site.js').Kit} kit @param {Pages | Board | Game | Collection | Doc | Design | Links} creation @param {string} [page]
+ * document that shows one with its code. @param {import('./site.js').Kit} kit @param {Pages | Board | Game | Collection | Doc | Design | Links | Form} creation @param {string} [page]
  */
 export function creationFiles (kit, creation, page = kit.name) {
   const { kind, name } = creation, asked = 'asked' in creation ? creation.asked : '', made = new Date(at(0)).toISOString()
   const shown = creation.kind === 'whiteboard' ? { kind, name, asked, ...boardFiles(creation, kit.dir) }
     : creation.kind === 'collection' ? { kind, name, ...collectionFiles(creation) }
+    : creation.kind === 'form' ? { kind, name, asked, ...formFiles(creation) }
     : creation.kind === 'document' ? { kind, name, markdown: creation.markdown, held: creation.held }
     : creation.kind === 'design' ? { kind, name, asked, ...designFile(creation, kit.lang) }
     : creation.kind === 'map' ? { kind, name, asked, creations: creation.creations, edges: creation.edges, latest: creation.latest }
@@ -194,7 +222,7 @@ export function creationFiles (kit, creation, page = kit.name) {
 
 /**
  * The frame that shows it in the page's pane, loaded once it is near, as tall as its kind takes (excel.css).
- * @param {import('./site.js').Kit} kit @param {(Pages | Board | Game | Collection | Doc | Design | Links)['kind']} kind
+ * @param {import('./site.js').Kit} kit @param {(Pages | Board | Game | Collection | Doc | Design | Links | Form)['kind']} kind
  * @param {{ page?: string, title?: string }} [creation]  whose creation, and the frame's name, as text
  */
 export function creationFrame (kit, kind, { page = kit.name, title = kit.text('pane.title') } = {}) {

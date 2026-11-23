@@ -27,6 +27,8 @@ const PANES = [
   ['fr/schemas', null, 'procédure de remboursement', 'l’IA de votre choix', 'Voir le déroulé', 'app-diagram img'],
   ['apps', null, 'log my hours by client', 'the AI you chose', 'Watch it unfold', 'app-page iframe'],
   ['fr/applis', null, 'noter mes heures par client', 'l’IA de votre choix', 'Voir le déroulé', 'app-page iframe'],
+  ['meeting-notes', 'Monday meeting.m4a', 'Write the minutes of this meeting', 'the AI you chose', 'Watch it unfold', '.msg-jean .prose table'],
+  ['fr/comptes-rendus', 'Réunion du lundi.m4a', 'Rédige le compte rendu de cette réunion', 'l’IA de votre choix', 'Voir le déroulé', '.msg-jean .prose table'],
   ['sheet-music', null, 'Write a lullaby for the piano', 'the AI you chose', 'Watch it unfold', 'app-score svg'],
   ['fr/partitions', null, 'Écris une berceuse pour piano', 'l’IA de votre choix', 'Voir le déroulé', 'app-score svg'],
 ]

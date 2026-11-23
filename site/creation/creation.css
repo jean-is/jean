@@ -16,3 +16,25 @@ html > .shown > main > * { flex: 1; min-block-size: 0; }
    never scrolls, so its lines stay on the creations they join */
 .creation > main:has(> app-links-map) { overflow: auto; padding: clamp(1rem, 4vw, 2rem); }
 .creation > main > app-links-map { flex: none; margin-block: auto; }
+/* A collection's own form beside its collection (caps/collect): the form as people see it, in a column of its own that scrolls,
+   then the collection; one under the other where the frame is narrow, the frame scrolling them both. */
+.form-pane { display: flex; }
+.form-pane > .view { flex: 1; min-inline-size: 0; }
+.form-seen { flex: 0 0 min(21rem, 42%); overflow-y: auto; padding: 1rem; border-inline-end: 1px solid var(--line); }
+.form-seen h2 { margin: 0 0 0.6rem; color: var(--ink-soft); font-size: 0.85rem; font-weight: 600; }
+.form-seen form { display: grid; gap: 0.65rem; padding: 0.9rem 1rem; border: 1px solid var(--line-strong); border-radius: 0.9rem; background: var(--room); }
+.form-seen h3 { margin: 0; font-size: 1.15rem; line-height: 1.25; }
+.form-seen :is(p, fieldset) { display: grid; gap: 0.25rem; margin: 0; padding: 0; border: 0; min-inline-size: 0; }
+.form-seen :is(label, legend) { padding: 0; color: var(--ink); font-size: 0.9rem; font-weight: 600; }
+.form-seen :is(input:not([type='radio'], [type='checkbox']), select, textarea) { box-sizing: border-box; inline-size: 100%; min-block-size: 2.25rem; padding: 0.3rem 0.6rem; border: 1px solid var(--line-strong); border-radius: 0.5rem; background: var(--room); color: var(--ink); font: inherit; }
+/* A choice or a box, as large as a finger needs (24 px, WCAG 2.5.8), its words beside it. */
+.form-pick label { display: flex; align-items: center; gap: 0.5rem; min-block-size: 1.75rem; font-weight: 400; cursor: pointer; }
+.form-pick input { flex: none; inline-size: 1.5rem; block-size: 1.5rem; margin: 0; accent-color: var(--ink); }
+/* Send, and beside it, once a reply went, the form's own words for it. */
+.form-seen .form-end { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.75rem; }
+.form-sent { flex: 1 1 8rem; font-size: 0.9rem; }
+@media (width < 44rem) {
+  .form-pane { flex-direction: column; overflow-y: auto; }
+  .form-seen { flex: none; overflow: visible; border-inline-end: 0; border-block-end: 1px solid var(--line); }
+  .form-pane > .view { flex: none; block-size: 24rem; }
+}

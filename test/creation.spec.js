@@ -6,8 +6,9 @@
 // its shelf sorted when Group them is pressed, Jean's changes waiting, then accepted. /games: the game in its own
 // frame, its cover, then the round an arrow starts. /collections: the collection in Tables' own view, Jean's changes
 // marked, then accepted, and its board. /documents: the document in its editor, Jean's changes accepted one, then all,
-// and words typed. /designs: the design in its view, its gap marked, another take picked. test/creation.test.js holds
-// what each creation's file is.
+// and words typed. /designs: the design in its view, its gap marked, another take picked. /forms: a collection's own form
+// beside its collection, a reply sent in one coming into the other as a row. test/creation.test.js holds what each
+// creation's file is.
 import { test, expect } from '@playwright/test'
 
 const JEAN_IS = 'http://127.0.0.1:4186/'
@@ -198,3 +199,50 @@ for (const [address, title, gap] of [['designs', 'Open day', '[Address], Lyon'],
     expect(wrong).toEqual([])
   })
 }
+
+for (const [address, name, sees, fields, shift, send, sent, online] of [
+  ['forms', 'Spring fair volunteers', 'What people see', ['Name', 'Email', 'Note'], 'Afternoon', 'Send', 'Thank you. Your reply was sent.', 'Online, it is sealed in the visitor’s browser'],
+  ['fr/formulaires', 'Bénévoles de la kermesse', 'Ce que les gens voient', ['Nom', 'E-mail', 'Remarque'], 'Après-midi', 'Envoyer', 'Merci. Votre réponse a bien été envoyée.', 'En ligne, elle est scellée dans le navigateur du visiteur'],
+]) {
+  test(`/${address}: its pane is a collection beside its own form, a reply sent in the form coming into the collection as a row`, async ({ page }) => {
+    const { pane, wrong } = await shown(page, address)
+    const form = pane.getByRole('region', { name: sees }).locator('form'), rows = pane.locator('app-table .table-grid tbody tr')
+    // The form as people see it: the collection's name, a field for each column it asks and no other, then Send.
+    await expect(form.getByRole('heading', { name })).toBeVisible()
+    await expect(form.locator('label[for]:not(.form-pick label), legend')).toHaveCount(4)
+    await expect(form.getByRole('radio')).toHaveCount(3)
+    await expect(form.getByRole('checkbox')).toHaveCount(1)
+    await expect(rows).toHaveCount(4)
+    // Nothing is sent without the row's name, which the form always asks.
+    await form.getByRole('button', { name: send }).click()
+    await expect(rows).toHaveCount(4)
+    await expect(pane.locator('#said')).toBeEmpty()
+    // Filled in and sent: the reply is a fifth row, each field in its column, and the form is empty again and says so.
+    await form.getByLabel(fields[0], { exact: true }).fill('Léa Dubois')
+    await form.getByLabel(fields[1], { exact: true }).fill('lea@example.org')
+    await form.getByRole('radio', { name: shift }).check()
+    await form.getByRole('checkbox').check()
+    await form.getByLabel(fields[2], { exact: true }).fill('À samedi !')
+    await form.getByRole('button', { name: send }).click()
+    await expect(rows).toHaveCount(5)
+    await expect(rows.last().locator('input').first()).toHaveValue('Léa Dubois')
+    await expect(rows.last()).toContainText(shift)
+    await expect(form.getByRole('status')).toHaveText(sent)
+    await expect(form.getByLabel(fields[0], { exact: true })).toHaveValue('')
+    // And under them, where a reply sent online would wait.
+    await expect(pane.locator('#said')).toContainText(online)
+    expect(wrong).toEqual([])
+  })
+}
+
+test('/forms on a phone: the form over its collection, neither cut, nothing wider than the frame', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 900 })
+  const { pane, wrong } = await shown(page, 'forms')
+  await expect(pane.locator('.form-seen button')).toBeVisible()
+  expect(await pane.locator('.form-pane').evaluate((box) => [box.scrollWidth <= box.clientWidth, getComputedStyle(box).flexDirection])).toEqual([true, 'column'])
+  expect(await pane.locator('.form-seen form').evaluate((form) => [...form.querySelectorAll('input, textarea, button')].every((field) => field.getBoundingClientRect().right <= innerWidth && field.getBoundingClientRect().left >= 0))).toBe(true)
+  await pane.locator('.form-pane > .view').scrollIntoViewIfNeeded()
+  await expect(pane.locator('app-table')).toBeVisible()
+  expect(wrong).toEqual([])
+})
+

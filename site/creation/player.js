@@ -11,7 +11,8 @@
 // (caps/tables/view.js), as a table, a board or cards, and a document in its editor (caps/documents/editor.js), each
 // with Jean's changes of it waiting to be accepted or rejected; a design in its view (caps/designs/view.js), its takes
 // above its page, each part picked, moved and retyped. A project's map is drawn as Creations draws it (caps/compose/map.js),
-// each creation saying the versions it reads and how it stands. Nothing is kept or sent (./state.js); what a view would ask Jean, which no
+// each creation saying the versions it reads and how it stands. A collection's own form (caps/collect) is beside its collection,
+// as people see it once it is online: what is sent in it comes into the collection as a row, as a published form's reply does. Nothing is kept or sent (./state.js); what a view would ask Jean, which no
 // brain answers here, is said in the creation's own words under it (./room.js).
 import { html, render } from 'lit-html'
 import { dir, t, useStrings } from '#app/core/i18n.js'
@@ -31,6 +32,7 @@ import { styleSheet } from '#app/ui/sheet.js'
  * @typedef {{ kind: 'document', name: string, markdown: string, held: { markdown: string, notes: string[] } }} Doc
  * @typedef {{ kind: 'design', name: string, asked: string, path: string, file: string }} Design
  * @typedef {{ kind: 'map', name: string, asked: string, creations: { place: string, name: string }[], edges: import('#app/caps/compose/refs.js').Edge[], latest: Record<string, number> }} Links
+ * @typedef {{ kind: 'form', name: string, asked: string, folder: string, files: Record<string, string>, asks: string[] }} Form
  */
 
 const params = new URLSearchParams(location.hash.slice(1))
@@ -51,7 +53,7 @@ const main = /** @type {HTMLElement} */ (document.getElementById('main'))
 const said = /** @type {HTMLElement} */ (document.getElementById('said'))
 const response = await fetch(new URL(params.get('src') ?? '', location.href))
 if (!response.ok) throw new Error(`creation: ${response.status} for ${params.get('src')}`)
-/** @type {Pages | Board | Game | Collection | Doc | Design | Links} */
+/** @type {Pages | Board | Game | Collection | Doc | Design | Links | Form} */
 const shown = await response.json()
 // Its name, the document's and its heading's, which only a screen reader meets: a game's frame holds no words of its own.
 document.title = /** @type {HTMLElement} */ (document.getElementById('name')).textContent = shown.name
@@ -162,5 +164,46 @@ async function map (one) {
     said: (place) => [...new Set([...edges.filter((edge) => edge.from === place && !edge.kind).map((edge) => which(edge.at)), ...stands(place).map(([key, given]) => (key === 'brain' ? String(given.name) : t(`compose.${key}`, given)))])] }), main)
 }
 
+/**
+ * A collection's own form beside its collection: the form as people see it online, a field for each column it asks, as Collect
+ * replies has it (caps/collect/form.js's parts), then the collection in Tables' view. What is sent in it comes into the collection
+ * as a published form's reply does (caps/sites/sites.js's gather()): a row by a visitor, each field by its column's name, as its
+ * column takes it; and what is said then is where a reply sent online would wait. @param {Form} one
+ */
+async function form (one) {
+  for (const [name, text] of Object.entries(one.files)) await app.fs.write(`${app.projectDir}/${one.folder}/${name}`, text)
+  const [tables, { propertyOf, converted }, { askable, partsOf }] = await Promise.all([import('#app/caps/tables/tables.js'), import('#app/caps/tables/table.js'), import('#app/caps/collect/form.js'),
+    useStrings('collect'), sheet('ui/creations.css'), sheet('ui/dialogs.css'), sheet('ui/view.css')])
+  const first = tables.shown.value = await tables.load(one.folder)
+  if (!first) throw new Error(`creation: ${one.folder} is no collection`)
+  const parts = partsOf(askable(first.table).filter((field) => one.asks.includes(field.id)))
+  const sent = /** @type {HTMLElement} */ (Object.assign(document.createElement('span'), { className: 'form-sent' }))
+  sent.setAttribute('role', 'status')
+  /** What a field is asked with, its kind's own: a number's, an email's, a day's. @param {import('#app/caps/collect/form.js').Part} part */
+  const typed = ({ attrs }) => (typeof attrs.type === 'string' ? attrs.type : 'text')
+  const field = (/** @type {import('#app/caps/collect/form.js').Part} */ part) => (part.as === 'tick' ? html`<p class="form-pick"><label for=${part.id}><input id=${part.id} name=${part.id} type="checkbox" value="true"><bdi>${part.name}</bdi></label></p>`
+    : part.as === 'radios' ? html`<fieldset><legend dir="auto">${part.name}</legend>${part.options.map((option, i) => html`<p class="form-pick"><label for=${`${part.id}-${i}`}><input id=${`${part.id}-${i}`} name=${part.id} type="radio" value=${option}><bdi>${option}</bdi></label></p>`)}</fieldset>`
+    : html`<p><label for=${part.id} dir="auto">${part.name}</label>${part.as === 'select' ? html`<select id=${part.id} name=${part.id}><option value="">${t('collect.pick')}</option>${part.options.map((option) => html`<option>${option}</option>`)}</select>`
+      : part.as === 'area' ? html`<textarea id=${part.id} name=${part.id} rows="2" dir="auto"></textarea>`
+      : html`<input id=${part.id} name=${part.id} type=${typed(part)} dir="auto" autocomplete="off" ?required=${part.attrs.required === true}>`}</p>`)
+  const send = async (/** @type {SubmitEvent} */ event) => {
+    event.preventDefault()
+    const asked = /** @type {HTMLFormElement} */ (event.currentTarget), data = new FormData(asked), now = await tables.load(one.folder)
+    if (!now) return
+    const set = Object.fromEntries(parts.flatMap(({ id, name }) => {
+      const property = propertyOf(now.table, name), value = data.get(id), fit = property && (property.type === 'checkbox' && value === 'true' ? true : converted(property, value))
+      return property && fit !== undefined ? [[property.id, fit]] : []
+    }))
+    await tables.change(now, [{ set }], 'visitor', undefined, false, false)
+    asked.reset()
+    sent.textContent = t('collect.sent')
+    say()
+  }
+  render(html`<div class="form-pane">
+    <section class="form-seen" aria-labelledby="form-seen"><h2 id="form-seen">${t('collect.sees')}</h2>
+      <form @submit=${send}><h3 dir="auto">${one.name}</h3>${parts.map(field)}<p class="form-end"><button class="button primary">${t('collect.send')}</button>${sent}</p></form></section>
+    <div class="view"><app-table folder=${one.folder} beside></app-table></div></div>`, main)
+}
+
 document.addEventListener('asked', () => { if (shown.kind !== 'whiteboard') say() })
-await ({ whiteboard: board, game, collection, document: page, design, map, site: pages, prototype: pages })[shown.kind](/** @type {any} */ (shown))
+await ({ whiteboard: board, game, collection, document: page, design, map, form, site: pages, prototype: pages })[shown.kind](/** @type {any} */ (shown))

@@ -1,0 +1,106 @@
+{
+  "title": "Free online form maker, no account: replies only you can read · {name}",
+  "description": "Turn a list into an online form for sign-ups, guests or orders. Replies are sealed in the visitor’s browser and come back as rows of your list. Free.",
+  "eyebrow": "Forms",
+  "h1": "Put a form online, and get the replies as rows only you can read.",
+  "h1.mark": "only you can read",
+  "acts": [["form", "Put a form online,"], ["replies", "and get the replies as rows only you can read."]],
+  "lede": "Ask {name} for a list to keep: volunteers, guests, orders. Tick the columns to ask people, and its form goes online at an address you share. Each reply is sealed in the visitor’s browser and comes into your list as a row. The host that holds it until then can’t read it, and neither can we.",
+  "cta": "Try it with a sample sign-up list",
+  "see": "See how it went",
+  "facts": [
+    "Free and open source",
+    "No account, for you or for them",
+    "Replies sealed before they are sent"
+  ],
+  "try.ask": "Make a collection for the volunteers of our school’s spring fair: their name, their email, their shift (morning, afternoon or evening), whether they bring a cake, and a note. Add a column for their stall and one to tick once I have confirmed them. Then tell me how to put its form online.",
+  "pane.brain": "The AI you chose",
+  "pane.ask": "A list of the volunteers for our spring fair, with a form for them to sign up.",
+  "pane.title": "A collection and its form, live in {name}",
+  "pane.try": "This is a real collection, beside its form as people see it online. Fill the form in and send it: your reply comes into the list as a row. Stall and Confirmed aren’t asked: they stay yours to fill.",
+  "pane.asked": "Here, your reply came straight in. Online, it is sealed in the visitor’s browser and waits at the host, which can’t read it, until you next open {name}.",
+  "made.name": "Spring fair volunteers",
+  "made.columns": ["Name", "Email", "Shift", "Brings a cake", "Note", "Stall", "Confirmed"],
+  "made.shifts": ["Morning", "Afternoon", "Evening"],
+  "made.rows": [
+    ["Amira Haddad", "amira@example.org", "Morning", "yes", "I can bring a folding table.", "Cakes", "yes"],
+    ["Jonas Weber", "jonas@example.org", "Afternoon", "", "", "Tombola", "yes"],
+    ["Chloé Martin", "chloe@example.org", "Morning", "yes", "", "Cakes", ""],
+    ["Ravi Patel", "ravi@example.org", "Evening", "", "Free from 6 pm only.", "", ""]
+  ],
+  "replay.title": "One sign-up list, step by step.",
+  "replay.why": "A school’s spring fair, from the request to the replies: what {name} made, what you put online, and what came back.",
+  "step.read": "{name} reads",
+  "replay.reads": [
+    "Your request: five things to ask each volunteer",
+    "And two to note yourself: their stall, and whether you confirmed them"
+  ],
+  "replay.works": [
+    "Made a collection with seven columns, each of its kind: words, an email, a choice among three shifts, boxes to tick",
+    "Told you where its form is: {share}, then {collect}"
+  ],
+  "replay.got": "The collection, open beside your request, with no row yet.",
+  "replay.icon": "table",
+  "replay.chip": "Spring fair volunteers",
+  "step.again": "You put its form online",
+  "replay.again": "In {share}, {collect}: five columns ticked, then {online}.",
+  "step.made": "Replies come in",
+  "replay.made": "Each reply is a row of the collection, each field in its column. Sort them by shift, tick who is confirmed, or download the list as an Excel workbook.",
+  "replay.madeIcon": "place",
+  "replay.madeChip": "spring-fair.hst.ing",
+  "asks.title": "Or ask for your own",
+  "asks.items": [
+    "A guest list for our wedding: name, how many are coming, a diet, a song they would like.",
+    "An order list for the bakery’s Christmas boxes, with a pick-up day.",
+    "A waiting list for the pottery class, with a phone number.",
+    "Who signed up for the morning shift? Write them an email."
+  ],
+  "io.title": "What goes in. What comes out.",
+  "io.why": "Say what to ask people and what you will note yourself. Or start from a list you already keep.",
+  "io.in": "In",
+  "io.out": "Out",
+  "io.ins": [
+    ["file", "Your words", "What to ask people, and what stays yours to fill"],
+    ["table", "A list you already keep", "A collection, or a spreadsheet brought in as one"],
+    ["file", "The columns you tick", "Words, numbers, dates, one choice, boxes, links, emails and phone numbers"]
+  ],
+  "io.outs": [
+    ["place", "A form online", "One page at an address you pick, in your language, easy to fill on a phone"],
+    ["table", "Replies as rows", "In the same list, each field in its column, the other columns left to you"],
+    ["tree", "A board", "The same rows as cards, a lane for each choice"],
+    ["table", "An Excel workbook or a CSV file", "Downloaded as it shows, to open anywhere"]
+  ],
+  "exact.title": "Sealed before it leaves their browser.",
+  "exact.why": "Most form tools read every reply on their servers. Here, what people send is locked on their own device, to a key only yours hold.",
+  "exact.cards": [
+    ["Sealed in their browser", "What a visitor sends is encrypted on their device before it goes, to a key made when your form went online."],
+    ["A host that can’t read it", "The host keeps each reply until your {name} collects it, a month at most. It holds no key to open one."],
+    ["Opened only by you", "Replies are opened in your browser, with a secret kept there. A recovery code, given when the form goes online, opens them on another device."]
+  ],
+  "where.title": "Where your list lives.",
+  "where.why": "On your devices. Online, there is only the form, and replies nobody else can open.",
+  "where.cards": [
+    ["Kept on your devices", "Your collection is plain files in your browser, encrypted. Nothing we can read reaches us."],
+    ["To an AI only when you ask", "Putting the form online and collecting replies use no AI. Rows go to the AI you chose only when you ask it about them."],
+    ["Online only what you tick", "The form holds the list’s name and the columns you ticked, nothing else. The other columns, and every row, stay with you."]
+  ],
+  "catch.items": [
+    "{name} is free; the AI behind it may not be. Asking for the list needs an AI. Making one by hand, putting its form online and collecting replies need none.",
+    "A form asks words, numbers, dates, one choice, boxes to tick, links, emails and phone numbers. No file to attach, no second page, no question that depends on another, no payment.",
+    "Online, the form is at a name you pick followed by .hst.ing, for a year from each time you put it online. Rename or add a column, and it must go online again.",
+    "Replies come in when you open {name}: nothing tells you of one while it is closed. The host keeps them a month at most, and 500 at a time.",
+    "Anyone with the link can reply, and more than once. Visitors don’t sign in, and nothing checks that an email is theirs.",
+    "A visitor gets no copy of their reply and can’t change it. To confirm, write to them yourself.",
+    "Replies open only with the secret in your browser or its recovery code. Lose both, and nobody can read them."
+  ],
+  "faq.items": [
+    ["Is it free?", "Yes, with no account at {name}, for you or for the people who reply. Asking for the list uses an AI, which may want an account: {free} opens a free one. Making the list by hand needs none."],
+    ["Do people need {name} to reply?", "No. The form is a web page: they open its link on any phone or computer, fill it in and send."],
+    ["Who can read the replies?", "You. Each one is sealed in the visitor’s browser, to a key your {name} holds. The host that keeps it can’t open it, and neither can we."],
+    ["Where do the replies go?", "Into the collection the form was made from: a row for each, every field in its column. They come in when you open {name}."],
+    ["Can I close the form?", "Yes: take it offline whenever you like. Replies already sent still come in."],
+    ["Is it in my language?", "Yes. The form is in the language {name} is set to, right to left too, with your own words for each question."]
+  ],
+  "end.title": "Try it with the spring fair.",
+  "end.why": "The request opens in {name} and is answered as soon as you choose an AI. Then open {share}, {collect}, and put its form online."
+}

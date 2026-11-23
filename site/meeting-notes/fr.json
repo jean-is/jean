@@ -1,0 +1,109 @@
+{
+  "title": "Compte rendu de réunion par IA, gratuit, d’un enregistrement · {name}",
+  "description": "Déposez l’enregistrement d’une réunion : ses paroles sont écrites sur votre appareil, puis l’IA rédige le compte rendu, les décisions, les actions. Gratuit.",
+  "eyebrow": "Comptes rendus",
+  "h1": "D’un enregistrement, tirez le compte rendu, écouté sur votre propre appareil.",
+  "h1.mark": "sur votre propre appareil",
+  "acts": [["notes", "D’un enregistrement, tirez le compte rendu,"], ["private", "écouté sur votre propre appareil."]],
+  "lede": "Déposez dans {name} l’enregistrement d’une réunion, d’un entretien ou un mémo vocal. Ce qui s’y dit est écrit dans cet onglet, une ligne par demi-minute, avec son heure. Demandez ensuite le compte rendu : ce qui a été décidé, qui fait quoi et pour quand, ce qui reste ouvert. Le son n’est jamais envoyé à une IA.",
+  "cta": "Ouvrir {name}, puis déposer un enregistrement",
+  "cta.note": "Il n’y a pas d’enregistrement d’exemple : prenez l’un des vôtres, un mémo vocal d’une minute pour commencer, et déposez-le dans la zone de saisie. La première fois, {name} demande avant de télécharger ce qui écrit la parole.",
+  "see": "Voir comment ça s’est passé",
+  "facts": [
+    "Libre et gratuit",
+    "Rien à installer",
+    "Écouté sur votre propre appareil"
+  ],
+  "pane.brain": "L’IA de votre choix",
+  "pane.play": "Voir le déroulé",
+  "pane.title": "Le compte rendu d’un enregistrement, rédigé dans {name}",
+  "demo.brain": "l’IA de votre choix",
+  "demo.answer": "Voici le compte rendu, d’après ce qui s’est dit dans l’enregistrement. Chaque point donne son heure.\n\n## Décidé\n\n- La librairie ouvre le dimanche matin à partir du 1er juin, à l’essai jusqu’à fin août ({t1}).\n- Le catalogue de printemps part à l’impression : 500 exemplaires pour 480 € ({t2}).\n\n## Qui fait quoi\n\n| Qui | Quoi | Pour quand |\n| --- | --- | --- |\n| Inès | Faire le planning du dimanche | 15 mai |\n| Marc | Envoyer les fichiers du catalogue à l’imprimeur | Vendredi |\n| Sofia | Demander à la mairie pour la terrasse | 12 mai |\n\n## Reste ouvert\n\n- Les embauches de l’été : pas de décision, à l’ordre du jour du 12 mai ({t4}).\n\nProchaine réunion le 12 mai, à la même heure ({t5}). Un enregistrement ne dit pas qui parle : j’ai repris les noms de ce que les gens se disent, vérifiez-les.",
+  "heard.columns": ["Commence à", "Ce qui s’est dit"],
+  "heard.lines": [
+    ["0", "Bon, on est le 5 mai et tout le monde est là. Trois sujets aujourd’hui : l’ouverture le dimanche, le catalogue de printemps, et les renforts pour l’été."],
+    ["250", "Donc on est d’accord, on ouvre le dimanche matin à partir du 1er juin, à l’essai jusqu’à fin août. Inès, tu peux faire le planning pour le 15 ? Oui, je m’en occupe."],
+    ["692", "Le devis de l’imprimeur, c’est 480 euros pour 500 exemplaires. C’est bon, on y va. Marc, tu lui envoies les fichiers d’ici vendredi."],
+    ["931", "Pour la terrasse, il nous faut d’abord la réponse de la mairie. Sofia, tu leur demandes avant la prochaine réunion ? Je les appelle cette semaine."],
+    ["1188", "Pour les embauches de l’été, je ne crois pas qu’on puisse décider aujourd’hui. On remet ça à l’ordre du jour du 12."],
+    ["1415", "Prochaine réunion le 12 mai, même heure. Merci à tous."]
+  ],
+  "replay.title": "Une réunion, étape par étape.",
+  "replay.why": "La réunion du lundi d’une librairie, 24 minutes enregistrées au téléphone : ce que {name} a entendu, ce qu’il en a tiré, et les fichiers qu’il a fabriqués.",
+  "replay.file": "Réunion du lundi.m4a",
+  "replay.ask": "Rédige le compte rendu de cette réunion : ce qui a été décidé, qui fait quoi et pour quand, et ce qui reste ouvert.",
+  "step.read": "{name} écoute",
+  "replay.reads": [
+    "L’enregistrement, dans cet onglet : ce qui s’y dit, écrit une ligne par demi-minute",
+    "Chaque ligne avec l’heure où elle commence, six d’entre elles ci-dessous"
+  ],
+  "replay.works": [
+    "Lu les paroles, pas le son : toute IA le peut, même une qui n’entend rien",
+    "Distingué ce qui a été décidé de ce qui a seulement été discuté",
+    "Retrouvé qui a pris chaque tâche, et pour quand, d’après ce que les gens se disent"
+  ],
+  "replay.got": "Le compte rendu dans la réponse : deux décisions, trois actions en tableau, un point resté ouvert, chacun avec son heure dans l’enregistrement.",
+  "replay.icon": "clock",
+  "replay.chip": "Compte rendu, chaque point avec son heure",
+  "step.again": "Vous demandez un fichier",
+  "replay.again": "Fais-en un document Word que je puisse envoyer à l’équipe.",
+  "step.made": "{name} le fabrique",
+  "replay.made": "Un document Word avec le compte rendu, en carte sous la réponse, à modifier et à envoyer.",
+  "replay.madeIcon": "file",
+  "replay.madeChip": "Compte rendu du 5 mai.docx",
+  "asks.title": "Ou posez vos propres questions",
+  "asks.items": [
+    "Seulement les actions, en liste à cocher.",
+    "Qu’a-t-on dit sur le budget ? Donne les heures.",
+    "Résume cet entretien en dix lignes, avec trois citations.",
+    "Écris l’e-mail qui envoie ce compte rendu à l’équipe."
+  ],
+  "io.title": "Ce qui entre. Ce qui sort.",
+  "io.why": "Un enregistrement fait au téléphone, au dictaphone ou pendant une visio. Demandez ensuite les notes sous la forme qu’il vous faut.",
+  "io.in": "En entrée",
+  "io.out": "En sortie",
+  "io.ins": [
+    ["mic", "Un enregistrement", "MP3, M4A, WAV, OGG, FLAC et d’autres : une réunion, un entretien, un mémo vocal"],
+    ["mic", "Un film", "MP4, MOV ou WebM : sa bande-son est écoutée, ses images ne sont pas regardées"],
+    ["file", "L’ordre du jour ou vos propres notes", "Pour suivre leur ordre et combler leurs trous"],
+    ["file", "Le compte rendu précédent", "Pour dire ce qui a avancé depuis"]
+  ],
+  "io.outs": [
+    ["brain", "Un compte rendu", "Décisions, actions et points ouverts, court ou long, dans votre langue"],
+    ["clock", "Le moment où ça s’est dit", "Chaque point avec son heure, pour le réécouter dans l’enregistrement"],
+    ["file", "Un document Word", "Le compte rendu, à modifier et à envoyer"],
+    ["table", "Une liste d’actions", "Gardée en collection : qui, quoi, pour quand, mise à jour après la réunion suivante"]
+  ],
+  "exact.title": "Écrit ici, pas dans le cloud.",
+  "exact.why": "La plupart des outils envoient votre enregistrement à un serveur pour le transcrire. {name} l’écrit dans cet onglet, puis ne remet à l’IA que des mots.",
+  "exact.cards": [
+    ["Écouté dans cet onglet", "Ce qui écrit la parole tourne sur votre ordinateur ou votre téléphone. Il est téléchargé une fois, avec votre accord : 18 Mo en français, anglais, allemand, espagnol, italien et néerlandais, environ 80 Mo dans les autres langues."],
+    ["Une ligne par demi-minute", "Chaque ligne commence par son heure dans l’enregistrement : les notes peuvent dire quand une chose s’est dite, et vous pouvez aller l’écouter."],
+    ["Ensuite, toute IA convient", "L’IA de votre choix lit les paroles, comme elle lirait un document. Elle n’a pas besoin d’entendre, et le son ne lui est pas envoyé."]
+  ],
+  "where.title": "Où va votre enregistrement.",
+  "where.why": "Il reste chez vous. Seules ses paroles vont à l’IA qui répond, et vous la choisissez.",
+  "where.cards": [
+    ["Gardé sur vos appareils", "L’enregistrement et ses paroles restent dans votre navigateur, chiffrés. Rien de lisible ne nous parvient."],
+    ["Des mots seulement, à l’IA de votre choix", "Votre demande et ce qui s’est dit vont à l’IA choisie, et nulle part ailleurs. Sous chaque réponse, {name} indique où elle a été faite."],
+    ["Ou rien du tout", "Avec l’IA de cet ordinateur, les paroles n’en sortent pas non plus : celle qu’il faut pour un conseil d’administration ou un entretien d’embauche. Il lui faut 12 Go de mémoire et une puce graphique récente."]
+  ],
+  "catch.items": [
+    "{name} est gratuit ; l’IA derrière ne l’est pas toujours. Sans inscription, seule l’IA de cet ordinateur répond.",
+    "Il ne distingue pas les voix : les paroles viennent en un seul texte. Les noms du compte rendu viennent de ce que les gens se disent : vérifiez qui a pris quoi.",
+    "Il ne rejoint pas une visio et n’enregistre rien : enregistrez avec votre téléphone ou votre logiciel de visio, puis apportez le fichier.",
+    "Un mot peut être mal entendu, les noms et les chiffres d’abord, et {name} peut se tromper. Vérifiez le compte rendu avec l’enregistrement.",
+    "Il écrit dans la langue de {name} : une réunion tenue en deux langues passe mal.",
+    "Tout tourne sur votre appareil : une longue réunion prend du temps, davantage sur un vieil ordinateur. Un fichier pèse 100 Mo au plus."
+  ],
+  "faq.items": [
+    ["Est-ce gratuit ?", "Oui, sans compte chez {name}. L’IA qui répond peut en demander un : « {free} » en ouvre un gratuit, ou utilisez un abonnement que vous payez déjà, ou l’IA de cet ordinateur, sans aucun compte."],
+    ["Mon enregistrement est-il envoyé quelque part ?", "Non. Il est écrit dans cet onglet, et reste sur vos appareils. Seules ses paroles vont à l’IA de votre choix ; avec l’IA de cet ordinateur, rien n’en sort."],
+    ["Quels fichiers accepte-t-il ?", "Le son en MP3, M4A, WAV, OGG, Opus, FLAC, AAC ou WebM, et les films en MP4 ou MOV, jusqu’à 100 Mo chacun."],
+    ["Dit-il qui parle ?", "Non. Ce qui s’est dit vient en un seul texte, avec les heures. Quand les gens se nomment, le compte rendu peut dire qui a pris une tâche."],
+    ["Quelles langues entend-il ?", "Celle de {name}. Le français, l’anglais, l’allemand, l’espagnol, l’italien et le néerlandais demandent un petit téléchargement, 18 Mo ; les autres langues un plus gros, environ 80 Mo."],
+    ["Peut-il enregistrer la réunion pour moi ?", "Non. Enregistrez-la avec votre téléphone, un dictaphone ou votre logiciel de visio, puis déposez le fichier dans la zone de saisie."]
+  ],
+  "end.title": "Commencez par un mémo vocal d’une minute.",
+  "end.why": "{name} s’ouvre, la zone de saisie prête. Déposez-y l’enregistrement, attendez ses paroles, et demandez."
+}

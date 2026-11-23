@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: MIT
 // The pages whose pane is what Jean made, live in Jean's own view (site/creation.js): /websites, /prototypes,
-// /whiteboards, /games, /collections, /documents and /designs. Each frames the document that shows a creation, with its creation's file beside it in each of its
+// /whiteboards, /games, /collections, /documents, /designs and /forms. Each frames the document that shows a creation, with its creation's file beside it in each of its
 // languages. What that file holds is held to what Jean itself asks of one: the site passes Sites' own check, the
 // prototype Prototypes', every page reached from the first; the whiteboard is a collection Tables reads, its notes
 // where `whiteboard` puts them, and the change it brings is `whiteboard_change`'s, Jean's own, to accept or reject;
 // the game is one Games keeps as its file, its words the page's; the collection is one Tables reads, Jean's change of
 // it waiting; the document's Markdown reads as its editor reads one, Jean's version beside it; and the design is one
-// Designs lays out from what `design` is given.
+// Designs lays out from what `design` is given; and /forms' collection is one Tables reads, each row a visitor's reply with
+// what the person noted since, its form asking the columns Collect replies can ask.
 // And the few modules of the room the views ask for, which the document stands in for, give every name those views
 // import from them. test/creation.spec.js holds the views themselves, in a browser.
 import assert from 'node:assert/strict'
@@ -26,7 +27,8 @@ import { marksOf } from '../app/caps/designs/layout.js'
 import { ROLES } from '../app/caps/designs/tool.js'
 import { dealt, worn } from '../app/caps/sites/look.js'
 import { fold, marked, parseChanges, stamp } from '../app/caps/tables/changes.js'
-import { PLACE, notesOf, readTable } from '../app/caps/tables/table.js'
+import { PLACE, notesOf, readTable, titleOf } from '../app/caps/tables/table.js'
+import { askable, partsOf } from '../app/caps/collect/form.js'
 import { layout } from '../app/caps/whiteboards/layout.js'
 import { dir } from '../app/core/i18n.js'
 import { STOOD } from '../site/creation.js'
@@ -34,7 +36,7 @@ import { buildSite, sitePages } from '../site/site.js'
 
 const APP = fileURLToPath(new URL('../app/', import.meta.url))
 const site = await buildSite({ brand: BRAND, base: 'https://jean.is/', now: new Date('2026-11-03T10:00:00') })
-const MADE = ['collections', 'designs', 'documents', 'games', 'prototypes', 'websites', 'whiteboards']
+const MADE = ['collections', 'designs', 'documents', 'forms', 'games', 'prototypes', 'websites', 'whiteboards']
 const made = site.pages.filter((page) => MADE.includes(page.name))
 /** A page's creation, as its file holds it. @param {{ name: string, lang: string }} page */
 const creationOf = (page) => JSON.parse(site.files[`creations/${page.name}.${page.lang}.json`])
@@ -50,7 +52,7 @@ test('each page for something Jean makes frames the document that shows a creati
   assert.deepEqual([...new Set(made.map((page) => page.name))], MADE)
   for (const page of made) {
     assert.deepEqual(Object.keys(pages.get(page.name)?.addresses ?? {}), ['en', 'fr'], page.name)
-    const html = site.files[page.path], frames = [...html.matchAll(/<iframe class="site-creation is-(?:site|prototype|whiteboard|game|collection|document|design)" src="([^"]+)" title="([^"]+)" loading="lazy"><\/iframe>/g)]
+    const html = site.files[page.path], frames = [...html.matchAll(/<iframe class="site-creation is-(?:site|prototype|whiteboard|game|collection|document|design|form)" src="([^"]+)" title="([^"]+)" loading="lazy"><\/iframe>/g)]
     assert.equal(frames.length, 1, page.path)
     const [at, hash] = frames[0][1].replaceAll('&amp;', '&').split('#'), params = new URLSearchParams(hash)
     assert.equal(at, `${'../'.repeat(page.address.split('/').length - 1)}creation.html`, page.path)
@@ -246,5 +248,32 @@ test('/designs’ design is one Designs lays out, in each language: what `design
     // The address isn't the request's to give: a gap in square brackets, which the view marks before printing.
     assert.match(words['made.where'], /^\[[^\]]+\]/, page.path)
     assert.ok(marksOf(/** @type {any} */ (design), new Date('2026-11-03')).some((mark) => mark.kind === 'gap' && mark.part === 'where'), page.path)
+  }
+})
+
+test('/forms’ collection is one Tables reads, in each language: each row a visitor’s reply in the columns its form asks, what the person noted in the others, and a form Collect replies would make', async () => {
+  const { ASKED } = await import('../site/forms/page.js')
+  for (const page of made.filter((at) => at.name === 'forms')) {
+    const one = creationOf(page), words = /** @type {Record<string, any>} */ (site.words.get('forms')?.[page.lang])
+    assert.match(one.folder, PLACE, page.path)
+    const table = readTable(one.files['collection.json']), lines = parseChanges(one.files['changes.jsonl']), rows = fold(lines)
+    assert.deepEqual([table.name, table.properties.map((property) => property.name), table.properties.map((property) => property.type)], [words['made.name'], words['made.columns'], ['text', 'email', 'select', 'checkbox', 'text', 'text', 'checkbox']], page.path)
+    assert.deepEqual(table.properties[2].options?.map((/** @type {{ name: string }} */ shift) => shift.name), words['made.shifts'], page.path)
+    // The form asks the first columns, the row's name among them, each one Collect replies can ask; the last two stay the person's.
+    const asked = table.properties.slice(0, ASKED).map((property) => property.id)
+    assert.deepEqual(one.asks, asked, page.path)
+    assert.ok(one.asks.includes(titleOf(table).id), page.path)
+    assert.deepEqual(askable(table).filter((field) => one.asks.includes(field.id)).map((field) => field.name), words['made.columns'].slice(0, ASKED), page.path)
+    // What asks each: the name on a line that must be filled, an email's field, a choice among the three shifts, a box, words on several lines.
+    assert.deepEqual(partsOf(askable(table).filter((field) => one.asks.includes(field.id))).map((part) => [part.as, part.attrs.type ?? '', part.attrs.required ?? false, part.options.length]),
+      [['input', '', true, 0], ['input', 'email', false, 0], ['radios', '', false, 3], ['tick', '', false, 0], ['area', '', false, 0]], page.path)
+    // Each row came by a visitor, in the columns the form asks alone; what is in the others, the person wrote. Nothing is Jean's, so nothing waits.
+    assert.equal(rows.length, words['made.rows'].length, page.path)
+    assert.deepEqual(rows.map((row) => row.cells[table.properties[0].id]), words['made.rows'].map((/** @type {string[]} */ row) => row[0]), page.path)
+    for (const line of lines) if ('set' in line && line.set) assert.ok(Object.keys(line.set).every((id) => asked.includes(id) === (line.by === 'visitor')), `${page.path}: ${JSON.stringify(line)}`)
+    assert.deepEqual([...new Set(lines.map((line) => ('by' in line ? line.by : '')))].sort(), ['user', 'visitor'], page.path)
+    assert.deepEqual(marked(lines, table.kept), [], page.path)
+    // What the pane says once a reply is sent in it: where one sent online would wait.
+    assert.equal(one.asked, words['pane.asked'].replace('{name}', BRAND.name), page.path)
   }
 })

@@ -1,0 +1,106 @@
+{
+  "title": "Formulaire en ligne gratuit, sans compte, aux réponses privées · {name}",
+  "description": "Faites d’une liste un formulaire en ligne : inscriptions, invités, commandes. Les réponses, scellées chez le visiteur, reviennent en lignes. Gratuit.",
+  "eyebrow": "Formulaires",
+  "h1": "Mettez un formulaire en ligne, et recevez les réponses en lignes que vous seul pouvez lire.",
+  "h1.mark": "que vous seul pouvez lire",
+  "acts": [["form", "Mettez un formulaire en ligne,"], ["replies", "et recevez les réponses en lignes que vous seul pouvez lire."]],
+  "lede": "Demandez à {name} une liste à tenir : des bénévoles, des invités, des commandes. Cochez les colonnes à demander, et son formulaire est en ligne, à une adresse à partager. Chaque réponse est scellée dans le navigateur du visiteur et arrive dans votre liste, en ligne de tableau. L’hébergeur qui la garde d’ici là ne peut pas la lire, et nous non plus.",
+  "cta": "Essayer avec une liste d’inscription",
+  "see": "Voir comment ça s’est passé",
+  "facts": [
+    "Libre et gratuit",
+    "Sans compte, pour vous comme pour eux",
+    "Réponses scellées avant l’envoi"
+  ],
+  "try.ask": "Crée une collection pour les bénévoles de la kermesse de l’école : leur nom, leur e-mail, leur créneau (matin, après-midi ou soir), s’ils apportent un gâteau, et une remarque. Ajoute une colonne pour leur stand et une à cocher quand je les ai confirmés. Puis dis-moi comment mettre son formulaire en ligne.",
+  "pane.brain": "L’IA de votre choix",
+  "pane.ask": "Une liste des bénévoles de notre kermesse, avec un formulaire pour s’inscrire.",
+  "pane.title": "Une collection et son formulaire, en direct dans {name}",
+  "pane.try": "C’est une vraie collection, à côté de son formulaire tel que les gens le voient en ligne. Remplissez le formulaire et envoyez-le : votre réponse arrive dans la liste, en ligne de tableau. Stand et Confirmé ne sont pas demandés : c’est à vous de les remplir.",
+  "pane.asked": "Ici, votre réponse est arrivée tout de suite. En ligne, elle est scellée dans le navigateur du visiteur et attend chez l’hébergeur, qui ne peut pas la lire, jusqu’à ce que vous rouvriez {name}.",
+  "made.name": "Bénévoles de la kermesse",
+  "made.columns": ["Nom", "E-mail", "Créneau", "Apporte un gâteau", "Remarque", "Stand", "Confirmé"],
+  "made.shifts": ["Matin", "Après-midi", "Soir"],
+  "made.rows": [
+    ["Amira Haddad", "amira@example.org", "Matin", "yes", "Je peux apporter une table pliante.", "Gâteaux", "yes"],
+    ["Jonas Weber", "jonas@example.org", "Après-midi", "", "", "Tombola", "yes"],
+    ["Chloé Martin", "chloe@example.org", "Matin", "yes", "", "Gâteaux", ""],
+    ["Ravi Patel", "ravi@example.org", "Soir", "", "Libre à partir de 18 h seulement.", "", ""]
+  ],
+  "replay.title": "Une liste d’inscription, étape par étape.",
+  "replay.why": "La kermesse d’une école, de la demande aux réponses : ce que {name} a fabriqué, ce que vous avez mis en ligne, et ce qui est revenu.",
+  "step.read": "{name} lit",
+  "replay.reads": [
+    "Votre demande : cinq choses à demander à chaque bénévole",
+    "Et deux à noter vous-même : leur stand, et si vous les avez confirmés"
+  ],
+  "replay.works": [
+    "Créé une collection de sept colonnes, chacune de son type : du texte, un e-mail, un choix parmi trois créneaux, des cases à cocher",
+    "Indiqué où est son formulaire : « {share} », puis « {collect} »"
+  ],
+  "replay.got": "La collection, ouverte à côté de votre demande, encore sans ligne.",
+  "replay.icon": "table",
+  "replay.chip": "Bénévoles de la kermesse",
+  "step.again": "Vous mettez son formulaire en ligne",
+  "replay.again": "Dans « {share} », « {collect} » : cinq colonnes cochées, puis « {online} ».",
+  "step.made": "Les réponses arrivent",
+  "replay.made": "Chaque réponse est une ligne de la collection, chaque champ dans sa colonne. Triez par créneau, cochez qui est confirmé, ou téléchargez la liste en classeur Excel.",
+  "replay.madeIcon": "place",
+  "replay.madeChip": "kermesse.hst.ing",
+  "asks.title": "Ou demandez la vôtre",
+  "asks.items": [
+    "La liste des invités de notre mariage : nom, combien viennent, un régime, une chanson qu’ils aimeraient.",
+    "Une liste de commandes pour les coffrets de Noël de la boulangerie, avec un jour de retrait.",
+    "Une liste d’attente pour le cours de poterie, avec un numéro de téléphone.",
+    "Qui s’est inscrit pour le matin ? Écris-leur un e-mail."
+  ],
+  "io.title": "Ce qui entre. Ce qui sort.",
+  "io.why": "Dites ce qu’il faut demander aux gens et ce que vous noterez vous-même. Ou partez d’une liste que vous tenez déjà.",
+  "io.in": "En entrée",
+  "io.out": "En sortie",
+  "io.ins": [
+    ["file", "Vos mots", "Ce qu’il faut demander aux gens, et ce qui reste à remplir par vous"],
+    ["table", "Une liste que vous tenez déjà", "Une collection, ou un tableur importé en collection"],
+    ["file", "Les colonnes que vous cochez", "Du texte, des nombres, des dates, un choix, des cases, des liens, des e-mails et des numéros de téléphone"]
+  ],
+  "io.outs": [
+    ["place", "Un formulaire en ligne", "Une page à l’adresse que vous choisissez, dans votre langue, facile à remplir sur un téléphone"],
+    ["table", "Les réponses en lignes", "Dans la même liste, chaque champ dans sa colonne, les autres colonnes laissées à vous"],
+    ["tree", "Un tableau de cartes", "Les mêmes lignes en cartes, une colonne par choix"],
+    ["table", "Un classeur Excel ou un fichier CSV", "Téléchargé tel qu’il s’affiche, à ouvrir partout"]
+  ],
+  "exact.title": "Scellé avant de quitter leur navigateur.",
+  "exact.why": "La plupart des outils de formulaires lisent chaque réponse sur leurs serveurs. Ici, ce que les gens envoient est verrouillé sur leur propre appareil, pour une clé que seuls les vôtres détiennent.",
+  "exact.cards": [
+    ["Scellé dans leur navigateur", "Ce qu’un visiteur envoie est chiffré sur son appareil avant de partir, pour une clé créée à la mise en ligne de votre formulaire."],
+    ["Un hébergeur qui ne peut pas lire", "L’hébergeur garde chaque réponse jusqu’à ce que votre {name} la récupère, un mois au plus. Il n’a aucune clé pour en ouvrir une."],
+    ["Ouvert par vous seul", "Les réponses sont ouvertes dans votre navigateur, avec un secret qui y est gardé. Un code de récupération, donné à la mise en ligne, les ouvre sur un autre appareil."]
+  ],
+  "where.title": "Où vit votre liste.",
+  "where.why": "Sur vos appareils. En ligne, il n’y a que le formulaire, et des réponses que personne d’autre ne peut ouvrir.",
+  "where.cards": [
+    ["Gardée sur vos appareils", "Votre collection, ce sont de simples fichiers dans votre navigateur, chiffrés. Rien de lisible ne nous parvient."],
+    ["À une IA seulement si vous demandez", "Mettre le formulaire en ligne et récupérer les réponses ne demandent aucune IA. Les lignes vont à l’IA de votre choix seulement quand vous l’interrogez sur elles."],
+    ["En ligne, seulement ce que vous cochez", "Le formulaire contient le nom de la liste et les colonnes cochées, rien d’autre. Les autres colonnes, et toutes les lignes, restent chez vous."]
+  ],
+  "catch.items": [
+    "{name} est gratuit ; l’IA derrière ne l’est pas toujours. Demander la liste passe par une IA. La créer à la main, mettre son formulaire en ligne et récupérer les réponses n’en demandent aucune.",
+    "Un formulaire demande du texte, des nombres, des dates, un choix, des cases à cocher, des liens, des e-mails et des numéros de téléphone. Pas de fichier à joindre, pas de deuxième page, pas de question qui dépend d’une autre, pas de paiement.",
+    "En ligne, le formulaire est à un nom que vous choisissez suivi de .hst.ing, pour un an à compter de chaque mise en ligne. Renommez ou ajoutez une colonne, et il faut le remettre en ligne.",
+    "Les réponses arrivent quand vous ouvrez {name} : rien ne vous en prévient tant qu’il est fermé. L’hébergeur les garde un mois au plus, et 500 à la fois.",
+    "Toute personne qui a le lien peut répondre, et plus d’une fois. Les visiteurs ne se connectent pas, et rien ne vérifie qu’un e-mail est bien le leur.",
+    "Un visiteur ne reçoit pas de copie de sa réponse et ne peut pas la modifier. Pour confirmer, écrivez-lui vous-même.",
+    "Les réponses ne s’ouvrent qu’avec le secret gardé dans votre navigateur ou son code de récupération. Perdez les deux, et personne ne peut les lire."
+  ],
+  "faq.items": [
+    ["Est-ce gratuit ?", "Oui, sans compte chez {name}, pour vous comme pour ceux qui répondent. Demander la liste passe par une IA, qui peut vouloir un compte : « {free} » en ouvre un gratuit. La créer à la main n’en demande aucun."],
+    ["Faut-il {name} pour répondre ?", "Non. Le formulaire est une page web : on ouvre son lien sur n’importe quel téléphone ou ordinateur, on le remplit et on l’envoie."],
+    ["Qui peut lire les réponses ?", "Vous. Chacune est scellée dans le navigateur du visiteur, pour une clé que détient votre {name}. L’hébergeur qui la garde ne peut pas l’ouvrir, et nous non plus."],
+    ["Où vont les réponses ?", "Dans la collection dont vient le formulaire : une ligne chacune, chaque champ dans sa colonne. Elles arrivent quand vous ouvrez {name}."],
+    ["Puis-je fermer le formulaire ?", "Oui : mettez-le hors ligne quand vous voulez. Les réponses déjà envoyées arrivent quand même."],
+    ["Est-il dans ma langue ?", "Oui. Le formulaire est dans la langue de {name}, de droite à gauche aussi, avec vos propres mots pour chaque question."]
+  ],
+  "end.title": "Essayez avec la kermesse.",
+  "end.why": "La demande s’ouvre dans {name}, qui y répond dès que vous choisissez une IA. Ouvrez ensuite « {share} », « {collect} », et mettez son formulaire en ligne."
+}

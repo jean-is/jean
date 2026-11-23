@@ -17,6 +17,7 @@
 // /whiteboards, a game at /games, a collection at /collections, a document at /documents, a design at /designs) has no conversation in its pane but what was made, live, in Jean's own view (site/creation.js): its
 // promise first, then the request that made it over the creation, as wide as the page, and under it what to try there.
 // /everywhere frames the same way a project's map, how its creations link, as Creations draws it.
+// /forms frames the same way a collection's own form beside its collection, what is sent in one coming into the other.
 import { creationFiles, creationFrame } from '../creation.js'
 import { demoFiles, demoFrame } from '../demo.js'
 import { FELT, ICONS, WAVE, caught, landing, underline, xml } from '../site.js'
@@ -49,7 +50,7 @@ import { FELT, ICONS, WAVE, caught, landing, underline, xml } from '../site.js'
  * @property {(kit: import('../site.js').Kit, words: { say: (key: string) => string, list: (key: string) => string[] }) => Drawn} drawn  its words filled as the page's are
  * @property {(kit: import('../site.js').Kit, words: { text: (key: string) => string, texts: (key: string) => string[] }) => Demo} [demo]  what its pane plays, its words filled as text
  * @property {(kit: import('../site.js').Kit, words: { text: (key: string) => string, texts: (key: string) => string[] }) => Record<string, string>} [tasks]  the files of the other tasks it frames, by their paths
- * @property {(kit: import('../site.js').Kit, words: { text: (key: string) => string, texts: (key: string) => string[] }) => import('../creation.js').Pages | import('../creation.js').Board | import('../creation.js').Game | import('../creation.js').Collection | import('../creation.js').Doc | import('../creation.js').Design | import('../creation.js').Links} [made]  what its pane shows live in Jean's own view, in a conversation's place: a site, a prototype, a whiteboard, a game, a collection, a document, a design or a project's map, its words filled as text
+ * @property {(kit: import('../site.js').Kit, words: { text: (key: string) => string, texts: (key: string) => string[] }) => import('../creation.js').Pages | import('../creation.js').Board | import('../creation.js').Game | import('../creation.js').Collection | import('../creation.js').Doc | import('../creation.js').Design | import('../creation.js').Links | import('../creation.js').Form} [made]  what its pane shows live in Jean's own view, in a conversation's place: a site, a prototype, a whiteboard, a game, a collection, a document, a design, a project's map or a collection's own form, its words filled as text
  * @property {(kit: import('../site.js').Kit, words: { say: (key: string) => string, text: (key: string) => string }) => string} [shows]  a block of its own, as HTML, the first of what proves its task
  * @property {Record<string, number[]>} limits  which items of its catch (`catch.items`, from 0) each part of its promise is about, by the part's name in its words' `acts`
  * @property {Record<string, Proof[]>} [proves]  what proves each part of its promise, in the argument's order, where its parts aren't PROVES'
@@ -80,7 +81,7 @@ function task (kit, into, own, demo) {
 const PROVES = { task: ['shows', 'replay', 'io'], trust: ['exact', 'where'] }
 
 /** The icons of what goes in and what comes out, by the words' first column. */
-const KINDS = { file: ICONS.file, pdf: ICONS.pdf, slides: ICONS.slides, table: ICONS.table, chart: ICONS.chart, picture: ICONS.picture, app: ICONS.app, brain: ICONS.brain, tree: ICONS.tree, clock: ICONS.clock, place: ICONS.place, music: ICONS.music }
+const KINDS = { file: ICONS.file, pdf: ICONS.pdf, slides: ICONS.slides, table: ICONS.table, chart: ICONS.chart, picture: ICONS.picture, app: ICONS.app, brain: ICONS.brain, tree: ICONS.tree, clock: ICONS.clock, place: ICONS.place, music: ICONS.music, mic: ICONS.mic }
 /** The icons of the cards on numbers and on where the file goes, in their words' order. */
 const EXACT = [ICONS.computer, ICONS.app, ICONS.clock]
 const WHERE = [ICONS.lock, ICONS.brain, ICONS.never]

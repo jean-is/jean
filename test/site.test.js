@@ -31,7 +31,7 @@ const jean = () => built
 test('every page, in every language, is what a page of the site must be, as jean.is has them', async () => {
   const site = await jean()
   assert.deepEqual(checkSite(site, { base: BASE, served }), [])
-  assert.deepEqual([...new Set(site.pages.map((page) => page.name))], ['accessibility', 'all-ai', 'apps', 'associations', 'charter', 'collections', 'compare', 'compare-chatgpt', 'compare-chatgpt-work', 'compare-claude-cowork', 'compare-gemini-tasks', 'compare-manus', 'compare-notebooklm', 'compare-open-webui', 'compare-openclaw', 'designs', 'diagrams', 'documents', 'enterprise', 'enterprise-key', 'everywhere', 'excel', 'family', 'files', 'finance', 'games', 'help', 'help/add-files', 'help/ai-sees', 'help/asks-first', 'help/back-up', 'help/choose-ai', 'help/couldnt-reach', 'help/first-task', 'help/is-free', 'help/key-refused', 'help/links', 'help/on-device', 'help/openrouter', 'help/plan-stopped', 'help/send-to-someone', 'help/skills', 'help/tasks-gone', 'help/together', 'help/use-a-key', 'help/what-jean-can-do', 'help/what-jean-is', 'help/where-kept', 'help/words', 'help/your-devices', 'home', 'import', 'offline', 'pdf', 'pricing', 'privacy', 'prototypes', 'public-sector', 'sheet-music', 'site-map', 'slides', 'teachers', 'terms', 'watch', 'websites', 'whiteboards', 'work'])
+  assert.deepEqual([...new Set(site.pages.map((page) => page.name))], ['accessibility', 'all-ai', 'apps', 'associations', 'charter', 'collections', 'compare', 'compare-chatgpt', 'compare-chatgpt-work', 'compare-claude-cowork', 'compare-gemini-tasks', 'compare-manus', 'compare-notebooklm', 'compare-open-webui', 'compare-openclaw', 'designs', 'diagrams', 'documents', 'enterprise', 'enterprise-key', 'everywhere', 'excel', 'family', 'files', 'finance', 'forms', 'games', 'help', 'help/add-files', 'help/ai-sees', 'help/asks-first', 'help/back-up', 'help/choose-ai', 'help/couldnt-reach', 'help/first-task', 'help/is-free', 'help/key-refused', 'help/links', 'help/on-device', 'help/openrouter', 'help/plan-stopped', 'help/send-to-someone', 'help/skills', 'help/tasks-gone', 'help/together', 'help/use-a-key', 'help/what-jean-can-do', 'help/what-jean-is', 'help/where-kept', 'help/words', 'help/your-devices', 'home', 'import', 'meeting-notes', 'offline', 'pdf', 'pricing', 'privacy', 'prototypes', 'public-sector', 'sheet-music', 'site-map', 'slides', 'teachers', 'terms', 'watch', 'websites', 'whiteboards', 'work'])
 })
 
 test('a link to jean.is shows the card of its page’s language, and one to an organisation’s copy the welcome screen', async () => {
@@ -263,13 +263,36 @@ test('/sheet-music’s tune is music as Jean’s skill has it written, in each o
   }
 })
 
+test('/meeting-notes shows lines of its recording each at its time, as Jean writes one, and its pane’s minutes give those times and no other, in each of its languages', async () => {
+  const site = await jean()
+  const { stamp } = await import('../app/caps/voice/heard.js')
+  for (const [lang, path] of [['en', 'meeting-notes.html'], ['fr', 'fr/comptes-rendus.html']]) {
+    const words = /** @type {Record<string, any>} */ (site.words.get('meeting-notes')?.[lang])
+    const seconds = words['heard.lines'].map((/** @type {string[]} */ [at]) => Number(at)), times = seconds.map(stamp)
+    // In the recording's order, from its start, each a window's start: no two within the 20 s the shortest window lasts.
+    assert.equal(times[0], '0:00', lang)
+    assert.ok(seconds.every((/** @type {number} */ at, /** @type {number} */ i) => Number.isInteger(at) && (!i || at - seconds[i - 1] >= 20)), lang)
+    // The page shows each under its time, in a table of its own.
+    const [, body] = /<table class="job-table is-said">[\s\S]*?<tbody>([\s\S]*?)<\/tbody>/.exec(site.files[path]) ?? []
+    assert.deepEqual([...String(body).matchAll(/<th scope="row">([^<]+)<\/th><td dir="ltr">[^<]+<\/td>/g)].map(([, at]) => at), times, lang)
+    // Its pane's task shares the recording, a sound, then answers with the minutes: each time they give is one of those lines', filled.
+    const records = site.files[`demos/meeting-notes.${lang}.jsonl`].trim().split('\n').map((line) => JSON.parse(line))
+    assert.deepEqual([records[1].update.content.name, records[1].update.content.mimeType], [words['replay.file'], 'audio/mp4'], lang)
+    const minutes = records.at(-1).update.content.text, given = [...minutes.matchAll(/\((\d+:\d\d)\)/g)].map(([, at]) => at)
+    assert.doesNotMatch(minutes, /\{t\d\}/, lang)
+    assert.equal(given.length, 4, lang)
+    assert.ok(given.every((at) => times.includes(at)), `${lang}: ${given}`)
+    assert.match(minutes, /\n\| --- \| --- \| --- \|\n/, lang)
+  }
+})
+
 test('a page whose pane draws a conversation Jean can play frames Jean’s demo of it, writes its task beside it from its words, and allows that frame alone; a help article’s figures frame other pages’', async () => {
   const site = await jean()
   const pages = await sitePages()
   const framing = [...pages].filter(([, page]) => page.frames).map(([name]) => name).sort()
-  assert.deepEqual(framing, ['apps', 'collections', 'designs', 'diagrams', 'documents', 'enterprise', 'everywhere', 'excel', 'games', 'help/add-files', 'help/asks-first', 'help/first-task', 'help/links', 'help/what-jean-is', 'offline', 'prototypes', 'sheet-music', 'slides', 'watch', 'websites', 'whiteboards', 'work'])
+  assert.deepEqual(framing, ['apps', 'collections', 'designs', 'diagrams', 'documents', 'enterprise', 'everywhere', 'excel', 'forms', 'games', 'help/add-files', 'help/asks-first', 'help/first-task', 'help/links', 'help/what-jean-is', 'meeting-notes', 'offline', 'prototypes', 'sheet-music', 'slides', 'watch', 'websites', 'whiteboards', 'work'])
   // The pages whose pane is no conversation but what Jean made, live, as test/creation.test.js and test/everywhere.test.js hold them.
-  const made = ['collections', 'designs', 'documents', 'everywhere', 'games', 'prototypes', 'websites', 'whiteboards']
+  const made = ['collections', 'designs', 'documents', 'everywhere', 'forms', 'games', 'prototypes', 'websites', 'whiteboards']
   const tasks = Object.fromEntries(Object.entries(site.files).filter(([path]) => /^demos\/.*\.jsonl$/.test(path)).map(([path, file]) => [path, file.trim().split('\n').map((line) => JSON.parse(line))]))
   // The homepage is a part of index.html, the app's own document, whose policy is the app's.
   for (const page of site.pages.filter((at) => !at.fragment)) {

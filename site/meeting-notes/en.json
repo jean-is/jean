@@ -1,0 +1,109 @@
+{
+  "title": "Free AI meeting notes: a recording transcribed on your device · {name}",
+  "description": "Drop a meeting recording in a browser tab: its words are written on your device, then AI makes the minutes, decisions and actions. Free, nothing to install.",
+  "eyebrow": "Meeting notes",
+  "h1": "Turn a recording into meeting notes, heard on your own device.",
+  "h1.mark": "on your own device",
+  "acts": [["notes", "Turn a recording into meeting notes,"], ["private", "heard on your own device."]],
+  "lede": "Drop a recording of a meeting, an interview or a voice memo in {name}. What is said in it is written down in this tab, a line each half minute with its time. Then ask for the minutes: what was decided, who does what by when, what is still open. The sound is never sent to an AI.",
+  "cta": "Open {name}, then drop a recording",
+  "cta.note": "There is no sample recording: bring one of yours, a voice memo of a minute to start with, and drop it in the box. The first time, {name} asks before it downloads what writes speech down.",
+  "see": "See how it went",
+  "facts": [
+    "Free and open source",
+    "Nothing to install",
+    "Heard on your own device"
+  ],
+  "pane.brain": "The AI you chose",
+  "pane.play": "Watch it unfold",
+  "pane.title": "A recording’s minutes, written in {name}",
+  "demo.brain": "the AI you chose",
+  "demo.answer": "Here are the minutes, from what was said in the recording. Each point gives its time.\n\n## Decided\n\n- The shop opens on Sunday mornings from 1 June, on trial until the end of August ({t1}).\n- The spring catalogue goes to print: 500 copies for €480 ({t2}).\n\n## Who does what\n\n| Who | What | By when |\n| --- | --- | --- |\n| Inès | Write the Sunday rota | 15 May |\n| Marc | Send the catalogue’s files to the printer | Friday |\n| Sofia | Ask the town hall about the terrace | 12 May |\n\n## Still open\n\n- Hiring for the summer: no decision, back on the agenda on 12 May ({t4}).\n\nThe next meeting is on 12 May, at the same time ({t5}). A recording doesn’t say who is speaking: I took the names from what people said, so check them.",
+  "heard.columns": ["Starts at", "What was said"],
+  "heard.lines": [
+    ["0", "OK, it’s the 5th of May and everyone is here. Three things today: opening on Sundays, the spring catalogue, and staff for the summer."],
+    ["250", "So we agree, we open on Sunday mornings from the 1st of June, on trial until the end of August. Inès, can you write the rota by the 15th? Yes, I’ll do it."],
+    ["692", "The printer’s quote is 480 euros for 500 copies. That’s fine, let’s go. Marc, you send him the files by Friday."],
+    ["931", "For the terrace we need the town hall’s answer first. Sofia, will you ask them before the next meeting? I’ll call them this week."],
+    ["1188", "On hiring for the summer, I don’t think we can decide today. Let’s put it back on the agenda for the 12th."],
+    ["1415", "Next meeting on the 12th of May, same time. Thanks, everyone."]
+  ],
+  "replay.title": "One meeting, step by step.",
+  "replay.why": "A bookshop’s Monday meeting, 24 minutes recorded on a phone: what {name} heard, what it worked out, and the files it made.",
+  "replay.file": "Monday meeting.m4a",
+  "replay.ask": "Write the minutes of this meeting: what was decided, who does what by when, and what is still open.",
+  "step.read": "{name} hears",
+  "replay.reads": [
+    "The recording, in this tab: what is said, written a line each half minute",
+    "Each line with the time it starts, six of them below"
+  ],
+  "replay.works": [
+    "Read the words, not the sound: any AI can, even one that hears nothing",
+    "Told what was decided from what was only talked about",
+    "Found who took each task, and by when, from what people said"
+  ],
+  "replay.got": "The minutes in the answer: two decisions, three actions in a table, one point left open, each with its time in the recording.",
+  "replay.icon": "clock",
+  "replay.chip": "Minutes, each point with its time",
+  "step.again": "You ask for a file",
+  "replay.again": "Make it a Word document I can send to the team.",
+  "step.made": "{name} makes it",
+  "replay.made": "A Word document with the minutes, as a card under the answer, to change and send.",
+  "replay.madeIcon": "file",
+  "replay.madeChip": "Minutes, 5 May.docx",
+  "asks.title": "Or ask your own",
+  "asks.items": [
+    "Only the actions, as a checklist.",
+    "What did we say about the budget? Give the times.",
+    "Sum up this interview in ten lines, with three quotes.",
+    "Write the email that sends these minutes to the team."
+  ],
+  "io.title": "What goes in. What comes out.",
+  "io.why": "A recording from a phone, a recorder or a video call. Then ask for the notes in the form you need.",
+  "io.in": "In",
+  "io.out": "Out",
+  "io.ins": [
+    ["mic", "A recording", "MP3, M4A, WAV, OGG, FLAC and more: a meeting, an interview, a voice memo"],
+    ["mic", "A film", "MP4, MOV or WebM: its sound is heard, its pictures aren’t looked at"],
+    ["file", "The agenda or your own notes", "To follow their order and fill their gaps"],
+    ["file", "Last time’s minutes", "To say what moved since"]
+  ],
+  "io.outs": [
+    ["brain", "Minutes", "Decisions, actions and open points, short or long, in your language"],
+    ["clock", "The moment it was said", "Each point with its time, to hear it again in the recording"],
+    ["file", "A Word document", "The minutes, to change and send"],
+    ["table", "A list of actions", "Kept as a collection: who, what, by when, updated after the next meeting"]
+  ],
+  "exact.title": "Written down here, not in the cloud.",
+  "exact.why": "Most tools send your recording to a server to be transcribed. {name} writes it down in this tab, then hands the AI words alone.",
+  "exact.cards": [
+    ["Heard in this tab", "What writes speech down runs on your own computer or phone. It is downloaded once, with your agreement: 18 MB in English, German, French, Spanish, Italian and Dutch, about 80 MB in other languages."],
+    ["A line each half minute", "Each line starts with its time in the recording, so the notes can say when a thing was said, and you can go and hear it."],
+    ["Then any AI will do", "The AI you chose reads the words, as it would read a document. It doesn’t need to hear, and the sound is not sent to it."]
+  ],
+  "where.title": "Where your recording goes.",
+  "where.why": "It stays with you. Only its words go to the AI that answers, and you choose it.",
+  "where.cards": [
+    ["Kept on your devices", "The recording and its words stay in your browser, encrypted. Nothing we can read reaches us."],
+    ["Only words, to the AI you chose", "Your request and what was said go to the AI you picked, and nowhere else. Under every answer, {name} says where it was done."],
+    ["Or nothing at all", "With the AI on this computer, the words don’t leave it either: the one for a board meeting or a job interview. It needs 12 GB of memory and a recent graphics chip."]
+  ],
+  "catch.items": [
+    "{name} is free; the AI behind it may not be. Without a sign-up, only the AI on this computer answers.",
+    "It doesn’t tell speakers apart: the words come as one text. Names in the notes come from what people say, so check who took what.",
+    "It doesn’t join a call or record one: record with your phone or your call software, then bring the file.",
+    "Words can be misheard, names and figures first, and {name} can be wrong. Check the notes against the recording.",
+    "It writes in the language {name} is set to: a meeting held in two languages comes out poorly.",
+    "It runs on your own device, so a long meeting takes a while, longer on an old laptop. A file holds 100 MB at most."
+  ],
+  "faq.items": [
+    ["Is it free?", "Yes, with no account at {name}. The AI that answers may want one: {free} opens a free one, or use a plan you already pay for, or the AI on this computer, with no account at all."],
+    ["Is my recording sent anywhere?", "No. It is written down in this tab, and stays on your devices. Only its words go to the AI you chose; with the AI on this computer, nothing leaves it."],
+    ["Which files does it take?", "Sound as MP3, M4A, WAV, OGG, Opus, FLAC, AAC or WebM, and films as MP4 or MOV, up to 100 MB each."],
+    ["Does it say who is speaking?", "No. What is said comes as one text, with times. Where people name each other, the notes can say who took a task."],
+    ["Which languages does it hear?", "The one {name} is set to. English, German, French, Spanish, Italian and Dutch use a small download, 18 MB; other languages a larger one, about 80 MB."],
+    ["Can it record the meeting for me?", "No. Record it with your phone, a recorder or your call software, then drop the file in the box."]
+  ],
+  "end.title": "Start with a voice memo of a minute.",
+  "end.why": "{name} opens with its box ready. Drop the recording in, wait for its words, and ask."
+}
