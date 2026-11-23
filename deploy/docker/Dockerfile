@@ -92,7 +92,7 @@ COPY keeper/ keeper/
 ENV HOST=0.0.0.0 PORT=8787
 USER 1000
 LABEL org.opencontainers.image.title="jean-gateway" \
-      org.opencontainers.image.description="Jean's gateway, on Node on port 8787, for the services a browser can't reach"
+      org.opencontainers.image.description="Node :8787"
 EXPOSE 8787
 CMD ["node", "--permission", "--allow-net", "--allow-fs-read=/app/", "--disallow-code-generation-from-strings", "--disable-warning=ExperimentalWarning", "gateway/serve.js"]
 
@@ -119,7 +119,7 @@ ENV HOST=0.0.0.0 PORT=8791 RELAY_DIR=/data HOST_DIR=/data
 USER 1000
 VOLUME /data
 LABEL org.opencontainers.image.title="jean-relay" \
-      org.opencontainers.image.description="Jean's relay, on Node on port 8791, where a person's devices and the people they send to meet"
+      org.opencontainers.image.description="Node :8791"
 EXPOSE 8791
 CMD ["node", "--permission", "--allow-net", "--allow-fs-read=/app/", "--allow-fs-read=/data/", "--allow-fs-write=/data/", "--disallow-code-generation-from-strings", "--disable-warning=ExperimentalWarning", "relay/serve.js"]
 
@@ -169,7 +169,7 @@ COPY --from=build /site /srv
 # ee/, the enterprise integrations, under the Elastic License 2.0 (ee/GRANT.md).
 ARG VERSION=dev REVISION="" CREATED=""
 LABEL org.opencontainers.image.title="jean" \
-      org.opencontainers.image.description="Jean, served by nginx without root on port 8080" \
+      org.opencontainers.image.description="Jean, rootless nginx :8080" \
       org.opencontainers.image.licenses="MIT AND Elastic-2.0" \
       org.opencontainers.image.vendor="Warehouse SAS" \
       org.opencontainers.image.authors="Warehouse SAS" \
