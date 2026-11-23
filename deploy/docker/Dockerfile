@@ -12,7 +12,7 @@
 # Nothing runs at install: what is copied from node_modules needs no install script.
 # The files are the same on every platform, so they are built once, on the builder's own; the
 # stages after only copy, and an image for another platform runs nothing under emulation.
-FROM --platform=$BUILDPLATFORM node:26-alpine@sha256:8996bb5821d62a8fd9bb27c1cb07462f3fdce6e47d640c6a881ead0b064ce216 AS build
+FROM --platform=$BUILDPLATFORM node:26-alpine@sha256:6bd9ab43c0ec0190ca7b2d193906cb8b7edf6e7f4afa43ddeccd6452710bffb5 AS build
 WORKDIR /src
 COPY package.json package-lock.json ./
 RUN npm ci --ignore-scripts --no-audit --no-fund
@@ -38,8 +38,8 @@ RUN sed -i 's|</head>|<meta name="app-policy" content="policy.json">\n</head>|' 
 # packages whose libraries it links, each whole, with apk's record of them, and Alpine's release, so that scanners
 # still see them; CA certificates; a user; and /tmp. Gathered on the builder's own platform, LLVM reading every
 # platform's binaries, so nothing runs under emulation; the build stops if Node links a library left out.
-FROM node:26-alpine@sha256:8996bb5821d62a8fd9bb27c1cb07462f3fdce6e47d640c6a881ead0b064ce216 AS node
-FROM --platform=$BUILDPLATFORM node:26-alpine@sha256:8996bb5821d62a8fd9bb27c1cb07462f3fdce6e47d640c6a881ead0b064ce216 AS node-files
+FROM node:26-alpine@sha256:6bd9ab43c0ec0190ca7b2d193906cb8b7edf6e7f4afa43ddeccd6452710bffb5 AS node
+FROM --platform=$BUILDPLATFORM node:26-alpine@sha256:6bd9ab43c0ec0190ca7b2d193906cb8b7edf6e7f4afa43ddeccd6452710bffb5 AS node-files
 RUN apk add --no-cache llvm
 COPY --from=node / /node
 RUN mkdir -p /target/lib/apk/db /target/usr/local/bin /target/etc /target/tmp \
@@ -98,7 +98,7 @@ CMD ["node", "--permission", "--allow-net", "--allow-fs-read=/app/", "--disallow
 
 # The relay's empty folder, made on the builder's own platform like Jean's files, so that the relay's image runs
 # nothing under emulation either.
-FROM --platform=$BUILDPLATFORM node:26-alpine@sha256:8996bb5821d62a8fd9bb27c1cb07462f3fdce6e47d640c6a881ead0b064ce216 AS relay-data
+FROM --platform=$BUILDPLATFORM node:26-alpine@sha256:6bd9ab43c0ec0190ca7b2d193906cb8b7edf6e7f4afa43ddeccd6452710bffb5 AS relay-data
 RUN mkdir /data
 
 # The relay: its modules and the share host's, which it uses, and Node, nothing to install, configured by RELAY_CONFIG.
