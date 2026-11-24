@@ -44,6 +44,7 @@ The UI never says "agent", "model", "MCP" or "token".
 
 | Concept | Word in the UI |
 |---|---|
+| What Jean is as a whole, where tasks, creations and projects meet: said in the pitch, on the site and in the guide | Atelier, in each language where it isn't the everyday word its own word for a craftsperson's workshop (мастерская, ورشة, 工坊, taller); never a screen, a tab or a mode; never "workspace", "studio", "forge" or "canvas" (D765) |
 | Model / provider | Jean's brain |
 | Capability (a module unlocked by discovery) | What Jean can do; skills are one of them |
 | Skill (`SKILL.md`) | Skill (D115) |
