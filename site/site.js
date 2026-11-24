@@ -15,6 +15,7 @@ import { createHash } from 'node:crypto'
 import { readdir, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import { parse, elements } from '../app/caps/sites/html.js'
 import { dir, languageName, preferredLocales } from '../app/core/i18n.js'
 import { icons as GLYPHS } from '../app/ui/menu-icons.js'
 import { untranslated, yoursFirst } from '../app/ui/yours.js'
@@ -329,12 +330,22 @@ export const penned = (html) => html.replace(/<([a-z]+)(\s[^>]*?)?\sclass="felt 
 export const prose = (addresses) => ({ addresses, ships: true, main: (kit) => /* html */ `<article class="prose site-prose">\n${penned(kit.prose)}</article>` })
 
 /**
+ * The code of one of a document's own scripts, as the site's check reads a page (app/caps/sites/html.js), never a pattern
+ * over its text: with no type, the first script with no attribute, which is the theme line; with one, the first of it.
+ * @param {string} html @param {string} [type]  'importmap', say
+ */
+export const inlineScript = (html, type) => {
+  const found = elements(parse(html)).find((one) => one.name === 'script' && (type ? one.attrs.type === type : !Object.keys(one.attrs).length))
+  return typeof found?.children[0] === 'string' ? found.children[0] : undefined
+}
+
+/**
  * The theme line the app's documents run first (app/index.html's first script), and the hash a page's policy allows it by.
  * @returns {Promise<{ script: string, hash: string }>}
  */
 export async function theme () {
   const html = await readFile(join(APP, 'index.html'), 'utf8')
-  const script = /<script>([^<]*)<\/script>/.exec(html)?.[1]
+  const script = inlineScript(html)
   if (!script) throw new Error('app/index.html has no theme line')
   return { script, hash: `'sha256-${createHash('sha256').update(script).digest('base64')}'` }
 }

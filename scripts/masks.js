@@ -19,6 +19,7 @@ import { maskHooks, plainOf } from '../app/ee/mask.js'
 import { namesIn, THRESHOLD, UNCAPITALISED } from '../app/ee/names.js'
 import { MODEL, READER } from '../app/ee/model.js'
 import { coverOf, parse, tally, wilson } from '../test/masks/score.js'
+import { resolveRequest } from './serve.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const HERE = join(ROOT, 'test/masks')
@@ -31,23 +32,26 @@ const has = (/** @type {string} */ name) => process.argv.includes(`--${name}`)
 const THRESHOLDS = (option('thresholds') ?? `${THRESHOLD},0.002,0.01,0.05`).split(',').map(Number)
 const LOWER = Number(option('uncapitalised') ?? UNCAPITALISED)
 const TYPES = /** @type {Record<string, string>} */ ({ '.js': 'text/javascript', '.mjs': 'text/javascript', '.json': 'application/json', '.wasm': 'application/wasm' })
+// The pinned model's files, as a mirror holds them, and nothing else: where the worker asks, where Hugging Face has it, where it's kept.
+const WEIGHTS = new Map(Object.keys(MODEL.files).map((name) => {
+  const at = `${MODEL.model}/resolve/${MODEL.revision}/${name}`
+  return [`/weights/${at}`, { from: `https://huggingface.co/${at}`, file: join(CACHE, 'weights', at) }]
+}))
 
 /** Jean's files, and the weights, fetched the first time. */
 const serve = () => new Promise((resolve) => {
   const server = createServer(async (request, response) => {
-    const path = decodeURIComponent(new URL(request.url ?? '/', 'http://x').pathname)
+    const path = new URL(request.url ?? '/', 'http://x').pathname
     if (path === '/page') { response.writeHead(200, { 'Content-Type': 'text/html' }); return response.end('<!doctype html><title>masks</title>') }
-    let file = join(ROOT, 'app', path)
-    if (path.startsWith('/weights/')) {
-      file = join(CACHE, path)
-      if (!existsSync(file)) {
-        const got = await fetch(`https://huggingface.co/${path.slice('/weights/'.length)}`)
-        if (!got.ok) { response.writeHead(404); return response.end() }
-        mkdirSync(dirname(file), { recursive: true })
-        writeFileSync(file, Buffer.from(await got.arrayBuffer()))
-      }
+    const weight = WEIGHTS.get(path)
+    const file = weight?.file ?? resolveRequest(request.url ?? '/', join(ROOT, 'app'))
+    if (weight && !existsSync(weight.file)) {
+      const got = await fetch(weight.from)
+      if (!got.ok) { response.writeHead(404); return response.end() }
+      mkdirSync(dirname(weight.file), { recursive: true })
+      writeFileSync(weight.file, Buffer.from(await got.arrayBuffer()))
     }
-    if (!existsSync(file) || statSync(file).isDirectory()) { response.writeHead(404); return response.end() }
+    if (!file || !existsSync(file) || statSync(file).isDirectory()) { response.writeHead(404); return response.end() }
     response.writeHead(200, { 'Content-Type': TYPES[extname(file)] ?? 'application/octet-stream', 'Content-Length': statSync(file).size })
     createReadStream(file).pipe(response)
   })

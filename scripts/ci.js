@@ -548,6 +548,8 @@ async function newestNode (major) {
   if (!response.ok) throw new Error(`${RELEASES} answered ${response.status}`)
   const found = /** @type {{ version: string }[]} */ (await response.json()).find((release) => release.version.startsWith(`v${major}.`))
   if (!found) throw new Error(`no Node ${major} in ${RELEASES}`)
+  // It goes into the image's build, and into the addresses its shell downloads Node from: a version, and nothing else.
+  if (!/^v\d+\.\d+\.\d+$/.test(found.version)) throw new Error(`${RELEASES} named Node ${major}'s newest ${JSON.stringify(found.version)}`)
   return found.version
 }
 

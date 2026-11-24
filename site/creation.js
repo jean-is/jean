@@ -12,7 +12,7 @@
 // is shown with it: the collection as its replies and the person left it, and the columns its form asks.
 import { createHash } from 'node:crypto'
 import { readFile } from 'node:fs/promises'
-import { xml } from './site.js'
+import { inlineScript, xml } from './site.js'
 import { made, rowsOf, changed, editsOf } from '../app/caps/whiteboards/tool.js'
 import { layout } from '../app/caps/whiteboards/layout.js'
 import { stamp, fold, stringifyChanges } from '../app/caps/tables/changes.js'
@@ -32,11 +32,11 @@ const CODE = Object.fromEntries(await Promise.all([['player.js', 'creation.js'],
 export const STOOD = { 'ui/state.js': 'state.js', 'ui/send.js': 'room.js', 'ui/creations.js': 'room.js', 'ui/windows.js': 'room.js', 'ui/preview.js': 'room.js', 'ui/dialogs.js': 'room.js', 'caps/whiteboards/whiteboards.js': 'room.js' }
 const DEMO = await readFile(new URL('../app/demo.html', import.meta.url), 'utf8')
 /** demo.html's first line, which reads the look and light or dark from the address before anything is drawn, and its import map. */
-const FIRST = /<script>([\s\S]*?)<\/script>/.exec(DEMO)?.[1]
-const IMPORTS = JSON.parse(/<script type="importmap">([\s\S]*?)<\/script>/.exec(DEMO)?.[1] ?? 'null')?.imports
+const FIRST = inlineScript(DEMO)
+const IMPORTS = JSON.parse(inlineScript(DEMO, 'importmap') ?? 'null')?.imports
 /** The editor's library, which a document's editor imports by the name the app's own document gives it. */
 const EDITOR = '#prosemirror'
-const LIBRARY = JSON.parse(/<script type="importmap">([\s\S]*?)<\/script>/.exec(await readFile(new URL('../app/index.html', import.meta.url), 'utf8'))?.[1] ?? 'null')?.imports?.[EDITOR]
+const LIBRARY = JSON.parse(inlineScript(await readFile(new URL('../app/index.html', import.meta.url), 'utf8'), 'importmap') ?? 'null')?.imports?.[EDITOR]
 /** Designs' layouts, palettes and voices, which a design is laid out from. */
 const BOOK = JSON.parse(await readFile(new URL('../app/caps/designs/layouts.json', import.meta.url), 'utf8'))
 if (!FIRST || !IMPORTS || !LIBRARY) throw new Error('app/demo.html has no first line, or no import map, or app/index.html names no editor')

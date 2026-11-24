@@ -7,14 +7,14 @@
 // page's; its look watch.css, over site.css (site/site.js, D438).
 import { createHash } from 'node:crypto'
 import { readFile } from 'node:fs/promises'
-import { FELT, WAVE, glyph, landing, underline, xml } from '../site.js'
+import { FELT, WAVE, glyph, inlineScript, landing, underline, xml } from '../site.js'
 import { NAMES, reelFiles } from './reels.js'
 
 const HERE = new URL('.', import.meta.url)
 /** The player's code and look, as the site serves them. */
 const CODE = Object.fromEntries(await Promise.all(['reel.js', 'schedule.js', 'score.js', 'reel.css'].map(async (file) => [`reels/${file}`, await readFile(new URL(file, HERE), 'utf8')])))
 /** demo.html's first line, which reads the look and light or dark from the address before anything is drawn, then the viewer's, then the system's: an export asks for one. */
-const FIRST = /<script>([\s\S]*?)<\/script>/.exec(await readFile(new URL('../../app/demo.html', import.meta.url), 'utf8'))?.[1]
+const FIRST = inlineScript(await readFile(new URL('../../app/demo.html', import.meta.url), 'utf8'))
 if (!FIRST) throw new Error('app/demo.html has no first line')
 const MAP = JSON.stringify({ imports: { '#app/': './' } })
 const hash = (/** @type {string} */ script) => `'sha256-${createHash('sha256').update(script).digest('base64')}'`

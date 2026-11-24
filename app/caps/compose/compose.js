@@ -127,8 +127,8 @@ function sectionIn(box, ref, from, dir) {
   const unwatch = app.fs.watch?.((path) => (!box.isConnected && box.firstChild ? unwatch?.() : (path === `${dir}/${ref.place}` || path.startsWith(`${dir}/${versionsAt(ref.place)}/`)) && void draw()), { all: true })
   void draw()
 }
-/** A section's Markdown as a site's page holds it: drawn as Jean draws Markdown, its HTML read back, lit's marks left out. @param {string} words */
-const htmlOf = (words) => ((holder) => (render(markdown(words), holder), holder.innerHTML.replace(/<!--[^]*?-->/g, '')))(document.createElement('div'))
+/** A section's Markdown as a site's page holds it: drawn as Jean draws Markdown, lit's marks taken out of the tree, never out of its text, then its HTML read back. @param {string} words */
+const htmlOf = (words) => ((holder, marks = document.createNodeIterator(holder, NodeFilter.SHOW_COMMENT)) => { render(markdown(words), holder); for (let mark = marks.nextNode(); mark; mark = marks.nextNode()) mark.parentNode?.removeChild(mark); return holder.innerHTML })(document.createElement('div'))
 
 /** A collection's port, while its owner keeps it open; null otherwise. @param {string} dir @param {string} folder @returns {Promise<Port | null>} */
 const portOf = async (dir, folder) => { try { return JSON.parse((await app.fs.read(`${dir}/${folder}/port.json`)) ?? 'null') } catch { return null } }
