@@ -38,10 +38,12 @@ class Virtual extends AsyncDirective {
   update(part, [options]) {
     if (!this.box) { this.box = /** @type {HTMLElement} */ (part.parentNode); this.reconnected() }
     const { count, at = -1 } = options, row = (/** @type {number} */ i) => Math.min(count, Math.max(0, i - (i % this.lanes)))
-    // Until the first are measured, those from the start; and the one to scroll to, drawn now with those around it.
+    // Until the first are measured, those from the start, measured once they are in (after the microtask that sizes the empty ones),
+    // before the page shows: as long as all of them from its first frame, since WebKit keeps no scroll anchor, and a list above the
+    // screen growing in the next would move what it shows. And the one to scroll to, drawn now with those around it.
     ;[this.from, this.to] = this.step ? this.shown(options) : [0, Math.min(count, 12)]
     if (at >= 0 && at !== this.at && (at < this.from || at >= this.to)) [this.from, this.to] = [row(at - 12), row(at + 12 + this.lanes)]
-    this.queue(); return this.render(options)
+    const drawn = this.render(options); if (this.step || !count) this.queue(); else queueMicrotask(() => this.step || this.check()); return drawn
   }
 
   /** Those in view and a screen's worth either side, whole rows of them, and the row past the last. @param {Options} options */
@@ -62,12 +64,13 @@ class Virtual extends AsyncDirective {
 
   /** The one to scroll to scrolled to, then those to draw now; more asked for once the end is in reach. */
   check() {
-    const box = this.box, { at = -1, count, more } = this.options
-    if (!box?.isConnected) return; if (!this.step) this.measure()
+    const box = this.box, { at = -1, count, more } = this.options, first = !this.step
+    if (!box?.isConnected) return; if (first) this.measure()
     if (at !== this.at) { this.at = at; box.children[at - this.from + 1]?.scrollIntoView({ block: 'nearest', inline: 'nearest' }) }
     if (!this.step) return void (!count && more?.())
     const [from, to, end] = this.shown(this.options)
-    if (from === this.from && to === this.to) return void (more && end * this.lanes >= count && more())
+    // Drawn again once first measured, the same in view or not, so that the empty ones take their lengths.
+    if (from === this.from && to === this.to && !first) return void (more && end * this.lanes >= count && more())
     // As long as before, so where it was scrolled to stays: WebKit moved the drawer by the rows taken out above, at its end. Not the
     // page, which scrolls smoothly, and which putting back would stop.
     let scroller = /** @type {Element | null} */ (box); while (scroller && scroller.scrollHeight <= scroller.clientHeight && scroller.scrollWidth <= scroller.clientWidth) scroller = scroller.parentElement

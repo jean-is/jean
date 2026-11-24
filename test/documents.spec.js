@@ -960,18 +960,23 @@ test.describe('found and used by the brain', () => {
     expect(months.length).toBeGreaterThan(2)
     for (const month of months) expect(month).toMatch(/^\p{L}+( \d{4})?$/u)
     expect(Number(await cards.first().getAttribute('aria-setsize'))).toBeLessThan(400)
+    await expect(cards.first()).toHaveAttribute('aria-posinset', '1')
     expect(await page.evaluate(async () => (await import('/ui/creations.js')).all.value.length)).toBe(400)
     // Found by words, they stay together, however far apart they were made: one grid, under no month's name.
     await creations.getByRole('searchbox').fill('Note 39')
     await expect(cards).toHaveCount(14)
     await expect(heads).toHaveCount(0)
     await expect(creations.locator('.creations-cards')).toHaveCount(1)
-    await creations.getByRole('searchbox').fill('')
+    // As long as all of them from the first frame: the words taken out, the page scrolled to its end before the next (WebKit keeps
+    // no scroll anchor, so a group above growing then would leave it in their middle), the oldest, its preview drawn.
+    await creations.getByRole('searchbox').evaluate(async (input) => {
+      ;(/** @type {HTMLInputElement} */ (input)).value = ''
+      input.dispatchEvent(new Event('input', { bubbles: true }))
+      await null
+      scrollTo(0, document.documentElement.scrollHeight)
+    })
     await expect(heads).toHaveCount(months.length)
     expect(await cards.count()).toBeLessThan(120)
-    await expect(cards.first()).toHaveAttribute('aria-posinset', '1')
-    // As long as all of them: at the page's end, the oldest, its preview drawn.
-    await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight))
     const oldest = cards.filter({ hasText: 'Note 399' })
     await expect(oldest).toBeInViewport()
     await expect(oldest.locator('.creation-preview')).toContainText('Note 399')
