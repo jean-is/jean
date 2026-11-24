@@ -6,7 +6,7 @@
   "machine.always": "Kwe mgbe niile na folda {folder}",
   "machine.app": "Iwu nwekwara ike ịgba na kọmputa a, ya na mmemme na sava ya, na folda ị họrọ: ọrụ nwere folda ahụ ga-agba iwu ha ebe ahụ.",
   "machine.choose": "Họrọ folda…",
-  "machine.failed": "Ọ malitighị: ọ chọrọ Node.js na kọmputa a, iwu node nke tọminal na-agba.",
+  "machine.failed": "Ọ malitighị: enweghị ike ibudata Node.js, nke ọ na-agba na ya. Lelee na kọmputa a nọ n’ịntanetị, wee họrọ folda ahụ ọzọ.",
   "machine.on.app": "Ọrụ nwere folda {folder} na-agba iwu ha na kọmputa a, a na-ajụ gị mbụ maka nke ọ bụla.",
   "machine.lede": "Ọrụ na-eji kọmputa e gbochiri agbochi dị na taabụ a, ma e wezụga ndị nọ na folda ị jikọrọ na kọmputa a.",
   "machine.off": "Ejikọghị ya",

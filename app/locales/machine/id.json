@@ -6,7 +6,7 @@
   "machine.always": "Selalu izinkan di {folder}",
   "machine.app": "Perintah juga bisa berjalan di komputer ini, dengan program dan servernya sendiri, di folder yang Anda pilih: tugas dengan folder itu menjalankan perintahnya di sana.",
   "machine.choose": "Pilih folder…",
-  "machine.failed": "Tidak berjalan: komputer ini perlu Node.js, yaitu perintah node di terminal.",
+  "machine.failed": "Tidak berjalan: Node.js, yang diperlukannya untuk berjalan, tidak bisa diunduh. Pastikan komputer ini tersambung ke internet, lalu pilih folder lagi.",
   "machine.on.app": "Tugas dengan folder {folder} menjalankan perintahnya di komputer ini, masing-masing ditanyakan dulu.",
   "machine.lede": "Tugas memakai lingkungan terisolasi, kecuali yang ada di folder yang Anda hubungkan di komputer ini.",
   "machine.off": "Belum terhubung",

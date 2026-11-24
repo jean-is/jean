@@ -6,7 +6,7 @@
   "machine.always": "Fàyè gbà nígbà gbogbo nínú {folder}",
   "machine.app": "Àwọn àṣẹ tún lè ṣiṣẹ́ lórí kọ̀ǹpútà yìí, pẹ̀lú àwọn ètò àti sáfà tirẹ̀, nínú fódà tí ẹ bá yàn: àwọn iṣẹ́ tó ní fódà náà ń ṣiṣẹ́ àwọn àṣẹ wọn níbẹ̀.",
   "machine.choose": "Yan fódà kan…",
-  "machine.failed": "Kò bẹ̀rẹ̀: ó nílò Node.js lórí kọ̀ǹpútà yìí, ìyẹn àṣẹ node nínú ibùdó àṣẹ.",
+  "machine.failed": "Kò bẹ̀rẹ̀: a kò lè gba Node.js sílẹ̀, èyí tí ó nílò láti ṣiṣẹ́. Ẹ rí i dájú pé kọ̀ǹpútà yìí wà lórí íntánẹ́ẹ̀tì, lẹ́yìn náà ẹ tún yan fódà kan.",
   "machine.on.app": "Àwọn iṣẹ́ tó ní fódà {folder} ń ṣiṣẹ́ àwọn àṣẹ wọn lórí kọ̀ǹpútà yìí, a ń béèrè ṣáájú ọ̀kọ̀ọ̀kan.",
   "machine.lede": "Àwọn iṣẹ́ ń lo àyíká àdádó, àyàfi àwọn tó wà nínú fódà tí ẹ so mọ́ kọ̀ǹpútà yìí.",
   "machine.off": "Kò so pọ̀",

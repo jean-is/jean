@@ -6,7 +6,7 @@
   "machine.always": "Ruhusu kila wakati katika {folder}",
   "machine.app": "Amri zinaweza pia kuendeshwa kwenye kompyuta hii, kwa programu na seva zake, katika folda utakayochagua: kazi zenye folda hiyo huendesha amri zao huko.",
   "machine.choose": "Chagua folda…",
-  "machine.failed": "Haikuanza: inahitaji Node.js kwenye kompyuta hii, yaani amri ya node kwenye terminali.",
+  "machine.failed": "Haikuanza: Node.js, ambayo inaihitaji ili ifanye kazi, haikuweza kupakuliwa. Hakikisha kompyuta hii iko mtandaoni, kisha uchague folda tena.",
   "machine.on.app": "Kazi zenye folda {folder} huendesha amri zao kwenye kompyuta hii, kila moja ikiulizwa kwanza.",
   "machine.lede": "Kazi hutumia mazingira yaliyotengwa, isipokuwa zile zilizo katika folda unayounganisha kwenye kompyuta hii.",
   "machine.off": "Haijaunganishwa",

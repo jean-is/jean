@@ -6,7 +6,9 @@
 // the sandbox. Offered when a server is refused in the sandbox. Jean reaches the bridge over MCP on
 // 127.0.0.1 with the key in the line, kept in .secrets/ with the folders where the user said
 // "always". A command the brain runs there is asked first; what the user types in the terminal is theirs.
-// The desktop app starts the bridge itself, in a folder the system's dialog picks, as Jean opens.
+// The desktop app starts the bridge itself, in a folder the system's dialog picks, as Jean opens. Either way Node, which
+// it runs on, is fetched once where the computer has none (line.js). A plan's CLI, Claude Code, Copilot CLI or Antigravity CLI,
+// the bridge installs and signs in when asked (D767, D768).
 // Its browser (D746), Chrome, Edge, Chromium or Brave of that computer, is the pane's, and the brain acts on its page with `page`.
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
@@ -19,6 +21,7 @@ import { icons } from '../../ui/menu-icons.js'
 import { BRAND } from '../../brand.js'
 import { t, useStrings } from '../../core/i18n.js'
 import { PROVIDERS } from '../../core/llm.js'
+import { line, started } from './line.js'
 import { mcpClient } from '../connections/mcp.js'
 import { hostBrowses } from '../browser/pages.js'
 
@@ -31,9 +34,13 @@ await Promise.all([useStrings('machine'), unlock('computer'), unlock('folders')]
 
 const SECRET = 'computer-bridge'
 const BRIDGE = new URL('../../bridge/bridge.js', import.meta.url).href
-/** The bridge's hash, which what the terminal fetches must have before anything of it runs: never half a file, nor another one (D677). */
+/** The bridge's hash, which what the terminal fetches must have before anything of it runs: never half a file, nor another one (D677); and the Node a line fetches where the computer has none. */
 const hash = signal('')
-const hashed = fetch(BRIDGE).then((res) => (res.ok ? res.arrayBuffer() : Promise.reject(new Error(String(res.status))))).then((bytes) => crypto.subtle.digest('SHA-256', bytes)).then((sum) => { hash.value = btoa(String.fromCharCode(...new Uint8Array(sum))) }, (error) => console.warn('The bridge', error))
+const runtime = signal(/** @type {import('./line.js').Runtime | null} */ (null))
+const hashed = Promise.all(['bridge.js', 'node.json'].map((path) => fetch(new URL(path, BRIDGE)).then((res) => (res.ok ? res : Promise.reject(new Error(`${path}: ${res.status}`))))))
+  .then(async ([script, pinned]) => { hash.value = btoa(String.fromCharCode(...new Uint8Array(await crypto.subtle.digest('SHA-256', await script.arrayBuffer())))); runtime.value = await pinned.json() }).catch((error) => console.warn('The bridge', error))
+/** What a line needs beside its pairing: the bridge, its hash, the Node it fetches and where from. */
+const lineOf = () => ({ bridge: BRIDGE, hash: hash.value, runtime: /** @type {import('./line.js').Runtime} */ (runtime.value), url: urlOf('node'), origin: location.origin })
 // The desktop app starts the bridge itself where the system has bash; the process it started, for the visit.
 const inApp = signal(false)
 const desktop = host.then((known) => (inApp.value = Boolean(known) && known?.os !== 'Windows'))
@@ -44,6 +51,9 @@ const FRESH_MS = 5000
 const PLANS = /** @type {Record<string, [string, string]>} */ ({ claudecode: ['/v1', 'claude'], copilot: ['/copilot/v1', 'copilot'], antigravity: ['/antigravity/v1', 'antigravity'], chatgpt: ['/chatgpt/v1', 'chatgpt'] })
 // Where ChatGPT signs in for open-source apps (D262): an identity of the provider's, like its API's address.
 const ISSUER = 'https://auth.openai.com'
+// Where a line fetches Node's builds (D766), and the installers of the plans' CLIs, Anthropic's, GitHub's and Google's (D768, D767), none with '': unless settings or policy name others (`urls`).
+const urlOf = (/** @type {'node' | 'claude' | 'copilot' | 'antigravity'} */ name) => String(app.policy.urls?.[name] ?? /** @type {Record<string, string>} */ ({ ...app.settings.peek().urls })[name]
+  ?? { node: 'https://nodejs.org/dist/v{version}/node-v{version}-{platform}.tar.gz', claude: 'https://claude.ai/install.sh', copilot: 'https://gh.io/copilot-install', antigravity: 'https://antigravity.google/cli/install.sh' }[name])
 
 /** The bridge as Jean last found it. */
 export const bridge = signal(/** @type {Found} */ ({ on: false }))
@@ -76,10 +86,11 @@ const pairing = () => (paired ??= (async () => {
 /**
  * A plan's brain on this computer (D235, D262, D756): where Jean reaches it through the bridge, and whether it is ready
  * (Claude Code, Copilot or Antigravity there and signed in, the bridge signed in to ChatGPT with the plan's use), or
- * the bridge, started before it knew that plan, needs starting again; null while the bridge isn't running. For
- * Claude Code, how it reaches Claude too, as `claude auth status` says, for what may read Google's data (D440).
+ * the bridge, started before it knew that plan, needs starting again, a CLI's before it could install and sign it in (6);
+ * here: the CLI there and signed in, there only (false), or not there (null); null while the bridge isn't running.
+ * For Claude Code, how it reaches Claude too, as `claude auth status` says, for what may read Google's data (D440).
  * @param {string} provider claudecode, copilot, antigravity or chatgpt
- * @returns {Promise<{ baseURL: string, apiKey: string, ready: boolean, old: boolean, terms?: Parameters<typeof import('../../core/terms.js').commercial>[0] } | null>}
+ * @returns {Promise<{ baseURL: string, apiKey: string, ready: boolean, old: boolean, here: boolean | null, terms?: Parameters<typeof import('../../core/terms.js').commercial>[0] } | null>}
  */
 export async function plan(provider) {
   if (!(await find(true)).on) return null
@@ -87,8 +98,22 @@ export async function plan(provider) {
   const [path, asked] = PLANS[provider]
   const about = await clientOf(pair).callTool({ name: 'about' }, { [asked]: true }, AbortSignal.timeout(40_000)).catch(() => null)
   const found = about?.structuredContent?.[asked]
-  return { baseURL: `http://127.0.0.1:${pair.port}${path}`, apiKey: pair.key, ready: found === true, old: Boolean(about) && found === undefined, terms: about?.structuredContent?.claudeTerms }
+  return { baseURL: `http://127.0.0.1:${pair.port}${path}`, apiKey: pair.key, ready: found === true, here: found ?? null, terms: about?.structuredContent?.claudeTerms,
+    old: Boolean(about) && (found === undefined || provider !== 'chatgpt' && found !== true && Number(about?.structuredContent?.version) < 6) }
 }
+
+/** A plan's CLI by its provider: claude, copilot or antigravity. @param {string} provider claudecode, copilot or antigravity */
+const cliOf = (provider) => /** @type {'claude' | 'copilot' | 'antigravity'} */ (PLANS[provider][1])
+
+/** Whether the bridge may install a plan's CLI: unless policy names no installer for it (D767, D768). @param {string} provider */
+export const installs = (provider) => Boolean(urlOf(cliOf(provider)))
+
+/**
+ * A plan's CLI, through the bridge (D767, D768): installed with its maker's installer, or signed in with its maker's own sign-in in the
+ * person's browser, which the bridge waits for. @param {string} provider claudecode, copilot or antigravity @param {boolean} install
+ */
+export const setUp = (provider, install) => pairing().then((pair) => clientOf(pair).callTool({ name: 'cli' }, { name: cliOf(provider), ...install && { install, url: urlOf(cliOf(provider)) } },
+  AbortSignal.timeout((install ? 6 : 16) * 60_000))).then((result) => { if (result.isError) throw new Error(result.content?.[0]?.text ?? provider) })
 
 /** Where the page goes to sign in to ChatGPT, as Jean, through the bridge, which keeps the tokens; it comes back with ?chatgpt=… (D262). */
 export async function chatgptSignIn() {
@@ -110,13 +135,7 @@ async function save(next) {
   known.value = next
 }
 
-/** Runs the bytes in `b`, which `read` gives, if they have the hash this page knows. @param {string} read */
-const checked = (read) => `${read};if((await import("node:crypto")).createHash("sha256").update(b).digest("base64")!=="${hash.value}")throw new Error("This isn't the bridge this page expects, so nothing ran: reload the page and copy the line again.");await import("data:text/javascript;base64,"+b.toString("base64"))`
-/** What the user pastes in a terminal, in their folder: the bridge from where Jean is served, checked, for this origin, with the key in its environment. @param {Pairing} pair */
-const line = ({ port, key }) => `curl -fsSL ${BRIDGE} | JEAN_BRIDGE_KEY=${key} node --input-type=module -e ${word(checked('const c=[];for await(const p of process.stdin)c.push(p);const b=Buffer.concat(c)'))} -- --port ${port} --origin ${location.origin}`
-/** A text as one word for the shell. @param {string} text */
-const word = (text) => `'${text.replaceAll("'", `'\\''`)}'`
-/** The desktop app's bridge ended without answering (no node, say). */
+/** The desktop app's bridge ended without answering (no Node to be had, say). */
 const failed = signal(false)
 
 /**
@@ -129,8 +148,7 @@ async function start(path) {
   const pair = await pairing()
   if (pair.path !== path) await save({ ...pair, path })
   if ((await find(true)).on) return
-  const node = `exec node --input-type=module -e ${word(checked('const b=Buffer.from(await(await fetch(process.argv[1])).arrayBuffer())'))} -- ${word(BRIDGE)} --port ${pair.port} --origin ${word(location.origin)} --folder ${word(path)} --attached`
-  const { id } = await call('os.spawnProcess', { command: `exec "\${SHELL:-/bin/sh}" -lic ${word(node)}`, envs: { JEAN_BRIDGE_KEY: pair.key } })
+  const { id } = await call('os.spawnProcess', { command: started({ ...lineOf(), port: pair.port, folder: path }), envs: { JEAN_BRIDGE_KEY: pair.key } })
   sessionStorage.setItem(RUNNING, String(id))
   failed.value = false
   for (let tries = 0; tries < 60 && !(await find(true)).on; tries++) {
@@ -317,11 +335,11 @@ export function page() {
     end: found.on ? html`<button class="button subtle" @click=${forget}>${t('machine.forget')}</button>`
       : own ? html`<button class="button subtle" @click=${choose}>${icons.folder} ${t('machine.choose')}</button>` : nothing,
     draw: () => html`<section class="machine">
-      ${found.on || own || !pair || !hash.value ? nothing : html`<ol class="machine-steps">
+      ${found.on || own || !pair || !hash.value || !runtime.value ? nothing : html`<ol class="machine-steps">
         <li>${t('machine.step.open')}</li>
         <li>${t('machine.step.paste')}<div class="machine-line">
-          <code dir="ltr">${line(pair).replace(/_KEY=\S+/, '_KEY=••••••••')}</code>
-          <button class="button subtle" @click=${() => navigator.clipboard.writeText(line(pair)).then(() => notify(t('toast.copied')))}>${icons.copy} ${t('action.copy')}</button>
+          <code dir="ltr">${line({ ...lineOf(), ...pair }).replace(/_KEY=\S+/, '_KEY=••••••••')}</code>
+          <button class="button subtle" @click=${() => navigator.clipboard.writeText(line({ ...lineOf(), ...pair })).then(() => notify(t('toast.copied')))}>${icons.copy} ${t('action.copy')}</button>
         </div><p class="hint">${t('machine.secret')}</p></li>
         <li><span class="ember" data-state="waking" aria-hidden="true"></span>${t('machine.step.wait')}</li>
       </ol>`}

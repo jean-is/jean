@@ -10,7 +10,7 @@ import { signal } from '@preact/signals-core'
 import { app, effective, CITED, rememberUnlocked, notify, changeSettings } from './state.js'
 import { unlock, isDenied, loaded, configureCapabilities, SIZES, WEIGHTS } from './caps.js'
 import { CATALOGUE, LOCKABLE, SEARCHABLE, BROWSED, STEPPED, everywhere, accept, begin, unlockAll } from './discovery.js'
-import { openSettings, ROOM_ICONS, lockedBy, pageOpen } from './dialogs.js'
+import { openSettings, ROOM_ICONS, lockedBy, pageOpen, goPage } from './dialogs.js'
 import { BRAND } from '../brand.js'
 import { t, formatBytes, useStrings } from '../core/i18n.js'
 import { icons } from './menu-icons.js'
@@ -53,10 +53,8 @@ const asking = signal('')
 
 /** Opens the list ('') or a capability's page, the keyboard on its title, or back on the list on the row it came from. @param {string} to */
 function go(to) {
-  const from = pageOpen()
   asking.value = ''
-  app.section.value = to ? `capabilities/${to}` : 'capabilities'
-  requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector(to ? '.data-head h2' : `[data-cap="${from}"]`))?.focus())
+  goPage('capabilities', to, '.data-head h2', 'data-cap')
 }
 
 /**

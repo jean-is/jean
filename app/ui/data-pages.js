@@ -9,7 +9,7 @@ import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { app, effective, updateSettings, pairs } from './state.js'
 import { unlock, isDenied, slots, loaded } from './caps.js'
-import { sectionOpen, pageOpen, openSettings, projectName, backup, lockedBy } from './dialogs.js'
+import { sectionOpen, pageOpen, openSettings, projectName, backup, lockedBy, goPage } from './dialogs.js'
 import { everywhere } from './discovery.js'
 import { BRAND } from '../brand.js'
 import { weigh } from '../core/files.js'
@@ -37,11 +37,7 @@ const storage = signal(/** @type {{ usage?: number, quota?: number, persisted?: 
 // The page open (pageOpen()): a part's id, or '' for the list.
 
 /** Opens the section's list ('') or a page, the keyboard on its title, or back on the list on the row it came from. @param {string} to */
-function go(to) {
-  const from = pageOpen()
-  app.section.value = to ? `${sectionOpen()}/${to}` : sectionOpen()
-  requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector(to ? '.data-head h2' : `[data-part="${from}"]`))?.focus())
-}
+const go = (/** @type {string} */ to) => goPage(sectionOpen(), to, '.data-head h2', 'data-part')
 
 // ─── What takes up space ─────────────────────────────────────────────────────
 

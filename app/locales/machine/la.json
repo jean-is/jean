@@ -6,7 +6,7 @@
   "machine.always": "Semper permitte in capsa {folder}",
   "machine.app": "Mandata etiam in hoc computatro exsequi possunt, cum eius programmatis et servitoribus, in capsa quam eligis: opera cum illa capsa tum mandata sua ibi exsequuntur.",
   "machine.choose": "Capsam elige…",
-  "machine.failed": "Non incepit: Node.js in hoc computatro eget, mandato node quod terminalis exsequitur.",
+  "machine.failed": "Non incepit: Node.js, quo currit, depromi non potuit. Inspice num hoc computatrum interreti conexum sit, deinde capsam iterum elige.",
   "machine.on.app": "Opera cum capsa {folder} mandata sua in hoc computatro exsequuntur, quodque prius rogatum.",
   "machine.lede": "Opera computatro saepto huius schedae utuntur, praeter ea in capsa quam in hoc computatro conectis.",
   "machine.off": "Non conexum",

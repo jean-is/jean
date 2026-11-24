@@ -6,7 +6,7 @@
   "machine.always": "Vždy povoliť v priečinku {folder}",
   "machine.app": "Príkazy môžu bežať aj v tomto počítači, s jeho vlastnými programami a servermi, v priečinku, ktorý vyberiete: úlohy s týmto priečinkom potom spúšťajú svoje príkazy tam.",
   "machine.choose": "Vybrať priečinok…",
-  "machine.failed": "Nespustilo sa: potrebuje v tomto počítači Node.js, príkaz node, ktorý terminál spúšťa.",
+  "machine.failed": "Nespustilo sa: Node.js, na ktorom beží, sa nepodarilo stiahnuť. Skontrolujte, či je tento počítač online, a potom znova vyberte priečinok.",
   "machine.on.app": "Úlohy s priečinkom {folder} spúšťajú svoje príkazy v tomto počítači, na každý sa najprv opýtajú.",
   "machine.lede": "Úlohy používajú izolované prostredie, okrem tých v priečinku, ktorý v tomto počítači pripojíte.",
   "machine.off": "Nepripojené",

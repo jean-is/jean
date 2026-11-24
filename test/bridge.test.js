@@ -7,7 +7,7 @@ import { generateKeyPairSync, createHash, sign } from 'node:crypto'
 import { existsSync } from 'node:fs'
 import { mkdtemp, mkdir, readFile, writeFile, rm, realpath, stat } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
 import { bridge, jeans, modelsOf, snapshot } from '../app/bridge/bridge.js'
 import { mcpClient } from '../app/caps/connections/mcp.js'
 import { chromium } from '@playwright/test'
@@ -95,7 +95,7 @@ describe('the bridge (D198)', { skip: process.platform === 'win32' }, () => {
     assert.equal(preflight.headers.get('access-control-allow-headers'), 'authorization,content-type,mcp-method')
 
     const client = mcpClient({ url: at, client: { name: 'Jean', version: 'test' }, authorization: async () => `Bearer ${KEY}` })
-    assert.deepEqual((await client.listTools()).map((tool) => tool.name), ['bash', 'about', 'chatgpt', 'browser'])
+    assert.deepEqual((await client.listTools()).map((tool) => tool.name), ['bash', 'about', 'cli', 'chatgpt', 'browser'])
     const about = await client.callTool({ name: 'about' }, {})
     assert.equal(about.structuredContent.path, folder)
     const ran = await client.callTool({ name: 'bash' }, { command: 'cat /workspace/site/index.html' })
@@ -156,7 +156,7 @@ describe('Claude Code through the bridge (D235)', { skip: process.platform === '
     await assert.rejects(llm.listModels({ brain, apiKey: 'nope' }), { code: 'auth' })
     const client = mcpClient({ url: brain.baseURL.replace('/v1', '/'), client: { name: 'Jean', version: 'test' }, authorization: async () => `Bearer ${KEY}` })
     const about = (await client.callTool({ name: 'about' }, { claude: true })).structuredContent
-    assert.deepEqual([about.version, about.claude], ['4', true])
+    assert.deepEqual([about.version, about.claude], ['6', true])
     // How it reaches Claude, for what may read Google's services' data (D440), with no address of the user's own in the way,
     // which whatever runs these tests may have.
     const own = { ANTHROPIC_BASE_URL: process.env.ANTHROPIC_BASE_URL, ANTHROPIC_AUTH_TOKEN: process.env.ANTHROPIC_AUTH_TOKEN }
@@ -456,7 +456,8 @@ describe('a Gemini plan through Antigravity and the bridge (D756)', { skip: proc
 
   test('it says whether Antigravity is here and signed in, and lists its models, the one it has chosen first', async () => {
     const client = mcpClient({ url: brain.baseURL.replace('/antigravity/v1', '/'), client: { name: 'Jean', version: 'test' }, authorization: async () => `Bearer ${KEY}` })
-    process.env.ANTIGRAVITY_SIGNED_OUT = '1'
+    process.env.ANTIGRAVITY_SIGNED_OUT = join(folder, 'signed-out')
+    await writeFile(process.env.ANTIGRAVITY_SIGNED_OUT, '')
     try {
       assert.equal((await client.callTool({ name: 'about' }, { antigravity: true })).structuredContent.antigravity, false)
       await assert.rejects(llm.listModels({ brain, apiKey: KEY }), { code: 'auth' })
@@ -519,6 +520,64 @@ describe('a Gemini plan through Antigravity and the bridge (D756)', { skip: proc
     await assert.rejects(step([{ role: 'user', content: 'over the limit' }]), { code: 'rate_limit', message: /weekly limit/ })
     await assert.rejects(step([{ role: 'user', content: 'hello' }], [], { ...brain, model: 'gemini-9' }), { message: /Unknown model: gemini-9/ })
   })
+})
+
+// What Connect does for a plan's CLI that isn't ready (D767, D768): it is installed by its maker's installer, which Jean names, as a
+// terminal would run it, then found where it went; signed out, it signs in by its maker's own sign-in in the person's browser,
+// played by each fixture (Claude Code's `auth login`, Copilot's `login`, Antigravity's `authenticate` over ACP), which removes
+// its signed-out mark as the browser's sign-in leaves the CLI's credentials.
+describe('a plan’s CLI installed and signed in from Jean (D767, D768)', { skip: process.platform === 'win32' }, () => {
+  for (const name of ['claude', 'copilot', 'antigravity']) {
+    test(`${name}, not on this computer, is installed by the installer Jean names, then signs in by its maker’s own sign-in; one the person left says so`, async () => {
+      const home = await realpath(await mkdtemp(join(tmpdir(), `bridge-${name}-`)))
+      const program = join(home, '.local', 'bin', name)
+      const [marker, out, declined] = [join(home, 'signed-out'), `${name.toUpperCase()}_SIGNED_OUT`, `${name.toUpperCase()}_DECLINED`]
+      /** The maker's installer, played: the program where it puts it; and one that fails as it does on a computer it doesn't support. @type {Record<string, string>} */
+      const scripts = {
+        '/install.sh': `mkdir -p '${dirname(program)}' && printf '#!/bin/sh\\nexec "%s" "%s" "$@"\\n' '${process.execPath}' '${new URL(`./fixtures/${name}.js`, import.meta.url).pathname}' > '${program}' && chmod +x '${program}'\n`,
+        '/unsupported.sh': 'echo "Fatal: Unsupported architecture: z80." >&2\nexit 1\n',
+      }
+      const site = createServer((req, res) => res.writeHead(scripts[req.url ?? ''] ? 200 : 404).end(scripts[req.url ?? ''] ?? ''))
+      await new Promise((ready) => site.listen(0, '127.0.0.1', () => ready(undefined)))
+      const from = `http://127.0.0.1:${/** @type {import('node:net').AddressInfo} */ (site.address()).port}`
+      /** @type {Awaited<ReturnType<typeof bridge>>} */
+      let work
+      const server = createServer((req, res) => work.handle(req, res))
+      await new Promise((ready) => server.listen(0, '127.0.0.1', () => ready(undefined)))
+      const port = /** @type {import('node:net').AddressInfo} */ (server.address()).port
+      work = await bridge({ folder: home, origins: [JEAN], key: KEY, port, [name]: [program] })
+      const asked = mcpClient({ url: `http://127.0.0.1:${port}/`, client: { name: 'Jean', version: 'test' }, authorization: async () => `Bearer ${KEY}` })
+      const here = async () => (await asked.callTool({ name: 'about' }, { [name]: true })).structuredContent[name]
+      try {
+        assert.equal(await here(), null)
+        assert.equal((await asked.callTool({ name: 'cli' }, { name: 'codex', install: true, url: `${from}/install.sh` })).isError, true)
+        assert.equal((await asked.callTool({ name: 'cli' }, { name, install: true })).isError, true)
+        const failed = await asked.callTool({ name: 'cli' }, { name, install: true, url: `${from}/unsupported.sh` })
+        assert.equal(failed.isError, true)
+        assert.match(failed.content[0].text, /Unsupported architecture: z80/)
+        await writeFile(marker, '')
+        process.env[out] = marker
+        assert.deepEqual((await asked.callTool({ name: 'cli' }, { name, install: true, url: `${from}/install.sh` })).structuredContent, { installed: true })
+        assert.equal(await here(), false)
+        process.env[declined] = '1'
+        const left = await asked.callTool({ name: 'cli' }, { name })
+        assert.equal(left.isError, true)
+        assert.match(left.content[0].text, /cancelled|denied/)
+        assert.equal(await here(), false)
+        delete process.env[declined]
+        assert.deepEqual((await asked.callTool({ name: 'cli' }, { name })).structuredContent, { signedIn: true })
+        assert.equal(existsSync(marker), false)
+        assert.equal(await here(), true)
+      } finally {
+        delete process.env[out]
+        delete process.env[declined]
+        server.close()
+        site.close()
+        await work.close()
+        await rm(home, { recursive: true, force: true })
+      }
+    })
+  }
 })
 
 describe('what the bridge makes of an ACP CLI (D756)', () => {

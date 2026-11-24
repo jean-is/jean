@@ -10,6 +10,7 @@
 // Jean's desktop app starts it itself, `--attached`: it ends when the app does, its input closing.
 // It also lets the user's plans answer as brains: their own Claude Code, Copilot CLI and Antigravity CLI
 // (D235, D262, D756), and their ChatGPT plan, which Jean signs in to as itself and whose tokens stay here (D262).
+// Each CLI it installs with its maker's own installer, and signs in with its maker's own sign-in in the person's browser, when asked.
 //
 //   curl -fsSL <jean>/bridge/bridge.js | JEAN_BRIDGE_KEY=<key> node --input-type=module -e '<runs it if its hash is the one given>' -- --port <port> --origin <jean>
 //
@@ -28,7 +29,7 @@ import { createInterface } from 'node:readline'
 import { pathToFileURL } from 'node:url'
 import { parseArgs } from 'node:util'
 
-const VERSION = '4'
+const VERSION = '6'
 const LEGACY = '2025-11-25'
 // What a command's output keeps, from its end; a request's body at most (a conversation, with its pictures).
 const KEPT = 1_000_000
@@ -52,6 +53,11 @@ const TOOLS = [
     description: 'This computer: the folder the bridge runs in, the system, and what runs in the background; with claude, copilot or antigravity, whether that CLI is here and signed in (null: not here), and with claude, how it reaches Claude (claudeTerms); with chatgpt, whether the bridge is signed in to ChatGPT with the use of its plan.',
     inputSchema: { type: 'object', properties: { claude: { type: 'boolean' }, copilot: { type: 'boolean' }, antigravity: { type: 'boolean' }, chatgpt: { type: 'boolean' } } },
     annotations: { readOnlyHint: true },
+  },
+  {
+    name: 'cli',
+    description: "A plan's CLI, which name says: Claude Code, Copilot CLI or Antigravity CLI. With install, installs it with its maker's installer, which url names; otherwise signs it in with its maker's own sign-in, in the person's browser, and waits until they have.",
+    inputSchema: { type: 'object', properties: { name: { type: 'string', enum: ['claude', 'copilot', 'antigravity'] }, install: { type: 'boolean' }, url: { type: 'string' } }, required: ['name'] },
   },
   {
     name: 'chatgpt',
@@ -174,6 +180,18 @@ const FRAME = 'These instructions come from the app the user talks to. They take
 // Antigravity's custom agent that is Jean in a conversation's folder (D756): its body is its prompt, and with no tools listed it
 // has none of its own, Jean's coming over MCP; it runs no command by itself. Quoted, so no YAML reads `off` as false.
 const AGENT = 'jean'
+// The plans' CLIs (D235, D262, D756), which the bridge installs and signs in when asked (D767, D768): what each is called, its
+// command, how it speaks ACP, and how it signs in with its maker in the person's browser: Claude Code's and Copilot's own command,
+// which opens the page and waits (Copilot's ACP server offers it as the command to run, not as `authenticate`), Antigravity's as
+// its ACP server offers it, Google's sign-in.
+const CLIS = /** @type {Record<Cli, { title: string, command: string, acp?: string[], signIn?: string[] }>} */ ({ claude: { title: 'Claude Code', command: 'claude', signIn: ['auth', 'login', '--claudeai'] },
+  copilot: { title: 'Copilot CLI', command: 'copilot', acp: ['--acp', '--disable-builtin-mcps'], signIn: ['login'] }, antigravity: { title: 'Antigravity CLI', command: 'agy', acp: ['acp', '--disable-telemetry'] } })
+const GOOGLE = 'oauth-personal'
+// Where a CLI is: on PATH, else where its maker's installer puts it, which a terminal's PATH has only once another opens, and
+// Homebrew's folders, which the desktop app's login shell may not have.
+const placesOf = (/** @type {string} */ command) => [command, join(homedir(), '.local', 'bin', command), `/opt/homebrew/bin/${command}`, `/usr/local/bin/${command}`]
+// What a maker's installer takes, at most.
+const INSTALL_MS = 5 * 60_000
 const AGENT_HEAD = `---\nname: ${AGENT}\ndescription: The app the user talks to.\nmainAgent: true\nsubagent: false\ncommandExecutionPolicy: "off"\n---\n\n`
 // The kinds of an ACP tool call that are a CLI's own work on this computer or the web, which Jean's tools never are.
 const OWN_KINDS = new Set(['read', 'edit', 'delete', 'move', 'search', 'execute', 'fetch'])
@@ -187,7 +205,7 @@ const RENEW_MS = 120_000
 
 /**
  * @typedef {{ folder: string, origins: string[], key: string, port: number, claude?: string[], copilot?: string[], antigravity?: string[], browser?: string[], home?: string }} Options
- *   claude, copilot, antigravity: how Claude Code, Copilot and Antigravity run; browser: the browser the bridge drives, and its first arguments, else the first
+ *   claude, copilot, antigravity: how Claude Code, Copilot and Antigravity run, else the first found where each goes (placesOf); browser: the browser the bridge drives, and its first arguments, else the first
  *   of BROWSERS found; home: the folder that keeps the ChatGPT sign-in and the browser's profile
  * @typedef {{ url: string, title: string, loading: boolean, back: boolean, forward: boolean }} Shown what the browser's tab shows, for the pane
  * @typedef {{ send: (method: string, params?: object, session?: string) => Promise<any>, until: (match: (message: any) => boolean, ms: number) => Promise<any>,
@@ -198,6 +216,7 @@ const RENEW_MS = 120_000
  * @typedef {{ exit: number, stdout: string, stderr: string, cwd: string, serving?: { group: number, addresses: string[], log: string } }} Ran
  * @typedef {{ role: string, content: any[] }} Turn
  * @typedef {'copilot' | 'antigravity'} Speaker a CLI that speaks ACP
+ * @typedef {'claude' | Speaker} Cli a plan's CLI
  * @typedef {{ id: string, child: import('node:child_process').ChildProcessWithoutNullStreams, agent: 'claude' | Speaker, tools: object[],
  *   count: number, seen: string, asked: { id: string, name: string, called?: boolean }[], given: Map<string, object>, waiting: Map<string, (result: object) => void>, stderr: string, idle?: NodeJS.Timeout,
  *   say: (content: any[]) => void, call: (params: any) => object | Promise<object>, step: (res: import('node:http').ServerResponse, signal: AbortSignal) => Promise<void> }} Session
@@ -451,9 +470,12 @@ function jwt(token) {
  * The bridge's work, apart from its server: answers MCP's messages, runs commands, ends what runs.
  * @param {Options} options
  */
-export async function bridge({ folder, origins, key, port, claude: [program, ...before] = ['claude'], copilot: [copilotProgram, ...copilotBefore] = ['copilot'],
-  antigravity: [agyProgram, ...agyBefore] = ['agy'], browser: [browserGiven, ...browserBefore] = [], home = join(process.env.XDG_CONFIG_HOME || join(homedir(), '.config'), 'jean') }) {
+export async function bridge({ folder, origins, key, port, claude = [], copilot = [], antigravity = [], browser: [browserGiven, ...browserBefore] = [],
+  home = join(process.env.XDG_CONFIG_HOME || join(homedir(), '.config'), 'jean') }) {
   const browserProgram = browserGiven ?? await firstOf(BROWSERS[platform()] ?? [])
+  const given = { claude, copilot, antigravity }
+  /** A CLI's program, and its first arguments: as given, else looked for again until it is found, as it may be installed meanwhile; none while it isn't. @param {Cli} cli */
+  const whereIs = async (cli) => { const [program = await firstOf(placesOf(CLIS[cli].command)) || undefined, ...before] = given[cli]; return { program, before } }
   const real = await realpath(folder)
   const temp = await mkdtemp(join(tmpdir(), 'jean-'))
   const link = join(temp, 'workspace')
@@ -855,7 +877,7 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
    * @returns {Promise<{ claude: boolean | null, claudeTerms?: { provider?: string, method?: string, plan?: string, gateway: boolean } }>}
    */
   const signedIn = async () => {
-    const { env } = await reach()
+    const [{ program = 'claude', before }, { env }] = await Promise.all([whereIs('claude'), reach()])
     return new Promise((done) => execFile(program, [...before, 'auth', 'status', '--json'], { timeout: 15_000 }, (_, stdout) => {
       try {
         const { loggedIn, apiProvider: provider, authMethod: method, subscriptionType: plan } = JSON.parse(stdout)
@@ -865,8 +887,8 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
     }))
   }
 
-  /** Whether this Claude Code takes THOUGHTS: its sign-in check, quick and asking its brain nothing, refuses them as a conversation would. @returns {Promise<boolean>} */
-  const thinksAloud = () => new Promise((done) => execFile(program, [...before, ...THOUGHTS, 'auth', 'status', '--json'], { timeout: 15_000 }, (_, __, stderr) => done(!stderr.includes(THOUGHTS[0]))))
+  /** Whether this Claude Code takes THOUGHTS: its sign-in check, quick and asking its brain nothing, refuses them as a conversation would. @param {string} program @param {string[]} before @returns {Promise<boolean>} */
+  const thinksAloud = (program, before) => new Promise((done) => execFile(program, [...before, ...THOUGHTS, 'auth', 'status', '--json'], { timeout: 15_000 }, (_, __, stderr) => done(!stderr.includes(THOUGHTS[0]))))
 
   /** @param {Session} session */
   function shut(session) {
@@ -909,8 +931,8 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
   async function claudeCode(model, system, tools) {
     const id = randomUUID()
     const mcp = { mcpServers: { jean: { type: 'http', url: `http://127.0.0.1:${port}/session/${id}`, headers: { authorization: `Bearer ${key}` } } } }
-    const { env, helpers } = await reach()
-    const thoughts = await thinksAloud() ? THOUGHTS : []
+    const [{ env, helpers }, { program = 'claude', before }] = await Promise.all([reach(), whereIs('claude')])
+    const thoughts = await thinksAloud(program, before) ? THOUGHTS : []
     const child = spawn(program, [...before, '-p', '--input-format', 'stream-json', '--output-format', 'stream-json', '--verbose', '--include-partial-messages',
       '--model', model, '--system-prompt', system, '--tools', '', '--strict-mcp-config', '--mcp-config', JSON.stringify(mcp), '--allowedTools', 'mcp__jean',
       '--setting-sources', '', '--settings', JSON.stringify(helpers), '--disable-slash-commands', '--no-session-persistence', ...thoughts], { cwd: temp, env: { ...env, MCP_TOOL_TIMEOUT: String(24 * 3_600_000) } })
@@ -966,9 +988,9 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
     await mkdir(dirname(join(dir, file)), { recursive: true })
     await writeFile(join(dir, file), prompt)
     const only = tools.map((/** @type {any} */ tool) => `jean-${tool.name}`).join(',') || 'jean-'
-    const child = agent === 'copilot'
-      ? spawn(copilotProgram, [...copilotBefore, '--acp', '--model', model, `--available-tools=${only}`, '--allow-tool=jean', '--disable-builtin-mcps', '--no-ask-user'], { cwd: dir })
-      : spawn(agyProgram, [...agyBefore, 'acp', '--agent', AGENT, '--process-per-session', '--disable-telemetry'], { cwd: dir })
+    const { program = CLIS[agent].command, before } = await whereIs(agent)
+    const child = spawn(program, [...before, ...(agent === 'copilot' ? ['--acp', '--model', model, `--available-tools=${only}`, '--allow-tool=jean', '--disable-builtin-mcps', '--no-ask-user']
+      : ['acp', '--agent', AGENT, '--process-per-session', '--disable-telemetry'])], { cwd: dir })
     const stopped = `${agent === 'copilot' ? 'Copilot' : 'Antigravity'} stopped.`
     /** What it said, thought, called and ended with, as they come. @type {any[]} */
     const queue = []
@@ -1099,8 +1121,9 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
   async function here(agent) {
     const kept = seen[agent]
     if (kept && Date.now() - kept.at < MODELS_MS) return kept.models
-    const child = agent === 'copilot' ? spawn(copilotProgram, [...copilotBefore, '--acp', '--disable-builtin-mcps'], { cwd: temp })
-      : spawn(agyProgram, [...agyBefore, 'acp', '--disable-telemetry'], { cwd: temp })
+    const { program, before } = await whereIs(agent)
+    if (!program) return null
+    const child = spawn(program, [...before, ...CLIS[agent].acp ?? []], { cwd: temp })
     const request = acp(/** @type {any} */ (child), () => undefined)
     const found = await Promise.race([new Promise((done) => setTimeout(() => done(null), 30_000)), (async () => {
       if ((await request('initialize', { protocolVersion: 1, clientCapabilities: {} })).error) return null
@@ -1112,6 +1135,48 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
     child.kill()
     if (found) seen[agent] = { at: Date.now(), models: found }
     return /** @type {object[] | false | null} */ (found)
+  }
+
+  /** Each CLI's sign-in under way, which another takes the place of, as when the person closed its page. @type {Partial<Record<Cli, import('node:child_process').ChildProcess>>} */
+  const signing = {}
+
+  /**
+   * A plan's CLI (D767, D768), as the person would get it in a terminal: installed with its maker's own installer, from
+   * the address Jean gives, in a session of its own, so that no terminal the bridge runs in is asked anything (Copilot's asks
+   * whether to change PATH); or signed in with its maker's own sign-in (CLIS), which opens their page in the person's browser
+   * and waits for them, the tokens the CLI's alone; asked again meanwhile, a new sign-in takes its place.
+   * @param {{ name?: string, install?: boolean, url?: string }} args @returns {Promise<{ installed: true } | { signedIn: true }>}
+   */
+  async function setUp({ name, install, url }) {
+    const cli = /** @type {Cli} */ (name)
+    if (!Object.hasOwn(CLIS, cli)) throw new Error('Which CLI: claude, copilot or antigravity?')
+    const { title, acp: speaks, signIn } = CLIS[cli]
+    delete seen[/** @type {Speaker} */ (cli)]
+    if (install) {
+      if (!/^https?:\/\//.test(String(url))) throw new Error("The installer's address is needed.")
+      await new Promise((done, failed) => execFile('bash', ['-c', 'set -o pipefail; curl -fsSL "$1" | bash', 'install', String(url)], { cwd: homedir(), timeout: INSTALL_MS, maxBuffer: KEPT, detached: true },
+        (error, stdout, stderr) => (error ? failed(new Error(`${title} wasn't installed: ${`${stdout}${stderr}`.replace(ESCAPES, '').trim().slice(-2000) || error.message}`)) : done(undefined))))
+      if (!(await whereIs(cli)).program) throw new Error(`${title} was installed, but isn't where the bridge looks for it.`)
+      return { installed: true }
+    }
+    const { program, before } = await whereIs(cli)
+    if (!program) throw new Error(`${title} is not installed on this computer.`)
+    signing[cli]?.kill()
+    const child = signing[cli] = spawn(program, [...before, ...signIn ?? speaks ?? []], { cwd: temp })
+    let said = ''
+    child.stderr.on('data', (chunk) => { said = (said + chunk).slice(-2000) })
+    const request = acp(/** @type {any} */ (child), () => undefined)
+    try {
+      const done = await Promise.race([signIn ? new Promise((ended) => child.on('close', (code) => ended(code === 0 ? {} : { error: { message: said.replace(ESCAPES, '').trim() } })))
+        : request('initialize', { protocolVersion: 1, clientCapabilities: {} }).then((begun) => (begun.result?.authMethods?.some((/** @type {any} */ method) => method.id === GOOGLE)
+          ? request('authenticate', { methodId: GOOGLE }) : { error: { message: begun.error?.message || 'Antigravity CLI offers no sign-in with Google.' } })),
+      new Promise((settle) => setTimeout(() => settle({ error: { message: `The sign-in to ${title} took too long.` } }), SIGN_IN_MS).unref())])
+      if (done.error) throw new Error(done.error.message || `${title} ended before the sign-in did: another took its place, or it stopped.`)
+      return { signedIn: true }
+    } finally {
+      child.kill()
+      if (signing[cli] === child) delete signing[cli]
+    }
   }
 
   /**
@@ -1366,6 +1431,10 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
           ...(params.arguments?.chatgpt && { chatgpt: await planned() }) }
         return { content: [{ type: 'text', text: JSON.stringify(about) }], structuredContent: about }
       }
+      if (method === 'tools/call' && params?.name === 'cli') {
+        return setUp(params.arguments ?? {}).then((done) => ({ content: [{ type: 'text', text: JSON.stringify(done) }], structuredContent: done }),
+          (error) => ({ content: [{ type: 'text', text: String(error?.message ?? error) }], isError: true }))
+      }
       if (method === 'tools/call' && params?.name === 'chatgpt') {
         if (params.arguments?.out) return signOut().then(() => ({ content: [{ type: 'text', text: 'Signed out of ChatGPT.' }] }))
         return signIn(params.arguments ?? {}).then((url) => ({ content: [{ type: 'text', text: url }], structuredContent: { url } }),
@@ -1469,7 +1538,9 @@ export async function main(argv) {
   if (platform() === 'win32') throw new Error('The bridge needs bash: on Windows, run it in WSL.')
   // The browser it drives, when it isn't one of those it looks for, or not where they usually are; empty, none (D746).
   const browser = process.env.JEAN_BROWSER === undefined ? undefined : [process.env.JEAN_BROWSER]
-  const work = await bridge({ folder: resolve(values.folder ?? process.cwd()), origins: values.origin, key, port, browser })
+  // A plan's CLI, when it isn't where the bridge looks for it, or not yet: where it is, or goes (JEAN_CLAUDE, JEAN_COPILOT, JEAN_ANTIGRAVITY).
+  const clis = Object.fromEntries(Object.keys(CLIS).map((cli) => [cli, [process.env[`JEAN_${cli.toUpperCase()}`] || []].flat()]))
+  const work = await bridge({ folder: resolve(values.folder ?? process.cwd()), origins: values.origin, key, port, browser, ...clis })
   const server = createServer((req, res) => work.handle(req, res).catch((error) => { if (!res.headersSent) res.writeHead(500).end(String(error?.message ?? error)) }))
   await new Promise((ready, failed) => server.once('error', failed).listen(port, '127.0.0.1', () => ready(undefined)))
   console.log(`Jean runs commands in ${work.folder} on this computer, while this runs. Ctrl+C stops it, and what it started.`)

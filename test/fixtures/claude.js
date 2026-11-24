@@ -7,9 +7,10 @@
 // turn; "limit" ends as a plan's limit does; "gateway" tells where it would send its requests and the
 // settings it was given; "hold <file>" makes the file and answers once it is gone; "think it over" thinks first,
 // its thought in words only when --thinking-display asks for them; anything else is echoed with what came with it.
-// CLAUDE_SIGNED_OUT=1 plays one not signed in; CLAUDE_OLD=1 one too old to know --thinking-display, which it refuses;
-// CLAUDE_PLAN its plan on claude.ai (max without it).
-import { existsSync } from 'node:fs'
+// CLAUDE_SIGNED_OUT=1 plays one not signed in, or, naming a file, while it is there: `auth login` removes it, as a sign-in in
+// the browser leaves Claude Code's credentials, and CLAUDE_DECLINED plays one the person left; CLAUDE_OLD=1 one too old to know
+// --thinking-display, which it refuses; CLAUDE_PLAN its plan on claude.ai (max without it).
+import { existsSync, rmSync } from 'node:fs'
 import { writeFile } from 'node:fs/promises'
 import { createInterface } from 'node:readline'
 import { parseArgs } from 'node:util'
@@ -19,9 +20,17 @@ if (process.env.CLAUDE_OLD && argv.includes('--thinking-display')) {
   console.error("error: unknown option '--thinking-display'")
   process.exit(1)
 }
+const signedOut = process.env.CLAUDE_SIGNED_OUT
+if (argv[1] === 'login') {
+  if (process.env.CLAUDE_DECLINED) console.error("Couldn't log in: the sign-in was cancelled.")
+  else if (signedOut && signedOut !== '1') rmSync(signedOut, { force: true })
+  console.log('Login successful.')
+  process.exit(process.env.CLAUDE_DECLINED ? 1 : 0)
+}
 if (argv.slice(0, 3).includes('auth')) {
-  console.log(JSON.stringify({ loggedIn: !process.env.CLAUDE_SIGNED_OUT, authMethod: 'claude.ai', apiProvider: 'firstParty', subscriptionType: process.env.CLAUDE_PLAN ?? 'max' }))
-  process.exit(process.env.CLAUDE_SIGNED_OUT ? 1 : 0)
+  const out = signedOut === '1' || Boolean(signedOut) && existsSync(String(signedOut))
+  console.log(JSON.stringify({ loggedIn: !out, authMethod: 'claude.ai', apiProvider: 'firstParty', subscriptionType: process.env.CLAUDE_PLAN ?? 'max' }))
+  process.exit(out ? 1 : 0)
 }
 const { values } = parseArgs({ args: argv, strict: false, options: { model: { type: 'string' }, 'system-prompt': { type: 'string' }, 'mcp-config': { type: 'string' }, tools: { type: 'string' }, settings: { type: 'string' }, 'thinking-display': { type: 'string' } } })
 const server = JSON.parse(String(values['mcp-config'])).mcpServers.jean

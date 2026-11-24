@@ -7,7 +7,10 @@
 // to make it and makes it over the MCP server session/new names, then answers with what it says and whether its command
 // was allowed; "limit" ends as a plan's quota does; anything else is echoed with what came with it, and the results the
 // session holds. A prompt that comes while another is answered is taken into that turn (a steer); session/cancel ends
-// the turn, cancelled, keeping only the results it had. ANTIGRAVITY_SIGNED_OUT=1 plays one not signed in.
+// the turn, cancelled, keeping only the results it had. ANTIGRAVITY_SIGNED_OUT names a file: while it is there, it plays one
+// not signed in, and `authenticate` with Google removes it, as a sign-in in the browser leaves Antigravity's credentials;
+// ANTIGRAVITY_DECLINED plays one whose sign-in the person left.
+import { existsSync, rmSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { createInterface } from 'node:readline'
@@ -112,7 +115,7 @@ createInterface({ input: process.stdin }).on('line', (line) => {
     const authMethods = [{ id: 'oauth-personal', name: 'Log in with Google' }, { id: 'gemini-api-key', name: 'Gemini API key' }]
     out({ id, result: { protocolVersion: 1, agentCapabilities: { loadSession: true, mcpCapabilities: { http: true } }, agentInfo: { name: 'Antigravity ACP Server' }, authMethods } })
   } else if (method === 'session/new') {
-    if (process.env.ANTIGRAVITY_SIGNED_OUT) return out({ id, error: { code: -32000, message: 'Authentication required' } })
+    if (process.env.ANTIGRAVITY_SIGNED_OUT && existsSync(process.env.ANTIGRAVITY_SIGNED_OUT)) return out({ id, error: { code: -32000, message: 'Authentication required' } })
     const server = params.mcpServers?.[0]
     if (server?.type === 'http' && !values['process-per-session']) return out({ id, error: { code: -32602, message: 'HTTP MCP servers need --process-per-session' } })
     if (values.agent && !params.mcpServers.length) return out({ id, error: { code: -32602, message: 'A session of an agent of its own needs its tools' } })
@@ -124,6 +127,10 @@ createInterface({ input: process.stdin }).on('line', (line) => {
     if (!session || params.configId !== 'model' || !CHOICES.includes(params.value)) return out({ id, error: { code: -32602, message: `Unknown model: ${params.value}` } })
     session.model = params.value
     out({ id, result: { configOptions: [{ ...MODELS, currentValue: params.value }] } })
+  } else if (method === 'authenticate') {
+    if (params.methodId !== 'oauth-personal' || process.env.ANTIGRAVITY_DECLINED) return out({ id, error: { code: -32603, message: 'The sign-in was cancelled.' } })
+    if (process.env.ANTIGRAVITY_SIGNED_OUT) rmSync(process.env.ANTIGRAVITY_SIGNED_OUT, { force: true })
+    out({ id, result: {} })
   } else if (method === 'session/cancel') sessions.get(params.sessionId)?.turn?.abort()
   else if (method === 'session/close') out({ id, result: {} })
   else if (method === 'session/prompt') prompt(id, params)

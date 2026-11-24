@@ -7,7 +7,7 @@
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { app } from '../../ui/state.js'
-import { openSettings, pageOpen } from '../../ui/dialogs.js'
+import { openSettings, pageOpen, goPage } from '../../ui/dialogs.js'
 import { here } from '../../ui/opfs.js'
 import { COLOURS } from '../../ui/touches.js'
 import { VAULT, vaultKey, unseal, slotKey, deviceKey } from '../../ui/seal.js'
@@ -27,10 +27,8 @@ const idOf = (dir) => dir.slice(9, 35)
 
 /** Opens the list ('') or a page, the keyboard on its title, or back on the list on the profile's row. @param {string} to */
 function go(to) {
-  const from = pageOpen()
-  app.section.value = to ? `profiles/${to}` : 'profiles'
   changing.value = null
-  requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector(to ? '.profile-head h2' : `[data-profile="${from}"]`))?.focus())
+  goPage('profiles', to, '.profile-head h2', 'data-profile')
 }
 
 /** Settings › Profiles: the list, or the page open. */

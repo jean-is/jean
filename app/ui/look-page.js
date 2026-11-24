@@ -14,7 +14,7 @@ import { app, effective, theme, setTheme, setLook, chosenLook, SHORTCUTS } from 
 import { mine } from './opfs.js'
 import { LOOKS, OWN, baseOf, offeredLooks, touched } from './looks.js'
 import { FONTS, SIZES, COLOURS } from './touches.js'
-import { lockedBy, valueOf, pageOpen } from './dialogs.js'
+import { lockedBy, valueOf, pageOpen, goPage } from './dialogs.js'
 import { slots } from './caps.js'
 import { backwards, keyNames, lookName } from './inbox.js'
 import { t, intlLocales, useStrings } from '../core/i18n.js'
@@ -30,10 +30,7 @@ const [starter] = await Promise.all([fetch(new URL('touches.css', import.meta.ur
 // The page open (pageOpen()): css, or '' for the section.
 
 /** Opens the section or the CSS's page, the keyboard on its title, or back on the row it came from. @param {string} to */
-function go(to) {
-  app.section.value = to ? `appearance/${to}` : 'appearance'
-  requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector(to ? '.look-head h2' : '[data-page="css"]'))?.focus())
-}
+const go = (/** @type {string} */ to) => goPage('appearance', to, '.look-head h2')
 
 /**
  * Motion and contrast on this device: less or full, usual or more, as the user asked, or Auto, null, what the device asks. Motion is kept

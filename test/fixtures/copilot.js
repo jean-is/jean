@@ -6,11 +6,20 @@
 // the MCP server session/new names, as Copilot does, then answers with what it says; "limit" ends as a
 // plan's limit does; anything else is echoed with what came with it, and the results the session holds.
 // A prompt that comes while another is answered ends that one, cancelled, which keeps only the results
-// it had. COPILOT_SIGNED_OUT=1 plays one not signed in.
+// it had. COPILOT_SIGNED_OUT=1 plays one not signed in, or, naming a file, while it is there: `copilot login`, the sign-in its
+// ACP server offers as a command to run, removes it, as a sign-in in the browser leaves its token, and COPILOT_DECLINED plays one
+// the person left.
+import { existsSync, rmSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
 import { createInterface } from 'node:readline'
 import { parseArgs } from 'node:util'
 
+const signedOut = process.env.COPILOT_SIGNED_OUT
+if (process.argv[2] === 'login') {
+  if (process.env.COPILOT_DECLINED) console.error('Error: the authorization was denied.')
+  else if (signedOut && signedOut !== '1') rmSync(signedOut, { force: true })
+  process.exit(process.env.COPILOT_DECLINED ? 1 : 0)
+}
 const { values } = parseArgs({ args: process.argv.slice(2), strict: false, options: { model: { type: 'string' }, 'available-tools': { type: 'string' } } })
 const out = (/** @type {object} */ message) => process.stdout.write(`${JSON.stringify({ jsonrpc: '2.0', ...message })}\n`)
 /** @typedef {{ cwd: string, server: any, noticed?: boolean, results: string[], turn?: AbortController, ended?: Promise<void> }} Session */
@@ -71,9 +80,11 @@ async function prompt(id, params) {
 
 createInterface({ input: process.stdin }).on('line', (line) => {
   const { id, method, params } = JSON.parse(line)
-  if (method === 'initialize') out({ id, result: { protocolVersion: 1, agentCapabilities: { mcpCapabilities: { http: true } }, authMethods: [] } })
-  else if (method === 'session/new') {
-    if (process.env.COPILOT_SIGNED_OUT) {
+  if (method === 'initialize') {
+    const authMethods = [{ id: 'copilot-login', name: 'Log in with Copilot CLI', _meta: { 'terminal-auth': { command: process.argv[1], args: ['login'], label: 'Copilot Login' } } }]
+    out({ id, result: { protocolVersion: 1, agentCapabilities: { mcpCapabilities: { http: true } }, authMethods } })
+  } else if (method === 'session/new') {
+    if (signedOut === '1' || Boolean(signedOut) && existsSync(String(signedOut))) {
       return out({ id, error: { code: -32000, message: 'Authentication required' } })
     }
     const sessionId = `s${sessions.size + 1}`

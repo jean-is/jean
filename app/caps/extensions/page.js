@@ -6,7 +6,7 @@
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { app, notify, updateSettings } from '../../ui/state.js'
-import { pageOpen, openSettings } from '../../ui/dialogs.js'
+import { pageOpen, openSettings, goPage } from '../../ui/dialogs.js'
 import { join } from '../../core/fs.js'
 import { t, locale } from '../../core/i18n.js'
 import { BRAND } from '../../brand.js'
@@ -34,11 +34,9 @@ const name = BRAND.name
 
 /** Opens the list ('') or a page, the keyboard on its title, or back on the list on the extension's row. @param {string} to */
 function go(to) {
-  const from = pageOpen()
   if (to !== 'read') reading.value = null
   removing.value = ''
-  app.section.value = to ? `extensions/${to}` : 'extensions'
-  requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector(to ? '.data-head h2[tabindex]' : `[data-extension="${from}"]`))?.focus())
+  goPage('extensions', to, '.data-head h2[tabindex]', 'data-extension')
 }
 
 // ─── Adding, changing, removing ──────────────────────────────────────────────

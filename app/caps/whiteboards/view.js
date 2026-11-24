@@ -94,9 +94,7 @@ customElements.define('app-whiteboard', class extends HTMLElement {
   /** @type {{ row: string, from: { x: number, y: number }, x: number, y: number } | null} */
   #moving = null
   #said = ''
-  /** The drawn line on its way, in board units, and the box being drawn around notes. @type {number[] | null} */
-  #stroke = null
-  /** @type {{ x: number, y: number, w: number, h: number } | null} */
+  /** The box being drawn around notes, in board units. @type {{ x: number, y: number, w: number, h: number } | null} */
   #box = null
   /** Where the next press puts what a tool makes, said by the menu's Move here; what an arrow being drawn starts from. @type {string | null} */
   #moveHere = null
@@ -464,7 +462,6 @@ customElements.define('app-whiteboard', class extends HTMLElement {
   /** A line drawn while Draw is pressed, kept as points from its own corner, thinned, once it is finished. @param {PointerEvent} event @param {HTMLElement} board @param {{ x: number, y: number }} at */
   #draw(event, board, at) {
     const points = [Math.round(at.x), Math.round(at.y)]
-    this.#stroke = points
     const lo = { x: at.x, y: at.y }, hi = { x: at.x, y: at.y }
     const move = (/** @type {PointerEvent} */ next) => {
       const p = this.#point(next), [x, y] = points.slice(-2)
@@ -477,7 +474,6 @@ customElements.define('app-whiteboard', class extends HTMLElement {
     board.addEventListener('pointermove', move)
     board.addEventListener('pointerup', async () => {
       board.removeEventListener('pointermove', move)
-      this.#stroke = null
       this.#live('')
       if (points.length < 4) return
       const xs = points.filter((_, i) => i % 2 === 0), ys = points.filter((_, i) => i % 2), x = Math.min(...xs), y = Math.min(...ys)

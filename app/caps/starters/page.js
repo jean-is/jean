@@ -7,7 +7,7 @@ import { html, nothing } from 'lit-html'
 import { effect } from '@preact/signals-core'
 import { app } from '../../ui/state.js'
 import { loaded } from '../../ui/caps.js'
-import { sectionOpen, pageOpen, lockedBy, valueOf as value } from '../../ui/dialogs.js'
+import { sectionOpen, pageOpen, lockedBy, valueOf as value, goPage } from '../../ui/dialogs.js'
 import { fresh, worded } from './learn.js'
 import { t, useStrings, intlLocales, locale } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
@@ -21,11 +21,7 @@ const projects = () => (loaded.value.has('projects') ? app.projects.value.filter
 effect(() => { if (app.dialog.value === 'settings' && sectionOpen() === 'starters') for (const project of projects()) void read(fileOf(project)) })
 
 /** Opens the list ('') or a list's page, the keyboard on its title, or back on its row. @param {string} to */
-function go(to) {
-  const from = pageOpen()
-  app.section.value = to ? `starters/${to}` : 'starters'
-  requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector(to ? '.starters-head h2' : `[data-list="${from}"]`))?.focus())
-}
+const go = (/** @type {string} */ to) => goPage('starters', to, '.starters-head h2', 'data-list')
 
 /** Settings' Ideas: how they are chosen and the lists, a list's page, or the organisation's alone. */
 export function section() {

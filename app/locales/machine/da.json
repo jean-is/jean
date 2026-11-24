@@ -6,7 +6,7 @@
   "machine.always": "Tillad altid i {folder}",
   "machine.app": "Kommandoer kan også køre på denne computer, med dens egne programmer og servere, i en mappe, du vælger: opgaver med den mappe kører så deres kommandoer dér.",
   "machine.choose": "Vælg en mappe…",
-  "machine.failed": "Det startede ikke: det kræver Node.js på denne computer, kommandoen node, som en terminal kører.",
+  "machine.failed": "Det startede ikke: Node.js, som det kører på, kunne ikke hentes. Tjek, at denne computer er online, og vælg så mappen igen.",
   "machine.on.app": "Opgaver med mappen {folder} kører deres kommandoer på denne computer, hver efter at du er blevet spurgt.",
   "machine.lede": "Opgaver bruger sandkassen, undtagen dem i den mappe, du forbinder på denne computer.",
   "machine.off": "Ikke forbundet",

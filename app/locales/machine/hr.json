@@ -6,7 +6,7 @@
   "machine.always": "Uvijek dopusti u mapi {folder}",
   "machine.app": "Naredbe se mogu pokretati i na ovom računalu, s njegovim programima i poslužiteljima, u mapi koju odaberete: zadaci s tom mapom tada ondje pokreću svoje naredbe.",
   "machine.choose": "Odaberi mapu…",
-  "machine.failed": "Nije se pokrenulo: na ovom računalu potreban je Node.js, naredba node koju pokreće terminal.",
+  "machine.failed": "Nije se pokrenulo: Node.js, na kojem radi, nije bilo moguće preuzeti. Provjerite ima li ovo računalo internetsku vezu, zatim ponovno odaberite mapu.",
   "machine.on.app": "Zadaci s mapom {folder} pokreću svoje naredbe na ovom računalu, svaku nakon pitanja.",
   "machine.lede": "Zadaci koriste izolirano okruženje, osim onih u mapi koju povežete na ovom računalu.",
   "machine.off": "Nije povezano",

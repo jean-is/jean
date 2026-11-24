@@ -6,7 +6,7 @@
   "machine.always": "Consenti sempre in {folder}",
   "machine.app": "I comandi possono girare anche su questo computer, con i suoi programmi e server, in una cartella che scegli: le attività con quella cartella eseguono lì i loro comandi.",
   "machine.choose": "Scegli una cartella…",
-  "machine.failed": "Non è partito: serve Node.js su questo computer, il comando node che si usa in un terminale.",
+  "machine.failed": "Non è partito: non è stato possibile scaricare Node.js, su cui funziona. Controlla che questo computer sia online, poi scegli di nuovo la cartella.",
   "machine.on.app": "Le attività con la cartella {folder} eseguono i loro comandi su questo computer, chiedendotelo ogni volta.",
   "machine.lede": "Le attività usano il computer isolato dentro questa scheda, tranne quelle nella cartella che colleghi su questo computer.",
   "machine.off": "Non collegato",

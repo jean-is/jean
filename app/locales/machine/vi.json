@@ -6,7 +6,7 @@
   "machine.always": "Luôn cho phép trong {folder}",
   "machine.app": "Lệnh cũng có thể chạy trên máy tính này, với chương trình và máy chủ của chính nó, trong một thư mục bạn chọn: các nhiệm vụ có thư mục ấy sẽ chạy lệnh ở đó.",
   "machine.choose": "Chọn thư mục…",
-  "machine.failed": "Không khởi động được: máy tính này cần có Node.js, tức lệnh node trong terminal.",
+  "machine.failed": "Không khởi động được: không tải được Node.js, phần mềm mà nó cần để chạy. Hãy kiểm tra xem máy tính này có mạng không, rồi chọn lại thư mục.",
   "machine.on.app": "Các nhiệm vụ có thư mục {folder} chạy lệnh trên máy tính này, mỗi lệnh đều hỏi trước.",
   "machine.lede": "Các nhiệm vụ dùng môi trường biệt lập, trừ những nhiệm vụ trong thư mục bạn kết nối trên máy tính này.",
   "machine.off": "Chưa kết nối",

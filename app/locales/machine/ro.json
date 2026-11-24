@@ -6,7 +6,7 @@
   "machine.always": "Permite întotdeauna în {folder}",
   "machine.app": "Comenzile pot rula și pe acest computer, cu propriile programe și servere, într-un dosar pe care îl alegeți: sarcinile cu acel dosar își rulează apoi comenzile acolo.",
   "machine.choose": "Alegeți un dosar…",
-  "machine.failed": "Nu a pornit: are nevoie de Node.js pe acest computer, comanda node pe care o rulează un terminal.",
+  "machine.failed": "Nu a pornit: Node.js, pe care rulează, nu a putut fi descărcat. Verificați dacă acest computer este online, apoi alegeți din nou dosarul.",
   "machine.on.app": "Sarcinile cu dosarul {folder} își rulează comenzile pe acest computer, fiecare după ce vă întreabă.",
   "machine.lede": "Sarcinile folosesc mediul izolat, cu excepția celor din dosarul pe care îl conectați pe acest computer.",
   "machine.off": "Neconectat",

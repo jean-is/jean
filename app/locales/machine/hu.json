@@ -6,7 +6,7 @@
   "machine.always": "Mindig engedem ebben a mappában: {folder}",
   "machine.app": "A parancsok ezen a számítógépen is futhatnak, a saját programjaival és szervereivel, egy általad választott mappában: az azt a mappát használó feladatok ott futtatják a parancsaikat.",
   "machine.choose": "Mappa kiválasztása…",
-  "machine.failed": "Nem indult el: Node.js kell hozzá ezen a számítógépen, a node parancs, amelyet egy terminál futtat.",
+  "machine.failed": "Nem indult el: a Node.js-t, amelyen fut, nem sikerült letölteni. Ellenőrizd, hogy van-e internet ezen a számítógépen, majd válaszd ki újra a mappát.",
   "machine.on.app": "A(z) {folder} mappát használó feladatok ezen a számítógépen futtatják a parancsaikat, mindegyik előtt kérdezve.",
   "machine.lede": "A feladatok a homokozót használják, kivéve azokat, amelyek az ezen a számítógépen csatlakoztatott mappában vannak.",
   "machine.off": "Nincs csatlakoztatva",

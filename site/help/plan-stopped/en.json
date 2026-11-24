@@ -24,8 +24,8 @@
   ],
   "fixes": [
     [
-      "The terminal says node isn’t found",
-      "The line needs Node.js, a free program, on your computer. Install it from nodejs.org, then open a new terminal and paste the line again."
+      "The terminal says Node.js couldn’t be fetched",
+      "The first time, the line fetches Node.js, the free program it runs on, when your computer has none. If your computer was offline, paste the line again once it’s back online. If it still fails, install Node.js from nodejs.org, then open a new terminal and paste the line again."
     ],
     [
       "The line runs, and your plan still can’t be reached",

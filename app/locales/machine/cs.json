@@ -6,7 +6,7 @@
   "machine.always": "Vždy povolit ve složce {folder}",
   "machine.app": "Příkazy mohou běžet i v tomto počítači, s jeho vlastními programy a servery, ve složce, kterou vyberete: úkoly s touto složkou pak spouštějí své příkazy tam.",
   "machine.choose": "Vybrat složku…",
-  "machine.failed": "Nespustilo se: potřebuje v tomto počítači Node.js, příkaz node, který terminál spouští.",
+  "machine.failed": "Nespustilo se: nepodařilo se stáhnout Node.js, na kterém běží. Zkontrolujte, že je tento počítač připojený k internetu, a pak znovu vyberte složku.",
   "machine.on.app": "Úkoly se složkou {folder} spouštějí své příkazy v tomto počítači, na každý se nejdřív zeptají.",
   "machine.lede": "Úkoly používají izolované prostředí, kromě těch ve složce, kterou v tomto počítači připojíte.",
   "machine.off": "Nepřipojeno",

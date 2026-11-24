@@ -6,7 +6,7 @@
   "machine.always": "Permitir sempre em {folder}",
   "machine.app": "Os comandos também podem correr neste computador, com os seus próprios programas e servidores, numa pasta que escolhes: as tarefas com essa pasta executam lá os seus comandos.",
   "machine.choose": "Escolher uma pasta…",
-  "machine.failed": "Não arrancou: precisa do Node.js neste computador, o comando node que um terminal executa.",
+  "machine.failed": "Não arrancou: não foi possível descarregar o Node.js, de que precisa para funcionar. Verifica se este computador tem internet e depois escolhe a pasta de novo.",
   "machine.on.app": "As tarefas com a pasta {folder} executam os seus comandos neste computador, cada um perguntado antes.",
   "machine.lede": "As tarefas usam o computador isolado dentro deste separador, exceto as da pasta que ligares neste computador.",
   "machine.off": "Não ligado",

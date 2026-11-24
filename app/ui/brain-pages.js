@@ -52,8 +52,8 @@ async function ask(brain) {
   }
 }
 
-/** What a way to add a brain says back: connecting, or why it didn't. */
-const status = signal(/** @type {{ way: string, kind: 'busy' | 'error', message: string } | null} */ (null))
+/** What a way to add a brain says back: connecting, a step to take, with its button, or why it didn't. */
+const status = signal(/** @type {{ way: string, kind: 'busy' | 'info' | 'error', message: string, act?: { label: string, run: () => void } } | null} */ (null))
 
 /** What a brain that can't answer says, its service named, as a conversation would. @param {BrainConfig} brain */
 const said = (brain) => t(`error.${troubles.value[brain.id]}`, { brain: describe(brain).name, origin: location.origin })
@@ -160,20 +160,32 @@ effect(() => { const wait = starting.value; if (wait?.machine.bridge.value.on) u
 
 /**
  * A plan's brain, through This computer (D235, D262, D756), started first from the plan's own way, which goes on by itself
- * once it runs. Claude Code, Copilot and Antigravity are the user's own, signed in on it; ChatGPT is signed in to first, the
- * page going there and back.
- * @param {keyof typeof PLANNED} id
+ * once it runs. Claude Code, Copilot CLI and Antigravity CLI the bridge installs, once asked, and signs in with their maker,
+ * after which it isn't asked again (D767, D768); ChatGPT is signed in to first, the page going there and back.
+ * @param {keyof typeof PLANNED} id @param {boolean} [signed] its CLI was just signed in
  */
-async function connectPlan(id) {
+async function connectPlan(id, signed = false) {
   const provider = PLANNED[id]
   status.value = { way: id, kind: 'busy', message: t('brain.connecting') }
   const machine = await unlock('machine') && await import('../caps/machine/machine.js')
   const found = machine && await machine.plan(provider)
-  if (machine && found && !found.ready && !found.old && id === 'chatgpt') return machine.chatgptSignIn().then(leave, () => { status.value = { way: id, kind: 'error', message: t('brain.chatgpt.failed') } })
-  status.value = found && !found.ready ? { way: id, kind: 'error', message: t(found.old ? 'brain.claude.restart' : `brain.${id}.missing`, { computer: t('cap.machine.name') }) } : null
   starting.value = machine && !found ? { id, machine } : null
+  if (machine && found && !found.ready && !found.old && id === 'chatgpt') return machine.chatgptSignIn().then(leave, () => { status.value = { way: id, kind: 'error', message: t('brain.chatgpt.failed') } })
+  if (machine && found && !found.ready && !found.old) return void (found.here === false && !signed ? readyPlan(machine, id, false) : status.value = found.here === false ? { way: id, kind: 'error', message: t(`brain.${id}.signInFailed`) }
+    : { way: id, kind: 'info', message: t(`brain.${id}.install`), act: machine.installs(provider) ? { label: t(`brain.${id}.installAction`), run: () => readyPlan(machine, id, true) } : undefined })
+  status.value = found && found.old ? { way: id, kind: 'error', message: t('brain.claude.restart', { computer: t('cap.machine.name') }) } : null
   if (!machine) openSettings('computer')
   else if (found && found.ready) attempt(id, t(`provider.${provider}`), () => connectBrain({ provider, baseURL: found.baseURL, apiKey: found.apiKey }))
+}
+
+/**
+ * A plan's CLI installed with its maker's installer, or signed in with its maker in the person's browser, then the plan connected
+ * (D767, D768); what another Connect started meanwhile says on. @param {typeof import('../caps/machine/machine.js')} machine @param {keyof typeof PLANNED} id @param {boolean} install
+ */
+async function readyPlan(machine, id, install) {
+  const mine = status.value = { way: id, kind: install ? 'busy' : 'info', message: t(`brain.${id}.${install ? 'installing' : 'signIn'}`) }
+  const done = await machine.setUp(PLANNED[id], install).then(() => true, (error) => void console.warn(PLANNED[id], error))
+  if (status.peek() === mine) done ? connectPlan(id, !install) : status.value = { way: id, kind: 'error', message: t(`brain.${id}.${install ? 'installFailed' : 'signInFailed'}`) }
 }
 
 /** Back from ChatGPT's sign-in (D262): its way's page, connecting, or saying why it can't. @param {string} outcome signed-in, declined or failed */
@@ -310,7 +322,8 @@ function waysOf(all) {
 const WAYS = ['claude', 'chatgpt', 'gemini', 'copilot', 'key', 'device', 'quick', 'local']
 
 /** What a way said back, under it. @param {string} id */
-const reply = (id) => (status.value?.way === id ? html`<p class="status is-${status.value.kind}" role=${status.value.kind === 'error' ? 'alert' : 'status'}>${status.value.message}</p>` : nothing)
+const reply = (id) => (status.value?.way === id ? html`<p class="status is-${status.value.kind}" role=${status.value.kind === 'error' ? 'alert' : 'status'}>${status.value.message}</p>${status.value.act
+  ? html`<div class="row"><button class="button primary" @click=${status.value.act.run}>${status.value.act.label}</button></div>` : nothing}` : nothing)
 
 /** The ways the first brain's step offers to whoever already pays for a brain or has a key, one open at a time (caps/first). */
 export const ways = () => html`<ul class="list ways">${waysOf(false).map(({ id, icon, title, needs, body }) => html`<li><details name="brain-way" class="way is-${id}" ?open=${status.value?.way === id || starting.value?.id === id}>

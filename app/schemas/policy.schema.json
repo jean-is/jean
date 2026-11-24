@@ -467,6 +467,18 @@
         },
         "kagi": {
           "$ref": "#/$defs/link"
+        },
+        "node": {
+          "$ref": "#/$defs/link"
+        },
+        "claude": {
+          "$ref": "#/$defs/link"
+        },
+        "copilot": {
+          "$ref": "#/$defs/link"
+        },
+        "antigravity": {
+          "$ref": "#/$defs/link"
         }
       },
       "additionalProperties": false
@@ -2185,6 +2197,46 @@
                     ]
                   },
                   "kagi": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/link"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "node": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/link"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "claude": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/link"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "copilot": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/link"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "antigravity": {
                     "anyOf": [
                       {
                         "$ref": "#/$defs/link"

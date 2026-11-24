@@ -6,7 +6,7 @@
   "machine.always": "Permette sempre in {folder}",
   "machine.app": "E cumande ponu dinù girà nant’à st’urdinatore, cù i so prugrammi è servitori, in un cartulare ch’è vo sciglite : i compiti cù quellu cartulare eseguiscenu tandu e so cumande culà.",
   "machine.choose": "Sceglie un cartulare…",
-  "machine.failed": "Ùn s’hè micca avviatu : ci vole Node.js nant’à st’urdinatore, a cumanda node chì un terminale eseguisce.",
+  "machine.failed": "Ùn s’hè micca avviatu : ci vole Node.js per girà, è ùn s’hè micca pussutu scaricà. Verificate chì st’urdinatore sia in linea, po sceglite torna u cartulare.",
   "machine.on.app": "I compiti cù u cartulare {folder} eseguiscenu e so cumande nant’à st’urdinatore, ognuna dumandata prima.",
   "machine.lede": "I compiti impieganu l’urdinatore isulatu di st’unghjetta, fora di quelli in u cartulare ch’è vo cunnettite nant’à st’urdinatore.",
   "machine.off": "Micca cunnessu",

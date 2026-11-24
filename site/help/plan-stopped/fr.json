@@ -24,8 +24,8 @@
   ],
   "fixes": [
     [
-      "Le terminal dit que node est introuvable",
-      "La ligne a besoin de Node.js, un programme gratuit, sur votre ordinateur. Installez-le depuis nodejs.org, puis ouvrez un nouveau terminal et recollez la ligne."
+      "Le terminal dit que Node.js n’a pas pu être téléchargé",
+      "La première fois, la ligne télécharge Node.js, le programme gratuit sur lequel elle tourne, si votre ordinateur ne l’a pas. S’il était hors ligne, recollez la ligne une fois la connexion revenue. Si cela échoue encore, installez Node.js depuis nodejs.org, puis ouvrez un nouveau terminal et recollez la ligne."
     ],
     [
       "La ligne tourne, et votre forfait reste injoignable",

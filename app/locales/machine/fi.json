@@ -6,7 +6,7 @@
   "machine.always": "Salli aina kansiossa {folder}",
   "machine.app": "Komennot voivat toimia myös tällä tietokoneella sen omilla ohjelmilla ja palvelimilla valitsemassasi kansiossa: sitä kansiota käyttävät tehtävät ajavat silloin komentonsa siellä.",
   "machine.choose": "Valitse kansio…",
-  "machine.failed": "Se ei käynnistynyt: se tarvitsee tällä tietokoneella Node.js:n, päätteen ajaman node-komennon.",
+  "machine.failed": "Se ei käynnistynyt: Node.js:ää, jonka varassa se toimii, ei voitu ladata. Tarkista, että tämä tietokone on verkossa, ja valitse sitten kansio uudelleen.",
   "machine.on.app": "Kansiota {folder} käyttävät tehtävät ajavat komentonsa tällä tietokoneella, kustakin ensin kysyen.",
   "machine.lede": "Tehtävät käyttävät hiekkalaatikkoa, paitsi ne, jotka ovat tällä tietokoneella yhdistämässäsi kansiossa.",
   "machine.off": "Ei yhdistetty",

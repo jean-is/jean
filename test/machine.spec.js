@@ -26,6 +26,20 @@ async function pasted(page) {
   return shown.replace(/_KEY=•+/, `_KEY=${key}`)
 }
 
+/**
+ * A plan's CLI not on this computer yet, and its maker's installer, played: it puts the CLI's fixture in the folder's bin, where
+ * JEAN_<NAME> tells the bridge to look; signed out, until its sign-in removes the mark <NAME>_SIGNED_OUT names (D767, D768).
+ * @param {string} disk @param {'claude' | 'copilot' | 'antigravity'} name
+ */
+async function notHere(disk, name) {
+  const program = join(disk, 'bin', name)
+  const site = createServer((_, res) => res.writeHead(200).end(`mkdir -p '${join(disk, 'bin')}' && printf '#!/bin/sh\\nexec "%s" "%s" "$@"\\n' '${process.execPath}' '${fileURLToPath(new URL(`./fixtures/${name}.js`, import.meta.url))}' > '${program}' && chmod +x '${program}'\n`))
+  await new Promise((ready) => site.listen(0, '127.0.0.1', () => ready(undefined)))
+  writeFileSync(join(disk, 'signed-out'), '')
+  const env = { ...process.env, [`JEAN_${name.toUpperCase()}`]: program, [`${name.toUpperCase()}_SIGNED_OUT`]: join(disk, 'signed-out') }
+  return { site, env, url: `http://127.0.0.1:${/** @type {import('node:net').AddressInfo} */ (site.address()).port}/install.sh` }
+}
+
 test('a server refused in the sandbox runs on this computer instead, and shows in the browser', async ({ page, browserName }) => {
   test.setTimeout(120_000)
   // The user's folder on this machine, and the one the browser opens of the same name.
@@ -67,7 +81,8 @@ test('a server refused in the sandbox runs on this computer instead, and shows i
   const part = settings.locator('.machine')
   await expect(part.locator('.machine-steps > li')).toHaveText(['Open a terminal in one of your folders.', /^Paste this line there, then press Enter\./, 'Waiting for the line to run: this page notices by itself.'])
   const line = await pasted(page)
-  expect(line).toMatch(/^curl -fsSL http:\/\/127\.0\.0\.1:\d+\/bridge\/bridge\.js \| JEAN_BRIDGE_KEY=[\w-]+ node --input-type=module -e '.+' -- --port \d+ --origin http:\/\/127\.0\.0\.1:\d+$/)
+  // Node found, or fetched where the computer has none (line.js), then the bridge.
+  expect(line).toMatch(/^curl -fsSL http:\/\/127\.0\.0\.1:\d+\/bridge\/bridge\.js \| JEAN_BRIDGE_KEY=[\w-]+ sh -c '.+' '.+' --port \d+ --origin http:\/\/127\.0\.0\.1:\d+$/)
   // What the terminal fetched runs only if it is what this page was given: another file runs nothing, and says so.
   const another = spawnSync('bash', ['-c', line.replace(/!=="[^"]+"/, '!=="not-this-one"')], { cwd: disk, encoding: 'utf8', timeout: 20_000 })
   expect(another.status).toBe(1)
@@ -214,15 +229,15 @@ test('the browser beside the conversation is this computer’s, whose page the b
   }
 })
 
-// Claude Code (D235): the user's own, signed in with their Claude plan, answers through the bridge; played
-// here by test/fixtures/claude.js, first on the PATH of the terminal the line is pasted in, never the real one.
-test('the user’s Claude plan answers, through Claude Code on this computer', async ({ page }) => {
+// Claude Code (D235): the user's own, signed in with their Claude plan, answers through the bridge; played here by
+// test/fixtures/claude.js, never the real one. It isn't on this computer at first: the bridge installs it with the installer
+// Jean names, played here too, then signs it in with its own `auth login`, as Anthropic's page in the browser would (D768).
+test('the user’s Claude plan answers, through Claude Code on this computer, which Connect installs and signs in', async ({ page }) => {
   test.setTimeout(120_000)
   const disk = mkdtempSync(join(tmpdir(), 'jean-e2e-'))
-  const bin = join(disk, 'bin')
-  mkdirSync(bin)
-  writeFileSync(join(bin, 'claude'), `#!/bin/sh\nexec '${process.execPath}' '${fileURLToPath(new URL('./fixtures/claude.js', import.meta.url))}' "$@"\n`, { mode: 0o755 })
+  const { site, env, url } = await notHere(disk, 'claude')
   await start(page)
+  await page.evaluate(async (claude) => (await import('/ui/state.js')).updateSettings({ urls: { claude } }), url)
   const settings = await openSettings(page, 'Brains')
   // Each way is a page of its own.
   await settings.locator('[data-brain="claude"]').click()
@@ -234,9 +249,12 @@ test('the user’s Claude plan answers, through Claude Code on this computer', a
   await expect(way.locator('.machine-steps')).toContainText('Paste this line there')
   await expect(page).toHaveURL(/#\/settings\/brains\/claude$/)
   const line = await pasted(page)
-  const bridge = spawn('bash', ['-c', line], { cwd: disk, stdio: 'ignore', detached: true, env: { ...process.env, PATH: `${bin}:${process.env.PATH}` } })
+  const bridge = spawn('bash', ['-c', line], { cwd: disk, stdio: 'ignore', detached: true, env })
   try {
-    // The line run, the plan connects by itself: nothing more to press, and a word that it worked.
+    // The line run, Connect goes on by itself: Claude Code isn't here, so it offers to install it.
+    await expect(way.locator('[role="status"]').last()).toHaveText('Claude Code, Anthropic’s program that comes with your plan, isn’t on this computer yet.', { timeout: 20_000 })
+    await way.getByRole('button', { name: 'Install Claude Code' }).click()
+    // Installed, then signed in: nothing more to press, and a word that it worked.
     await expect(settings).toBeHidden({ timeout: 20_000 })
     await expect(page.locator('[role="status"] .toast')).toContainText('Brain connected')
     // Claude Code runs here, but answers from Anthropic's: a brain in the cloud, never a private one.
@@ -253,17 +271,20 @@ test('the user’s Claude plan answers, through Claude Code on this computer', a
     await expect(activity.locator('.thought').last()).toContainText('Weighing it.')
   } finally {
     stop(bridge)
+    site.close()
   }
 })
 
-// Copilot (D262): the user's own Copilot CLI, signed in with their plan, answers through the bridge, over ACP;
-// played here by test/fixtures/copilot.js, first on the PATH of the terminal the line is pasted in.
-test('the user’s Copilot plan answers, through Copilot on this computer', async ({ page }) => {
+// Copilot (D262): the user's own Copilot CLI, signed in with their plan, answers through the bridge, over ACP; played here by
+// test/fixtures/copilot.js, first on the PATH of the terminal the line is pasted in, but signed out: Connect signs it in with
+// `copilot login`, the sign-in its ACP server offers as a command to run, as GitHub's page in the browser would (D768).
+test('the user’s Copilot plan answers, through Copilot on this computer, which Connect signs in', async ({ page }) => {
   test.setTimeout(120_000)
   const disk = mkdtempSync(join(tmpdir(), 'jean-e2e-'))
   const bin = join(disk, 'bin')
   mkdirSync(bin)
   writeFileSync(join(bin, 'copilot'), `#!/bin/sh\nexec '${process.execPath}' '${fileURLToPath(new URL('./fixtures/copilot.js', import.meta.url))}' "$@"\n`, { mode: 0o755 })
+  writeFileSync(join(disk, 'signed-out'), '')
   await start(page)
   const settings = await openSettings(page, 'Brains')
   await settings.locator('[data-brain="copilot"]').click()
@@ -271,7 +292,7 @@ test('the user’s Copilot plan answers, through Copilot on this computer', asyn
   await expect(way).toContainText('GitHub Copilot plan')
   await way.getByRole('button', { name: 'Connect' }).click()
   const line = await pasted(page)
-  const bridge = spawn('bash', ['-c', line], { cwd: disk, stdio: 'ignore', detached: true, env: { ...process.env, PATH: `${bin}:${process.env.PATH}` } })
+  const bridge = spawn('bash', ['-c', line], { cwd: disk, stdio: 'ignore', detached: true, env: { ...process.env, PATH: `${bin}:${process.env.PATH}`, COPILOT_SIGNED_OUT: join(disk, 'signed-out') } })
   try {
     await expect(settings).toBeHidden({ timeout: 20_000 })
     await expect(page.locator('[role="status"] .toast')).toContainText('Brain connected')
@@ -285,22 +306,24 @@ test('the user’s Copilot plan answers, through Copilot on this computer', asyn
 })
 
 // A Gemini plan (D756): the user's own Antigravity CLI, signed in with Google, answers through the bridge, over ACP, as an
-// agent with Jean's prompt; played here by test/fixtures/antigravity.js, first on the PATH of the terminal the line is pasted in.
-test('the user’s Gemini plan answers, through Antigravity on this computer', async ({ page }) => {
+// agent with Jean's prompt; played here by test/fixtures/antigravity.js. It isn't on this computer at first: the bridge
+// installs it with the installer Jean names, played here too, then signs it in, as Google's page in the browser would.
+test('the user’s Gemini plan answers, through Antigravity on this computer, which Connect installs and signs in', async ({ page }) => {
   test.setTimeout(120_000)
   const disk = mkdtempSync(join(tmpdir(), 'jean-e2e-'))
-  const bin = join(disk, 'bin')
-  mkdirSync(bin)
-  writeFileSync(join(bin, 'agy'), `#!/bin/sh\nexec '${process.execPath}' '${fileURLToPath(new URL('./fixtures/antigravity.js', import.meta.url))}' "$@"\n`, { mode: 0o755 })
+  const { site, env, url } = await notHere(disk, 'antigravity')
   await start(page)
+  await page.evaluate(async (antigravity) => (await import('/ui/state.js')).updateSettings({ urls: { antigravity } }), url)
   const settings = await openSettings(page, 'Brains')
   await settings.locator('[data-brain="gemini"]').click()
   const way = settings.locator('.brain-way')
   await expect(way).toContainText('Google AI Pro or Ultra plan')
   await way.getByRole('button', { name: 'Connect' }).click()
   const line = await pasted(page)
-  const bridge = spawn('bash', ['-c', line], { cwd: disk, stdio: 'ignore', detached: true, env: { ...process.env, PATH: `${bin}:${process.env.PATH}` } })
+  const bridge = spawn('bash', ['-c', line], { cwd: disk, stdio: 'ignore', detached: true, env })
   try {
+    await expect(way.locator('[role="status"]').last()).toHaveText('Antigravity CLI, Google’s program for using your plan in other apps, isn’t on this computer yet.', { timeout: 20_000 })
+    await way.getByRole('button', { name: 'Install Antigravity CLI' }).click()
     await expect(settings).toBeHidden({ timeout: 20_000 })
     await expect(page.locator('[role="status"] .toast')).toContainText('Brain connected')
     await expect((await openSettings(page, 'Brains')).locator('.brain-rows button', { hasText: 'Google Antigravity' })).toContainText('In the cloud')
@@ -310,6 +333,7 @@ test('the user’s Gemini plan answers, through Antigravity on this computer', a
     await expect(page.locator('.msg-jean .prose').last()).toContainText(/Heard \(gemini-3\.8-flash, [\s\S]*, jean, no tools\): [\s\S]*hello there/, { timeout: 20_000 })
   } finally {
     stop(bridge)
+    site.close()
   }
 })
 

@@ -337,11 +337,14 @@ export function openSettings(name = 'general') {
 export const sectionOpen = () => app.section.value.split('/')[0]
 /** The page open in the section, or none. */
 export const pageOpen = () => app.section.value.split('/')[1] ?? ''
-/** Opens a section's list ('') or a page, the keyboard on its title, or back on the list on what opened it. @param {string} section @param {string} to */
-export function goPage(section, to) {
+/**
+ * Opens a section's list ('') or a page, the keyboard on its title (`head`), or back on the list on what opened it, the row
+ * its attribute `row` names. @param {string} section @param {string} to @param {string} [head] @param {string} [row]
+ */
+export function goPage(section, to, head = '.data-head h2', row = 'data-page') {
   const from = pageOpen()
   app.section.value = to ? `${section}/${to}` : section
-  requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector(to ? '.data-head h2' : `[data-page="${from}"]`))?.focus())
+  requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector(to ? head : `[${row}="${from}"]`))?.focus())
 }
 
 class Settings extends Element {

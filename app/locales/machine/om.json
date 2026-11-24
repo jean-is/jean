@@ -6,7 +6,7 @@
   "machine.always": "Foldara {folder} keessatti yeroo hunda hayyami",
   "machine.app": "Ajajoonni kompiitara kana irrattis, sagantaa fi sarvaroota isaatiin, foldara ati filattu keessatti hojjechuu danda'u: hojiiwwan foldara sana qaban achitti ajaja isaanii hojjechiisu.",
   "machine.choose": "Foldara filadhu…",
-  "machine.failed": "Hin jalqabne: kompiitara kana irratti Node.js, ajaja node terminaalli hojjechiisu, barbaada.",
+  "machine.failed": "Hin jalqabne: Node.js, inni irratti hojjetu, buufamuu hin dandeenye. Kompiitarri kun interneetii qabaachuu isaa mirkaneessi, achiis foldara irra deebi'ii filadhu.",
   "machine.on.app": "Hojiiwwan foldara {folder} qaban ajaja isaanii kompiitara kana irratti hojjechiisu, tokkoon tokkoon dura gaafatamee.",
   "machine.lede": "Hojiiwwan kompiitara adda ba'e tabii kana keessaa fayyadamu, kanneen foldara ati kompiitara kana irratti walqabsiifte keessa jiran malee.",
   "machine.off": "Hin walqabanne",

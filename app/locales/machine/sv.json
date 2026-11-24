@@ -6,7 +6,7 @@
   "machine.always": "Tillåt alltid i {folder}",
   "machine.app": "Kommandon kan också köras på den här datorn, med dess egna program och servrar, i en mapp du väljer: uppgifter med den mappen kör då sina kommandon där.",
   "machine.choose": "Välj en mapp…",
-  "machine.failed": "Det startade inte: det behöver Node.js på den här datorn, kommandot node som en terminal kör.",
+  "machine.failed": "Det startade inte: Node.js, som det körs på, kunde inte hämtas. Kontrollera att den här datorn är online och välj sedan mappen igen.",
   "machine.on.app": "Uppgifter med mappen {folder} kör sina kommandon på den här datorn, vart och ett efter att du tillfrågats.",
   "machine.lede": "Uppgifter använder sandlådan, utom de i mappen du ansluter på den här datorn.",
   "machine.off": "Inte ansluten",

@@ -6,7 +6,7 @@
   "machine.always": "在 {folder} 中一律允許",
   "machine.app": "指令也可以在這台電腦上執行，用它自己的程式和伺服器，在你選的資料夾裡：之後使用那個資料夾的任務，指令都在那裡執行。",
   "machine.choose": "選擇資料夾…",
-  "machine.failed": "沒有啟動：這台電腦上需要 Node.js，也就是終端機執行的 node 指令。",
+  "machine.failed": "沒有啟動：無法下載它執行所需的 Node.js。請確認這台電腦已連網，然後重新選擇資料夾。",
   "machine.on.app": "使用資料夾 {folder} 的任務會在這台電腦上執行指令，每個都先問你。",
   "machine.lede": "任務都用這個分頁裡隔開的那台電腦，只有你在這台電腦上連接的資料夾裡的任務例外。",
   "machine.off": "未連接",

@@ -6,7 +6,7 @@
   "machine.always": "Vumela njalo efoldeni {folder}",
   "machine.app": "Imiyalo ingaqalisa nakule khompyutha, nezinhlelo namaseva ayo, efoldeni oyikhethayo: imisebenzi enaleyo folda iqalisa imiyalo yayo lapho.",
   "machine.choose": "Khetha ifolda…",
-  "machine.failed": "Akuqalanga: kudinga i-Node.js kule khompyutha, umyalo othi node oqaliswa yitheminali.",
+  "machine.failed": "Akuqalanga: i-Node.js, edingekayo ukuze kusebenze, ayikwazanga ukulandwa. Qinisekisa ukuthi le khompyutha ixhunywe ku-inthanethi, bese ukhetha ifolda futhi.",
   "machine.on.app": "Imisebenzi enefolda {folder} iqalisa imiyalo yayo kule khompyutha, ngamunye ubuzwe kuqala.",
   "machine.lede": "Imisebenzi isebenzisa ikhompyutha ehlukanisiwe kule thebhu, ngaphandle kwaleyo esefoldeni oyixhuma kule khompyutha.",
   "machine.off": "Akuxhunyiwe",

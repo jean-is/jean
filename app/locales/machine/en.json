@@ -6,7 +6,7 @@
   "machine.always": "Always allow in {folder}",
   "machine.app": "Commands can also run on this computer, with its own programs and servers, in a folder you choose: tasks with that folder then run their commands there.",
   "machine.choose": "Choose a folder…",
-  "machine.failed": "It didn’t start: it needs Node.js on this computer, the node command a terminal runs.",
+  "machine.failed": "It didn’t start: Node.js, which it runs on, couldn’t be fetched. Check that this computer is online, then choose the folder again.",
   "machine.on.app": "Tasks with the folder {folder} run their commands on this computer, each asked first.",
   "machine.lede": "Tasks use the walled-off computer in this tab, except those in the folder you connect on this computer.",
   "machine.off": "Not connected",

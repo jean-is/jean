@@ -11,7 +11,7 @@ import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
 import { app, effective, notify, updateSettings, readBody, enterProject, openConversation } from './state.js'
 import { loaded, unlock, isDenied } from './caps.js'
-import { openSettings, setting, pageOpen } from './dialogs.js'
+import { openSettings, setting, pageOpen, goPage } from './dialogs.js'
 import { changeMemory, parseMemory, memoryText, oneLine } from '../core/memory.js'
 import { stringifyFrontMatter } from '../core/settings.js'
 import { dirname, join } from '../core/fs.js'
@@ -94,9 +94,8 @@ export const showRoutine = (path) => openSettings(`routines/${path.split('/').at
 
 /** Opens the section ('') or a page, the keyboard on its title, or back on the row it came from. @param {string} to */
 function go(to) {
-  const from = pageOpen()
-  ;[app.section.value, query.value, editing.value, writing.value] = [to ? `you/${to}` : 'you', '', '', null]
-  requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector(to ? '.you-head h2' : `[data-row="${from}"]`))?.focus())
+  ;[query.value, editing.value, writing.value] = ['', '', null]
+  goPage('you', to, '.you-head h2', 'data-row')
 }
 
 /** Puts the caret at the end of a field, the keyboard in it. @param {HTMLInputElement | HTMLTextAreaElement | null} field */

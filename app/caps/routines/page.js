@@ -8,7 +8,7 @@ import { live } from 'lit-html/directives/live.js'
 import { signal, effect } from '@preact/signals-core'
 import { app, brainsHere, openConversation } from '../../ui/state.js'
 import { act } from '../../ui/acts.js'
-import { sectionOpen, pageOpen } from '../../ui/dialogs.js'
+import { sectionOpen, pageOpen, goPage } from '../../ui/dialogs.js'
 import { choices } from '../../ui/picker.js'
 import { loadConversation } from '../../core/conversations.js'
 import { routineOf, unanswered } from '../../core/events.js'
@@ -53,11 +53,7 @@ effect(() => {
 })
 
 /** Opens the list ('') or a page, the keyboard on its title, or back on the list on the routine's row. @param {string} to */
-function go(to) {
-  const from = pageOpen()
-  app.section.value = to ? `routines/${to}` : 'routines'
-  requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector(to ? '.routine-head h2' : `[data-routine="${from}"]`))?.focus())
-}
+const go = (/** @type {string} */ to) => goPage('routines', to, '.routine-head h2', 'data-routine')
 
 /** When a routine runs, in words: every Monday at 8:30 (in French too, without CLDR's leading zero), or what sets it off. @param {Plan} routine */
 function when(routine) {
