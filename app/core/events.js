@@ -69,6 +69,32 @@ export function foldTurns(records) {
   return turns
 }
 
+/**
+ * An answer as it happened, for the room (ui/chat.js): a round of the brain thinks, says what it says, then calls; its
+ * thinking joins the stretch of work under way, its words are the answer's, its calls start the next stretch.
+ * @typedef {{ work: ToolCallInfo[], ms: number }} Stretch ms: each round's thinking, up to its words (`_meta.spoke`), and each call
+ */
+/** @param {Step[]} steps @param {(text: string) => string} words what of a step's text shows @returns {(Stretch | { text: string, step: Step })[]} */
+export function flow(steps, words) {
+  /** @type {(Stretch | { text: string, step: Step })[]} */
+  const segments = []
+  const add = (/** @type {ToolCallInfo} */ entry, /** @type {number | undefined} */ ms) => {
+    let last = segments.at(-1)
+    if (!last || !('work' in last)) segments.push((last = { work: [], ms: 0 }))
+    last.work.push(entry)
+    last.ms += ms ?? 0
+  }
+  for (const step of steps) {
+    const top = step.tools.filter((tool) => !tool._meta?.parent), brains = top.filter((tool) => !tool.name)
+    const shown = words(step.text), text = shown.trim() ? shown : ''
+    // A summary asked for before the brain (D359) comes first.
+    for (const brain of brains) add(brain, (brain === brains.at(-1) && text && brain._meta?.spoke) || brain._meta?.ms)
+    if (text) segments.push({ text, step })
+    for (const call of top) if (call.name) add(call, call._meta?.ms)
+  }
+  return segments
+}
+
 /** Every file linked from the conversation, in order. @param {Envelope[]} records @returns {ResourceLink[]} */
 export const linkedFiles = (records) => records.flatMap(({ update }) => (update?.sessionUpdate === 'user_message_chunk' && update.content.type === 'resource_link' ? [update.content] : []))
 

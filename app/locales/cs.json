@@ -75,6 +75,14 @@
   "activity.retrying": "Zkouší se znovu…",
   "activity.failed": "Něco se pokazilo",
   "activity.answeredWith": "Odpověď od: {brain}",
+  "activity.workedFor": "Práce: {time}",
+  "activity.thoughtFor": "Přemýšlení: {time}",
+  "activity.more": {
+    "one": "{count} další",
+    "few": "{count} další",
+    "many": "{count} dalšího",
+    "other": "{count} dalších"
+  },
   "activity.brain": "Dotaz pro: {brain}",
   "activity.input": "Vstup",
   "activity.output": "Výsledek",

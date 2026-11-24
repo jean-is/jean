@@ -74,6 +74,13 @@
   "activity.retrying": "Novu tentativu…",
   "activity.failed": "Qualcosa ùn hà micca funziunatu",
   "activity.answeredWith": "Rispostu cù {brain}",
+  "activity.workedFor": "Travagliu durante {time}",
+  "activity.thoughtFor": "Riflessione durante {time}",
+  "activity.more": {
+    "one": "un altru",
+    "many": "altri {count}",
+    "other": "altri {count}"
+  },
   "activity.brain": "Dumandatu à {brain}",
   "activity.input": "Entrata",
   "activity.output": "Risultatu",

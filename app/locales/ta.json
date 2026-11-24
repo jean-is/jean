@@ -73,6 +73,12 @@
   "activity.retrying": "மீண்டும் முயல்கிறது…",
   "activity.failed": "ஏதோ தவறு நடந்தது",
   "activity.answeredWith": "பதில்: {brain}",
+  "activity.workedFor": "வேலை நேரம்: {time}",
+  "activity.thoughtFor": "சிந்தனை நேரம்: {time}",
+  "activity.more": {
+    "one": "மேலும் {count}",
+    "other": "மேலும் {count}"
+  },
   "activity.brain": "கேள்வி: {brain}",
   "activity.input": "உள்ளீடு",
   "activity.output": "முடிவு",

@@ -73,6 +73,12 @@
   "activity.retrying": "আবার চেষ্টা করছে…",
   "activity.failed": "কিছু একটা ভুল হয়েছে",
   "activity.answeredWith": "{brain} দিয়ে উত্তর দেওয়া হয়েছে",
+  "activity.workedFor": "{time} ধরে কাজ",
+  "activity.thoughtFor": "{time} ধরে ভাবনা",
+  "activity.more": {
+    "one": "আরও {count}টি",
+    "other": "আরও {count}টি"
+  },
   "activity.brain": "{brain}-কে জিজ্ঞেস করা হয়েছে",
   "activity.input": "ইনপুট",
   "activity.output": "ফলাফল",

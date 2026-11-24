@@ -73,6 +73,12 @@
   "activity.retrying": "Нов опит…",
   "activity.failed": "Нещо се обърка",
   "activity.answeredWith": "Отговор с {brain}",
+  "activity.workedFor": "Работа: {time}",
+  "activity.thoughtFor": "Размисъл: {time}",
+  "activity.more": {
+    "one": "още {count}",
+    "other": "още {count}"
+  },
   "activity.brain": "Запитване до {brain}",
   "activity.input": "Вход",
   "activity.output": "Резултат",

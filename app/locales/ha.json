@@ -73,6 +73,12 @@
   "activity.retrying": "Ana sake gwadawa…",
   "activity.failed": "Wani abu ya ɓaci",
   "activity.answeredWith": "Amsa: {brain}",
+  "activity.workedFor": "An yi aiki na {time}",
+  "activity.thoughtFor": "An yi tunani na {time}",
+  "activity.more": {
+    "one": "ƙarin {count}",
+    "other": "ƙarin {count}"
+  },
   "activity.brain": "Tambaya: {brain}",
   "activity.input": "Shigarwa",
   "activity.output": "Sakamako",

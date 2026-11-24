@@ -73,6 +73,12 @@
   "activity.retrying": "Försöker igen…",
   "activity.failed": "Något gick fel",
   "activity.answeredWith": "Besvarat med {brain}",
+  "activity.workedFor": "Arbetade i {time}",
+  "activity.thoughtFor": "Tänkte i {time}",
+  "activity.more": {
+    "one": "{count} till",
+    "other": "{count} till"
+  },
   "activity.brain": "Frågade {brain}",
   "activity.input": "Indata",
   "activity.output": "Resultat",

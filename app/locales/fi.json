@@ -73,6 +73,12 @@
   "activity.retrying": "Yritetään uudelleen…",
   "activity.failed": "Jokin meni vikaan",
   "activity.answeredWith": "Vastaaja: {brain}",
+  "activity.workedFor": "Työskenteli {time}",
+  "activity.thoughtFor": "Ajatteli {time}",
+  "activity.more": {
+    "one": "{count} muu",
+    "other": "{count} muuta"
+  },
   "activity.brain": "Kysytty: {brain}",
   "activity.input": "Syöte",
   "activity.output": "Tulos",

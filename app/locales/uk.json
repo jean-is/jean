@@ -75,6 +75,14 @@
   "activity.retrying": "Пробую ще раз…",
   "activity.failed": "Щось пішло не так",
   "activity.answeredWith": "Відповідь: {brain}",
+  "activity.workedFor": "Робота: {time}",
+  "activity.thoughtFor": "Роздуми: {time}",
+  "activity.more": {
+    "one": "ще {count}",
+    "few": "ще {count}",
+    "many": "ще {count}",
+    "other": "ще {count}"
+  },
   "activity.brain": "Запит: {brain}",
   "activity.input": "Вхідні дані",
   "activity.output": "Результат",

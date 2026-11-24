@@ -73,6 +73,12 @@
   "activity.retrying": "Trying again…",
   "activity.failed": "Something went wrong",
   "activity.answeredWith": "Answered with {brain}",
+  "activity.workedFor": "Worked for {time}",
+  "activity.thoughtFor": "Thought for {time}",
+  "activity.more": {
+    "one": "{count} more",
+    "other": "{count} more"
+  },
   "activity.brain": "Asked {brain}",
   "activity.input": "Input",
   "activity.output": "Result",

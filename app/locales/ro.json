@@ -74,6 +74,13 @@
   "activity.retrying": "Se încearcă din nou…",
   "activity.failed": "Ceva n-a mers bine",
   "activity.answeredWith": "Răspuns cu {brain}",
+  "activity.workedFor": "A lucrat {time}",
+  "activity.thoughtFor": "S-a gândit {time}",
+  "activity.more": {
+    "one": "încă {count}",
+    "few": "încă {count}",
+    "other": "încă {count}"
+  },
   "activity.brain": "Întrebat: {brain}",
   "activity.input": "Intrare",
   "activity.output": "Rezultat",

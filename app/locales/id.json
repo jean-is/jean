@@ -72,6 +72,11 @@
   "activity.retrying": "Mencoba lagi…",
   "activity.failed": "Terjadi kesalahan",
   "activity.answeredWith": "Dijawab oleh {brain}",
+  "activity.workedFor": "Bekerja selama {time}",
+  "activity.thoughtFor": "Berpikir selama {time}",
+  "activity.more": {
+    "other": "{count} lainnya"
+  },
   "activity.brain": "Bertanya ke {brain}",
   "activity.input": "Masukan",
   "activity.output": "Hasil",

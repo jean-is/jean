@@ -76,6 +76,15 @@
   "activity.retrying": "O klask en-dro…",
   "activity.failed": "Un dra bennak a zo aet a-dreuz",
   "activity.answeredWith": "Respontet gant {brain}",
+  "activity.workedFor": "Labour e-pad {time}",
+  "activity.thoughtFor": "Prederiañ e-pad {time}",
+  "activity.more": {
+    "one": "{count} ouzhpenn",
+    "two": "{count} ouzhpenn",
+    "few": "{count} ouzhpenn",
+    "many": "{count} ouzhpenn",
+    "other": "{count} ouzhpenn"
+  },
   "activity.brain": "Goulennet ouzh {brain}",
   "activity.input": "Enmont",
   "activity.output": "Disoc’h",

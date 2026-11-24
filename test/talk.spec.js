@@ -261,7 +261,7 @@ test('a request whose connection drops before its answer starts is asked again a
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Here is what I found')
   expect(dropped).toBe(1)
   await expect(page.locator('.msg-error')).toHaveCount(0)
-  await expect(page.locator('.msg-jean .activity > summary')).toContainText('Answered with')
+  await expect(page.locator('.msg-jean .activity > summary')).toContainText('Thought for')
 })
 
 test('a service account’s file connects Vertex AI: it names its project, and only tokens signed from it leave', async ({ page }) => {

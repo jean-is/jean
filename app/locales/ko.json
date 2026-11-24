@@ -72,6 +72,11 @@
   "activity.retrying": "다시 시도하는 중…",
   "activity.failed": "문제가 발생했어요",
   "activity.answeredWith": "답변: {brain}",
+  "activity.workedFor": "{time} 동안 작업함",
+  "activity.thoughtFor": "{time} 동안 생각함",
+  "activity.more": {
+    "other": "외 {count}개"
+  },
   "activity.brain": "질문: {brain}",
   "activity.input": "입력",
   "activity.output": "결과",

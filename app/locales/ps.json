@@ -73,6 +73,12 @@
   "activity.retrying": "بیا هڅه کوي…",
   "activity.failed": "یو څه سم ونه شول",
   "activity.answeredWith": "د {brain} په مرسته ځواب",
+  "activity.workedFor": "د کار وخت: {time}",
+  "activity.thoughtFor": "د فکر وخت: {time}",
+  "activity.more": {
+    "one": "{count} نور",
+    "other": "{count} نور"
+  },
   "activity.brain": "وپوښتل شو: {brain}",
   "activity.input": "ورکړه",
   "activity.output": "پایله",

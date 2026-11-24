@@ -74,6 +74,13 @@
   "activity.retrying": "Novi pokušaj…",
   "activity.failed": "Nešto nije u redu",
   "activity.answeredWith": "Odgovorio mozak {brain}",
+  "activity.workedFor": "Rad: {time}",
+  "activity.thoughtFor": "Razmišljanje: {time}",
+  "activity.more": {
+    "one": "još {count}",
+    "few": "još {count}",
+    "other": "još {count}"
+  },
   "activity.brain": "Upit mozgu {brain}",
   "activity.input": "Ulaz",
   "activity.output": "Rezultat",

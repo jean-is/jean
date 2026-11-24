@@ -6,9 +6,9 @@ import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import { app, retry, effective, brainLabel, openFile, send, canStepUp, askSmarter, assistantName, decisionsHere, notify, rewind, fork } from './state.js'
 import { unlock, slots, SIZES } from './caps.js'
-import { foldTurns, titleOf, linkedFiles, splitSuggestions, isPicture, filesMade } from '../core/events.js'
+import { foldTurns, titleOf, linkedFiles, splitSuggestions, isPicture, filesMade, flow } from '../core/events.js'
 import { serviceURL } from '../core/settings.js'
-import { t, locale, intlLocales, formatBytes, relativeTime } from '../core/i18n.js'
+import { t, locale, intlLocales, formatBytes, formatDuration, relativeTime } from '../core/i18n.js'
 import { markdown, withFormulas } from './markdown.js'
 import { icons } from './icons.js'
 import { mine } from './opfs.js'
@@ -235,8 +235,7 @@ function turnView(turn, live, files, upTo, last, sources, steered) {
     ${streaming || text || entries.length ? html`
       <article class="msg msg-jean ${streaming ? 'is-streaming' : ''}" aria-busy=${streaming ? 'true' : 'false'}>
         ${slots('progress').map((entry) => entry.draw({ plan }))}
-        ${activity(steps, text, streaming, files, plan?.find((entry) => entry.status === 'in_progress')?.content, steered)}
-        ${text ? html`<div class="prose" dir="auto">${markdown(text, sources, streaming)}${streaming ? html`<span class="caret" aria-hidden="true"></span>` : nothing}</div>` : nothing}
+        ${answer(steps, sources, streaming, files, plan?.find((entry) => entry.status === 'in_progress')?.content, steered)}
         ${entries.flatMap((entry) => (entry._meta?.picture || (entry._meta?.making && entry.status === 'in_progress') ? [html`<app-picture .call=${{ ...entry }}></app-picture>`] : []))}
         ${entries.flatMap((entry) => (entry._meta?.checked ? [html`<app-certificate .call=${entry}></app-certificate>`] : []))}
         ${[...new Map(entries.flatMap(({ _meta }) => [...(_meta?.file ? [_meta.file] : []), ...(_meta?.files ?? [])].map((file) => [file.name, file]))).values()].map((file) => html`<app-file uri=${file.uri} name=${file.name} type=${file.mimeType} size=${file.size} version=${file.version ?? ''}></app-file>`)}
@@ -315,86 +314,86 @@ function sourcesView(cited) {
   </details>`
 }
 
+/** ui/steps.js: a stretch's lines, glyphs and counts, loaded with the first stretch; when each stretch under way was first drawn. */
+const drawn = signal(/** @type {typeof import('./steps.js') | null} */ (null)), began = new Map(), second = signal(0)
+// A second at a time while one is drawn, stopping once none was since the last.
+let ticking = 0, under = false
+const tick = () => {
+  under = true
+  ticking ||= setInterval(() => (under ? ((under = false), second.value++) : (clearInterval(ticking), (ticking = 0))), 1000)
+}
+
 /**
- * "What Jean is doing", from the turn's ACP records, in the order it happened: each time the
- * brain was asked, then the calls it made. What a script or a helper did shows under its call,
- * as a tree: a helper's brain, its calls, and their scripts' calls. Each line opens on what it
- * was given and what came back; a plan's step under way says what it does (D364).
- * @param {Step[]} steps @param {string} text @param {boolean} streaming @param {ResourceLink[]} files @param {string} [doing] @param {boolean} [steered]
+ * The answer as it happened (core/events.js): each stretch of work a line, between what the brain said; under the last, while
+ * it is written, Answer now, the decision inbox and an offer.
+ * @param {Step[]} steps @param {import('./markdown.js').Sources} sources @param {boolean} streaming @param {ResourceLink[]} files @param {string} [doing] @param {boolean} [steered]
  */
-function activity(steps, text, streaming, files, doing, steered) {
+function answer(steps, sources, streaming, files, doing, steered) {
+  const segments = flow(steps, (text) => splitSuggestions(text).text)
+  if (streaming && !segments.length) segments.push({ work: [], ms: 0 })
   const entries = steps.flatMap((step) => step.tools)
-  const tools = entries.filter((entry) => entry.name || entry._meta?.parent)
   const last = entries.findLast((entry) => !entry.name && !entry._meta?.parent)
-  const aborted = last?.rawOutput?.code === 'aborted', failed = last?.status === 'failed' && !aborted
-  // Asked for tools and never read what they returned: out of steps, or closed in the middle.
-  const unfinished = !streaming && !steered && (aborted || last?.rawOutput?.stopReason === 'tool_use')
-  const working = tools.some((tool) => tool.status === 'pending' || tool.status === 'in_progress')
-  // A task paused at its limit didn't fail (D364).
-  const status = streaming ? (working ? 'working' : 'thinking') : failed || (unfinished && !aborted && !last?._meta?.stopped) ? 'failed' : 'completed'
-  // The offer made here, not in a conversation out of sight (D147).
-  const offering = app.offering.value?.conversation === drawing.path ? app.offering.value : null
-  // A request that failed is asked again after a moment.
-  const waiting = streaming ? decisionsHere(drawing.path).length + (offering ? 1 : 0) : 0
-  const summary = waiting ? t('inbox.waiting', { count: waiting }) : streaming
-    ? doing && !last?._meta?.retrying && (working || !text) ? doing : t(last?._meta?.retrying ? 'activity.retrying' : working ? 'activity.working' : text ? 'activity.writing' : 'activity.thinking')
-    : failed ? t('activity.failed') : unfinished ? t('activity.unfinished') : last ? t('activity.answeredWith', { brain: brainName(last) })
-      // A turn that was one call, with no brain asked (a flow run, D218): what that call did.
-      : toolLabel(tools.findLast((tool) => !tool._meta?.parent) ?? /** @type {ToolCallInfo} */ ({ toolCallId: '', title: '' }))
-  // What each brain step thought and wrote.
+  // What each round of the brain thought and wrote.
   const said = new Map(steps.map((step) => [step.tools.findLast((entry) => !entry.name && !entry._meta?.parent)?.toolCallId, step]))
   // A brain that thinks at length, with nothing written yet, can be told to answer now, once (D414).
   const thinking = streaming && last?.status === 'in_progress' && !last._meta?.hurried && said.get(last.toolCallId)
   const hurry = thinking && !thinking.text && thinking.thought.length > 2000
-  // Parts in the order the work was split (their calls are kept in the order they finished).
-  const order = (/** @type {ToolCallInfo} */ tool) => Number(/\.(\d+)$/.exec(tool.toolCallId)?.[1] ?? 0)
-  /** @type {{ entry: ToolCallInfo, depth: number, key: string }[]} */
-  const rows = []
-  // Keys stay with their line as lines arrive, so one that is open stays open (a brain may reuse an id).
-  const seen = new Map()
-  /** @param {ToolCallInfo} entry @param {number} depth */
-  const add = (entry, depth) => {
-    seen.set(entry.toolCallId, (seen.get(entry.toolCallId) ?? 0) + 1)
-    rows.push({ entry, depth, key: `${entry.toolCallId}#${seen.get(entry.toolCallId)}` })
-    // The brain's own searches, kept with its reply.
-    for (const block of entry._meta?.raw ?? []) {
-      if (block.type === 'server_tool_use' && block.name === 'web_search') add({ toolCallId: block.id, title: '', name: 'web_search', status: 'completed', rawInput: block.input }, depth + 1)
-    }
-    const children = tools.filter((child) => child._meta?.parent === entry.toolCallId)
-    if (entry.name === 'delegate') children.sort((a, b) => order(a) - order(b))
-    for (const child of children) add(child, depth + 1)
-  }
-  for (const entry of entries) if (!entry._meta?.parent) add(entry, 0)
+  // The offer made here, not in a conversation out of sight (D147).
+  const offering = app.offering.value?.conversation === drawing.path ? app.offering.value : null
+  const waiting = streaming ? decisionsHere(drawing.path).length + (offering ? 1 : 0) : 0
+  const end = segments.findLastIndex((segment) => 'work' in segment), at = segments.length - 1
   return html`
-    <details class="activity" data-status=${status}>
-      <summary><span class="ember" aria-hidden="true"></span><span dir="auto">${summary}</span>${icons.chevron}</summary>
-      <ol class="activity-list">
-        ${repeat(rows, (row) => row.key, ({ entry, depth }) => html`<li data-status=${entry.status ?? 'pending'} data-call=${entry.toolCallId} class=${depth ? 'is-nested' : ''}
-          data-depth=${entry.name || depth ? depth : nothing}>
-          <details class="step">
-            <summary><span class="ember" aria-hidden="true"></span>${entry.status === 'failed' ? html`<span class="visually-hidden">${t('activity.failed')}: </span>` : nothing}<span dir="auto">${entry.name ? toolLabel(entry, files) : entry._meta?.compact ? html`<app-compaction .entry=${entry}></app-compaction>` : brainLine(entry)}</span>${icons.chevron}</summary>
-            ${opened(entry, said.get(entry.toolCallId))}
-          </details>
-        </li>`)}
-      </ol>
-      ${tools.length ? slots('activity').map((action) => action.draw()) : nothing}
-    </details>
+    ${repeat(segments, (segment, i) => `${i}:${'work' in segment ? segment.work[0]?.toolCallId : ''}`, (segment, i) => ('work' in segment
+      ? stretch(segment, { last, said, entries, files, doing, steered, streaming, waiting, live: streaming && i === at, end: i === end })
+      : html`<div class="prose" dir="auto">${markdown(segment.text, sources, streaming && i === at)}${streaming && i === at ? html`<span class="caret" aria-hidden="true"></span>` : nothing}</div>`))}
     ${hurry ? html`<div><button class="link-button" @click=${() => import('./send.js').then((module) => module.answerNow())}>${t('activity.answerNow')}</button></div>` : nothing}
     ${streaming ? inbox(entries, files) : nothing}
     ${streaming && offering ? offerCard(offering) : nothing}`
 }
 
-/** ui/steps.js: what each line opens on, loaded with the first activity. */
-const steps = signal(/** @type {typeof import('./steps.js') | null} */ (null))
-const opened = (/** @type {ToolCallInfo} */ entry, /** @type {Step | undefined} */ step) => steps.value?.details(entry, step) ?? (import('./steps.js').then((module) => (steps.value = module)), nothing)
-
-/** Which brain was asked, and why Auto chose it. @param {ToolCallInfo} brain */
-function brainLine(brain) {
-  return html`${t('activity.brain', { brain: brainName(brain) })}
-    ${brain.rawInput?.auto ? html`<span class="muted"> · ${autoReason(brain.rawInput.auto)}</span>` : nothing}
-    ${brain.rawOutput?.usage?.cacheReadTokens ? html`<span class="muted"> · ${t('activity.cached')}</span>` : nothing}
-    ${brain._meta?.hurried ? html`<span class="muted"> · ${t('activity.hurried')}</span>` : nothing}
-    ${brain.status === 'failed' && brain.rawOutput?.error ? html`<span class="muted"> — ${brain.rawOutput.error}</span>` : nothing}`
+/**
+ * A stretch of work as one line. Under way: the call it is on, else a plan's step under way (D364), how long it has run,
+ * and the end of the brain's thinking beneath. Done: how long it took and its counts by kind, how the answer ended if it
+ * was the last, or the brain when it only asked one.
+ * @param {import('../core/events.js').Stretch} stretch
+ * @param {{ last?: ToolCallInfo, said: Map<string | undefined, Step>, entries: ToolCallInfo[], files: ResourceLink[], doing?: string, steered?: boolean, streaming: boolean, waiting: number, live: boolean, end: boolean }} turn
+ */
+function stretch({ work, ms }, { last, said, entries, files, doing, steered, streaming, waiting, live, end }) {
+  const brains = work.filter((entry) => !entry.name), calls = work.filter((entry) => entry.name)
+  const brain = brains.at(-1), key = work[0]?.toolCallId ?? '', module = drawn.value
+  let line, status = 'completed', glimpse = ''
+  if (live) {
+    const running = calls.filter((call) => call.status === 'pending' || call.status === 'in_progress'), now = running.at(-1)
+    const step = said.get(brain?.toolCallId)
+    status = now ? 'working' : 'thinking'
+    tick()
+    void second.value
+    if (!began.has(key)) began.set(key, Date.now())
+    const since = Date.now() - began.get(key)
+    // The call it is on, drawn afresh as the next begins.
+    line = html`${waiting ? t('inbox.waiting', { count: waiting }) : brain?._meta?.retrying ? t('activity.retrying')
+      : now ? repeat([now], (one) => one.toolCallId, (one) => html`<span class="stretch-now">${module?.glyphOf(one)}<span dir="auto">${toolLabel(one, files)}</span>${running.length > 1 ? html`<span class="muted">+${new Intl.NumberFormat(intlLocales()).format(running.length - 1)}</span>` : nothing}</span>`)
+      : doing ?? t('activity.thinking')}${since >= 1000 ? html`<span class="muted"> · ${formatDuration(Math.floor(since / 1000) * 1000)}</span>` : nothing}`
+    if (!now && brain?.status === 'in_progress' && step?.thought && !step.text) glimpse = step.thought.slice(-300)
+  } else {
+    const aborted = end && last?.rawOutput?.code === 'aborted', failed = end && last?.status === 'failed' && !aborted
+    // Asked for tools and never read what they returned: out of steps, or closed in the middle. A task paused at its limit didn't fail (D364).
+    const unfinished = end && !streaming && !steered && (aborted || last?.rawOutput?.stopReason === 'tool_use')
+    if (failed || (unfinished && !aborted && !last?._meta?.stopped)) status = 'failed'
+    const time = ms >= 1 ? formatDuration(ms) : '', thought = brains.some((one) => said.get(one.toolCallId)?.thought)
+    line = failed ? t('activity.failed') : unfinished ? t('activity.unfinished')
+      // A turn that was one call, with no brain asked (a flow run, D218): what that call did.
+      : !last ? toolLabel(calls.at(-1) ?? /** @type {ToolCallInfo} */ ({ toolCallId: '', title: '' }), files)
+      // Without its time (a file kept before it was), the brain asked.
+      : html`${time && calls.length ? t('activity.workedFor', { time }) : time && thought ? t('activity.thoughtFor', { time })
+        : t(end ? 'activity.answeredWith' : 'activity.brain', { brain: brainName(brain ?? last) })}${calls.length ? module?.tally(work) : nothing}`
+  }
+  return html`<details class="activity" data-status=${status}>
+      <summary><span class="ember" aria-hidden="true"></span><span class="stretch-line" dir="auto">${line}</span>${icons.chevron}</summary>
+      ${module?.lines(work, entries, said, files) ?? (import('./steps.js').then((loaded) => (drawn.value = loaded)), nothing)}
+      ${end && calls.length ? slots('activity').map((action) => action.draw()) : nothing}
+    </details>
+    ${glimpse ? html`<p class="glimpse" aria-hidden="true" dir="auto"><span>${glimpse}</span></p>` : nothing}`
 }
 
 /**
@@ -415,11 +414,6 @@ function inbox(entries, files) {
 
 /** Who a card is from, when a helper asks. @param {string | undefined} helper */
 const asking = (helper) => (helper ? html`<p class="approval-from">${icons.helpers}<span dir="auto">${helper}</span></p>` : nothing)
-
-/** Why Auto chose a brain, in plain words. @param {{ level: number, reason: string }} auto */
-function autoReason({ level, reason }) {
-  return reason === 'demand' ? t(`auto.demand.${level}`) : t(`auto.reason.${reason}`)
-}
 
 /** Offers whose sentence above the box says what set them off: in an answer, they say what they do (D322). */
 const IN_ANSWER = new Set(['skills', 'routines', 'flows'])

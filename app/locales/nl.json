@@ -73,6 +73,12 @@
   "activity.retrying": "Probeert opnieuw…",
   "activity.failed": "Er ging iets mis",
   "activity.answeredWith": "Beantwoord met {brain}",
+  "activity.workedFor": "{time} gewerkt",
+  "activity.thoughtFor": "{time} nagedacht",
+  "activity.more": {
+    "one": "nog {count}",
+    "other": "nog {count}"
+  },
   "activity.brain": "{brain} gevraagd",
   "activity.input": "Invoer",
   "activity.output": "Resultaat",

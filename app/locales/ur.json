@@ -73,6 +73,12 @@
   "activity.retrying": "دوبارہ کوشش جاری ہے…",
   "activity.failed": "کچھ غلط ہو گیا",
   "activity.answeredWith": "جواب: {brain}",
+  "activity.workedFor": "{time} کام کیا",
+  "activity.thoughtFor": "{time} سوچا",
+  "activity.more": {
+    "one": "{count} مزید",
+    "other": "{count} مزید"
+  },
   "activity.brain": "سوال: {brain}",
   "activity.input": "ان پٹ",
   "activity.output": "نتیجہ",

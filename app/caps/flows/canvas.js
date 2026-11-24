@@ -265,7 +265,8 @@ function reveal(node) {
   const id = node.call?.toolCallId
   const line = id && /** @type {HTMLElement | null} */ (document.querySelector(`app-conversation [data-call="${CSS.escape(id)}"]`))
   if (!line) return
-  for (const details of [line.closest('details.activity'), line.querySelector('details.step')]) if (details instanceof HTMLDetailsElement) details.open = true
+  // A file on a line naming several is its own details.
+  for (const details of [line.closest('details.activity'), line.matches('details') ? line : line.querySelector('details.step')]) if (details instanceof HTMLDetailsElement) details.open = true
   line.scrollIntoView({ block: 'center', behavior: still() ? 'auto' : 'smooth' })
   line.querySelector('summary')?.focus({ preventScroll: true })
 }

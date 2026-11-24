@@ -73,6 +73,12 @@
   "activity.retrying": "ફરી પ્રયાસ…",
   "activity.failed": "કંઈક ખોટું થયું",
   "activity.answeredWith": "જવાબ: {brain}",
+  "activity.workedFor": "{time} કામ કર્યું",
+  "activity.thoughtFor": "{time} વિચાર્યું",
+  "activity.more": {
+    "one": "વધુ {count}",
+    "other": "વધુ {count}"
+  },
   "activity.brain": "પૂછ્યું: {brain}",
   "activity.input": "ઇનપુટ",
   "activity.output": "પરિણામ",

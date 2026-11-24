@@ -73,6 +73,12 @@
   "activity.retrying": "Sinusubukang muli…",
   "activity.failed": "May nagkaproblema",
   "activity.answeredWith": "Sinagot ng {brain}",
+  "activity.workedFor": "Nagtrabaho nang {time}",
+  "activity.thoughtFor": "Nag-isip nang {time}",
+  "activity.more": {
+    "one": "{count} pa",
+    "other": "{count} pa"
+  },
   "activity.brain": "Tinanong ang {brain}",
   "activity.input": "Input",
   "activity.output": "Resulta",

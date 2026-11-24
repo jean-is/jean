@@ -73,6 +73,12 @@
   "activity.retrying": "Irra deebi'ee yaalaa jira…",
   "activity.failed": "Wanti tokko dogoggore",
   "activity.answeredWith": "{brain} fayyadamee deebise",
+  "activity.workedFor": "Yeroo hojii: {time}",
+  "activity.thoughtFor": "Yeroo yaadaa: {time}",
+  "activity.more": {
+    "one": "{count} dabalataa",
+    "other": "{count} dabalataa"
+  },
   "activity.brain": "{brain} gaafate",
   "activity.input": "Galtee",
   "activity.output": "Bu'aa",

@@ -74,6 +74,13 @@
   "activity.retrying": "Iterum temptat…",
   "activity.failed": "Aliquid erravit",
   "activity.answeredWith": "Respondit cerebrum {brain}",
+  "activity.workedFor": "Laboravit per {time}",
+  "activity.thoughtFor": "Cogitavit per {time}",
+  "activity.more": {
+    "one": "unum aliud",
+    "many": "{count} alia",
+    "other": "{count} alia"
+  },
   "activity.brain": "Rogatum cerebrum {brain}",
   "activity.input": "Datum",
   "activity.output": "Effectus",

@@ -72,6 +72,11 @@
   "activity.retrying": "Đang thử lại…",
   "activity.failed": "Đã có lỗi xảy ra",
   "activity.answeredWith": "Trả lời bởi {brain}",
+  "activity.workedFor": "Đã làm việc {time}",
+  "activity.thoughtFor": "Đã suy nghĩ {time}",
+  "activity.more": {
+    "other": "{count} mục khác"
+  },
   "activity.brain": "Đã hỏi {brain}",
   "activity.input": "Đầu vào",
   "activity.output": "Kết quả",

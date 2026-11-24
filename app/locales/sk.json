@@ -75,6 +75,14 @@
   "activity.retrying": "Skúša sa znova…",
   "activity.failed": "Niečo sa pokazilo",
   "activity.answeredWith": "Odpoveď od: {brain}",
+  "activity.workedFor": "Práca: {time}",
+  "activity.thoughtFor": "Premýšľanie: {time}",
+  "activity.more": {
+    "one": "{count} ďalší",
+    "few": "{count} ďalšie",
+    "many": "{count} ďalšieho",
+    "other": "{count} ďalších"
+  },
   "activity.brain": "Otázka pre: {brain}",
   "activity.input": "Vstup",
   "activity.output": "Výsledok",

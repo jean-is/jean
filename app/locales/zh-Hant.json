@@ -72,6 +72,11 @@
   "activity.retrying": "正在重試…",
   "activity.failed": "發生問題",
   "activity.answeredWith": "由 {brain} 回答",
+  "activity.workedFor": "工作了 {time}",
+  "activity.thoughtFor": "思考了 {time}",
+  "activity.more": {
+    "other": "另外 {count} 個"
+  },
   "activity.brain": "已詢問 {brain}",
   "activity.input": "輸入",
   "activity.output": "結果",

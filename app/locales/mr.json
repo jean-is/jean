@@ -73,6 +73,12 @@
   "activity.retrying": "पुन्हा प्रयत्न सुरू आहे…",
   "activity.failed": "काहीतरी चुकले",
   "activity.answeredWith": "उत्तर: {brain}",
+  "activity.workedFor": "{time} काम केले",
+  "activity.thoughtFor": "{time} विचार केला",
+  "activity.more": {
+    "one": "आणखी {count}",
+    "other": "आणखी {count}"
+  },
   "activity.brain": "प्रश्न: {brain}",
   "activity.input": "इनपुट",
   "activity.output": "निकाल",

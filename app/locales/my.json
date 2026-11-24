@@ -72,6 +72,11 @@
   "activity.retrying": "ထပ်စမ်းနေသည်…",
   "activity.failed": "တစ်ခုခု မှားသွားသည်",
   "activity.answeredWith": "{brain} ဖြင့် ဖြေပြီး",
+  "activity.workedFor": "{time} ကြာ အလုပ်လုပ်ခဲ့သည်",
+  "activity.thoughtFor": "{time} ကြာ စဉ်းစားခဲ့သည်",
+  "activity.more": {
+    "other": "နောက်ထပ် {count} ခု"
+  },
   "activity.brain": "{brain} ကို မေးပြီး",
   "activity.input": "ထည့်သွင်းချက်",
   "activity.output": "ရလဒ်",

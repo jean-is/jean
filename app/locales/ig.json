@@ -72,6 +72,11 @@
   "activity.retrying": "Na-anwa ọzọ…",
   "activity.failed": "Ihe adịghị mma mere",
   "activity.answeredWith": "E ji {brain} zaa",
+  "activity.workedFor": "Rụrụ ọrụ maka {time}",
+  "activity.thoughtFor": "Chere echiche maka {time}",
+  "activity.more": {
+    "other": "{count} ọzọ"
+  },
   "activity.brain": "Jụrụ {brain}",
   "activity.input": "Ihe e nyere",
   "activity.output": "Nsonaazụ",

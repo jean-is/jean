@@ -77,6 +77,16 @@
   "activity.retrying": "جارٍ المحاولة مرة أخرى…",
   "activity.failed": "حدث خطأ ما",
   "activity.answeredWith": "الإجابة من {brain}",
+  "activity.workedFor": "مدة العمل: {time}",
+  "activity.thoughtFor": "مدة التفكير: {time}",
+  "activity.more": {
+    "zero": "{count} أخرى",
+    "one": "واحد آخر",
+    "two": "اثنان آخران",
+    "few": "{count} أخرى",
+    "many": "{count} أخرى",
+    "other": "{count} أخرى"
+  },
   "activity.brain": "تم سؤال {brain}",
   "activity.input": "المُدخل",
   "activity.output": "النتيجة",

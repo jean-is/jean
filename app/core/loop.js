@@ -156,9 +156,10 @@ export async function runTurn(options) {
     // Thinking at length, the brain may be told to answer now, by the user, or on this computer past its ceiling: it is
     // asked again at once, lightly, from the end of what it thought, and only once (D414).
     let [cut, hurried, thinking, wrote] = [new AbortController(), false, 0, 0]
-    // When it first wrote, a thought, words or a call, on the clock of its duration: how long it took to start, then how fast it wrote.
+    // When it first wrote, a thought, words or a call, on the clock of its duration: how long it took to start, then how fast it wrote;
+    // and its first words, where its thinking ends (flow()).
     /** @type {number | undefined} */
-    let first
+    let first, spoke
     const ceiling = own || !isLocal(brain) ? Infinity : Math.min(CEILING, (options.window ?? Infinity) / 4)
     const hurry = () => cut.abort(HURRY)
     const stop = () => cut.abort()
@@ -174,6 +175,7 @@ export async function runTurn(options) {
             heard = true
             if (event.type !== 'cite' && event.type !== 'done') first ??= Date.now() - started
             if (event.type === 'text') {
+              spoke ??= Date.now() - started
               text += event.delta
               shown({ sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: event.delta } })
             } else if (event.type === 'thinking') {
@@ -211,7 +213,7 @@ export async function runTurn(options) {
         }
       }
     } catch (error) {
-      const failed = { ...entry, status: /** @type {const} */ ('failed'), rawOutput: errorInfo(error), _meta: { ...own, ...(hurried && { hurried }), ...(first !== undefined && { first }), ms: Date.now() - started } }
+      const failed = { ...entry, status: /** @type {const} */ ('failed'), rawOutput: errorInfo(error), _meta: { ...own, ...(hurried && { hurried }), ...(first !== undefined && { first }), ...(spoke !== undefined && { spoke }), ms: Date.now() - started } }
       onUpdate({ sessionUpdate: 'tool_call_update', ...failed }, step)
       await persist(stepRecords(step, failed, own ? '' : thought, own ? '' : text))
       throw error
@@ -225,7 +227,7 @@ export async function runTurn(options) {
     // Thinking blocks and the provider's own search results are replayed unchanged by later turns.
     // How long it took, and to start, is kept for the activity view.
     const raw = done?.message.raw
-    const kept = { ...own, ...cited, ...(hurried && { hurried }), ...(!own && Array.isArray(raw) && raw.some((block) => !/^(text|tool_use)$/.test(block?.type)) && { raw }), ...(first !== undefined && { first }), ms: Date.now() - started }
+    const kept = { ...own, ...cited, ...(hurried && { hurried }), ...(!own && Array.isArray(raw) && raw.some((block) => !/^(text|tool_use)$/.test(block?.type)) && { raw }), ...(first !== undefined && { first }), ...(spoke !== undefined && { spoke }), ms: Date.now() - started }
     const completed = { ...entry, status: /** @type {const} */ ('completed'), rawOutput: { stopReason, usage: done?.usage }, _meta: kept }
     onUpdate({ sessionUpdate: 'tool_call_update', ...completed }, step)
     await persist(stepRecords(step, completed, own ? '' : thought, own ? '' : text))

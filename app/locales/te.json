@@ -73,6 +73,12 @@
   "activity.retrying": "మళ్లీ ప్రయత్నిస్తోంది…",
   "activity.failed": "ఏదో తప్పు జరిగింది",
   "activity.answeredWith": "జవాబు: {brain}",
+  "activity.workedFor": "పని సమయం: {time}",
+  "activity.thoughtFor": "ఆలోచన సమయం: {time}",
+  "activity.more": {
+    "one": "మరో {count}",
+    "other": "మరో {count}"
+  },
   "activity.brain": "ప్రశ్న: {brain}",
   "activity.input": "ఇన్‌పుట్",
   "activity.output": "ఫలితం",

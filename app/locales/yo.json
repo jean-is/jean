@@ -72,6 +72,11 @@
   "activity.retrying": "Ó ń gbìyànjú lẹ́ẹ̀kan sí i…",
   "activity.failed": "Nǹkan kan kò lọ dáadáa",
   "activity.answeredWith": "Ìdáhùn láti ọ̀dọ̀ {brain}",
+  "activity.workedFor": "Ṣiṣẹ́ fún {time}",
+  "activity.thoughtFor": "Ronú fún {time}",
+  "activity.more": {
+    "other": "{count} míràn"
+  },
   "activity.brain": "A béèrè lọ́wọ́ {brain}",
   "activity.input": "Ohun tí a fi wọlé",
   "activity.output": "Àbájáde",

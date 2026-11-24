@@ -73,6 +73,12 @@
   "activity.retrying": "Νέα προσπάθεια…",
   "activity.failed": "Κάτι πήγε στραβά",
   "activity.answeredWith": "Απάντηση με {brain}",
+  "activity.workedFor": "Δούλεψε για {time}",
+  "activity.thoughtFor": "Σκέφτηκε για {time}",
+  "activity.more": {
+    "one": "{count} ακόμη",
+    "other": "{count} ακόμη"
+  },
   "activity.brain": "Ερώτηση: {brain}",
   "activity.input": "Είσοδος",
   "activity.output": "Αποτέλεσμα",

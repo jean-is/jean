@@ -73,6 +73,12 @@
   "activity.retrying": "Újrapróbálás…",
   "activity.failed": "Hiba történt",
   "activity.answeredWith": "Válaszolt: {brain}",
+  "activity.workedFor": "Munkaidő: {time}",
+  "activity.thoughtFor": "Gondolkodás: {time}",
+  "activity.more": {
+    "one": "még {count}",
+    "other": "még {count}"
+  },
   "activity.brain": "Kérdezve: {brain}",
   "activity.input": "Bemenet",
   "activity.output": "Eredmény",

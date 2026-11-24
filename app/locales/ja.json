@@ -72,6 +72,11 @@
   "activity.retrying": "もう一度試しています…",
   "activity.failed": "問題が発生しました",
   "activity.answeredWith": "{brain} が回答しました",
+  "activity.workedFor": "作業時間 {time}",
+  "activity.thoughtFor": "思考時間 {time}",
+  "activity.more": {
+    "other": "ほか {count} 件"
+  },
   "activity.brain": "{brain} に質問しました",
   "activity.input": "入力",
   "activity.output": "結果",

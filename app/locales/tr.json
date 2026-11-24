@@ -73,6 +73,12 @@
   "activity.retrying": "Tekrar deniyor…",
   "activity.failed": "Bir şeyler ters gitti",
   "activity.answeredWith": "Yanıtlayan: {brain}",
+  "activity.workedFor": "{time} çalıştı",
+  "activity.thoughtFor": "{time} düşündü",
+  "activity.more": {
+    "one": "{count} tane daha",
+    "other": "{count} tane daha"
+  },
   "activity.brain": "Sorulan: {brain}",
   "activity.input": "Girdi",
   "activity.output": "Sonuç",

@@ -8,7 +8,7 @@ import { test, expect } from '@playwright/test'
 
 const TASK = await readFile(new URL('./fixtures/demo.jsonl', import.meta.url), 'utf8')
 
-for (const [lang, dir, answered] of [['en', 'ltr', 'Answered with OpenRouter · claude-sonnet-5.5'], ['ar', 'rtl', 'OpenRouter'], ['ja', 'ltr', 'OpenRouter']]) {
+for (const [lang, dir] of [['en', 'ltr'], ['ar', 'rtl'], ['ja', 'ltr']]) {
   test(`a task plays again as Jean wrote it, its follow-up playing the next request (${lang})`, async ({ page }) => {
     /** What went wrong on the page, and what it asked for beyond Jean's own files. @type {string[]} */
     const wrong = []
@@ -25,7 +25,8 @@ for (const [lang, dir, answered] of [['en', 'ltr', 'Answered with OpenRouter · 
     await expect(answer).toHaveClass(/is-streaming/)
     await expect(answer.locator('.activity-list [data-call="call-1"]')).toHaveAttribute('data-status', 'completed')
     await expect(answer).not.toHaveClass(/is-streaming/)
-    await expect(answer.locator('.activity > summary')).toContainText(answered)
+    // Which brain it asked, on the line of its round.
+    await expect(answer.locator('.activity-list .is-said')).toContainText(['OpenRouter · claude-sonnet-5.5', 'OpenRouter · claude-sonnet-5.5'])
     await expect(answer.locator('.prose')).toContainText('East')
     await expect(answer.locator('app-chart .chart canvas')).toBeVisible()
     // With wait, the next request comes only once its follow-up is pressed.

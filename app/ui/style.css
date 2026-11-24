@@ -447,37 +447,33 @@ progress { inline-size: 100%; block-size: 0.5rem; accent-color: var(--flame); }
 
 /* ─── What Jean is doing ────────────────────────────────────────────────── */
 
+/* Each stretch of work, one line between the things the brain said (ui/chat.js); what it opens on is ui/activity.css's. */
 .activity { font-size: 0.86rem; color: var(--ink-soft); }
-.activity summary { display: inline-flex; align-items: center; gap: 0.5rem; list-style: none; cursor: pointer; padding: 0.15rem 0.1rem; border-radius: 0.5rem; }
+.activity summary { display: inline-flex; align-items: center; gap: 0.5rem; max-inline-size: 100%; list-style: none; cursor: pointer; padding: 0.15rem 0.1rem; border-radius: 0.5rem; }
 .activity summary::-webkit-details-marker { display: none; }
-.activity summary .icon { --glyph: var(--icon-s); flex: none; transition: rotate 0.3s var(--ease); }
-.activity[open] > summary .icon, .step[open] > summary .icon { rotate: 180deg; }
-.activity-list { margin: 0.5rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.2rem; }
-.activity-list li { min-inline-size: 0; }
-.activity-list li.is-nested { padding-inline-start: 1.1rem; }
-.activity-list li[data-depth='2'] { padding-inline-start: 2.2rem; }
-.activity-list li[data-depth='3'] { padding-inline-start: 3.3rem; }
-/* Each line opens on what it was given and what came back. */
-.step > summary { display: flex; gap: 0.55rem; }
-.step > summary .icon { --glyph: var(--icon-s); opacity: 0.75; }
-.step > summary:hover .icon, .step[open] > summary .icon { opacity: 1; }
-.step-body { display: grid; gap: 0.3rem; margin: 0.2rem 0 0.6rem; padding-inline-start: 1.15rem; min-inline-size: 0; }
-.step-body p { margin: 0; }
-.step-facts, .step-label { font-size: 0.8rem; color: var(--ink-faint); }
-.step-facts code { font-family: var(--mono); }
-.step-body pre { margin: 0; padding: 0.5rem 0.7rem; max-block-size: 18rem; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; font: 0.78rem/1.5 var(--mono); color: var(--ink-soft); border: 1px solid var(--line); border-radius: 0.6rem; background: oklch(from var(--ink) l c h / 0.04); }
-.thought { padding-inline-start: 0.9rem; border-inline-start: 1px solid var(--line-strong); color: var(--ink-faint); font-size: 0.88rem; }
-.thought p { margin-block: 0 0.5rem; }
+.activity summary > .icon { --glyph: var(--icon-s); flex: none; transition: rotate 0.3s var(--ease); }
+.activity[open] > summary > .icon { rotate: 180deg; }
+.stretch-line, .stretch-now, .stretch-counts, .stretch-counts > span { display: inline-flex; align-items: center; gap: 0.4rem; min-inline-size: 0; }
+.stretch-line .icon { --glyph: var(--icon-s); flex: none; }
+/* The step under way comes in as it begins. */
+.stretch-now { color: var(--ink); animation: arrive 0.3s var(--ease) both; }
+.stretch-now > span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.stretch-counts { gap: 0.65rem; margin-inline-start: 0.2rem; color: var(--ink-faint); font-variant-numeric: tabular-nums; }
+.stretch-counts > span { gap: 0.2rem; }
+.stretch-counts .is-failed { color: var(--danger); }
+/* While the brain thinks with nothing written yet, the end of its thinking under the line, fading upwards. */
+.glimpse { display: flex; flex-direction: column; justify-content: flex-end; max-block-size: 3.1em; overflow: hidden; margin: -0.3rem 0 0; padding-inline-start: 1.05rem; font-size: 0.82rem; line-height: 1.55; color: var(--ink-faint); mask: linear-gradient(transparent, #000 1em) bottom / 100% 3.1em no-repeat; }
+.activity[open] + .glimpse { display: none; }
 .ember { inline-size: 0.5rem; block-size: 0.5rem; flex: none; border-radius: 50%; background: var(--ember-off); }
-[data-status='thinking'] > summary .ember, [data-status='working'] > summary .ember, [data-status='in_progress'] > .step > summary .ember, [data-status='pending'] > .step > summary .ember, .ember:is([data-state='waking'], [data-state='working']) {
+[data-status='thinking'] > summary .ember, [data-status='working'] > summary .ember, .ember:is([data-state='waking'], [data-state='working']) {
   background: var(--flame);
   box-shadow: 0 0 0.6rem oklch(from var(--glow) l c h / 0.9);
   animation: pulse 1.1s ease-in-out infinite var(--loops, running);
 }
-[data-status='completed'] > summary .ember, [data-status='completed'] > .step > summary .ember, .ember[data-state='ready'] { background: oklch(from var(--flame) l c h / 0.55); }
+[data-status='completed'] > summary .ember, .ember[data-state='ready'] { background: oklch(from var(--flame) l c h / 0.55); }
 /* The computer's light (D176) at the corner of the terminal's button. */
 .terminal-toggle { position: relative; } .terminal-toggle .ember { position: absolute; inset-block-start: 0.3rem; inset-inline-end: 0.3rem; inline-size: 0.4rem; block-size: 0.4rem; }
-[data-status='failed'] > summary .ember, [data-status='failed'] > .step > summary .ember { background: var(--danger); }
+[data-status='failed'] > summary .ember { background: var(--danger); }
 @keyframes pulse { 50% { opacity: 0.4; scale: 0.8; } }
 
 .approval { padding: 1rem 1.1rem; border: 1px solid oklch(from var(--flame) l c h / 0.5); border-radius: var(--radius); background: oklch(from var(--flame) l c h / 0.08); overflow-wrap: anywhere; animation: arrive 0.4s var(--ease) both; }

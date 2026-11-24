@@ -73,6 +73,12 @@
   "activity.retrying": "फिर से कोशिश जारी है…",
   "activity.failed": "कुछ गड़बड़ हो गई",
   "activity.answeredWith": "उत्तर: {brain}",
+  "activity.workedFor": "{time} तक काम किया",
+  "activity.thoughtFor": "{time} तक सोचा",
+  "activity.more": {
+    "one": "{count} और",
+    "other": "{count} और"
+  },
   "activity.brain": "प्रश्न: {brain}",
   "activity.input": "इनपुट",
   "activity.output": "नतीजा",

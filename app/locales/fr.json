@@ -74,6 +74,13 @@
   "activity.retrying": "Nouvelle tentative…",
   "activity.failed": "Un problème est survenu",
   "activity.answeredWith": "Répondu par {brain}",
+  "activity.workedFor": "Travail pendant {time}",
+  "activity.thoughtFor": "Réflexion pendant {time}",
+  "activity.more": {
+    "one": "{count} autre",
+    "many": "{count} autres",
+    "other": "{count} autres"
+  },
   "activity.brain": "Question posée à {brain}",
   "activity.input": "Entrée",
   "activity.output": "Résultat",

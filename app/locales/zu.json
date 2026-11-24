@@ -73,6 +73,12 @@
   "activity.retrying": "Izama futhi…",
   "activity.failed": "Kukhona okungahambanga kahle",
   "activity.answeredWith": "Kuphendulwe ngengqondo: {brain}",
+  "activity.workedFor": "Isikhathi somsebenzi: {time}",
+  "activity.thoughtFor": "Isikhathi sokucabanga: {time}",
+  "activity.more": {
+    "one": "{count} ngaphezulu",
+    "other": "{count} ngaphezulu"
+  },
   "activity.brain": "Kubuzwe ingqondo: {brain}",
   "activity.input": "Okufakiwe",
   "activity.output": "Umphumela",

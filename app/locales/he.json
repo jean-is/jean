@@ -74,6 +74,13 @@
   "activity.retrying": "מנסה שוב…",
   "activity.failed": "משהו השתבש",
   "activity.answeredWith": "נענה על ידי {brain}",
+  "activity.workedFor": "זמן עבודה: {time}",
+  "activity.thoughtFor": "זמן חשיבה: {time}",
+  "activity.more": {
+    "one": "עוד אחד",
+    "two": "עוד {count}",
+    "other": "עוד {count}"
+  },
   "activity.brain": "נשאל: {brain}",
   "activity.input": "קלט",
   "activity.output": "תוצאה",

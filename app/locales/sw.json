@@ -73,6 +73,12 @@
   "activity.retrying": "Inajaribu tena…",
   "activity.failed": "Kuna hitilafu",
   "activity.answeredWith": "Imejibiwa na {brain}",
+  "activity.workedFor": "Muda wa kazi: {time}",
+  "activity.thoughtFor": "Muda wa kufikiri: {time}",
+  "activity.more": {
+    "one": "{count} zaidi",
+    "other": "{count} zaidi"
+  },
   "activity.brain": "Imeuliza {brain}",
   "activity.input": "Ingizo",
   "activity.output": "Matokeo",

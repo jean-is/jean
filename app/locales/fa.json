@@ -73,6 +73,12 @@
   "activity.retrying": "در حال تلاش دوباره…",
   "activity.failed": "مشکلی پیش آمد",
   "activity.answeredWith": "پاسخ با {brain}",
+  "activity.workedFor": "مدت کار: {time}",
+  "activity.thoughtFor": "مدت فکر: {time}",
+  "activity.more": {
+    "one": "{count} مورد دیگر",
+    "other": "{count} مورد دیگر"
+  },
   "activity.brain": "پرسش از {brain}",
   "activity.input": "ورودی",
   "activity.output": "نتیجه",
