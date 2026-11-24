@@ -4,7 +4,7 @@
   "promise": "Lumikha gamit ang anumang AI, itago ang lahat",
   "acts": ["create", "any", "keep"],
   "create.title": "Lumikha.",
-  "create.why": "Dashboard na nagbabago ang mga numero kapag ginalaw ang mga slider, dokumentong nasa sarili mong mga kulay, website na handa nang i-publish.",
+  "create.why": "Ang sarili mong pagawaan para sa mahahalagang bagay: dashboard na nagbabago ang mga numero kapag ginalaw ang mga slider, dokumentong nasa sarili mong mga kulay, website na handa nang i-publish.",
   "where.home": "Sa bahay",
   "where.family": "Sa pamilya",
   "where.work": "Sa trabaho",

@@ -4,7 +4,7 @@
   "promise": "Tvorte s akoukoľvek AI a všetko si nechajte",
   "acts": ["create", "any", "keep"],
   "create.title": "Tvorte.",
-  "create.why": "Prehľad, ktorého posuvníky menia čísla, dokument vo vašich farbách, web pripravený na zverejnenie.",
+  "create.why": "Váš ateliér pre to, na čom záleží: prehľad, ktorého posuvníky menia čísla, dokument vo vašich farbách, web pripravený na zverejnenie.",
   "where.home": "Doma",
   "where.family": "V rodine",
   "where.work": "V práci",

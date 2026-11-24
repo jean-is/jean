@@ -4,7 +4,7 @@
   "promise": "Crea con cualquier IA, guárdalo todo",
   "acts": ["create", "any", "keep"],
   "create.title": "Crea.",
-  "create.why": "Un panel cuyos controles cambian las cifras, un documento con tus colores, un sitio web listo para publicarse.",
+  "create.why": "Tu taller para lo que importa: un panel cuyos controles cambian las cifras, un documento con tus colores, un sitio web listo para publicarse.",
   "where.home": "En casa",
   "where.family": "En familia",
   "where.work": "En el trabajo",

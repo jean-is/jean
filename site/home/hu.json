@@ -4,7 +4,7 @@
   "promise": "Alkoss bármelyik MI-vel, és tarts meg mindent",
   "acts": ["create", "any", "keep"],
   "create.title": "Alkoss.",
-  "create.why": "Egy irányítópult, amelyen a csúszkák átírják a számokat, egy dokumentum a saját színeidben, egy weboldal, amely azonnal élesíthető.",
+  "create.why": "A saját műhelyed ahhoz, ami számít: egy irányítópult, amelyen a csúszkák átírják a számokat, egy dokumentum a saját színeidben, egy weboldal, amely azonnal élesíthető.",
   "where.home": "Otthon",
   "where.family": "A családban",
   "where.work": "A munkában",
