@@ -81,10 +81,10 @@ test('a server refused in the sandbox runs on this computer instead, and shows i
   const part = settings.locator('.machine')
   await expect(part.locator('.machine-steps > li')).toHaveText(['Open a terminal in one of your folders.', /^Paste this line there, then press Enter\./, 'Waiting for the line to run: this page notices by itself.'])
   const line = await pasted(page)
-  // Node found, or fetched where the computer has none (line.js), then the bridge.
-  expect(line).toMatch(/^curl -fsSL http:\/\/127\.0\.0\.1:\d+\/bridge\/bridge\.js \| JEAN_BRIDGE_KEY=[\w-]+ sh -c '.+' '.+' --port \d+ --origin http:\/\/127\.0\.0\.1:\d+$/)
+  // The bridge, checked, then run by sh, its own head finding Node, or fetching it where the computer has none (line.js).
+  expect(line).toMatch(/^curl -fsSL http:\/\/127\.0\.0\.1:\d+\/bridge\/bridge\.js \| JEAN_BRIDGE_KEY=[\w-]+ sh -c '.+ = [0-9a-f]{64} .+' - --port \d+ --origin http:\/\/127\.0\.0\.1:\d+ '--node=.+'$/)
   // What the terminal fetched runs only if it is what this page was given: another file runs nothing, and says so.
-  const another = spawnSync('bash', ['-c', line.replace(/!=="[^"]+"/, '!=="not-this-one"')], { cwd: disk, encoding: 'utf8', timeout: 20_000 })
+  const another = spawnSync('bash', ['-c', line.replace(/ = [0-9a-f]{64} /, ` = ${'0'.repeat(64)} `)], { cwd: disk, encoding: 'utf8', timeout: 20_000 })
   expect(another.status).toBe(1)
   expect(another.stderr).toContain("This isn't the bridge this page expects, so nothing ran")
   // What it says in the terminal, for a failure to show why it didn't answer.

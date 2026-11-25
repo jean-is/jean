@@ -2,26 +2,29 @@
 // Jean's own Node, the one CI, the container images and Jean's server run, is the newest LTS, named once in .nvmrc (D701).
 // What can't read that file names the same major in an image's tag, node:<major>-alpine, pinned to its digest where
 // scripts/security.js asks for one, and test/lts.test.js holds every one to it. This asks Node's own list of releases
-// whether a newer LTS has come out since. app/bridge/node.json pins the Node This computer's line fetches where a computer
-// has none (D198): the newest release of that major, with its archive's hash for each system, from Node's own SHASUMS256.txt.
-//   npm run lts              exits 1 when .nvmrc isn't the newest LTS's major, or an image or node.json names another, or
-//                            node.json's hashes aren't its release's
+// whether a newer LTS has come out since. The bridge's shell head (app/bridge/bridge.js) pins the Node it fetches where a
+// computer has none (D766): the newest release of that major, with its archive's hash for each system, from Node's own
+// SHASUMS256.txt.
+//   npm run lts              exits 1 when .nvmrc isn't the newest LTS's major, or an image or the bridge names another, or
+//                            the bridge's hashes aren't its release's
 //   npm run lts -- --write   moves .nvmrc and every image to the newest LTS, each pinned one to the new tag's digest, and
-//                            node.json to that major's newest release
+//                            the bridge to that major's newest release
 // CI runs it on every push to main, every pull request and each Monday (.github/workflows/lts.yml). The engines in
 // package.json are something else: the oldest Node Jean's scripts run on, for Intl's features.
 import { execFileSync } from 'node:child_process'
 import { readFileSync, writeFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
-import { SYSTEMS } from '../app/caps/machine/line.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 /** Node's own list of releases, newest first, each with its LTS's name, or false. */
 export const RELEASES = 'https://nodejs.org/dist/index.json'
-/** Node's own builds, and the file that pins the one This computer's line fetches. */
+/** Node's own builds, and the file whose shell head pins the one the bridge fetches. */
 const BUILDS = 'https://nodejs.org/dist/'
-const RUNTIME = 'app/bridge/node.json'
+const RUNTIME = 'app/bridge/bridge.js'
+/** In that head: the version, and each system's build by Node's name for it, with its archive's hash. */
+const VERSION = /^( {2}v=)(\S+)$/m
+const BUILD = / p=([\w-]+) h=([0-9a-f]*);;/g
 /** An image of Node's by its major, as Docker names one: node:<major>, node:<major>-alpine. */
 const IMAGE = /\bnode:(\d+)\b/g
 /** One pinned to its digest, which a new major's tag needs a new one of: node:<major><variant>@sha256:<hex>. */
@@ -42,19 +45,30 @@ export function pinned(root = ROOT) {
 /** The newest LTS's major in Node's list of releases. @param {{ version: string, lts: string | false }[]} releases */
 export const newest = (releases) => Math.max(...releases.filter((release) => release.lts).map((release) => Number(/^v(\d+)\./.exec(release.version)?.[1])))
 
-/** The Node This computer's line fetches, as node.json pins it. @param {string} [root] @returns {import('../app/caps/machine/line.js').Runtime} */
-export const runtime = (root = ROOT) => JSON.parse(readFileSync(join(root, RUNTIME), 'utf8'))
+/** @typedef {{ version: string, sha256: Record<string, string> }} Runtime the Node the bridge fetches: its version, and its archive's hash by Node's name for each system */
+
+/** The bridge's shell head, which ends at the first line that closes JavaScript's comment. @param {string} text */
+const head = (text) => text.slice(0, text.indexOf('\n*/\n') + 1)
+
+/** The Node a bridge's head pins. @param {string} text @returns {Runtime} */
+export const runtimeOf = (text) => ({ version: VERSION.exec(head(text))?.[2] ?? '', sha256: Object.fromEntries([...head(text).matchAll(BUILD)].map(([, platform, hash]) => [platform, hash])) })
+
+/** A bridge with its head pinning that Node instead. @param {string} text @param {Runtime} runtime */
+export const pin = (text, { version, sha256 }) => head(text).replace(VERSION, (_, lead) => lead + version).replace(BUILD, (_, platform) => ` p=${platform} h=${sha256[platform] ?? ''};;`) + text.slice(head(text).length)
+
+/** The Node the bridge fetches, as its head pins it. @param {string} [root] */
+export const runtime = (root = ROOT) => runtimeOf(readFileSync(join(root, RUNTIME), 'utf8'))
 
 /** The newest release of a major in Node's list of releases, newest first. @param {number} major @param {{ version: string }[]} releases */
 export const newestOf = (major, releases) => releases.map((release) => release.version.slice(1)).find((version) => Number(version.split('.')[0]) === major)
 
 /**
- * A release's archive for each system the line fetches for, by its hash in the release's SHASUMS256.txt.
- * @param {string} version @param {(version: string) => Promise<string>} [sums] @returns {Promise<import('../app/caps/machine/line.js').Runtime>}
+ * A release's archive for each system the bridge fetches for, by its hash in the release's SHASUMS256.txt.
+ * @param {string} version @param {(version: string) => Promise<string>} [sums] @param {string[]} [systems] @returns {Promise<Runtime>}
  */
-export async function pins(version, sums = async (at) => (await fetch(`${BUILDS}v${at}/SHASUMS256.txt`)).text()) {
+export async function pins(version, sums = async (at) => (await fetch(`${BUILDS}v${at}/SHASUMS256.txt`)).text(), systems = Object.keys(runtime().sha256)) {
   const text = await sums(version)
-  const sha256 = Object.fromEntries(Object.keys(SYSTEMS).map((platform) => [platform, new RegExp(`^([0-9a-f]{64})  node-v${version.replaceAll('.', '\\.')}-${platform}\\.tar\\.gz$`, 'm').exec(text)?.[1] ?? '']))
+  const sha256 = Object.fromEntries(systems.map((platform) => [platform, new RegExp(`^([0-9a-f]{64})  node-v${version.replaceAll('.', '\\.')}-${platform}\\.tar\\.gz$`, 'm').exec(text)?.[1] ?? '']))
   const missing = Object.keys(sha256).filter((platform) => !sha256[platform])
   if (missing.length) throw new Error(`Node ${version} has no archive for ${missing.join(', ')} in its SHASUMS256.txt`)
   return { version, sha256 }
@@ -112,7 +126,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     const changed = await write(lts)
     const fetched = await pins(/** @type {string} */ (newestOf(lts, releases)))
     if (JSON.stringify(fetched) !== JSON.stringify(runtime())) {
-      writeFileSync(join(ROOT, RUNTIME), `${JSON.stringify(fetched, null, 2)}\n`)
+      writeFileSync(join(ROOT, RUNTIME), pin(readFileSync(join(ROOT, RUNTIME), 'utf8'), fetched))
       changed.push(RUNTIME)
     }
     console.log(changed.length ? `Node ${lts}, the newest LTS, in ${changed.join(', ')}: run npm run check on Node ${lts}, and give Jean's server its compose.yaml again (deploy/server/README.md)` : `Node ${lts}, the newest LTS, everywhere already`)

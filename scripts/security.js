@@ -208,8 +208,11 @@ export function notice (path) {
   return lines.map((line) => `${open}${line}${close}\n`).join('')
 }
 
-/** Where a file's notice goes: after a #! line or a doctype, which come first. @param {string} text */
-const top = (text) => /^(?:#!.*\n|<!doctype html>\n)?/i.exec(text)?.[0].length ?? 0
+/**
+ * Where a file's notice goes: after a #! line or a doctype, which come first, or after `":" `, the shell's no-op, on a file
+ * sh runs before Node does, which JavaScript reads as a string (bridge/bridge.js, D766). @param {string} text
+ */
+const top = (text) => /^(?:#!.*\n|<!doctype html>\n|":" (?=\/\/ SPDX-))?/i.exec(text)?.[0].length ?? 0
 
 /** Whether a file of code opens with its notice. @param {string} path @param {string} text */
 export const noticed = (path, text) => text.startsWith(notice(path), top(text))

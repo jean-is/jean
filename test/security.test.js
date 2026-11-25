@@ -105,6 +105,9 @@ test('each file of code opens with its licence, Elastic-2.0 and its copyright in
   assert.ok(!noticed('app/ui/a.js', `${ee}export {}\n`), 'code taken out of ee/ is seen')
   assert.equal(withNotice('app/ui/a.js', `${ee}export {}\n`), `${ee}export {}\n`, 'and left for a person, never relicensed')
   assert.ok(!noticed('app/ee/a.js', '// SPDX-License-Identifier: MIT\nexport {}\n'))
+  // A file sh runs before Node does, as the bridge is: its notice after the shell's no-op, which JavaScript reads as a string.
+  assert.ok(noticed('app/bridge/bridge.js', '":" // SPDX-License-Identifier: MIT\n":" /*\nexec node\n*/\n'))
+  assert.equal(withNotice('app/ui/a.js', '":" /*\n*/\n'), '// SPDX-License-Identifier: MIT\n":" /*\n*/\n')
 })
 
 test('every module of Jean’s keeps the rules, and nothing tracked looks like a secret', () => {

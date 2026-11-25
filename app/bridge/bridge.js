@@ -1,4 +1,32 @@
-// SPDX-License-Identifier: MIT
+":" // SPDX-License-Identifier: MIT
+":" /*
+# What sh runs, once the line has found this file has the hash the page knows (D677): Node of 20 or later, the computer's
+# own, else Node's build for this system, fetched once into Jean's folder from where --node= says and kept only with the
+# hash pinned here, which npm run lts -- --write keeps (D766); then this same file, on it, as a module, the copy the line
+# made removed. JavaScript reads all this as a string and a comment.
+n=$(command -v node)
+"${n:-false}" -e 'process.exit(+(parseInt(process.versions.node)<20))' 2>/dev/null || {
+  v=26.13.1
+  d=${XDG_CONFIG_HOME:-$HOME/.config}/jean/node-v$v
+  n=$d/bin/node
+  [ -x "$n" ] || {
+    case $(uname -sm) in
+      'Darwin arm64') p=darwin-arm64 h=aec2514ea1ceb2ba52455e9ec65986f6749a06dd759e5db2a72e6889668c9735;;
+      'Darwin x86_64') p=darwin-x64 h=82bb96078a24ca50b9c9a38f2379e6be6d87171fcd400fc14c8934b3bce96e2f;;
+      'Linux x86_64') p=linux-x64 h=518674de2b621728a5e4486f5fb3b7d2900bb3cc4aa97969edaa463db99f9778;;
+      'Linux aarch64') p=linux-arm64 h=80a330b35415382878df18d41afbd106ea89bfb3be0087d6608e289a14c5cc7d;;
+    esac
+    for a; do case $a in --node=*) u=$(printf '%s\n' "${a#*=}" | sed "s/{version}/$v/g;s/{platform}/$p/g");; esac; done
+    echo "Fetching Node.js $v for Jean, once." >&2
+    t=$(mktemp)
+    [ -n "$h" ] && curl -fsSL "$u" -o "$t" && [ "$( (sha256sum || shasum -a 256) <"$t" 2>/dev/null | cut -c1-64)" = "$h" ] &&
+      rm -rf "$d" "$d.part" && mkdir -p "$d.part" && tar -xzf "$t" -C "$d.part" --strip-components=1 && mv "$d.part" "$d"
+    rm -f "$t"
+    [ -x "$n" ] || { echo "Jean's bridge runs on Node.js 20 or later, which couldn't be fetched here: install it, then run the line again." >&2; exit 1; }
+  }
+}
+exec "$n" --input-type=module -e 'const f=await import("node:fs"),p=process.argv[1],b=f.readFileSync(p);/\.js$/.test(p)||f.rmSync(p);await import("data:text/javascript;base64,"+b.toString("base64"))' "$0" "$@"
+*/
 // The bridge (D198): this computer, for Jean. The user runs it in a terminal, in the folder a
 // conversation has, with the line Settings › Computer gives; the Computer's commands then run here,
 // on the user's own machine, in that folder, with its real programs and ports: `npm run dev` serves,
@@ -12,7 +40,7 @@
 // (D235, D262, D756), and their ChatGPT plan, which Jean signs in to as itself and whose tokens stay here (D262).
 // Each CLI it installs with its maker's own installer, and signs in with its maker's own sign-in in the person's browser, when asked.
 //
-//   curl -fsSL <jean>/bridge/bridge.js | JEAN_BRIDGE_KEY=<key> node --input-type=module -e '<runs it if its hash is the one given>' -- --port <port> --origin <jean>
+//   curl -fsSL <jean>/bridge/bridge.js | JEAN_BRIDGE_KEY=<key> sh -c '<runs it with sh if its hash is the one given>' - --port <port> --origin <jean> --node=<Node's builds>
 //
 // The key comes from the environment, which another user's `ps` can't read as it can an argument, and nothing the
 // bridge starts inherits it.
@@ -1530,7 +1558,7 @@ export async function bridge({ folder, origins, key, port, claude = [], copilot 
 
 /** @param {string[]} argv */
 export async function main(argv) {
-  const { values } = parseArgs({ args: argv, options: { port: { type: 'string' }, origin: { type: 'string', multiple: true }, folder: { type: 'string' }, attached: { type: 'boolean' } } })
+  const { values } = parseArgs({ args: argv, options: { port: { type: 'string' }, origin: { type: 'string', multiple: true }, folder: { type: 'string' }, attached: { type: 'boolean' }, node: { type: 'string' } } })
   const port = Number(values.port)
   const key = process.env.JEAN_BRIDGE_KEY
   delete process.env.JEAN_BRIDGE_KEY

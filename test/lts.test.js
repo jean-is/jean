@@ -2,15 +2,14 @@
 // Jean's own Node, named once in .nvmrc (scripts/lts.js, D701): every image of Node's named here, every CI job that runs
 // Node and package.json's engines agree with it. Whether it is still the newest LTS needs Node's list of releases, which
 // npm run lts reads in CI; here newest() reads a list of that shape, and write() moves a copy of the repository's pins. The
-// Node This computer's line fetches where a computer has none (app/bridge/node.json, D198) is of the same major.
+// Node the bridge's shell head fetches where a computer has none (app/bridge/bridge.js, D766) is of the same major.
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
 import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, it } from 'node:test'
-import { images, newest, newestOf, pinned, pins, runtime, write } from '../scripts/lts.js'
-import { SYSTEMS } from '../app/caps/machine/line.js'
+import { images, newest, newestOf, pin, pinned, pins, runtime, runtimeOf, write } from '../scripts/lts.js'
 
 const ROOT = new URL('..', import.meta.url)
 const read = (/** @type {string} */ path) => readFile(new URL(path, ROOT), 'utf8')
@@ -75,17 +74,26 @@ describe("Jean's own Node", () => {
     }
   })
 
-  it('is the major of the Node the bridge’s line fetches, its archive’s hash pinned for every system the line knows', () => {
+  it('is the major of the Node the bridge fetches, its archive’s hash pinned for macOS and Linux, Arm and x64', () => {
     const { version, sha256 } = runtime()
     assert.equal(Number(version.split('.')[0]), pinned())
-    assert.deepEqual(Object.keys(sha256).sort(), Object.keys(SYSTEMS).sort())
+    assert.deepEqual(Object.keys(sha256).sort(), ['darwin-arm64', 'darwin-x64', 'linux-arm64', 'linux-x64'])
     for (const hash of Object.values(sha256)) assert.match(hash, /^[0-9a-f]{64}$/)
+  })
+
+  it('pins another Node in the bridge’s head alone, its JavaScript as it was', async () => {
+    const text = await read('app/bridge/bridge.js')
+    const next = { version: '28.1.0', sha256: Object.fromEntries(Object.keys(runtime().sha256).map((platform, i) => [platform, String(i).repeat(64)])) }
+    const pinnedThere = pin(text, next)
+    assert.deepEqual(runtimeOf(pinnedThere), next)
+    assert.equal(pinnedThere.slice(pinnedThere.indexOf('\n*/\n')), text.slice(text.indexOf('\n*/\n')))
+    assert.equal(pin(pinnedThere, runtime()), text)
   })
 
   it('pins the newest release of a major, with each system’s hash from its SHASUMS256.txt, and refuses one missing a system', async () => {
     const releases = [{ version: 'v27.0.0', lts: false }, { version: 'v26.14.2', lts: 'Q' }, { version: 'v26.14.1', lts: 'Q' }, { version: 'v24.9.0', lts: 'P' }]
     assert.equal(newestOf(26, releases), '26.14.2')
-    const hashes = Object.fromEntries(Object.keys(SYSTEMS).map((platform, i) => [platform, String(i).repeat(64)]))
+    const hashes = Object.fromEntries(Object.keys(runtime().sha256).map((platform, i) => [platform, String(i).repeat(64)]))
     const sums = Object.entries(hashes).map(([platform, hash]) => `${hash}  node-v26.14.2-${platform}.tar.gz\n${'f'.repeat(64)}  node-v26.14.2-${platform}.tar.xz`).join('\n')
     assert.deepEqual(await pins('26.14.2', async () => sums), { version: '26.14.2', sha256: hashes })
     await assert.rejects(pins('26.14.2', async () => sums.split('\n').filter((row) => !row.includes('linux-arm64')).join('\n')), /no archive for linux-arm64/)

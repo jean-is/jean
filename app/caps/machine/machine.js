@@ -34,13 +34,12 @@ await Promise.all([useStrings('machine'), unlock('computer'), unlock('folders')]
 
 const SECRET = 'computer-bridge'
 const BRIDGE = new URL('../../bridge/bridge.js', import.meta.url).href
-/** The bridge's hash, which what the terminal fetches must have before anything of it runs: never half a file, nor another one (D677); and the Node a line fetches where the computer has none. */
+/** The bridge's hash, in hex, which what the terminal fetches must have before anything of it runs: never half a file, nor another one (D677). */
 const hash = signal('')
-const runtime = signal(/** @type {import('./line.js').Runtime | null} */ (null))
-const hashed = Promise.all(['bridge.js', 'node.json'].map((path) => fetch(new URL(path, BRIDGE)).then((res) => (res.ok ? res : Promise.reject(new Error(`${path}: ${res.status}`))))))
-  .then(async ([script, pinned]) => { hash.value = btoa(String.fromCharCode(...new Uint8Array(await crypto.subtle.digest('SHA-256', await script.arrayBuffer())))); runtime.value = await pinned.json() }).catch((error) => console.warn('The bridge', error))
-/** What a line needs beside its pairing: the bridge, its hash, the Node it fetches and where from. */
-const lineOf = () => ({ bridge: BRIDGE, hash: hash.value, runtime: /** @type {import('./line.js').Runtime} */ (runtime.value), url: urlOf('node'), origin: location.origin })
+const hashed = fetch(BRIDGE).then((res) => (res.ok ? res.arrayBuffer() : Promise.reject(new Error(String(res.status)))))
+  .then(async (script) => { hash.value = [...new Uint8Array(await crypto.subtle.digest('SHA-256', script))].map((byte) => byte.toString(16).padStart(2, '0')).join('') }).catch((error) => console.warn('The bridge', error))
+/** What a line needs beside its pairing: the bridge, its hash and where Node's builds are. */
+const lineOf = () => ({ bridge: BRIDGE, hash: hash.value, url: urlOf('node'), origin: location.origin })
 // The desktop app starts the bridge itself where the system has bash; the process it started, for the visit.
 const inApp = signal(false)
 const desktop = host.then((known) => (inApp.value = Boolean(known) && known?.os !== 'Windows'))
@@ -335,7 +334,7 @@ export function page() {
     end: found.on ? html`<button class="button subtle" @click=${forget}>${t('machine.forget')}</button>`
       : own ? html`<button class="button subtle" @click=${choose}>${icons.folder} ${t('machine.choose')}</button>` : nothing,
     draw: () => html`<section class="machine">
-      ${found.on || own || !pair || !hash.value || !runtime.value ? nothing : html`<ol class="machine-steps">
+      ${found.on || own || !pair || !hash.value ? nothing : html`<ol class="machine-steps">
         <li>${t('machine.step.open')}</li>
         <li>${t('machine.step.paste')}<div class="machine-line">
           <code dir="ltr">${line({ ...lineOf(), ...pair }).replace(/_KEY=\S+/, '_KEY=••••••••')}</code>
