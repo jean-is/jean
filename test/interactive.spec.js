@@ -11,7 +11,7 @@
 import { readFile } from 'node:fs/promises'
 import { pathToFileURL } from 'node:url'
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, openSettings, openApprovals, closeSettings, openTasks, nextCopy, chooseLanguage, SHARE_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, openApp, openSettings, openApprovals, closeSettings, openTasks, nextCopy, chooseLanguage, SHARE_URL } from './helpers.js'
 
 /** The language, picked in Settings as start() picks it. @param {import('@playwright/test').Page} page @param {string} lang */
 async function speak(page, lang) {
@@ -338,7 +338,7 @@ test('a page of parts leaves Jean drawn as Jean draws it and live without Jean: 
   await page.evaluate(async (host) => { const { app, updateSettings } = await import('/ui/state.js'); await updateSettings({ urls: { ...app.settings.value.urls, share: host } }) }, SHARE_URL)
   await ask(page, 'How much will a car loan cost?')
   await answered(page)
-  await page.evaluate(async () => { const { apps } = await import('/caps/interactive/apps.js'), [one] = await apps.kept(); await apps.open(one) })
+  await openApp(page)
   const pane = page.locator('app-preview'), out = pane.locator('.pane-head .icon-group > [popovertarget^="out-"]')
   await expect(pane.locator('app-parts ul.figures > li strong')).toHaveText(['€282.38', '€1,942.91'])
   await out.click()

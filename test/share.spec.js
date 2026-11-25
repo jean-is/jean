@@ -8,7 +8,7 @@
 import { readFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, openTasks, openSettings, closeSettings, SHARE_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, openApp, openTasks, openSettings, closeSettings, SHARE_URL } from './helpers.js'
 import { renderFiles } from '../scripts/render.js'
 
 const PACKAGE = /^https:\/\/cdn\.jsdelivr\.net\/npm\/@jean-is\/render@[^/]+\/(.+)$/
@@ -260,7 +260,7 @@ test('a page of parts shared by link from its pane opens in the host’s viewer 
   }, SHARE_URL)
   await ask(page, 'How much will a car loan cost?')
   await answered(page)
-  await page.evaluate(async () => { const { apps } = await import('/caps/interactive/apps.js'), [one] = await apps.kept(); await apps.open(one) })
+  await openApp(page)
   await page.locator('app-preview .pane-head .icon-group > [popovertarget^="out-"]').click()
   await page.locator('app-preview .out-menu').getByRole('button', { name: /^Share/ }).click()
   const dialog = page.locator('app-share-dialog dialog[open]')

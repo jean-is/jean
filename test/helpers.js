@@ -193,6 +193,15 @@ export async function holdAnswers(page) {
   return go
 }
 
+/**
+ * The task's app open in its pane, once its answer's page is kept (caps/interactive/apps.js): the list of tasks it is read from
+ * learns the answer was written a moment after the answer is drawn. @param {import('@playwright/test').Page} page
+ */
+export async function openApp(page) {
+  await expect.poll(() => page.evaluate(async () => (await (await import('/caps/interactive/apps.js')).apps.kept()).length)).toBeGreaterThan(0)
+  await page.evaluate(async () => { const { apps } = await import('/caps/interactive/apps.js'), [one] = await apps.kept(); await apps.open(one) })
+}
+
 /** The task's answers, all written. @param {import('@playwright/test').Page} page @param {number} [count] */
 export async function answered(page, count = 1) {
   await expect(page.locator('.msg-jean .prose')).toHaveCount(count)

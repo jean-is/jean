@@ -21,9 +21,12 @@ async function shown (page, address) {
   const wrong = []
   // Not Jean's: Playwright's WebKit since build 2370 refuses every <select> a style attribute it doesn't have, on a bare page too
   // (test/csp.spec.js), and a collection's view holds some.
-  const selects = page.context().browser()?.browserType().name() === 'webkit'
-  page.on('console', (message) => { if (message.type() === 'error' && !(selects && message.text().startsWith('Refused to apply a stylesheet because'))) wrong.push(message.text()) })
-  page.on('pageerror', (error) => wrong.push(error.message))
+  // Nor is WebKit's word, now and then, that a ResizeObserver loop left notifications undelivered: on Linux, the frame a design's view
+  // is first laid out sizes its words and its takes at once, and the takes, less deep, are told in the next (test/documents.spec.js).
+  const webkit = page.context().browser()?.browserType().name() === 'webkit'
+  const theirs = (/** @type {string} */ text) => webkit && (text.startsWith('Refused to apply a stylesheet because') || text.startsWith('ResizeObserver loop'))
+  page.on('console', (message) => { if (message.type() === 'error' && !theirs(message.text())) wrong.push(message.text()) })
+  page.on('pageerror', (error) => { if (!theirs(error.message)) wrong.push(error.message) })
   await page.goto(JEAN_IS + address)
   await page.locator('.site-creation').scrollIntoViewIfNeeded()
   return { pane: page.frameLocator('.site-creation'), wrong }

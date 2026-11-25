@@ -12,7 +12,7 @@
 import { readFile } from 'node:fs/promises'
 import { request } from 'node:http'
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, nameOf, paint, openTasks, SHARE_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, openApp, nameOf, paint, openTasks, SHARE_URL } from './helpers.js'
 
 test.setTimeout(120_000)
 
@@ -656,7 +656,7 @@ test('a page of parts goes online from its pane as a site its host runs: drawn a
   await page.evaluate(async (host) => { const { app, updateSettings } = await import('/ui/state.js'); await updateSettings({ urls: { ...app.settings.value.urls, share: host } }) }, SHARE_URL)
   await ask(page, 'How much will a car loan cost?')
   await answered(page)
-  await page.evaluate(async () => { const { apps } = await import('/caps/interactive/apps.js'), [one] = await apps.kept(); await apps.open(one) })
+  await openApp(page)
   const dialog = page.locator('dialog.site-publish')
   await page.locator('app-preview').getByRole('button', { name: 'Share, download or print' }).click()
   await page.getByRole('button', { name: 'Publish…' }).click()
