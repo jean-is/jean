@@ -2,6 +2,8 @@
   "out.share": "Partajați…",
   "out.publish": "Publicați…",
   "out.send": "Trimiteți către o aplicație…",
+  "out.install": "Instalați ca aplicație",
+  "out.gone": "{name} nu mai este aici.",
   "out.print": "Tipăriți sau salvați ca PDF",
   "out.kit": "Identitate vizuală",
   "out.failed": "Nu s-a putut salva. Încercați din nou.",

@@ -2,6 +2,8 @@
   "out.share": "Chia sẻ…",
   "out.publish": "Đưa lên mạng…",
   "out.send": "Gửi đến một ứng dụng…",
+  "out.install": "Cài đặt như một ứng dụng",
+  "out.gone": "{name} không còn ở đây nữa.",
   "out.print": "In hoặc lưu thành PDF",
   "out.kit": "Hệ thống thiết kế",
   "out.failed": "Không lưu được. Hãy thử lại.",

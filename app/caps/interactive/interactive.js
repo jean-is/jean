@@ -317,7 +317,8 @@ class AppPage extends HTMLElement {
     else if (data?.save instanceof Blob) savePage(data, rights.peek().allows.downloads)
     else if (navigator.userActivation?.isActive === false) return
     else if (data?.allow === 'maps') void this.allow().then((allowed) => answer({ allowed }))
-    else if (typeof data?.prompt === 'string' && data.prompt.trim() && !app.busy.peek()) send(data.prompt.trim().slice(0, 2000))
+    // An app alone, installed (ui/install.js), has no task on screen to answer: Jean opens with what it asks.
+    else if (typeof data?.prompt === 'string' && data.prompt.trim() && !app.busy.peek()) (document.documentElement.hasAttribute('data-alone') ? open(`./?q=${encodeURIComponent(data.prompt.trim().slice(0, 2000))}`, '_blank', 'noopener') : send(data.prompt.trim().slice(0, 2000)))
     else if (typeof data?.open === 'string' && /^https:\/\//i.test(data.open)) window.open(data.open, '_blank', 'noopener')
   }
 
@@ -396,7 +397,7 @@ let parted
  */
 export const page = (source, open = false, kind = '', task = '') => ((parts, words = parts?.at(-1)?.tag === '#words' ? parts[parts.length - 1].text : '') => (parts
   ? (parted ??= import('./view-parts.js'), html`<app-parts class=${kind} task=${task || nothing} source=${source.slice(0, source.length - words.length)} ?open=${open && !words}></app-parts>${words && blocks(lex(words))}`)
-  : html`<app-page class=${kind} source=${source} ?open=${open}></app-page>`))(parse(source, open))
+  : html`<app-page class=${kind} task=${task || nothing} source=${source} ?open=${open}></app-page>`))(parse(source, open))
 
 drawn.value = { ...drawn.peek(),
   html: page,

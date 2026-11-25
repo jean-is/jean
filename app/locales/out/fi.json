@@ -2,6 +2,8 @@
   "out.share": "Jaa…",
   "out.publish": "Julkaise…",
   "out.send": "Lähetä sovellukseen…",
+  "out.install": "Asenna sovelluksena",
+  "out.gone": "{name} ei ole enää täällä.",
   "out.print": "Tulosta tai tallenna PDF:nä",
   "out.kit": "Suunnittelujärjestelmä",
   "out.failed": "Tallennus ei onnistunut. Yritä uudelleen.",

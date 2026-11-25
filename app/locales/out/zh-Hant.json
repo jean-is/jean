@@ -2,6 +2,8 @@
   "out.share": "分享…",
   "out.publish": "發布…",
   "out.send": "傳送到應用程式…",
+  "out.install": "安裝為應用程式",
+  "out.gone": "{name} 已不在這裡。",
   "out.print": "列印或存成 PDF",
   "out.kit": "設計系統",
   "out.failed": "無法儲存。請再試一次。",

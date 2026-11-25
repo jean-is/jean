@@ -132,6 +132,7 @@ async function start() {
     else root.style.removeProperty('--tint')
   })
   await refreshConversations()
+  if (location.search === '?app') return (await import('./install.js')).alone()
   await startRouter()
   app.fs.watch?.((path) => (path === 'settings.json' ? changeSettings() : path.endsWith('project.md') ? refreshProjects() : refreshConversations()))
 
@@ -145,7 +146,7 @@ async function start() {
 
   // D718, D714.
   if (app.settings.value.forget) import('./forget.js').then((module) => module.forget()).catch(console.warn)
-  const shared = new URLSearchParams(location.search).get('shared')
+  const back = new URLSearchParams(location.search), shared = back.get('shared')
   if (shared) import('./received.js').then((module) => module.received(shared)).catch(console.warn)
   ;/** @type {any} */ (globalThis).launchQueue?.setConsumer((/** @type {any} */ launch) => launch.files.length && import('./received.js').then((module) => module.opened(launch.files)))
 
@@ -160,7 +161,6 @@ async function start() {
   if (document.getElementById('curtain')) import('./curtain.js').then((curtain) => curtain.lift()).catch(failed)
   // A search from the browser's bar is sent, the family page's ?child begins a profile,
   // or back from signing in: to a connection (?state=…), or to OpenRouter or ChatGPT.
-  const back = new URLSearchParams(location.search)
   if (back.has('q')) { history.replaceState(null, '', location.pathname + location.hash); send(back.get('q') ?? '') }
   else if (back.has('child')) { history.replaceState(null, '', location.pathname + location.hash); if (!app.ephemeral.value && await unlock('profiles')) (await import('../caps/profiles/dialog.js')).open(true) }
   else if (!(back.has('state') && await (await import('../caps/connections/connections.js')).finishSignIn()) && back.size) await (await import('./brains.js')).finishSignIn()

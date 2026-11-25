@@ -2,6 +2,8 @@
   "out.share": "Dijeli…",
   "out.publish": "Objavi…",
   "out.send": "Pošalji u aplikaciju…",
+  "out.install": "Instaliraj kao aplikaciju",
+  "out.gone": "{name} više nije ovdje.",
   "out.print": "Ispis ili spremanje u PDF",
   "out.kit": "Dizajnerski sustav",
   "out.failed": "Spremanje nije uspjelo. Pokušajte ponovno.",

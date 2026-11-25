@@ -2,6 +2,8 @@
   "out.share": "Yabelana…",
   "out.publish": "Shicilela…",
   "out.send": "Thumela ku-app…",
+  "out.install": "Faka njenge-app",
+  "out.gone": "Akusekho lapha: {name}",
   "out.print": "Phrinta noma ulondoloze njenge-PDF",
   "out.kit": "Uhlelo lwedizayini",
   "out.failed": "Akukwazekanga ukulondoloza. Zama futhi.",

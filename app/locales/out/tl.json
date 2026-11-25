@@ -2,6 +2,8 @@
   "out.share": "Ibahagi…",
   "out.publish": "Ilathala…",
   "out.send": "Ipadala sa isang app…",
+  "out.install": "I-install bilang app",
+  "out.gone": "Wala na rito ang {name}.",
   "out.print": "I-print o i-save bilang PDF",
   "out.kit": "Sistema ng disenyo",
   "out.failed": "Hindi ito nai-save. Subukan ulit.",

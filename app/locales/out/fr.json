@@ -2,6 +2,8 @@
   "out.share": "Partager…",
   "out.publish": "Publier…",
   "out.send": "Envoyer à une appli…",
+  "out.install": "Installer comme appli",
+  "out.gone": "{name} n’est plus ici.",
   "out.print": "Imprimer ou enregistrer en PDF",
   "out.kit": "Charte graphique",
   "out.failed": "L’enregistrement a échoué. Réessayez.",

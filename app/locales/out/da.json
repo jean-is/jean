@@ -2,6 +2,8 @@
   "out.share": "Del…",
   "out.publish": "Udgiv…",
   "out.send": "Send til en app…",
+  "out.install": "Installér som app",
+  "out.gone": "{name} er her ikke længere.",
   "out.print": "Udskriv eller gem som PDF",
   "out.kit": "Designsystem",
   "out.failed": "Det kunne ikke gemmes. Prøv igen.",

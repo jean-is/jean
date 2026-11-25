@@ -2,6 +2,8 @@
   "out.share": "Dela…",
   "out.publish": "Publicera…",
   "out.send": "Skicka till en app…",
+  "out.install": "Installera som app",
+  "out.gone": "{name} finns inte här längre.",
   "out.print": "Skriv ut eller spara som PDF",
   "out.kit": "Designsystem",
   "out.failed": "Det gick inte att spara. Försök igen.",

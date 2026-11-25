@@ -2,6 +2,8 @@
   "out.share": "共享…",
   "out.publish": "发布…",
   "out.send": "发送到应用…",
+  "out.install": "安装为应用",
+  "out.gone": "{name} 已不在这里。",
   "out.print": "打印或存为 PDF",
   "out.kit": "设计系统",
   "out.failed": "没能保存。请再试一次。",

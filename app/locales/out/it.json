@@ -2,6 +2,8 @@
   "out.share": "Condividi…",
   "out.publish": "Pubblica…",
   "out.send": "Invia a un’app…",
+  "out.install": "Installa come app",
+  "out.gone": "{name} non è più qui.",
   "out.print": "Stampa o salva come PDF",
   "out.kit": "Sistema di design",
   "out.failed": "Salvataggio non riuscito. Riprova.",

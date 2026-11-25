@@ -3,7 +3,7 @@
 // (Publish, for a page on its own where the share host publishes sites, Share, Send to an app, Copy), as a file (Download, the format most want first, its own file last), on paper, then the design system
 // for what wears one. What a browser or this Jean can't do isn't there, and one way alone is the button itself. Each kind's own files
 // and prints are tested with it (documents, tables, slides, designs, scores, games).
-import { test, expect } from '@playwright/test'
+import { test, expect, chromium, devices } from '@playwright/test'
 import { start, connectFakeBrain, ask, answered, turnOn, openSettings, SHARE_URL } from './helpers.js'
 
 /** The system's sheet, as a browser with one has it, and what it was given. @param {import('@playwright/test').Page} page */
@@ -140,7 +140,7 @@ test('a game: a link and the sheet give its page, its file downloads, and paper 
   }, place)
   const pane = page.locator('app-preview:has(app-game)')
   await pane.locator(BUTTON).click()
-  await expect(pane.locator('.out-menu button')).toHaveText(['Publish…', 'Share…', 'Send to an app…', 'Web page', 'Print or save as PDF'])
+  await expect(pane.locator('.out-menu button')).toHaveText(['Publish…', 'Share…', 'Send to an app…', 'Install as an app', 'Web page', 'Print or save as PDF'])
   await page.keyboard.press('Escape')
   await pick(pane, /^Print or save as PDF/)
   await onPaper(page, async (sheet) => { await expect(sheet.locator('h1')).toHaveText('Star'); await expect(sheet.locator('p')).toHaveText('Catch the stars.') })
@@ -169,7 +169,7 @@ test('an app: a link holds its block, its page downloads, and paper has it as it
   await expect(pane.locator('iframe')).toBeVisible()
   await pane.locator(BUTTON).click()
   const menu = pane.locator('.out-menu')
-  await expect(menu.locator('button')).toHaveText(['Publish…', 'Share…', 'Send to an app…', 'Web page', 'Print or save as PDF'])
+  await expect(menu.locator('button')).toHaveText(['Publish…', 'Share…', 'Send to an app…', 'Install as an app', 'Web page', 'Print or save as PDF'])
   const [file] = await Promise.all([page.waitForEvent('download'), menu.getByRole('button', { name: /^Web page/ }).click()])
   expect(file.suggestedFilename()).toBe('Tips.html')
   await pick(pane, /^Print or save as PDF/)
@@ -177,6 +177,50 @@ test('an app: a link holds its block, its page downloads, and paper has it as it
   await pick(pane, /^Share/)
   await expect(page.locator('app-share-dialog dialog')).toBeVisible()
   expect(await held(page)).toEqual({ text: expect.stringMatching(/^```html\n<!doctype html>[^]*\n```$/) })
+})
+
+test('an app installs from Jean’s own address, nothing published, and the app opened alone keeps what it kept beside its task', async ({ baseURL }, info) => {
+  // Chromium itself, in a profile of its own: its headless shell installs nothing, and a passing context is a private window.
+  const context = await chromium.launchPersistentContext(info.outputPath('profile'), { channel: 'chromium', viewport: devices['Desktop Chrome'].viewport, baseURL, serviceWorkers: 'block' })
+  const page = context.pages()[0] ?? await context.newPage(), browser = await context.newCDPSession(page)
+  // The browser's question, as the person answers it.
+  await page.addInitScript(() => { /** @type {any} */ (window).BeforeInstallPromptEvent.prototype.prompt = async function () { /** @type {any} */ (window).asked = true; return { outcome: 'accepted' } } })
+  await start(page)
+  await page.evaluate(async () => {
+    const [{ app, refreshConversations }, { createConversation, appendRecords }, { metaRecord, userRecord, envelope }, { unlock }] = await Promise.all([import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js'), import('/ui/caps.js')])
+    const { path } = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
+    const counter = '<!doctype html><title>Visits</title><h1>Visits</h1><p id="n"></p><script>localStorage.setItem("n", Number(localStorage.getItem("n")) + 1); document.getElementById("n").textContent = localStorage.getItem("n")</script>'
+    await appendRecords(app.fs, path, [metaRecord(app.deviceId, { title: 'Visits' }), userRecord('Count my visits', app.deviceId), envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: `\`\`\`html\n${counter}\n\`\`\`` } })])
+    await refreshConversations()
+    await unlock('interactive')
+    const { apps } = await import('/caps/interactive/apps.js'), [one] = await apps.kept()
+    await apps.open(one)
+  })
+  const pane = page.locator('app-preview')
+  await expect(pane.frameLocator('iframe').locator('#n')).toHaveText('1')
+  await pane.locator(BUTTON).click()
+  const menu = pane.locator('.out-menu')
+  await expect(menu.locator('button')).toHaveText(['Send to an app…', 'Install as an app', 'Web page', 'Print or save as PDF'])
+  // Open, the menu makes the page's manifest the app's own, which the browser would install.
+  await expect.poll(async () => (await browser.send('Page.getAppManifest')).url).toMatch(/^blob:/)
+  const { data } = await browser.send('Page.getAppManifest'), manifest = JSON.parse(data ?? '{}')
+  expect(manifest).toMatchObject({ name: 'Visits', display: 'standalone', lang: 'en', dir: 'ltr', start_url: expect.stringMatching(/\/\?app#profile=/) })
+  expect(manifest.icons[0].src).toMatch(/^data:image\/png;base64,/)
+  await expect.poll(async () => (await browser.send('Page.getInstallabilityErrors')).installabilityErrors).toEqual([])
+  await browser.send('PWA.install', { manifestId: manifest.id })
+  await menu.getByRole('button', { name: 'Install as an app' }).click()
+  await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).asked)).toBe(true)
+  // Answered, Jean's own manifest is back.
+  await expect(page.locator('link[rel="manifest"]')).toHaveAttribute('href', 'manifest.webmanifest')
+
+  // Installed, it opens alone: the app as its pane showed it, what it kept counted on, its manifest the same.
+  const [installed] = await Promise.all([context.waitForEvent('page'), browser.send('PWA.launch', { manifestId: manifest.id })])
+  await expect(installed).toHaveTitle('Visits')
+  await expect(installed.locator('app-shell')).toHaveCount(0)
+  await expect(installed.locator('main.alone').frameLocator('iframe').locator('#n')).toHaveText('2')
+  const alone = await context.newCDPSession(installed)
+  await expect.poll(async () => JSON.parse((await alone.send('Page.getAppManifest')).data ?? '{}').id).toBe(manifest.id)
+  await context.close()
 })
 
 test('a design: what to look at first comes before all, and a link holds its picture, kept among the project’s files', async ({ page, context }) => {

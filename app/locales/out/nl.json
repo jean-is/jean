@@ -2,6 +2,8 @@
   "out.share": "Delen…",
   "out.publish": "Publiceren…",
   "out.send": "Naar een app sturen…",
+  "out.install": "Installeren als app",
+  "out.gone": "{name} is hier niet meer.",
   "out.print": "Afdrukken of als pdf opslaan",
   "out.kit": "Ontwerpsysteem",
   "out.failed": "Opslaan is niet gelukt. Probeer het opnieuw.",

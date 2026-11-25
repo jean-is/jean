@@ -2,6 +2,8 @@
   "out.share": "Kongsi…",
   "out.publish": "Terbitkan…",
   "out.send": "Hantar ke aplikasi…",
+  "out.install": "Pasang sebagai aplikasi",
+  "out.gone": "{name} tiada di sini lagi.",
   "out.print": "Cetak atau simpan sebagai PDF",
   "out.kit": "Sistem reka bentuk",
   "out.failed": "Tidak dapat disimpan. Cuba lagi.",

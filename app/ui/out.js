@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 // How what a pane shows leaves Jean (D683), the same for a document, a collection, a deck, a design, a tune, a game, an app, a site, a
 // prototype, a picture, a film or any other file: one button in its head, just before Close, whose menu goes in one order, as an answer's does: to someone
-// (Publish, online at a name of its own, for a site or any page on its own; Share, a link; Send to an app, the system's sheet; Copy), as a
-// file (Download, the format most people want first, its own file last),
+// (Publish, online at a name of its own, for a site or any page on its own; Share, a link; Send to an app, the system's sheet; Copy), to this
+// device (Install as an app, for an app or a game, where the browser installs one, ./install.js), as a file (Download, the format most people want first, its own file last),
 // on paper (Print, or save as PDF, which ⌘P does in the pane too), then the way to the design system for what wears one. What a kind has
 // no use for, or this browser or this Jean hasn't, isn't there, and one way alone is the button itself. A kind says what it can do
 // through its `out` slot: `of(file)` whether it is its own, `load()` the module whose `ways(file, pane)` says so, read as a pane first draws one.
@@ -23,8 +23,8 @@ await useStrings('out')
  */
 /**
  * What a kind can do. first: what to do before any of it (a design's marks); share: what a link holds (Share's `Item`); publish: a way online of its own (a site's, D720); page: the page on
- * its own it is, or a game's files, which goes online as a site of one page where the share host publishes sites; send: what the system's sheet is given, with the file's name and type this browser is asked about.
- * @typedef {{ first?: Way, share?: () => unknown, publish?: Way, page?: () => Promise<BlobPart | Map<string, string>>, send?: { file?: string, type?: string, make: () => Promise<ShareData> }, copy?: Way, files: Way[], print?: Way, kit?: boolean,
+ * its own it is, or a game's files, which goes online as a site of one page where the share host publishes sites; install: whether it installs as an app of its own (D770); send: what the system's sheet is given, with the file's name and type this browser is asked about.
+ * @typedef {{ first?: Way, share?: () => unknown, publish?: Way, page?: () => Promise<BlobPart | Map<string, string>>, install?: boolean, send?: { file?: string, type?: string, make: () => Promise<ShareData> }, copy?: Way, files: Way[], print?: Way, kit?: boolean,
  *   thing?: { kind: 'collection' | 'document' | 'deck', uri: string } }} Ways  thing: what can be worked on together, which Share asks how (caps/together, D733)
  */
 
@@ -74,18 +74,20 @@ const toKit = async () => { const [{ openSettings }, { projectKit }] = await Pro
 /** The button and its menu, or the button alone. @param {Shown} file @param {Ways | null} ways */
 export function outButton(file, ways) {
   if (!ways) return nothing
-  const { send, share, first, copy, files, print, kit, page } = ways, menu = `out-${file.uri}`, linked = share && loaded.value.has('share')
+  const { send, share, first, copy, files, print, kit, page } = ways, menu = `out-${file.uri}`, linked = share && loaded.value.has('share'), installs = ways.install && 'onbeforeinstallprompt' in window
   if (page && online.peek() === null && !isDenied('sites')) (online.value = false, import('../caps/sites/offer.js').then(({ offered }) => offered()).then((offer) => { online.value = Boolean(offer) }))
   const publish = ways.publish ?? (page && online.value ? publishing(file, page) : undefined)
   const sends = send && navigator.canShare?.(send.file ? { files: [new File([''], send.file, { type: send.type })] } : { text: 'a' })
   const row = (/** @type {Way} */ way) => html`<li><button type="button" popovertarget=${menu} popovertargetaction="hide" @click=${(/** @type {Event} */ event) => take(file, way, event.currentTarget)}>${way.glyph}<span dir="auto">${way.label}</span></button></li>`
   const to = /** @type {Way[]} */ ([...(publish ? [publish] : []), ...(linked ? [{ id: '', glyph: icons.share, label: t('out.share'), run: async (/** @type {EventTarget | null} */ from) => (await import('../caps/share/share.js')).openShare({ path: app.current.peek()?.path ?? `${app.projectDir}/conversations/`, title: file.title, item: /** @type {import('../caps/share/share.js').Item} */ (await share()), ...(ways.thing && { thing: ways.thing }) }, from) }] : []),
     ...(sends ? [{ id: 'share', glyph: icons.send, label: t('out.send'), run: async () => navigator.share(await (ready ?? send.make())) }] : []), ...(copy ? [{ glyph: icons.copy, label: t('action.copy'), ...copy }] : [])])
-  const paper = print ? [{ glyph: icons.print, label: t('out.print'), ...print }] : [], every = [...to, ...files, ...paper], shares = linked || sends || publish
+  const here = installs ? [{ id: '', glyph: icons.devices, label: t('out.install'), run: async () => (await import('./install.js')).install(file) }] : []
+  const paper = print ? [{ glyph: icons.print, label: t('out.print'), ...print }] : [], every = [...to, ...here, ...files, ...paper], shares = linked || sends || publish
   if (every.length === 1 && !first && !kit) return html`<button class="icon-button" aria-label=${t('out.name', { name: file.name })} @click=${() => take(file, every[0])}>${icons.download}</button>`
   return html`<button class="icon-button" popovertarget=${menu} aria-label=${t(shares ? (print ? 'out.menu' : 'out.menuNoPrint') : 'out.menuNoShare')}>${shares ? icons.share : icons.download}</button>
-    <div id=${menu} class="menu out-menu" popover @toggle=${(/** @type {ToggleEvent} */ event) => { ready = sends && event.newState === 'open' ? send.make() : null; ready?.catch(() => {}) }}>
-      ${first ? html`<ul>${row(first)}</ul><hr>` : nothing}${to.length ? html`<ul>${to.map(row)}</ul><hr>` : nothing}
+    <div id=${menu} class="menu out-menu" popover @toggle=${(/** @type {ToggleEvent} */ event) => { ready = sends && event.newState === 'open' ? send.make() : null; ready?.catch(() => {})
+      if (installs) import('./install.js').then((install) => (event.newState === 'open' ? install.ready(file) : install.done())).catch(console.warn) }}>
+      ${first ? html`<ul>${row(first)}</ul><hr>` : nothing}${to.length ? html`<ul>${to.map(row)}</ul><hr>` : nothing}${here.length ? html`<ul>${here.map(row)}</ul><hr>` : nothing}
       <div role="group" aria-label=${t('out.download')}><p class="menu-heading" aria-hidden="true">${t('out.download')}</p><ul>${files.map(row)}</ul></div>
       ${paper.length ? html`<hr><ul>${paper.map(row)}</ul>` : nothing}${kit ? html`<hr><ul>${row({ id: '', glyph: icons.palette, label: t('out.kit'), run: toKit })}</ul>` : nothing}
     </div>`

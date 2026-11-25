@@ -2,6 +2,8 @@
   "out.share": "공유…",
   "out.publish": "게시…",
   "out.send": "앱으로 보내기…",
+  "out.install": "앱으로 설치",
+  "out.gone": "더 이상 여기에 없습니다: {name}",
   "out.print": "인쇄 또는 PDF로 저장",
   "out.kit": "디자인 시스템",
   "out.failed": "저장하지 못했어요. 다시 해 보세요.",

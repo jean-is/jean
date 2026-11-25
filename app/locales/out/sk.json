@@ -2,6 +2,8 @@
   "out.share": "Zdieľať…",
   "out.publish": "Zverejniť…",
   "out.send": "Poslať do aplikácie…",
+  "out.install": "Nainštalovať ako aplikáciu",
+  "out.gone": "{name} už tu nie je.",
   "out.print": "Tlačiť alebo uložiť ako PDF",
   "out.kit": "Dizajnový systém",
   "out.failed": "Uloženie sa nepodarilo. Skúste to znova.",

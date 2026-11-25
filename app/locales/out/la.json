@@ -2,6 +2,8 @@
   "out.share": "Communica…",
   "out.publish": "Publica…",
   "out.send": "Ad applicationem mitte…",
+  "out.install": "Ut applicationem institue",
+  "out.gone": "{name} hic iam non est.",
   "out.print": "Imprime aut ut PDF serva",
   "out.kit": "Systema delineationis",
   "out.failed": "Servari non potuit. Iterum tempta.",
