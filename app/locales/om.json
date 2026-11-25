@@ -79,6 +79,10 @@
     "one": "{count} dabalataa",
     "other": "{count} dabalataa"
   },
+  "activity.asked": {
+    "one": "{brain} · gaaffii {count}",
+    "other": "{brain} · gaaffii {count}"
+  },
   "activity.brain": "{brain} gaafate",
   "activity.input": "Galtee",
   "activity.output": "Bu'aa",

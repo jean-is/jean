@@ -453,16 +453,14 @@ progress { inline-size: 100%; block-size: 0.5rem; accent-color: var(--flame); }
 .activity summary::-webkit-details-marker { display: none; }
 .activity summary > .icon { --glyph: var(--icon-s); flex: none; transition: rotate 0.3s var(--ease); }
 .activity[open] > summary > .icon { rotate: 180deg; }
-.stretch-line, .stretch-now, .stretch-counts, .stretch-counts > span { display: inline-flex; align-items: center; gap: 0.4rem; min-inline-size: 0; }
+.stretch-line, .stretch-now { display: inline-flex; align-items: center; gap: 0.4rem; min-inline-size: 0; }
+.stretch-line { color: var(--ink); }
 .stretch-line .icon { --glyph: var(--icon-s); flex: none; }
 /* The step under way comes in as it begins. */
-.stretch-now { color: var(--ink); animation: arrive 0.3s var(--ease) both; }
+.stretch-now { animation: arrive 0.3s var(--ease) both; }
 .stretch-now > span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-.stretch-counts { gap: 0.65rem; margin-inline-start: 0.2rem; color: var(--ink-faint); font-variant-numeric: tabular-nums; }
-.stretch-counts > span { gap: 0.2rem; }
-.stretch-counts .is-failed { color: var(--danger); }
 /* While the brain thinks with nothing written yet, the end of its thinking under the line, fading upwards. */
-.glimpse { display: flex; flex-direction: column; justify-content: flex-end; max-block-size: 3.1em; overflow: hidden; margin: -0.3rem 0 0; padding-inline-start: 1.05rem; font-size: 0.82rem; line-height: 1.55; color: var(--ink-faint); mask: linear-gradient(transparent, #000 1em) bottom / 100% 3.1em no-repeat; }
+.glimpse { display: flex; flex-direction: column; justify-content: flex-end; max-block-size: 3.1em; overflow: hidden; margin: -0.25rem 0 0; padding-inline-start: 1.05rem; font-size: 0.84rem; line-height: 1.55; color: var(--ink-faint); mask: linear-gradient(transparent, #000 1em) bottom / 100% 3.1em no-repeat; }
 .activity[open] + .glimpse { display: none; }
 .ember { inline-size: 0.5rem; block-size: 0.5rem; flex: none; border-radius: 50%; background: var(--ember-off); }
 [data-status='thinking'] > summary .ember, [data-status='working'] > summary .ember, .ember:is([data-state='waking'], [data-state='working']) {

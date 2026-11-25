@@ -81,6 +81,11 @@
     "few": "još {count}",
     "other": "još {count}"
   },
+  "activity.asked": {
+    "one": "{brain} · {count} upit",
+    "few": "{brain} · {count} upita",
+    "other": "{brain} · {count} upita"
+  },
   "activity.brain": "Upit mozgu {brain}",
   "activity.input": "Ulaz",
   "activity.output": "Rezultat",

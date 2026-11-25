@@ -81,6 +81,11 @@
     "many": "{count} alia",
     "other": "{count} alia"
   },
+  "activity.asked": {
+    "one": "{brain} · {count} rogatio",
+    "many": "{brain} · {count} rogationes",
+    "other": "{brain} · {count} rogationes"
+  },
   "activity.brain": "Rogatum cerebrum {brain}",
   "activity.input": "Datum",
   "activity.output": "Effectus",

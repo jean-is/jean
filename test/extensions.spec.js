@@ -98,7 +98,8 @@ test('an extension read from its address is added, runs apart, draws under each 
   const activity = page.locator('.msg-jean').last().locator('.activity')
   await activity.locator('summary').first().click()
   const refused = activity.locator('.activity-list li[data-status="failed"]')
-  await refused.locator('summary').click()
+  // The page it would have written is named on its line, and opens there.
+  await refused.locator('.line-name').click()
   await expect(refused.locator('.step-facts')).toContainText('Refused by Word count')
   // Going back to the request, it hears what was removed, once (D188).
   page.once('dialog', (dialog) => dialog.accept())
@@ -229,7 +230,7 @@ test('the example extensions (examples/extensions/) are ready-made where policy 
   const facts = async () => {
     const last = page.locator('.msg-jean').last()
     await last.locator('.activity summary').first().click()
-    await last.locator('.activity-list li[data-depth] summary').first().click()
+    await last.locator('.activity-list li[data-depth] :is(.line-name, summary:not([hidden]))').first().click()
     return last.locator('li[data-depth] .step-facts').first()
   }
 

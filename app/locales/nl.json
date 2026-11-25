@@ -79,6 +79,10 @@
     "one": "nog {count}",
     "other": "nog {count}"
   },
+  "activity.asked": {
+    "one": "{brain} · {count} keer gevraagd",
+    "other": "{brain} · {count} keer gevraagd"
+  },
   "activity.brain": "{brain} gevraagd",
   "activity.input": "Invoer",
   "activity.output": "Resultaat",

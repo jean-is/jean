@@ -79,6 +79,10 @@
     "one": "{count} mere",
     "other": "{count} mere"
   },
+  "activity.asked": {
+    "one": "{brain} · spurgt {count} gang",
+    "other": "{brain} · spurgt {count} gange"
+  },
   "activity.brain": "Spurgte {brain}",
   "activity.input": "Input",
   "activity.output": "Resultat",

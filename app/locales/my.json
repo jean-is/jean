@@ -77,6 +77,9 @@
   "activity.more": {
     "other": "နောက်ထပ် {count} ခု"
   },
+  "activity.asked": {
+    "other": "{brain} · {count} ကြိမ် မေးခဲ့သည်"
+  },
   "activity.brain": "{brain} ကို မေးပြီး",
   "activity.input": "ထည့်သွင်းချက်",
   "activity.output": "ရလဒ်",

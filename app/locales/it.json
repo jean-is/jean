@@ -81,6 +81,11 @@
     "many": "altri {count}",
     "other": "altri {count}"
   },
+  "activity.asked": {
+    "one": "{brain} · {count} richiesta",
+    "many": "{brain} · {count} richieste",
+    "other": "{brain} · {count} richieste"
+  },
   "activity.brain": "Chiesto a {brain}",
   "activity.input": "Input",
   "activity.output": "Risultato",

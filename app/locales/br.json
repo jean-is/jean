@@ -85,6 +85,13 @@
     "many": "{count} ouzhpenn",
     "other": "{count} ouzhpenn"
   },
+  "activity.asked": {
+    "one": "{brain} · goulennet {count} gwech",
+    "two": "{brain} · goulennet {count} gwech",
+    "few": "{brain} · goulennet {count} gwech",
+    "many": "{brain} · goulennet {count} gwech",
+    "other": "{brain} · goulennet {count} gwech"
+  },
   "activity.brain": "Goulennet ouzh {brain}",
   "activity.input": "Enmont",
   "activity.output": "Disoc’h",

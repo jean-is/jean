@@ -79,6 +79,10 @@
     "one": "{count} ਹੋਰ",
     "other": "{count} ਹੋਰ"
   },
+  "activity.asked": {
+    "one": "{brain} · {count} ਵਾਰ ਪੁੱਛਿਆ",
+    "other": "{brain} · {count} ਵਾਰ ਪੁੱਛਿਆ"
+  },
   "activity.brain": "ਪੁੱਛਿਆ: {brain}",
   "activity.input": "ਇਨਪੁੱਟ",
   "activity.output": "ਨਤੀਜਾ",

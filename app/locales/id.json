@@ -77,6 +77,9 @@
   "activity.more": {
     "other": "{count} lainnya"
   },
+  "activity.asked": {
+    "other": "{brain} · ditanya {count} kali"
+  },
   "activity.brain": "Bertanya ke {brain}",
   "activity.input": "Masukan",
   "activity.output": "Hasil",

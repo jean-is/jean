@@ -79,6 +79,10 @@
     "one": "વધુ {count}",
     "other": "વધુ {count}"
   },
+  "activity.asked": {
+    "one": "{brain} · {count} વાર પૂછ્યું",
+    "other": "{brain} · {count} વાર પૂછ્યું"
+  },
   "activity.brain": "પૂછ્યું: {brain}",
   "activity.input": "ઇનપુટ",
   "activity.output": "પરિણામ",

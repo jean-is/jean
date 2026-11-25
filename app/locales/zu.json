@@ -79,6 +79,10 @@
     "one": "{count} ngaphezulu",
     "other": "{count} ngaphezulu"
   },
+  "activity.asked": {
+    "one": "{brain} · imibuzo engu-{count}",
+    "other": "{brain} · imibuzo engu-{count}"
+  },
   "activity.brain": "Kubuzwe ingqondo: {brain}",
   "activity.input": "Okufakiwe",
   "activity.output": "Umphumela",

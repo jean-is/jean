@@ -79,6 +79,10 @@
     "one": "още {count}",
     "other": "още {count}"
   },
+  "activity.asked": {
+    "one": "{brain} · {count} заявка",
+    "other": "{brain} · {count} заявки"
+  },
   "activity.brain": "Запитване до {brain}",
   "activity.input": "Вход",
   "activity.output": "Резултат",

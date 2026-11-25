@@ -324,8 +324,7 @@ const tick = () => {
 }
 
 /**
- * The answer as it happened (core/events.js): each stretch of work a line, between what the brain said; under the last, while
- * it is written, Answer now, the decision inbox and an offer.
+ * The answer as it happened (flow()): each stretch of work a line between what the brain said; then Answer now, decisions, an offer.
  * @param {Step[]} steps @param {import('./markdown.js').Sources} sources @param {boolean} streaming @param {ResourceLink[]} files @param {string} [doing] @param {boolean} [steered]
  */
 function answer(steps, sources, streaming, files, doing, steered) {
@@ -352,9 +351,8 @@ function answer(steps, sources, streaming, files, doing, steered) {
 }
 
 /**
- * A stretch of work as one line. Under way: the call it is on, else a plan's step under way (D364), how long it has run,
- * and the end of the brain's thinking beneath. Done: how long it took and its counts by kind, how the answer ended if it
- * was the last, or the brain when it only asked one.
+ * A stretch of work as one line: under way, the call it is on or a plan's step (D364), its time and the brain's thinking
+ * beneath; done, how long it took and what kinds of work, how the answer ended, or the brain when it only asked one.
  * @param {import('../core/events.js').Stretch} stretch
  * @param {{ last?: ToolCallInfo, said: Map<string | undefined, Step>, entries: ToolCallInfo[], files: ResourceLink[], doing?: string, steered?: boolean, streaming: boolean, waiting: number, live: boolean, end: boolean }} turn
  */
@@ -388,9 +386,10 @@ function stretch({ work, ms }, { last, said, entries, files, doing, steered, str
       : html`${time && calls.length ? t('activity.workedFor', { time }) : time && thought ? t('activity.thoughtFor', { time })
         : t(end ? 'activity.answeredWith' : 'activity.brain', { brain: brainName(brain ?? last) })}${calls.length ? module?.tally(work) : nothing}`
   }
-  return html`<details class="activity" data-status=${status}>
+  // Its first round's line, for a tour or a flow's card.
+  return html`<details class="activity" data-status=${status} data-call=${brain ? brains[0].toolCallId : nothing}>
       <summary><span class="ember" aria-hidden="true"></span><span class="stretch-line" dir="auto">${line}</span>${icons.chevron}</summary>
-      ${module?.lines(work, entries, said, files) ?? (import('./steps.js').then((loaded) => (drawn.value = loaded)), nothing)}
+      ${module?.lines(work, entries, said, files, end && !streaming) ?? (import('./steps.js').then((loaded) => (drawn.value = loaded)), nothing)}
       ${end && calls.length ? slots('activity').map((action) => action.draw()) : nothing}
     </details>
     ${glimpse ? html`<p class="glimpse" aria-hidden="true" dir="auto"><span>${glimpse}</span></p>` : nothing}`

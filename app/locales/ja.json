@@ -77,6 +77,9 @@
   "activity.more": {
     "other": "ほか {count} 件"
   },
+  "activity.asked": {
+    "other": "{brain} · {count} 回質問"
+  },
   "activity.brain": "{brain} に質問しました",
   "activity.input": "入力",
   "activity.output": "結果",

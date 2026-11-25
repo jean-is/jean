@@ -79,6 +79,10 @@
     "one": "{count} और",
     "other": "{count} और"
   },
+  "activity.asked": {
+    "one": "{brain} · {count} बार पूछा गया",
+    "other": "{brain} · {count} बार पूछा गया"
+  },
   "activity.brain": "प्रश्न: {brain}",
   "activity.input": "इनपुट",
   "activity.output": "नतीजा",

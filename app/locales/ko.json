@@ -77,6 +77,9 @@
   "activity.more": {
     "other": "외 {count}개"
   },
+  "activity.asked": {
+    "other": "{brain} · {count}번 질문"
+  },
   "activity.brain": "질문: {brain}",
   "activity.input": "입력",
   "activity.output": "결과",

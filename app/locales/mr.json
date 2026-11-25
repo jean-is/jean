@@ -79,6 +79,10 @@
     "one": "आणखी {count}",
     "other": "आणखी {count}"
   },
+  "activity.asked": {
+    "one": "{brain} · {count} वेळा विचारले",
+    "other": "{brain} · {count} वेळा विचारले"
+  },
   "activity.brain": "प्रश्न: {brain}",
   "activity.input": "इनपुट",
   "activity.output": "निकाल",

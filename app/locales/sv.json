@@ -79,6 +79,10 @@
     "one": "{count} till",
     "other": "{count} till"
   },
+  "activity.asked": {
+    "one": "{brain} · tillfrågad {count} gång",
+    "other": "{brain} · tillfrågad {count} gånger"
+  },
   "activity.brain": "Frågade {brain}",
   "activity.input": "Indata",
   "activity.output": "Resultat",

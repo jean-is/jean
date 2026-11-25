@@ -79,6 +79,10 @@
     "one": "{count} tane daha",
     "other": "{count} tane daha"
   },
+  "activity.asked": {
+    "one": "{brain} · {count} kez soruldu",
+    "other": "{brain} · {count} kez soruldu"
+  },
   "activity.brain": "Sorulan: {brain}",
   "activity.input": "Girdi",
   "activity.output": "Sonuç",

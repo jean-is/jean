@@ -79,6 +79,10 @@
     "one": "{count} pa",
     "other": "{count} pa"
   },
+  "activity.asked": {
+    "one": "{brain} · tinanong nang {count} beses",
+    "other": "{brain} · tinanong nang {count} beses"
+  },
   "activity.brain": "Tinanong ang {brain}",
   "activity.input": "Input",
   "activity.output": "Resulta",

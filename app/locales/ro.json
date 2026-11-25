@@ -81,6 +81,11 @@
     "few": "încă {count}",
     "other": "încă {count}"
   },
+  "activity.asked": {
+    "one": "{brain} · {count} cerere",
+    "few": "{brain} · {count} cereri",
+    "other": "{brain} · {count} de cereri"
+  },
   "activity.brain": "Întrebat: {brain}",
   "activity.input": "Intrare",
   "activity.output": "Rezultat",

@@ -79,6 +79,10 @@
     "one": "{count} مورد دیگر",
     "other": "{count} مورد دیگر"
   },
+  "activity.asked": {
+    "one": "{brain} · {count} بار پرسیده شد",
+    "other": "{brain} · {count} بار پرسیده شد"
+  },
   "activity.brain": "پرسش از {brain}",
   "activity.input": "ورودی",
   "activity.output": "نتیجه",

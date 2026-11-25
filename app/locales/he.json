@@ -81,6 +81,11 @@
     "two": "עוד {count}",
     "other": "עוד {count}"
   },
+  "activity.asked": {
+    "one": "{brain} · {count} בקשה",
+    "two": "{brain} · {count} בקשות",
+    "other": "{brain} · {count} בקשות"
+  },
   "activity.brain": "נשאל: {brain}",
   "activity.input": "קלט",
   "activity.output": "תוצאה",

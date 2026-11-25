@@ -79,6 +79,10 @@
     "one": "{count} more",
     "other": "{count} more"
   },
+  "activity.asked": {
+    "one": "{brain} · asked once",
+    "other": "{brain} · asked {count} times"
+  },
   "activity.brain": "Asked {brain}",
   "activity.input": "Input",
   "activity.output": "Result",

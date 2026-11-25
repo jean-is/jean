@@ -79,6 +79,10 @@
     "one": "{count} muu",
     "other": "{count} muuta"
   },
+  "activity.asked": {
+    "one": "{brain} · kysytty {count} kerran",
+    "other": "{brain} · kysytty {count} kertaa"
+  },
   "activity.brain": "Kysytty: {brain}",
   "activity.input": "Syöte",
   "activity.output": "Tulos",

@@ -79,6 +79,10 @@
     "one": "{count} نور",
     "other": "{count} نور"
   },
+  "activity.asked": {
+    "one": "{brain} · {count} پوښتنې",
+    "other": "{brain} · {count} پوښتنې"
+  },
   "activity.brain": "وپوښتل شو: {brain}",
   "activity.input": "ورکړه",
   "activity.output": "پایله",

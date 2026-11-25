@@ -83,6 +83,12 @@
     "many": "{count} ďalšieho",
     "other": "{count} ďalších"
   },
+  "activity.asked": {
+    "one": "{brain} · {count} otázka",
+    "few": "{brain} · {count} otázky",
+    "many": "{brain} · {count} otázky",
+    "other": "{brain} · {count} otázok"
+  },
   "activity.brain": "Otázka pre: {brain}",
   "activity.input": "Vstup",
   "activity.output": "Výsledok",

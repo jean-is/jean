@@ -79,6 +79,10 @@
     "one": "మరో {count}",
     "other": "మరో {count}"
   },
+  "activity.asked": {
+    "one": "{brain} · {count} ప్రశ్న",
+    "other": "{brain} · {count} ప్రశ్నలు"
+  },
   "activity.brain": "ప్రశ్న: {brain}",
   "activity.input": "ఇన్‌పుట్",
   "activity.output": "ఫలితం",

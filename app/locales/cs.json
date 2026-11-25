@@ -83,6 +83,12 @@
     "many": "{count} dalšího",
     "other": "{count} dalších"
   },
+  "activity.asked": {
+    "one": "{brain} · {count} dotaz",
+    "few": "{brain} · {count} dotazy",
+    "many": "{brain} · {count} dotazu",
+    "other": "{brain} · {count} dotazů"
+  },
   "activity.brain": "Dotaz pro: {brain}",
   "activity.input": "Vstup",
   "activity.output": "Výsledek",

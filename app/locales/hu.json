@@ -79,6 +79,10 @@
     "one": "még {count}",
     "other": "még {count}"
   },
+  "activity.asked": {
+    "one": "{brain} · {count} kérés",
+    "other": "{brain} · {count} kérés"
+  },
   "activity.brain": "Kérdezve: {brain}",
   "activity.input": "Bemenet",
   "activity.output": "Eredmény",

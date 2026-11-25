@@ -79,6 +79,10 @@
     "one": "ƙarin {count}",
     "other": "ƙarin {count}"
   },
+  "activity.asked": {
+    "one": "{brain} · tambayoyi {count}",
+    "other": "{brain} · tambayoyi {count}"
+  },
   "activity.brain": "Tambaya: {brain}",
   "activity.input": "Shigarwa",
   "activity.output": "Sakamako",

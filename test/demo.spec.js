@@ -25,8 +25,8 @@ for (const [lang, dir] of [['en', 'ltr'], ['ar', 'rtl'], ['ja', 'ltr']]) {
     await expect(answer).toHaveClass(/is-streaming/)
     await expect(answer.locator('.activity-list [data-call="call-1"]')).toHaveAttribute('data-status', 'completed')
     await expect(answer).not.toHaveClass(/is-streaming/)
-    // Which brain it asked, on the line of its round.
-    await expect(answer.locator('.activity-list .is-said')).toContainText(['OpenRouter · claude-sonnet-5.5', 'OpenRouter · claude-sonnet-5.5'])
+    // Which brain it asked, once, at the end of its lines.
+    await expect(answer.locator('.activity-list .is-said')).toContainText('OpenRouter · claude-sonnet-5.5')
     await expect(answer.locator('.prose')).toContainText('East')
     await expect(answer.locator('app-chart .chart canvas')).toBeVisible()
     // With wait, the next request comes only once its follow-up is pressed.

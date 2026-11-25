@@ -79,6 +79,10 @@
     "one": "{count} ακόμη",
     "other": "{count} ακόμη"
   },
+  "activity.asked": {
+    "one": "{brain} · {count} ερώτηση",
+    "other": "{brain} · {count} ερωτήσεις"
+  },
   "activity.brain": "Ερώτηση: {brain}",
   "activity.input": "Είσοδος",
   "activity.output": "Αποτέλεσμα",

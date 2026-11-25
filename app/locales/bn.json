@@ -79,6 +79,10 @@
     "one": "আরও {count}টি",
     "other": "আরও {count}টি"
   },
+  "activity.asked": {
+    "one": "{brain} · {count} বার জিজ্ঞাসা",
+    "other": "{brain} · {count} বার জিজ্ঞাসা"
+  },
   "activity.brain": "{brain}-কে জিজ্ঞেস করা হয়েছে",
   "activity.input": "ইনপুট",
   "activity.output": "ফলাফল",

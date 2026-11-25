@@ -83,6 +83,12 @@
     "many": "ще {count}",
     "other": "ще {count}"
   },
+  "activity.asked": {
+    "one": "{brain} · {count} запит",
+    "few": "{brain} · {count} запити",
+    "many": "{brain} · {count} запитів",
+    "other": "{brain} · {count} запиту"
+  },
   "activity.brain": "Запит: {brain}",
   "activity.input": "Вхідні дані",
   "activity.output": "Результат",

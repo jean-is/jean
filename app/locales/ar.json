@@ -87,6 +87,14 @@
     "many": "{count} أخرى",
     "other": "{count} أخرى"
   },
+  "activity.asked": {
+    "zero": "{brain} · عدد الطلبات: {count}",
+    "one": "{brain} · عدد الطلبات: {count}",
+    "two": "{brain} · عدد الطلبات: {count}",
+    "few": "{brain} · عدد الطلبات: {count}",
+    "many": "{brain} · عدد الطلبات: {count}",
+    "other": "{brain} · عدد الطلبات: {count}"
+  },
   "activity.brain": "تم سؤال {brain}",
   "activity.input": "المُدخل",
   "activity.output": "النتيجة",

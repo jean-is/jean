@@ -79,6 +79,10 @@
     "one": "{count} مزید",
     "other": "{count} مزید"
   },
+  "activity.asked": {
+    "one": "{brain} · {count} بار پوچھا گیا",
+    "other": "{brain} · {count} بار پوچھا گیا"
+  },
   "activity.brain": "سوال: {brain}",
   "activity.input": "ان پٹ",
   "activity.output": "نتیجہ",

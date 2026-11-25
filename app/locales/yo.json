@@ -77,6 +77,9 @@
   "activity.more": {
     "other": "{count} míràn"
   },
+  "activity.asked": {
+    "other": "{brain} · a béèrè ní ìgbà {count}"
+  },
   "activity.brain": "A béèrè lọ́wọ́ {brain}",
   "activity.input": "Ohun tí a fi wọlé",
   "activity.output": "Àbájáde",

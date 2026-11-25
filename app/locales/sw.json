@@ -79,6 +79,10 @@
     "one": "{count} zaidi",
     "other": "{count} zaidi"
   },
+  "activity.asked": {
+    "one": "{brain} · maswali {count}",
+    "other": "{brain} · maswali {count}"
+  },
   "activity.brain": "Imeuliza {brain}",
   "activity.input": "Ingizo",
   "activity.output": "Matokeo",

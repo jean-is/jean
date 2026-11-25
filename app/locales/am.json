@@ -79,6 +79,10 @@
     "one": "{count} ተጨማሪ",
     "other": "{count} ተጨማሪ"
   },
+  "activity.asked": {
+    "one": "{brain} · {count} ጥያቄ",
+    "other": "{brain} · {count} ጥያቄዎች"
+  },
   "activity.brain": "የተጠየቀው፦ {brain}",
   "activity.input": "ግብዓት",
   "activity.output": "ውጤት",

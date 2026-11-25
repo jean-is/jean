@@ -81,6 +81,11 @@
     "many": "altri {count}",
     "other": "altri {count}"
   },
+  "activity.asked": {
+    "one": "{brain} · {count} dumanda",
+    "many": "{brain} · {count} dumande",
+    "other": "{brain} · {count} dumande"
+  },
   "activity.brain": "Dumandatu à {brain}",
   "activity.input": "Entrata",
   "activity.output": "Risultatu",

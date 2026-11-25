@@ -83,6 +83,12 @@
     "many": "jeszcze {count}",
     "other": "jeszcze {count}"
   },
+  "activity.asked": {
+    "one": "{brain} · {count} zapytanie",
+    "few": "{brain} · {count} zapytania",
+    "many": "{brain} · {count} zapytań",
+    "other": "{brain} · {count} zapytania"
+  },
   "activity.brain": "Zapytano: {brain}",
   "activity.input": "Dane wejściowe",
   "activity.output": "Wynik",

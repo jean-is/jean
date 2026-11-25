@@ -79,6 +79,10 @@
     "one": "மேலும் {count}",
     "other": "மேலும் {count}"
   },
+  "activity.asked": {
+    "one": "{brain} · {count} கேள்வி",
+    "other": "{brain} · {count} கேள்விகள்"
+  },
   "activity.brain": "கேள்வி: {brain}",
   "activity.input": "உள்ளீடு",
   "activity.output": "முடிவு",

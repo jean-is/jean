@@ -81,6 +81,11 @@
     "many": "mais {count}",
     "other": "mais {count}"
   },
+  "activity.asked": {
+    "one": "{brain} · {count} consulta",
+    "many": "{brain} · {count} consultas",
+    "other": "{brain} · {count} consultas"
+  },
   "activity.brain": "Perguntado a {brain}",
   "activity.input": "Entrada",
   "activity.output": "Resultado",

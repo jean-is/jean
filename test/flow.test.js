@@ -62,8 +62,8 @@ test('counts by kind: a move or a deletion is a change, the brain’s own search
   ]
   assert.deepEqual(counts(work), [
     { kind: 'read', count: 2, failed: false },
-    { kind: 'edit', count: 2, failed: false },
     { kind: 'search', count: 2, failed: false },
     { kind: 'fetch', count: 1, failed: true },
+    { kind: 'edit', count: 2, failed: false },
   ])
 })

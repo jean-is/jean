@@ -79,6 +79,10 @@
     "one": "{count} weitere",
     "other": "{count} weitere"
   },
+  "activity.asked": {
+    "one": "{brain} · einmal gefragt",
+    "other": "{brain} · {count}-mal gefragt"
+  },
   "activity.brain": "{brain} gefragt",
   "activity.input": "Eingabe",
   "activity.output": "Ergebnis",

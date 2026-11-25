@@ -77,6 +77,9 @@
   "activity.more": {
     "other": "{count} ọzọ"
   },
+  "activity.asked": {
+    "other": "{brain} · a jụrụ ugboro {count}"
+  },
   "activity.brain": "Jụrụ {brain}",
   "activity.input": "Ihe e nyere",
   "activity.output": "Nsonaazụ",
