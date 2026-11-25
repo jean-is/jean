@@ -183,8 +183,9 @@ test('an app installs from Jean’s own address, nothing published, and the app 
   // Chromium itself, in a profile of its own: its headless shell installs nothing, and a passing context is a private window.
   const context = await chromium.launchPersistentContext(info.outputPath('profile'), { channel: 'chromium', viewport: devices['Desktop Chrome'].viewport, baseURL, serviceWorkers: 'block' })
   const page = context.pages()[0] ?? await context.newPage(), browser = await context.newCDPSession(page)
-  // The browser's question, as the person answers it.
+  // The browser's question, as the person answers it; and the system's sheet, which Chromium has on a Mac and not on Linux.
   await page.addInitScript(() => { /** @type {any} */ (window).BeforeInstallPromptEvent.prototype.prompt = async function () { /** @type {any} */ (window).asked = true; return { outcome: 'accepted' } } })
+  await withSheet(page)
   await start(page)
   await page.evaluate(async () => {
     const [{ app, refreshConversations }, { createConversation, appendRecords }, { metaRecord, userRecord, envelope }, { unlock }] = await Promise.all([import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js'), import('/ui/caps.js')])
