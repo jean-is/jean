@@ -2,8 +2,7 @@
 // Connections, web search and live conversation (0.5). The version's done-when: Jean
 // sums up the user's latest emails through a connection, with citations. The connection signs in
 // with OAuth against a fake mail service (test/fixtures/fake-mail.js), in the browser.
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, openFromCase, connect, connectTile, openSettings, closeSettings, openTasks, withPolicy, MAIL_URL, GATEWAY_URL, BRAIN_URL } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, turnOn, openFromCase, connect, connectTile, openSettings, closeSettings, openTasks, withPolicy, MAIL_URL, GATEWAY_URL, BRAIN_URL } from './helpers.js'
 
 /** @param {import('@playwright/test').Page} page */
 const system = (page) => page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.find((record) => record.meta?.prompt)?.meta?.prompt.system)

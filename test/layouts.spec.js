@@ -3,8 +3,7 @@
 // and the one recommended framed under its badge; numbered items that start in bold are steps, a
 // GitHub alert and a quote that starts with an emoji are notes; a column of amounts lines up at the
 // end. Copied, the answer is still the Markdown it was, and rich text with its table, list and quotes.
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, nextCopy } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, answered, nextCopy } from './helpers.js'
 
 test('a comparison, steps and notes are laid out as what they are, and copy as they were', async ({ page }) => {
   await start(page)

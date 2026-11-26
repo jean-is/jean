@@ -6,9 +6,8 @@
 // The homepage is checked as the part of index.html it is, under the app's root, which has its own tests.
 import { readFile } from 'node:fs/promises'
 import { createRequire } from 'node:module'
-import { test, expect } from '@playwright/test'
 import { sitePages } from '../site/site.js'
-import { answered, ask, connectFakeBrain, start } from './helpers.js'
+import { test, expect, answered, ask, connectFakeBrain, start } from './helpers.js'
 
 const JEAN_IS = 'http://127.0.0.1:4186/'
 const AXE = await readFile(createRequire(import.meta.url).resolve('axe-core/axe.min.js'), 'utf8')

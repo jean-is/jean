@@ -3,8 +3,7 @@
 // everywhere, then what they often ask there, kept in Settings; with none, the organisation's, policy's `starters`, in the
 // person's language, else Jean's; under `only`, the organisation's alone, locked. In Arabic and Japanese, its words and
 // directions are theirs.
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, withPolicy, openSettings, closeSettings, addProject, enterProject } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, withPolicy, openSettings, closeSettings, addProject, enterProject } from './helpers.js'
 
 /** Adds an idea on the list open in Settings, its words and request kept as a person leaves each field (not by Tab, which lands on an icon button whose tip Escape would close first). @param {import('@playwright/test').Locator} settings @param {string} words @param {string} request */
 async function add(settings, words, request) {

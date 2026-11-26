@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Feedback (D712): offered once an answer was asked again twice; then Good and Not right in the last answer's More options. Not right
 // asks what missed, and answers again a level up with those words; Keep it in mind turns memory on for the brain to note it.
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask } from './helpers.js'
 
 test('asked again twice, Feedback is offered; Not right says why and answers again, Good stays pressed', async ({ page }) => {
   await start(page)

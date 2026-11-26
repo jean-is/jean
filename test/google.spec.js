@@ -3,8 +3,7 @@
 // gateway holds the web app Google registered for it, so Gmail, Google Calendar, Google Docs, Google Drive, Google Sheets and
 // Google Workspace connect through it, and its AI gateway, whose contract rules out training on what it
 // is sent, reads what they bring in. Google is test/fixtures/fake-google.js, at its own addresses.
-import { test, expect } from '@playwright/test'
-import { start, ask, callTool, openSettings, closeSettings, withPolicy, connectTile as fromTile } from './helpers.js'
+import { test, expect, start, ask, callTool, openSettings, closeSettings, withPolicy, connectTile as fromTile } from './helpers.js'
 import { CLIENT, SECRET, INBOX, SERVERS, policy, fakeGoogle } from './fixtures/fake-google.js'
 
 const AUTH = 'https://www.googleapis.com/auth/'

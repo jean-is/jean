@@ -5,8 +5,7 @@
 // the words picked, and the brain is told what each names just before it. + in the box opens a
 // menu beside it of the room's skills, and of its connections, each picked named as / names it (D292). What / names
 // is a chip in the box, by its name, a mode in the request, which says above it what it is, and a tag there looks for it.
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, turnOn, closeSettings, connect, MAIL_URL, chooseLanguage } from './helpers.js'
+import { test, expect, start, connectFakeBrain, turnOn, closeSettings, connect, MAIL_URL, chooseLanguage } from './helpers.js'
 
 /** A name as the box holds it once picked: a chip, by its name. @param {string} name */
 const chip = (name) => `\u2068\u202F${name}\u202F\u2069`

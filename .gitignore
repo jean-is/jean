@@ -19,6 +19,8 @@ node_modules/
 # Playwright output (npm run e2e)
 test-results/
 playwright-report/
+# What each browser test's pages read, which every run keeps for the next AFFECTED one (D772)
+test/.cache/
 # Desktop apps built by npm run build:desktop, and Neutralino's binaries it downloads (D155)
 dist/
 

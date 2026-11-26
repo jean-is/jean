@@ -4,7 +4,7 @@
 // again from the request, the answer written as it came. Every page that has one, in English and French, as jean.is
 // serves them (scripts/serve.js --home). Where the page has a guided tour over its task, /excel, Play is
 // the page's, and opens a popover that plays it full size, each stop in its turn ringing what it names, then again.
-import { test, expect } from '@playwright/test'
+import { test, expect } from './helpers.js'
 
 const JEAN_IS = 'http://127.0.0.1:4186/'
 

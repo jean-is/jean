@@ -9,7 +9,7 @@ import { mkdtemp, readdir, readFile, rm, symlink, writeFile } from 'node:fs/prom
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { test, expect } from '@playwright/test'
+import { test, expect } from './helpers.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const strings = JSON.parse(readFileSync(join(ROOT, 'app', 'locales', 'en.json'), 'utf8'))

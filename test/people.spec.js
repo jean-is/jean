@@ -4,8 +4,7 @@
 // it and accepts; the six digits his screen shows are typed on Ana's; then each has the other, Ana's Jean naming Bob as she did, and where
 // each reads. Both screens show the same three steps on the way. Chromium only: Playwright's WebKit keeps nothing, where no one is kept
 // (test/playwright.config.js).
-import { test, expect } from '@playwright/test'
-import { start, openSettings, closeSettings, openTasks, RELAY_URL, SHARE_URL } from './helpers.js'
+import { test, expect, start, openSettings, closeSettings, openTasks, RELAY_URL, SHARE_URL } from './helpers.js'
 
 /** @typedef {import('@playwright/test').Page} Page */
 

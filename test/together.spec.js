@@ -3,8 +3,7 @@
 // on 4187, which keeps journals (test/playwright.config.js). Ana makes a link from Share's "Work on it together"; Bob opens it, gives the
 // name the others see and joins; a row each adds reaches the other's copy; Ana removes Bob, who keeps what he had. Chromium only:
 // Playwright's WebKit keeps nothing (test/playwright.config.js).
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, RELAY_URL, SHARE_URL } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, answered, RELAY_URL, SHARE_URL } from './helpers.js'
 
 /** @typedef {import('@playwright/test').Page} Page */
 

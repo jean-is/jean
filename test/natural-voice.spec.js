@@ -3,8 +3,7 @@
 // box; once that language's voice is downloaded, it reads it, while another of its languages is read by the
 // system's voices and offered by a notice until downloaded too. Settings › General turns it off and credits
 // it. Its worker is replaced by a fake that makes a beep for each request and says what it was asked.
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, openSettings } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, openSettings } from './helpers.js'
 
 test.use({ locale: 'en-US' })
 

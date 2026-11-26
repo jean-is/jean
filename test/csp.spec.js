@@ -5,8 +5,7 @@
 // sandbox where code runs, the frame of a page an answer holds, the check page, the privacy policy and
 // the terms. With the smoke tests
 // in Chromium and WebKit; in Firefox and Chrome too with npm run csp (test/browsers.config.js).
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, openSettings, closeSettings } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, openSettings, closeSettings } from './helpers.js'
 import { line, expected } from './fixtures/csp.js'
 
 const CSP_SERVER = 'http://127.0.0.1:4184/'

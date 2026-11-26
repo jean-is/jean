@@ -5,8 +5,7 @@
 // before writing a letter. A click brings Jean back on that task, coming back takes away those still
 // shown, and the switch in Settings › General turns them off. The browser's notifications are stood in for, and
 // being elsewhere is the page without focus: the test sees what Jean asks of them.
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, openSettings, closeSettings, openTasks } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, openSettings, closeSettings, openTasks } from './helpers.js'
 
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {

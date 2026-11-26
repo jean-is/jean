@@ -8,8 +8,7 @@
 // certificate says so (D437). On localhost no key is needed.
 import { readFile } from 'node:fs/promises'
 import { X509Certificate, createHash } from 'node:crypto'
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, withPolicy, openSettings, BRAIN_URL, openData } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, withPolicy, openSettings, BRAIN_URL, openData } from './helpers.js'
 import { authority, issue, requested, certsOnly, ocspAnswer, provider, providerKeys, QUALIFIED } from './fixtures/ca.js'
 
 const EST = 'https://ca.fake.example/.well-known/est'

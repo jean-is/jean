@@ -9,8 +9,7 @@
 import { readFile, readdir } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, openData, openSettings, openProfile, closeSettings, openTasks, ask, answered, RELAY_URL, BRAIN_URL } from './helpers.js'
+import { test, expect, start, connectFakeBrain, openData, openSettings, openProfile, closeSettings, openTasks, ask, answered, RELAY_URL, BRAIN_URL } from './helpers.js'
 
 const PASSWORD = 'a long and happy password'
 /** A brain in the cloud with a key, which crosses, the fake brain answering for it; the fake brain itself, on this computer, stays (bundle.js). */

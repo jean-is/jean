@@ -2,8 +2,7 @@
 // Signing in with the organisation's account (D385): at work, policy names the identity provider and
 // the gateway's brain; Jean signs in at the first visit, the gateway gets the token, its MCP servers too, which renews,
 // Settings › Brains says who is signed in, and signing out, from the person's menu, stays so until asked.
-import { test, expect } from '@playwright/test'
-import { start, ask, openSettings, closeSettings, openTasks, openProfile, turnOn, withPolicy, MAIL_URL } from './helpers.js'
+import { test, expect, start, ask, openSettings, closeSettings, openTasks, openProfile, turnOn, withPolicy, MAIL_URL } from './helpers.js'
 import { POLICY, TOOLS, fakeIssuer, fakeGateway, fakeTools, redirect } from './fixtures/fake-issuer.js'
 
 /** The task's answers, all written. @param {import('@playwright/test').Page} page @param {number} [count] */

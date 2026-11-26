@@ -3,8 +3,7 @@
 // the user agrees, its weights download, with their progress shown, the files are read into vectors,
 // and search_files finds a passage in other words than the question's. The embedder is replaced by
 // a fake whose vectors give income, earnings and revenue one meaning.
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask } from './helpers.js'
 
 /** The fake embedder: a loaded event, then for each text a vector of 64 bytes, words folded into them by meaning. */
 const WORKER = `

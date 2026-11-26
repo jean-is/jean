@@ -7,8 +7,7 @@
 // sheets, the same in every engine; the text's size is the browser's own setting, which Chromium's
 // protocol sets.
 import { readFileSync } from 'node:fs'
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, openSettings, closeSettings, openTasks } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, openSettings, closeSettings, openTasks } from './helpers.js'
 import { LOOKS } from '../app/ui/looks.js'
 
 test.skip(({ browserName }) => browserName !== 'chromium', 'the same style sheets in every engine')

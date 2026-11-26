@@ -4,8 +4,7 @@
 // routines, requests Jean sends itself on a schedule, while open or caught up at the next visit (D122). Jean's own Visual answers,
 // in every room from the first message.
 import { createHash } from 'node:crypto'
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, openSettings, closeSettings, openTasks, MAIL_URL } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, turnOn, openSettings, closeSettings, openTasks, MAIL_URL } from './helpers.js'
 
 
 /** A new conversation, once the page has turned to it. @param {import('@playwright/test').Page} page */

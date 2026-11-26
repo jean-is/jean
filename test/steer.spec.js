@@ -2,9 +2,8 @@
 // Steering (D365): what the user sends while a task works waits under its live answer, then its brain reads it before
 // its next step, the work going on under it; × takes it back to the box, and a reload puts one not read yet back there.
 // The fake brain counts slowly to five, a second a step, and stops when told to.
-import { test, expect } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
-import { start, connectFakeBrain, ask, answered, holdAnswers } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, answered, holdAnswers } from './helpers.js'
 
 /** @param {string} lang @returns {Promise<Record<string, string>>} */
 const strings = async (lang) => JSON.parse(await readFile(new URL(`../app/locales/${lang}.json`, import.meta.url), 'utf8'))

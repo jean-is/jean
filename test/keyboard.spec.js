@@ -3,8 +3,7 @@
 // nothing of its keyboard: a box touched rises under the bar while it has the keys, its / menu under it, and goes back
 // when they leave it, in a new task as in one under way. Where the browser says what the keyboard leaves, the window
 // shorter or what is seen of it, the box sits just above it. With a mouse, none of it loads.
-import { test, expect } from '@playwright/test'
-import { connectFakeBrain, ask, answered } from './helpers.js'
+import { test, expect, connectFakeBrain, ask, answered } from './helpers.js'
 
 /** The box's top and bottom, and the bar's bottom, as drawn. @param {import('@playwright/test').Page} page */
 const places = (page) => page.evaluate(() => {

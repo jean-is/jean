@@ -3,8 +3,7 @@
 // version's done-when: a large task is split, approved step by step, and the result is verified
 // against its sources. The fake brain splits a briefing between two helpers, each reading one
 // email from the fake mail service (test/fixtures/fake-mail.js).
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, connect, openSettings, MAIL_URL } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, turnOn, connect, openSettings, MAIL_URL } from './helpers.js'
 
 /** @param {import('@playwright/test').Page} page */
 const system = (page) => page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.find((record) => record.meta?.prompt)?.meta?.prompt.system)

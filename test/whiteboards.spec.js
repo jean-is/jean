@@ -6,8 +6,7 @@
 // its arrow with it, and given a colour; a Creations card dropped on it, shown and opened; pictures of it downloaded; Lanes and
 // Table in the address; table_rows reading it. In Arabic, the board runs right to left and a drop still lands where it was put.
 import { readFileSync } from 'node:fs'
-import { test, expect } from '@playwright/test'
-import { start, ask, answered, BRAIN_URL } from './helpers.js'
+import { test, expect, start, ask, answered, BRAIN_URL } from './helpers.js'
 
 /** A plan's brain, which the fake brain answers for: not on this computer, so it passes (D491). @param {import('@playwright/test').Page} page */
 const planBrain = (page) => page.evaluate((baseURL) => import('/ui/brains.js').then(({ addBrain }) => addBrain({ id: 'claude', provider: 'claudecode', api: 'openai', baseURL, model: 'haiku' })), BRAIN_URL)

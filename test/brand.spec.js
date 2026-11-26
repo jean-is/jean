@@ -2,8 +2,7 @@
 // A design system proposed from the person's own material (D740): on the design system's page from a logo, a brand guide as a
 // PDF or a Word file, drawn in its previews and worn only once accepted; or by Jean in a task, from a logo shared, waiting there.
 // Every kit proposed reads at AA by day and by night. In Arabic and Japanese too, from a guide written in each.
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, openSettings, png } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, answered, openSettings, png } from './helpers.js'
 import { wordGuide, BRANDS } from './brands/fixtures.js'
 
 /** A guide as a PDF of an A4 page, a line each, in Helvetica (one of the standard fonts, which says nothing of the brand). @param {string[]} lines */

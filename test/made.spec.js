@@ -3,9 +3,8 @@
 // web page or a Word document, its table as CSV the way this locale's spreadsheets read it, and
 // printed alone. Files the brain writes (D119): a Word document from the first message on,
 // changed in place, holding a picture Jean made in the task by its name (D730), and a spreadsheet written from a script.
-import { test, expect } from '@playwright/test'
 import { readZip } from '../app/core/zip.js'
-import { start, connectFakeBrain, ask, answered, turnOn, paint, SALES, nameOf } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, answered, turnOn, paint, SALES, nameOf } from './helpers.js'
 import { extractPages } from '../app/caps/files/extract.js'
 
 test.beforeEach(async ({ page }) => {

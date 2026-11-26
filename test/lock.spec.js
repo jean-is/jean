@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: MIT
 // The lock (D371): every file is sealed at rest, and a lock keeps the key behind a password or a
 // passkey, with a recovery code; a second tab is handed the key, Lock now locks them all.
-import { test, expect } from '@playwright/test'
-import { start, turnOn, openSettings, closeSettings, openProfile, openProfiles, openOthers } from './helpers.js'
+import { test, expect, start, turnOn, openSettings, closeSettings, openProfile, openProfiles, openOthers } from './helpers.js'
 
 const PASSWORD = 'a long and happy password'
 

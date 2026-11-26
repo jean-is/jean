@@ -3,8 +3,7 @@
 // signs in with Entra ID at the first visit, the AI gateway answers with that sign-in's token, and
 // Microsoft 365 connects through the organisation's gateway, which holds the web app Entra registered
 // for it. Microsoft is test/fixtures/fake-microsoft.js, at its own addresses.
-import { test, expect } from '@playwright/test'
-import { start, ask, answered, callTool, openSettings, closeSettings, withPolicy, connectTile } from './helpers.js'
+import { test, expect, start, ask, answered, callTool, openSettings, closeSettings, withPolicy, connectTile } from './helpers.js'
 import { POLICY, TENANT, ISSUER, SPA, WEB, SECRET, MAILBOX, fakeMicrosoft } from './fixtures/fake-microsoft.js'
 
 const AT = `https://login.microsoftonline.com/${TENANT}/oauth2/v2.0/authorize`

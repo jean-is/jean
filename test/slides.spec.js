@@ -4,8 +4,7 @@
 // three ways (typing on a slide, as its Markdown, or by asking Jean, whose version is accepted or rejected slide by slide,
 // D505), laid out again from its kit's Slide layout menu, and saved as PowerPoint, as a PDF, as its file and as a link; a chart is
 // Charts' own and a diagram Pele's (D592). In Arabic and Japanese too. Its decks are among the creations (D558).
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, turnOn, openSettings, closeSettings, openTasks, chooseLanguage, nameOf } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, answered, turnOn, openSettings, closeSettings, openTasks, chooseLanguage, nameOf } from './helpers.js'
 import { writeZip } from '../app/core/zip.js'
 
 /** Jean's own Slides skill, added as the user adds it, by its name in the user's language. @param {import('@playwright/test').Page} page @param {string} [name] @param {string} [add] */

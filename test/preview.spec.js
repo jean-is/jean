@@ -5,8 +5,7 @@
 // Settings says no (D158); a Word document, a table and a deck show as Office draws them, in a
 // frame of the same kind (D183), and a file follows its new version; a PDF shows its drawn pages.
 // On a phone it covers the conversation; right to left, it sits on the left.
-import { test, expect } from '@playwright/test'
-import { downloadFile, start, connectFakeBrain, ask, holdAnswers, openApprovals, SALES, pdf, inkOf, nameOf } from './helpers.js'
+import { test, expect, downloadFile, start, connectFakeBrain, ask, holdAnswers, openApprovals, SALES, pdf, inkOf, nameOf } from './helpers.js'
 import { writeZip } from '../app/core/zip.js'
 import { makeFile } from '../app/caps/made/formats.js'
 import { extractPages } from '../app/caps/files/extract.js'

@@ -2,8 +2,7 @@
 // To look at (caps/checks): over a collection's rows, what its own check found, with no brain: the same row twice, mended by Keep one; a choice
 // written two ways, by Make them one; a number some rows lack, whose first row opens; a finding left shows no more, kept with the collection.
 // Nothing shows once nothing is found. In Arabic and Japanese, the band is in the language.
-import { test, expect } from '@playwright/test'
-import { start } from './helpers.js'
+import { test, expect, start } from './helpers.js'
 
 /** A collection of invoices beside the task, with a row twice, a client written two ways and an amount lacking; its place. @param {import('@playwright/test').Page} page */
 const invoices = (page) => page.evaluate(async () => {

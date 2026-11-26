@@ -4,8 +4,7 @@
 // watches, a look with nothing to say leaves nothing, and one that speaks is kept and shown as one. The browser's picker is
 // replaced by a painted canvas, whose window the test changes.
 import { readFileSync } from 'node:fs'
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, withPolicy, openSettings, closeSettings } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, answered, withPolicy, openSettings, closeSettings } from './helpers.js'
 
 /** The room's strings and screen sharing's own, in a language. @param {string} lang */
 const stringsOf = (lang) => ({

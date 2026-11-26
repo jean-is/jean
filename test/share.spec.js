@@ -7,8 +7,7 @@
 // after a note that it is someone else's; no longer shared once stopped.
 import { readFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, openApp, openTasks, openSettings, closeSettings, SHARE_URL } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, answered, openApp, openTasks, openSettings, closeSettings, SHARE_URL } from './helpers.js'
 import { renderFiles } from '../scripts/render.js'
 
 const PACKAGE = /^https:\/\/cdn\.jsdelivr\.net\/npm\/@jean-is\/render@[^/]+\/(.+)$/

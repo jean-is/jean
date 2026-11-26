@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: MIT
 // Backup (0.2): everything Jean keeps in one zip, keys left out, restored on another device
 // (here, a fresh browser context) without deleting anything that was already there.
-import { test, expect } from '@playwright/test'
 import { readZip, writeZip } from '../app/core/zip.js'
-import { start, connectFakeBrain, ask, openSettings, closeSettings, openTasks, nameOf } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, openSettings, closeSettings, openTasks, nameOf } from './helpers.js'
 
 test('a backup holds the conversations but no key, and restores on a fresh device', async ({ page, browser }) => {
   await start(page)

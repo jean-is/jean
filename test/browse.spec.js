@@ -6,8 +6,7 @@
 // as an app. ⌘⇧B opens and closes it. It shares the side of the window with a file's preview, neither
 // covering the other, and its edge and the divider between them resize them (D144). A web page Jean
 // made opens there from its card (D172). Right to left, the pane mirrors; in Japanese, its strings are Japanese.
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, holdAnswers, turnOn, openSettings, openTasks, BRAIN_URL, SALES } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, holdAnswers, turnOn, openSettings, openTasks, BRAIN_URL, SALES } from './helpers.js'
 
 const SITE = BRAIN_URL.replace(/\/v1$/, '/site')
 

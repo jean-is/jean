@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: MIT
 // What another app gives Jean once installed (D714): a share, which the service worker holds in memory until the page it
 // opens asks for it, its words then in the box and its files shared; and the manifests that offer both.
-import { test, expect } from '@playwright/test'
-import { start } from './helpers.js'
+import { test, expect, start } from './helpers.js'
 
 test('a share from another app lands in the box: its words to send or not, its file shared as a dropped one', async ({ browser, baseURL }) => {
   const context = await browser.newContext({ serviceWorkers: 'allow', baseURL })

@@ -3,8 +3,7 @@
 // systems), or Search at the top of the drawer (D165), finds a conversation by its words, a file by
 // its text, and a section of Settings, as people type: part of a word, case and accents aside; once
 // Connections is found, a connection and a service to connect too, named in the box as / names them.
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, openTasks, withPolicy, turnOn, closeSettings, MAIL_URL } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, openTasks, withPolicy, turnOn, closeSettings, MAIL_URL } from './helpers.js'
 
 /**
  * Conversations and a file kept as Jean keeps them, so there is plenty to look back on.

@@ -7,8 +7,7 @@
 // and the picture with them.
 import { readFile } from 'node:fs/promises'
 import { pathToFileURL } from 'node:url'
-import { test, expect } from '@playwright/test'
-import { start, openTasks, servedInstruments } from './helpers.js'
+import { test, expect, start, openTasks, servedInstruments } from './helpers.js'
 
 test.use({ viewport: { width: 1280, height: 800 } })
 

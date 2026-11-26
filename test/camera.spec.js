@@ -4,8 +4,7 @@
 // shrinks to a tile. While Jean watches, a look with nothing to say leaves nothing, and one that speaks is kept and shown
 // as one. The camera is a painted canvas, whose scene the test changes; live conversation is denied, so nothing listens.
 import { readFileSync } from 'node:fs'
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, withPolicy, turnOn, closeSettings, openSettings, chooseLanguage } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, answered, withPolicy, turnOn, closeSettings, openSettings, chooseLanguage } from './helpers.js'
 
 /** The room's strings and the camera's own, in a language. @param {string} lang */
 const stringsOf = (lang) => ({

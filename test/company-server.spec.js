@@ -3,8 +3,7 @@
 // types in a masked field, which only the server receives: never the conversation, the box or the brain. The flow's
 // words run in Arabic and Japanese too.
 import { readFileSync } from 'node:fs'
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask } from './helpers.js'
 
 for (const lang of ['en', 'ar', 'ja']) {
   const words = JSON.parse(readFileSync(`app/locales/${lang}.json`, 'utf8'))

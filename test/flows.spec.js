@@ -4,8 +4,7 @@
 // puts the main area in flow mode, on the room's flows; on a task, a button beside the terminal's and the
 // browser's opens a pane on that task drawn as a flow, each step with what it is doing or became (D216),
 // and on the flows it made or ran. In Japanese, its words are Japanese; right to left, it mirrors.
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, holdAnswers, turnOn, closeSettings, openTasks, addProject, enterProject } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, holdAnswers, turnOn, closeSettings, openTasks, addProject, enterProject } from './helpers.js'
 
 /** Where a card sits, as the canvas keeps it. @param {import('@playwright/test').Locator} card */
 const at = (card) => card.evaluate((element) => [/** @type {HTMLElement} */ (element).style.getPropertyValue('--x'), /** @type {HTMLElement} */ (element).style.getPropertyValue('--y')])

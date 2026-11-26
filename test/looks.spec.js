@@ -7,8 +7,7 @@
 // with its other mode folded into its corner on Auto; then the accent, from swatches.
 import { readFile } from 'node:fs/promises'
 import { pathToFileURL } from 'node:url'
-import { test, expect } from '@playwright/test'
-import { start, openSettings, closeSettings, openTasks, connectFakeBrain, ask, nameOf, withPolicy } from './helpers.js'
+import { test, expect, start, openSettings, closeSettings, openTasks, connectFakeBrain, ask, nameOf, withPolicy } from './helpers.js'
 import { LOOKS } from '../app/ui/looks.js'
 
 test.use({ viewport: { width: 1280, height: 800 } })

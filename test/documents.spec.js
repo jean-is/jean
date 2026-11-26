@@ -8,10 +8,9 @@
 // and drop, a phone; and Documents found as Jean writes a document again, then made and changed by the
 // brain's own tools, a picture Jean made in the task put in by its name (D730), and found again from another task, with @ in the box
 // and by the brain, which reads one before it changes it.
-import { test, expect } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
 import { readZip } from '../app/core/zip.js'
-import { start as begin, connectFakeBrain, ask, answered, openTasks, openSettings, addProject, enterProject, paint, SHARE_URL } from './helpers.js'
+import { test, expect, start as begin, connectFakeBrain, ask, answered, openTasks, openSettings, addProject, enterProject, paint, SHARE_URL } from './helpers.js'
 
 const fixture = (/** @type {string} */ name) => readFile(new URL(`fixtures/editor/${name}`, import.meta.url), 'utf8')
 const sample = () => fixture('jean-answer.md')

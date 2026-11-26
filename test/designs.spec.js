@@ -5,9 +5,8 @@
 // faces, and as a picture, which carries the design too; printed two to a sheet; a shape, an ornament and a QR code added behind the
 // words, arranged and duplicated; offered for an invitation written as a web page; a picture Jean made in the task put in by its name (D730). In Arabic its words run right to left in Jean's own
 // face; in Japanese the weekday in brackets is marked.
-import { test, expect } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
-import { start, connectFakeBrain, ask, answered, nameOf, paint, png, openSettings, closeSettings } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, answered, nameOf, paint, png, openSettings, closeSettings } from './helpers.js'
 
 /** The design on show, as the pane holds it. @param {import('@playwright/test').Page} page */
 const shown = (page) => page.evaluate(async () => (await import('/caps/designs/designs.js')).shown.value?.design)

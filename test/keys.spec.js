@@ -6,8 +6,7 @@
 // the one before (D130, D238, D253, D584); ⌘B opens the drawer or puts it away (D234); ⌘/ shows the shortcuts (D257);
 // ⌘S saves a copy of the open task, and no key deletes one (D313); Escape stops an answer (D315); ⌥↓ and ⌥↑ go
 // through the project's tasks, and ⌃Tab and ⌃⇧Tab too where Jean has a window of its own.
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, openSettings, closeSettings, openTasks, nameOf } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, openSettings, closeSettings, openTasks, nameOf } from './helpers.js'
 
 test('⌘, opens Settings, and ⌘⇧O starts a new conversation from anywhere', async ({ page }) => {
   await start(page)

@@ -3,8 +3,7 @@
 // the box takes the questions one at a time, the answer Jean recommends picked already, with room
 // for the user's own words, Skip and Back; then every answer goes back to the brain. The fake
 // brain asks three questions before writing a letter.
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask } from './helpers.js'
 
 test('Jean asks its questions one at a time, and reads every answer back', async ({ page }) => {
   await start(page)

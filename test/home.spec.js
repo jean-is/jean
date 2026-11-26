@@ -9,8 +9,7 @@
 // where it has none, read from there without leaving. Once hidden, the address is the site's own, the language kept.
 // On a phone the box stays docked at the foot. Jean as written (app/, any other site) has no page at all.
 // Playwright's WebKit keeps nothing over a reload or a new address (no OPFS), so what a reload keeps is checked in Chromium.
-import { test, expect } from '@playwright/test'
-import { connectFakeBrain, ask, answered, openProfile, openTasks } from './helpers.js'
+import { test, expect, connectFakeBrain, ask, answered, openProfile, openTasks } from './helpers.js'
 
 const JEAN_IS = 'http://127.0.0.1:4186/'
 /**

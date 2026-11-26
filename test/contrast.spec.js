@@ -6,8 +6,7 @@
 // colour is laid over the pixels it covered.
 // Chromium only: what is measured is the style sheets, the same in every engine.
 import { readFileSync } from 'node:fs'
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, openSettings, closeSettings, openTasks, closeTasks } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, openSettings, closeSettings, openTasks, closeTasks } from './helpers.js'
 import { LOOKS } from '../app/ui/looks.js'
 
 test.skip(({ browserName }) => browserName !== 'chromium', 'pixels are compared in one engine')

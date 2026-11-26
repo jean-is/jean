@@ -3,10 +3,13 @@
 // one (an opaque-origin frame running a classic worker). Jean is served as written, or as a web
 // deploy serves it with SITE=dist/web after npm run build:web (D318), and a deterministic fake
 // brain answers (D37). Each is a <capability>.spec.js, beside the unit tests'
-// *.test.js, which node --test runs (D247). Usage: npm run e2e
+// *.test.js, which node --test runs (D247). Usage: npm run e2e, AFFECTED=origin/main npm run e2e for only the specs a
+// change since then affects (D772), or SPECS='ask files' npm run e2e for those.
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { defineConfig, devices } from '@playwright/test'
+import { BASE, affected, said } from '../scripts/affected.js'
 import { ISSUER, JWKS, POLICY } from './fixtures/fake-issuer.js'
 import { vapid } from '../relay/relay.js'
 
@@ -26,6 +29,21 @@ const RELAY = 4187
 const CHROMIUM_ONLY = ['out', 'report', 'begin', 'collect', 'soon', 'look', 'related', 'sources', 'people', 'together', 'colleagues', 'about', 'approvals', 'ask', 'audit', 'authority', 'away', 'compact', 'compare', 'delegate', 'demo', 'dlp', 'find', 'flows', 'google', 'session', 'starters',
   'guards', 'help', 'learn', 'lists', 'meaning', 'microsoft', 'notifications', 'panes', 'plan', 'policy', 'reach', 'remember', 'retention', 'signin', 'site', 'steer',
   'thinking', 'you', 'compose']
+
+// Only the specs a change affects, as the last runs read them (scripts/affected.js): AFFECTED=<base>, or AFFECTED=1 since
+// origin/main, picks them; SPECS names them, as npm run ci -- --affected does. Each runs in every engine that runs it.
+if (process.env.AFFECTED && process.env.SPECS === undefined) {
+  const base = /^(?:1|true)$/.test(process.env.AFFECTED) ? BASE : process.env.AFFECTED
+  const found = affected(base)
+  console.log(said(found, base))
+  // Each worker reads this config again: it reads these.
+  process.env.SPECS = [...found.chosen.keys()].join(' ')
+}
+const CHOSEN = process.env.SPECS?.split(/[\s,]+/).filter(Boolean)
+if (CHOSEN?.some((name) => !/^[\w.-]+$/.test(name))) throw new Error(`SPECS=${process.env.SPECS}: specs by name, as ask files`)
+if (CHOSEN && !CHOSEN.length) { console.log('No spec to run'); process.exit(0) }
+const ONLY = CHOSEN ? { testMatch: new RegExp(`/test/(?:${CHOSEN.map((name) => name.replaceAll('.', '\\.')).join('|')})\\.spec\\.js$`) } : {}
+
 const RELAYED = { origins: [`http://127.0.0.1:${APP}`], hosts: ['127.0.0.1'],
   clients: [{ issuer: `http://127.0.0.1:${MAIL}/closed`, tokenEndpoint: `http://127.0.0.1:${MAIL}/token`, clientId: 'gateway-app', clientSecret: 'gateway-secret' }] }
 
@@ -42,7 +60,8 @@ export default defineConfig({
   // Half of the cores, Playwright's own default, said here because each worker's browser takes several: at 85% a run took
   // hardly less time, the processor well over-committed, and tests that wait on timers failed by the handful.
   workers: '50%',
-  reporter: 'list',
+  // And what each spec's tests read, for AFFECTED's next run (scripts/affected.js).
+  reporter: [['list'], [fileURLToPath(new URL('../scripts/affected.js', import.meta.url))]],
   // Without motion: Jean's light and face move for as long as a page is open, and with a few
   // pages at once that alone kept the processor busy. A test that needs it turns it back on for its page.
   // Service workers blocked: Playwright's script for it reads navigator.serviceWorker in every frame, which throws
@@ -51,8 +70,8 @@ export default defineConfig({
   use: { baseURL: `http://127.0.0.1:${APP}/`, serviceWorkers: 'block', reducedMotion: 'reduce' },
   projects: [
     // Muted: a score's test plays music (WebKit has no such flag: start() in helpers.js silences it).
-    { name: 'chromium', use: { ...devices['Desktop Chrome'], launchOptions: { args: ['--mute-audio'] } } },
-    { name: 'webkit', use: { ...devices['Desktop Safari'] }, testIgnore: ['**/.cache/**', ...CHROMIUM_ONLY.map((name) => `**/${name}.spec.js`)],
+    { name: 'chromium', ...ONLY, use: { ...devices['Desktop Chrome'], launchOptions: { args: ['--mute-audio'] } } },
+    { name: 'webkit', ...ONLY, use: { ...devices['Desktop Safari'] }, testIgnore: ['**/.cache/**', ...CHROMIUM_ONLY.map((name) => `**/${name}.spec.js`)],
       grepInvert: /\((?:[^)]*, )?(?:ar|ja)[,)]|\bin (?:ar|ja|Arabic|Japanese)\b/ },
   ],
   webServer: [

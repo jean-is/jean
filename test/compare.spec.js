@@ -4,7 +4,7 @@
 // the app where they say: a way to add a brain open in Settings › Brains (Ollama's, a Claude plan's), Settings › Your
 // data's Bring in, which takes another assistant's export, or the sample spreadsheet in the box. Each address is the
 // app's own once there.
-import { test, expect } from '@playwright/test'
+import { test, expect } from './helpers.js'
 
 const JEAN_IS = 'http://127.0.0.1:4186/'
 

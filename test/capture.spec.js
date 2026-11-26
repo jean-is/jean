@@ -4,8 +4,7 @@
 // both. The browser's screen picker is replaced by a painted canvas. In three languages.
 import { readFileSync } from 'node:fs'
 import { deflateSync, crc32 } from 'node:zlib'
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask } from './helpers.js'
 
 /** A plain PNG of the given size. @param {number} width @param {number} height */
 function png(width, height) {

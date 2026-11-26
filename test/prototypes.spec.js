@@ -7,8 +7,7 @@
 // Build it asks for the app it shows. In Arabic and Japanese.
 import { createHash } from 'node:crypto'
 import { readFile } from 'node:fs/promises'
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, nameOf, SHARE_URL } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, answered, nameOf, SHARE_URL } from './helpers.js'
 
 test.setTimeout(120_000)
 

@@ -7,10 +7,10 @@
 // is played by a folder of the private file system, the same kind of handle. WebKit works on a copy.
 // Playwright's own contexts are private, where Chrome 153 closes the browser when a handle of the private
 // file system is read back from IndexedDB: what lasts across visits is checked in a profile of its own.
-import { test, expect, chromium, devices } from '@playwright/test'
+import { chromium, devices } from '@playwright/test'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
-import { start, connectFakeBrain, ask, turnOn, openTasks, giveFolder } from './helpers.js'
+import { test, expect, recorded, start, connectFakeBrain, ask, turnOn, openTasks, giveFolder } from './helpers.js'
 import { extractPages } from '../app/caps/files/extract.js'
 import { makeFile } from '../app/caps/made/formats.js'
 import { readZip } from '../app/core/zip.js'
@@ -192,6 +192,7 @@ test.describe('in place', () => {
   test('a folder of code changes by exactly Jean’s change; two conversations and two projects each keep their own folder after a reload', async ({ baseURL }, info) => {
     // A profile of its own, as people have, where handles last across visits.
     const context = await chromium.launchPersistentContext(info.outputPath('profile'), { viewport: devices['Desktop Chrome'].viewport, baseURL, serviceWorkers: 'block' })
+    recorded(context)
     await picker(context)
     const page = context.pages()[0] ?? await context.newPage()
     await start(page)
@@ -308,6 +309,7 @@ test.describe('in place', () => {
 
   test('a reload while the folders are read back, or another tab reading them then, loses none; a read that took its page down forgets them for the visit', async ({ baseURL }, info) => {
     const context = await chromium.launchPersistentContext(info.outputPath('profile'), { viewport: devices['Desktop Chrome'].viewport, baseURL, serviceWorkers: 'block' })
+    recorded(context)
     await picker(context)
     // Once asked, the next read of the folders' store never ends: a page caught as it reads them back.
     await context.addInitScript(() => {

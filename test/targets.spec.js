@@ -5,8 +5,7 @@
 // screen, a conversation with an answer, its + menu, the user's menu, Settings and the tasks, in
 // every look, on a laptop and on a phone. Chromium only: what is measured is the style sheets.
 import { readFileSync } from 'node:fs'
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, openProfile, openSettings, closeSettings, openTasks } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, openProfile, openSettings, closeSettings, openTasks } from './helpers.js'
 import { LOOKS } from '../app/ui/looks.js'
 
 test.skip(({ browserName }) => browserName !== 'chromium', 'the same style sheets in every engine')

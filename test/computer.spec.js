@@ -4,13 +4,12 @@
 // scripts and Python in the sandbox, with /workspace and the internet as Settings allow; commands in
 // bash, their files kept in the project's workspace or, after the user agrees, in their folder; a new
 // site asked about first, a registry's key added by Jean, a relay used.
-import { test, expect } from '@playwright/test'
 import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { mkdtempSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { start, connectFakeBrain, ask, turnOn, openSettings, closeSettings, withPolicy, SALES, pdf, inkOf } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, turnOn, openSettings, closeSettings, withPolicy, SALES, pdf, inkOf } from './helpers.js'
 
 const QUESTIONS = {
   en: ['What are the total sales by region?', 'Here are the exact totals'],

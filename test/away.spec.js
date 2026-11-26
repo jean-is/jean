@@ -4,8 +4,7 @@
 // shows the answer where it got to, and an answer that came meanwhile a still light until it is opened. The list shows no times. The fake brain asks three questions
 // before writing a letter. A task follows another at once, a title shows whole until the pointer
 // is on its task, which brings its menu's button, and the keyboard goes from task to task.
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, openTasks } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, answered, openTasks } from './helpers.js'
 
 test('an answer goes on while the user is in another conversation', async ({ page, browserName }) => {
   await start(page)

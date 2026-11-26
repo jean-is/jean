@@ -93,7 +93,7 @@ The prompt and the declared tools are frozen for the life of a conversation. Cha
 ## Testing
 
 - Use `node --test` for `core/`, test-first for `core/` and storage.
-- One Playwright smoke test per capability, `test/<capability>.spec.js` beside the unit tests' `*.test.js`, run against the fake brain (`npm run e2e`). It is separate from `npm run check` because it needs browsers.
+- One Playwright smoke test per capability, `test/<capability>.spec.js` beside the unit tests' `*.test.js`, run against the fake brain (`npm run e2e`). It is separate from `npm run check` because it needs browsers. It takes `test` and `expect` from `./helpers.js`, which keeps what its pages read, so that a run here can take only what a change affects (D772).
 - A browser test checks what only a browser can tell; logic goes under `node --test`. Chromium runs every spec. WebKit runs what can differ between engines (frames, the sandbox, storage, editing, the keyboard, media, drawing), in English; a spec of what Jean decides, the same JavaScript everywhere, joins `CHROMIUM_ONLY` in `test/playwright.config.js`.
 - A run repeated over looks, languages or sizes earns its time. A rule about colour runs in every look, in English; one about layout in the looks that size their own; a look's own motion only where its sheet has some. A flow's words run in Arabic and Japanese once.
 - Every UI change gets checked in one right-to-left locale (Arabic) and one CJK locale (Japanese).
@@ -127,8 +127,8 @@ npm run check   # vendor, manifest, tsc --noEmit (strict), tests, budgets
 npm run security  # the security rules above, in the code, no secret in a tracked file (D679), and each file of code's licence (-- --fix writes a missing one); npm test runs it too
 npm run lts     # whether .nvmrc names Node's newest LTS, from Node's list of releases (D701); -- --write moves it and every node:<major> image there; CI runs it each Monday too
 npm test        # node --test --test-force-exit test/*.test.js
-npm run e2e     # Playwright smoke tests in Chromium and WebKit (once: npx playwright install chromium webkit)
-npm run ci      # GitHub's CI here (D724): every job read from .github/workflows/, run in the images CI uses, side by side, logs in dist/ci/; -- e2e:webkit or -- check audit picks jobs, --worktree takes uncommitted changes, --amd64 runs as GitHub's runners do; what publishes is rehearsed, never pushed; needs Docker, and helm, kind and kubectl for the containers job
+npm run e2e     # Playwright smoke tests in Chromium and WebKit (once: npx playwright install chromium webkit); AFFECTED=origin/main runs only the specs a change since then affects, as the last runs read them (D772), SPECS='ask files' those
+npm run ci      # GitHub's CI here (D724): every job read from .github/workflows/, run in the images CI uses, side by side, logs in dist/ci/; -- e2e:webkit or -- check audit picks jobs, --worktree takes uncommitted changes, --affected only the browser tests a change since origin/main affects (D772), --amd64 runs as GitHub's runners do; what publishes is rehearsed, never pushed; needs Docker, and helm, kind and kubectl for the containers job
 npm run reflexes  # measure Kev on the multilingual reflex test set (-- --lang fr,ja, -- --write); BRAIN=<provider>:<model>, a brain reading a child's danger where Kev isn't on (D661)
 npm run offers    # measure what a brain offers on the multilingual offer test set (BRAIN=<provider>:<model>, -- --write)
 npm run tutor     # measure how often a brain gives the answer to a child's work, on the multilingual tutor test set (BRAIN=<provider>:<model>, JUDGE=<provider>:<model>, -- --write)

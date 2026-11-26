@@ -3,8 +3,7 @@
 // cloud recognition, in the interface language; otherwise Whistle or a small Whisper, by
 // language, downloaded only once the user agrees. The browser's recogniser is replaced by a fake that hears a sentence.
 // Read-aloud (D114): each answer in its own language, by the best voice on the device.
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, openSettings } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, openSettings } from './helpers.js'
 
 // While listening the button pulses, unless the user asked for less motion.
 test.use({ locale: 'en-US', reducedMotion: 'reduce' })

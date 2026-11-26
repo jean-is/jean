@@ -4,7 +4,7 @@
 // pointed at, the arrows walking the links, a press saying what Jean would do; in Arabic its sources on the right, and at
 // 320 px wide its columns stacked, no name cut. test/everywhere.test.js holds what the map holds.
 import { readFile } from 'node:fs/promises'
-import { test, expect } from '@playwright/test'
+import { test, expect } from './helpers.js'
 import { PLACES } from '../site/everywhere/page.js'
 
 const JEAN_IS = 'http://127.0.0.1:4186/'

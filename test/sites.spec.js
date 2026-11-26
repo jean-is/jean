@@ -11,8 +11,7 @@
 // and pointing in Arabic and Japanese.
 import { readFile } from 'node:fs/promises'
 import { request } from 'node:http'
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, openApp, nameOf, paint, openTasks, SHARE_URL } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, answered, openApp, nameOf, paint, openTasks, SHARE_URL } from './helpers.js'
 
 test.setTimeout(120_000)
 
