@@ -31,9 +31,36 @@ async function precacheShell () {
   const { shell = [], locales = [], integrity = {} } = await response.json()
   const root = await fetch(url('./'), { cache: 'no-cache' })
   if (!root.ok) throw new Error(`./: HTTP ${root.status}`)
-  const files = await Promise.all([...shell, ...locales].map((path) => fetchVerified(path, integrity[path])))
+  const before = await earlier()
+  const files = await Promise.all([...shell, ...locales].map(async (path) => (await unchanged(before, path, integrity[path])) ?? fetchVerified(path, integrity[path])))
   await cache.put(url('./'), root)
   await Promise.all(files.map(([path, file]) => cache.put(url(path), file)))
+}
+
+/**
+ * What earlier versions keep, one version at a time: the hashes its listing names, and its caches, its shell's first.
+ * @returns {Promise<{ listed: Record<string, string>, kept: Cache[] }[]>}
+ */
+async function earlier () {
+  const names = await caches.keys()
+  return Promise.all(names.filter((name) => name.startsWith('app-shell-') && name !== SHELL).map(async (shell) => {
+    const listing = await (await caches.open(shell)).match(url('capabilities.json')), ofIt = `${CAPABILITY}${shell.slice('app-shell-'.length)}-`
+    return { listed: (await listing?.json().catch(() => null))?.integrity ?? {}, kept: await Promise.all([shell, ...names.filter((name) => name.startsWith(ofIt))].map((name) => caches.open(name))) }
+  }))
+}
+
+/**
+ * A file an earlier version keeps that hasn't changed since: its listing names the same hash as this one's, so its copy
+ * is taken as it is, without asking the network or hashing it again. An update then fetches only what changed, where
+ * asking about each of the shell's thousand files kept Settings' Check for a new version waiting for seconds.
+ * @param {Awaited<ReturnType<typeof earlier>>} before @param {string} path @param {string} [integrity]
+ * @returns {Promise<[string, Response] | undefined>}
+ */
+async function unchanged (before, path, integrity) {
+  for (const { listed, kept } of before) for (const cache of integrity && listed[path] === integrity ? kept : []) {
+    const hit = await cache.match(url(path))
+    if (hit) return [path, hit]
+  }
 }
 
 /**
@@ -111,41 +138,25 @@ self.addEventListener('notificationclick', (event) => {
   event.waitUntil(self.clients.matchAll({ type: 'window' }).then(([client]) => (client ? client.focus().then(() => client.navigate(at)) : self.clients.openWindow(at))))
 })
 
-/** @param {unknown} id what a page asked for */
+/** An update takes what hasn't changed from the caches before it, so big runtimes never come again. @param {unknown} id what a page asked for */
 async function cacheCapability (id) {
   try {
     const listing = await (await caches.open(SHELL)).match(url('capabilities.json'))
     const { capabilities = {}, integrity = {} } = listing ? await listing.json() : {}
     if (typeof id !== 'string' || !Object.hasOwn(capabilities, id)) return false
     const cache = await caches.open(capabilityCache(id))
-    // One file at a time: runtimes include a 27 MB wasm.
-    for (const path of capabilities[id].files) {
-      if (await cache.match(url(path))) continue
-      const [, file] = (await fromEarlierCache(path, integrity[path])) ?? await fetchVerified(path, integrity[path])
-      await cache.put(url(path), file)
-    }
+    const kept = await earlier(), missing = /** @type {string[]} */ ([])
+    await Promise.all(capabilities[id].files.map(async (/** @type {string} */ path) => {
+      if (await cache.match(url(path))) return
+      const hit = await unchanged(kept, path, integrity[path])
+      if (hit) await cache.put(url(path), hit[1]); else missing.push(path)
+    }))
+    // What comes from the network, one file at a time: runtimes include a 27 MB wasm.
+    for (const path of missing) await cache.put(url(path), (await fetchVerified(path, integrity[path]))[1])
     return true
   } catch {
     return false
   }
-}
-
-/**
- * An unchanged file from an earlier version's capability cache, so updates don't
- * download big runtimes again. Checked against the new integrity value.
- * @param {string} path @param {string} [integrity]
- * @returns {Promise<[string, Response] | null>}
- */
-async function fromEarlierCache (path, integrity) {
-  if (!integrity) return null
-  for (const name of await caches.keys()) {
-    if (!name.startsWith(CAPABILITY) || name.startsWith(`${CAPABILITY}${VERSION}-`)) continue
-    const hit = await (await caches.open(name)).match(url(path))
-    if (!hit) continue
-    const digest = await crypto.subtle.digest('SHA-256', await hit.clone().arrayBuffer())
-    if (`sha256-${btoa(String.fromCharCode(...new Uint8Array(digest)))}` === integrity) return [path, hit]
-  }
-  return null
 }
 
 // ─── Fetch ───────────────────────────────────────────────────────────────────
