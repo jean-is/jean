@@ -219,7 +219,7 @@ test('a word of two directions reads from its first letter, on a canvas, in its 
   }
 })
 
-test('beside a chart, its numbers open as a table, a column for each series and its categories as row heads', async ({ page }) => {
+test('beside a chart, its numbers open as a table, a column for each series and its categories as row heads', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await page.evaluate(async () => (await import('/ui/caps.js')).unlock('charts'))
   await page.evaluate(() => {

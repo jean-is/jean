@@ -123,7 +123,7 @@ test('offered where it can run, downloaded with consent, then answering on the d
   await expect(legend).toHaveAccessibleName('Private · offline')
 })
 
-test('a run that fails says so once, and the next request loads the brain again in a new worker', async ({ page }) => {
+test('a run that fails says so once, and the next request loads the brain again in a new worker', { tag: '@chromium' }, async ({ page }) => {
   await capable(page, BREAKS)
   await start(page)
   await download(page)
@@ -173,7 +173,7 @@ test('not offered where it can’t run', async ({ page }) => {
   await expect(dialog.locator('[data-brain="device"]')).toHaveCount(0)
 })
 
-test('?brain=device opens this device’s way in Brains, as a page of the site asks', async ({ page }) => {
+test('?brain=device opens this device’s way in Brains, as a page of the site asks', { tag: '@chromium' }, async ({ page }) => {
   await capable(page)
   await page.goto('./?brain=device')
   const device = page.locator('app-settings dialog[open] .brain-way')
@@ -185,7 +185,7 @@ test('?brain=device opens this device’s way in Brains, as a page of the site a
 // open (?brain=device), and where it can't run, Brains without it, the other ways offered.
 const JEAN_IS = 'http://127.0.0.1:4186/'
 
-test('the offline page’s button opens Brains with this device’s way open', async ({ page }) => {
+test('the offline page’s button opens Brains with this device’s way open', { tag: '@chromium' }, async ({ page }) => {
   await capable(page)
   await page.goto(`${JEAN_IS}offline`)
   await page.locator('.off-hero a.button.primary').click()
@@ -195,7 +195,7 @@ test('the offline page’s button opens Brains with this device’s way open', a
   await expect(page).toHaveURL(`${JEAN_IS}#/settings/brains/device`)
 })
 
-test('where it can’t run, the offline page’s button opens Brains without this device’s way', async ({ page }) => {
+test('where it can’t run, the offline page’s button opens Brains without this device’s way', { tag: '@chromium' }, async ({ page }) => {
   await page.addInitScript(() => {
     Object.defineProperty(Navigator.prototype, 'gpu', { configurable: true, get: () => ({ requestAdapter: async () => ({ features: new Set() }) }) })
   })
@@ -209,7 +209,7 @@ test('where it can’t run, the offline page’s button opens Brains without thi
   await expect(page).toHaveURL(`${JEAN_IS}fr#/settings/brains/device`)
 })
 
-test('never again where loading it ended the tab, what it downloaded deleted, nor on a phone or a computer that says under 8 GB', async ({ page }) => {
+test('never again where loading it ended the tab, what it downloaded deleted, nor on a phone or a computer that says under 8 GB', { tag: '@chromium' }, async ({ page }) => {
   await capable(page)
   await start(page)
   // The tab ended while the brain loaded: its mark stayed, and what it had downloaded (D319).

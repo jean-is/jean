@@ -70,7 +70,7 @@ test('a design system proposed on its page from a logo, drawn in its previews an
   await expect(settings.locator('.hint[role="status"]')).toContainText('No colours found in it')
 })
 
-test('from a task: a logo shared, Jean proposes a design system, which waits on its page until the person accepts it', async ({ page }) => {
+test('from a task: a logo shared, Jean proposes a design system, which waits on its page until the person accepts it', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await page.locator('.composer input[type="file"]').setInputFiles({ name: 'Acme logo.png', mimeType: 'image/png', buffer: LOGO })

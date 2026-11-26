@@ -82,7 +82,7 @@ for (const [lang, about, local, free, save, prove] of [
   })
 }
 
-test('an answer whose request reached outside this device says where', async ({ page }) => {
+test('an answer whose request reached outside this device says where', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   // Wikipedia's address comes from settings or policy; here, one outside this device, which the fake service answers.
@@ -102,7 +102,7 @@ test('an answer whose request reached outside this device says where', async ({ 
   await expect(card.locator('.receipt-hosts')).toHaveText('wiki.example.com')
 })
 
-test('an answer in the cloud costs what its provider’s prices say, from models.dev when the provider lists none', async ({ page }) => {
+test('an answer in the cloud costs what its provider’s prices say, from models.dev when the provider lists none', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   // A brain in the cloud, which the fake brain answers for, and models.dev's catalogue, read once.
   await page.route('https://api.openai.example/v1/**', async (route) => route.fulfill({ response: await route.fetch({ url: route.request().url().replace('https://api.openai.example', BRAIN_URL.replace(/\/v1$/, '')) }) }))
@@ -132,7 +132,7 @@ test('an answer in the cloud costs what its provider’s prices say, from models
 })
 
 for (const [lang, brains, spent, month, about] of [['en', 'Brains', 'What it cost', 'This month: $', 'About this answer'], ['ar', 'العقول', 'ما كلّفه', 'هذا الشهر', 'عن هذه الإجابة'], ['ja', '頭脳', 'かかった費用', '今月', 'この回答について']]) {
-  test(`Settings › Brains says what Jean cost this month, and its page the months, the brains and the tasks that cost most (D691, ${lang})`, async ({ page }) => {
+  test(`Settings › Brains says what Jean cost this month, and its page the months, the brains and the tasks that cost most (D691, ${lang})`, { tag: '@chromium' }, async ({ page }) => {
     await start(page, lang)
     await page.route('https://api.openai.example/v1/**', async (route) => route.fulfill({ response: await route.fetch({ url: route.request().url().replace('https://api.openai.example', BRAIN_URL.replace(/\/v1$/, '')) }) }))
     await page.route('https://models.dev/api.json', (route) => route.fulfill({ json: { openai: { models: { 'gpt-6-sol': { cost: { input: 2, output: 8, cache_read: 0.2 } } } } } }))
@@ -167,7 +167,7 @@ for (const [lang, brains, spent, month, about] of [['en', 'Brains', 'What it cos
 }
 
 for (const [lang, about, plan, brains] of [['en', 'About this answer', 'In your Claude plan', 'Brains'], ['ar', 'عن هذه الإجابة', 'مشمولة في اشتراكك في Claude', 'العقول'], ['ja', 'この回答について', 'Claude のプランに含まれます', '頭脳']]) {
-  test(`an answer from a Claude plan is in the plan, and so is the month under Brains, and no catalogue is read for it (D235, D691, ${lang})`, async ({ page }) => {
+  test(`an answer from a Claude plan is in the plan, and so is the month under Brains, and no catalogue is read for it (D235, D691, ${lang})`, { tag: '@chromium' }, async ({ page }) => {
     await start(page, lang)
     // Claude Code through the bridge, which the fake brain answers for.
     let read = 0
@@ -198,7 +198,7 @@ const openCertificates = async (page, section = 'Your data') => {
 }
 
 for (const [lang, section, dates, unsaid] of [['en', 'Your data', 'Who dates them', 'Not said'], ['ar', 'بياناتك', 'من يؤرّخها', 'غير محدد'], ['ja', 'あなたのデータ', '日時を証明する相手', '指定なし']]) {
-  test(`Settings › Your data's Certificates names who dates certificates, the public log, and the country of each brain in the cloud, which certificates then name (D276, ${lang})`, async ({ page }) => {
+  test(`Settings › Your data's Certificates names who dates certificates, the public log, and the country of each brain in the cloud, which certificates then name (D276, ${lang})`, { tag: '@chromium' }, async ({ page }) => {
     await start(page, lang)
     await cloudBrain(page)
     // About this answer, which comes with the first message.
@@ -233,7 +233,7 @@ for (const [lang, section, dates, unsaid] of [['en', 'Your data', 'Who dates the
   })
 }
 
-test('what policy names, who dates, the log and its brains’ countries, shows in Your data’s Certificates, locked (D276)', async ({ page }) => {
+test('what policy names, who dates, the log and its brains’ countries, shows in Your data’s Certificates, locked (D276)', { tag: '@chromium' }, async ({ page }) => {
   await withPolicy(page, { urls: { timestamp: 'https://tsa.corp.example/tsr', transparencyLog: 'https://log.corp.example' }, brains: [{ id: 'corp', provider: 'custom', api: 'openai', baseURL: 'https://api.corp.example/v1', model: 'fake', label: 'Corp', jurisdiction: 'DE' }] })
   await start(page)
   await page.evaluate(async () => (await import('/ui/caps.js')).unlock('receipt'))
@@ -247,7 +247,7 @@ test('what policy names, who dates, the log and its brains’ countries, shows i
   await expect(country.locator('option:checked')).toHaveText('Germany')
 })
 
-test('a month’s limit: once answers reached it, a paid brain’s request asks first, Not now sends nothing, and Allow for this task lets that task go on (D711)', async ({ page }) => {
+test('a month’s limit: once answers reached it, a paid brain’s request asks first, Not now sends nothing, and Allow for this task lets that task go on (D711)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await page.route('https://api.openai.example/v1/**', async (route) => route.fulfill({ response: await route.fetch({ url: route.request().url().replace('https://api.openai.example', BRAIN_URL.replace(/\/v1$/, '')) }) }))
   await page.route('https://models.dev/api.json', (route) => route.fulfill({ json: { openai: { models: { 'gpt-6-sol': { cost: { input: 2, output: 8, cache_read: 0.2 } } } } } }))

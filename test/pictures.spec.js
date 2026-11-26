@@ -37,7 +37,7 @@ const capable = (page) => page.addInitScript(() => {
   Object.defineProperty(Navigator.prototype, 'deviceMemory', { configurable: true, get: () => 8 })
 })
 
-test('the brain offers pictures when asked to draw, then makes one, kept in the project', async ({ page }) => {
+test('the brain offers pictures when asked to draw, then makes one, kept in the project', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Draw a lighthouse at dusk')
@@ -107,7 +107,7 @@ test('a picture takes its place at once, shows glimpses of it as it forms, then 
   expect(await place.evaluate((figure) => figure.clientWidth / figure.clientHeight)).toBeCloseTo(1.5, 1)
 })
 
-test('a picture from this computer showing nudity or sex never shows: its glimpses hide, nothing is kept, and the brain hears why (D275)', async ({ page }) => {
+test('a picture from this computer showing nudity or sex never shows: its glimpses hide, nothing is kept, and the brain hears why (D275)', { tag: '@chromium' }, async ({ page }) => {
   await page.route('**/v1/models', async (route) => {
     const response = await route.fetch()
     await route.fulfill({ response, body: (await response.text()).replace('fake-image-1', 'gpt-image-1.5') })
@@ -131,7 +131,7 @@ test('a picture from this computer showing nudity or sex never shows: its glimps
   })).toEqual([])
 })
 
-test('a suggestive picture shows, unless the user refuses those too, or the organisation does, which locks it (D275)', async ({ page }) => {
+test('a suggestive picture shows, unless the user refuses those too, or the organisation does, which locks it (D275)', { tag: '@chromium' }, async ({ page }) => {
   await capable(page)
   await page.route('**/caps/pictures/device-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: checking([0, 5, 0, 0]) }))
   await start(page)
@@ -172,7 +172,7 @@ test('a film is asked first, then shown in the answer, ready to play and save', 
   await expect(page.locator('app-picture a[download]')).toHaveAttribute('aria-label', 'Save the film')
 })
 
-test('Never on a film declines it, not every change; Always allow holds for films, until Settings asks first again', async ({ page }) => {
+test('Never on a film declines it, not every change; Always allow holds for films, until Settings asks first again', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await page.evaluate(async () => (await import('/ui/caps.js')).unlock('pictures'))
@@ -248,7 +248,7 @@ const LOADING = `self.onmessage = ({ data }) => {
   setTimeout(() => self.postMessage({ id: data.id, type: data.type === 'load' ? 'ready' : 'done' }), 600)
 }`
 
-test('graphic violence is refused unless the user allows it, self-harm whatever the user says; symbols of hate as the organisation sets them (D280)', async ({ page }) => {
+test('graphic violence is refused unless the user allows it, self-harm whatever the user says; symbols of hate as the organisation sets them (D280)', { tag: '@chromium' }, async ({ page }) => {
   await capable(page)
   await page.route('**/caps/pictures/device-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: checking([5, 0, 0, 0], ['violence'], ['violence'], ['selfHarm']) }))
   await start(page)
@@ -339,7 +339,7 @@ const STAGES = `self.onmessage = async ({ data }) => {
   done({ bytes: new Uint8Array(await (await canvas.convertToBlob()).arrayBuffer()) })
 }`
 
-test('on this device, FLUX.2 [klein] changes a picture of the conversation in its proportions, whichever one makes them (D545)', async ({ page }) => {
+test('on this device, FLUX.2 [klein] changes a picture of the conversation in its proportions, whichever one makes them (D545)', { tag: '@chromium' }, async ({ page }) => {
   await capable(page)
   await page.route('**/caps/pictures/stage-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: STAGES }))
   // Only this device makes pictures: the fake brain has no picture model.
@@ -441,7 +441,7 @@ test('films on this device: their own card, downloaded once, then a film of a de
   expect(credentials).toEqual({ intact: true, bound: true, generated: true, maker: 'FastWan2.2-TI2V-5B', watermark: given.slice(0, 61), after: ['uuid', 'd8fec3d6'] })
 })
 
-test('a film made here showing nudity never shows: a frame of it is refused, nothing is kept, and the brain hears why (D275, D585)', async ({ page }) => {
+test('a film made here showing nudity never shows: a frame of it is refused, nothing is kept, and the brain hears why (D275, D585)', { tag: '@chromium' }, async ({ page }) => {
   await capable(page)
   await page.route('**/caps/pictures/stage-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: FILMING }))
   await page.route('**/v1/models', async (route) => {
@@ -465,7 +465,7 @@ self.onmessage = ({ data }) => self.postMessage({ id: data.id, type: 'done', log
   await expect(page.locator('app-picture video')).toHaveCount(0)
 })
 
-test('the pictures and films it made are among the creations, a card each opening beside the task, and Create asks for one in the box (D542)', async ({ page }) => {
+test('the pictures and films it made are among the creations, a card each opening beside the task, and Create asks for one in the box (D542)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await turnOn(page, 'Pictures and films')
@@ -515,7 +515,7 @@ test('the pictures and films it made are among the creations, a card each openin
   await expect(page.locator('app-settings dialog[open]')).toHaveCount(0)
 })
 
-test('with nothing here to make a picture or a film, turning them on, their Open and their rows in Create\'s menu lead to Settings › Brains, where a brain that makes them is added, not to an empty page (D542, D585)', async ({ page }) => {
+test('with nothing here to make a picture or a film, turning them on, their Open and their rows in Create\'s menu lead to Settings › Brains, where a brain that makes them is added, not to an empty page (D542, D585)', { tag: '@chromium' }, async ({ page }) => {
   // No brain that makes pictures or films, on a device without WebGPU.
   await page.addInitScript(() => Object.defineProperty(Navigator.prototype, 'gpu', { configurable: true, get: () => undefined }))
   await page.route('**/v1/models', async (route) => {

@@ -384,7 +384,7 @@ test.describe('what an answer draws', () => {
 })
 
 test.describe('found and used by the brain', () => {
-  test('a document written again offers Documents; the brain then makes one, and its changes are accepted or rejected', async ({ page }) => {
+  test('a document written again offers Documents; the brain then makes one, and its changes are accepted or rejected', { tag: '@chromium' }, async ({ page }) => {
     await begin(page)
     await connectFakeBrain(page)
     await ask(page, 'Call write with {"name":"Letter.md","content":"# Letter\\n\\nDear Ana,"}')
@@ -414,7 +414,7 @@ test.describe('found and used by the brain', () => {
     await expect.poll(() => saved(page, path)).toBe('# Cover letter\n\nI am writing to apply for the post of editor.\n')
   })
 
-  test('a picture Jean made in the task goes into a document by the name it was made under, kept at its place and drawn there; another creation by its place (D730)', async ({ page }) => {
+  test('a picture Jean made in the task goes into a document by the name it was made under, kept at its place and drawn there; another creation by its place (D730)', { tag: '@chromium' }, async ({ page }) => {
     await begin(page)
     await connectFakeBrain(page)
     await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('documents') })
@@ -431,7 +431,7 @@ test.describe('found and used by the brain', () => {
     expect(await saved(page, path)).toContain(`![Léa laughing](../${uri})`)
   })
 
-  test('a document made in one task opens from another: with @ in the box, and by the brain, which is told of it and reads it before it changes it', async ({ page }) => {
+  test('a document made in one task opens from another: with @ in the box, and by the brain, which is told of it and reads it before it changes it', { tag: '@chromium' }, async ({ page }) => {
     await begin(page)
     await connectFakeBrain(page)
     await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('documents') })
@@ -485,7 +485,7 @@ test.describe('found and used by the brain', () => {
     await expect.poll(() => saved(page, path)).toBe('# Application\n\nI am writing to apply for the post of editor.\n')
   })
 
-  test('a task opened again from the tasks shows the document it had beside it as it was left, and none once it was closed', async ({ page }) => {
+  test('a task opened again from the tasks shows the document it had beside it as it was left, and none once it was closed', { tag: '@chromium' }, async ({ page }) => {
     await begin(page)
     await connectFakeBrain(page)
     await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('documents') })
@@ -518,7 +518,7 @@ test.describe('found and used by the brain', () => {
     await expect(page.locator('app-preview .pane')).toHaveCount(0)
   })
 
-  test('Creations, once there are some: the drawer\'s place opens their page, nothing beside it under the pointer, a card each, kept in the address; each opens beside the task (D497, D605)', async ({ page }) => {
+  test('Creations, once there are some: the drawer\'s place opens their page, nothing beside it under the pointer, a card each, kept in the address; each opens beside the task (D497, D605)', { tag: '@chromium' }, async ({ page }) => {
     await begin(page)
     await connectFakeBrain(page)
     await ask(page, 'Hello there')
@@ -623,7 +623,7 @@ test.describe('found and used by the brain', () => {
     await expect(page).toHaveURL(/#\/\?creations$/)
   })
 
-  test('Creations makes a new document, which goes by its title, and a new table, its name to type beside the task, each written once the user does something in it', async ({ page }) => {
+  test('Creations makes a new document, which goes by its title, and a new table, its name to type beside the task, each written once the user does something in it', { tag: '@chromium' }, async ({ page }) => {
     await begin(page)
     const tasks = await openTasks(page)
     const place = tasks.getByRole('button', { name: 'Creations', exact: true })
@@ -742,7 +742,7 @@ test.describe('found and used by the brain', () => {
     await expect(chips.getByRole('button', { name: 'Collections 1' })).toHaveAttribute('aria-pressed', 'true')
   })
 
-  test('Creations are found by their words and kind, pinned first, renamed in place with their title line, duplicated, and deleted with five seconds to undo, from each card\'s menu', async ({ page, browserName }) => {
+  test('Creations are found by their words and kind, pinned first, renamed in place with their title line, duplicated, and deleted with five seconds to undo, from each card\'s menu', { tag: '@chromium' }, async ({ page, browserName }) => {
     await begin(page)
     await connectFakeBrain(page)
     const tasks = await openTasks(page)
@@ -2162,7 +2162,7 @@ test.describe('the title and the pane', () => {
     expect(await problems(page)).toEqual([])
   })
 
-  test('a document is shared as it is when Share is pressed, once sharing is found, in a task', async ({ page }) => {
+  test('a document is shared as it is when Share is pressed, once sharing is found, in a task', { tag: '@chromium' }, async ({ page }) => {
     await begin(page)
     await connectFakeBrain(page)
     await ask(page, 'Hello')
@@ -2895,7 +2895,7 @@ test.describe('out in the look here (D663)', () => {
     return { name: download.suggestedFilename(), xml, paths: files.map((one) => one.name) }
   }
 
-  test('as Word from Save, in the design system: its colours and faces, its logo in its corner, its picture inside, a reference by its name; as Markdown as ever', async ({ page }) => {
+  test('as Word from Save, in the design system: its colours and faces, its logo in its corner, its picture inside, a reference by its name; as Markdown as ever', { tag: '@chromium' }, async ({ page }) => {
     const before = await dressed(page)
     const { name, xml, paths } = await word(page)
     expect(name).toBe('notes.docx')
@@ -2916,7 +2916,7 @@ test.describe('out in the look here (D663)', () => {
     expect(await problems(page)).toEqual(before)
   })
 
-  test('what the user wrote themself says nothing of a trained model in Word, and a look changed reaches the next file', async ({ page }) => {
+  test('what the user wrote themself says nothing of a trained model in Word, and a look changed reaches the next file', { tag: '@chromium' }, async ({ page }) => {
     await dressed(page, { author: 'user' })
     expect((await word(page)).paths).not.toContain('docProps/custom.xml')
     await page.evaluate(async () => (await import('/ui/kit.js')).keepKit(null, null))
@@ -3062,7 +3062,7 @@ test.describe('out in the look here (D663)', () => {
     expect(await refused(await problems(page))).toEqual(before)
   })
 
-  test('Settings offers the design system once Documents is found, Slides still unfound, once whatever else is found; it speaks of all, draws a page beside the deck, and marks what only slides show (D664)', async ({ page }) => {
+  test('Settings offers the design system once Documents is found, Slides still unfound, once whatever else is found; it speaks of all, draws a page beside the deck, and marks what only slides show (D664)', { tag: '@chromium' }, async ({ page }) => {
     await begin(page)
     const settings = await openSettings(page, 'Appearance')
     const row = settings.getByRole('button', { name: /^Design system/ })
@@ -3090,7 +3090,7 @@ test.describe('out in the look here (D663)', () => {
     await expect(settings.getByRole('button', { name: /^Design system/ })).toHaveCount(1)
   })
 
-  test("Save's menu leads to the design system: the person's, or the project's where it has a look of its own, which goes over the person's (D664)", async ({ page }) => {
+  test("Save's menu leads to the design system: the person's, or the project's where it has a look of its own, which goes over the person's (D664)", { tag: '@chromium' }, async ({ page }) => {
     await dressed(page)
     const settings = page.locator('dialog.settings')
     const leads = async () => {

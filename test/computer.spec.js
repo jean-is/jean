@@ -234,7 +234,7 @@ test('bash: commands, python3, uv and node in /workspace, kept in the project’
   })).toBe(false)
 })
 
-test('the internet: a new site asked about first, then always; a registry’s key; the relay; and off', async ({ page }) => {
+test('the internet: a new site asked about first, then always; a registry’s key; the relay; and off', { tag: '@chromium' }, async ({ page }) => {
   test.setTimeout(90_000)
   /** @type {{ url: string, authorization?: string }[]} */
   const seen = []
@@ -387,7 +387,7 @@ test('npm install from the registry Settings name, then node requires and import
   await expect(answer).toContainText("import { hi } from 'esm-hi'")
 })
 
-test('npm init, ls and run; a server refused, with the page beside the conversation instead', async ({ page }) => {
+test('npm init, ls and run; a server refused, with the page beside the conversation instead', { tag: '@chromium' }, async ({ page }) => {
   test.setTimeout(120_000)
   await start(page)
   await connectFakeBrain(page)
@@ -409,7 +409,7 @@ test('npm init, ls and run; a server refused, with the page beside the conversat
   await expect(answer).toContainText('only install, init, ls, run, exec and create work here')
 })
 
-test('npx runs a package’s program: installed once beside the others, or from ./node_modules, with Node’s modules, stdin and its exit code; npm exec and npm create run it too (D745)', async ({ page }) => {
+test('npx runs a package’s program: installed once beside the others, or from ./node_modules, with Node’s modules, stdin and its exit code; npm exec and npm create run it too (D745)', { tag: '@chromium' }, async ({ page }) => {
   test.setTimeout(120_000)
   const packages = [
     // CommonJS, as most programs are: a #! line, its own folder for require and __dirname, require.main, stdin, process.exitCode.
@@ -540,7 +540,7 @@ test('the project’s workspace in the browser: a page that uses its other files
   await expect(pane.locator('.browser-list').getByRole('button', { name: 'site/' })).toBeVisible()
 })
 
-test('Settings › Computer: the sandbox and its page (D176, D249), the internet changed in place and its sites, the workspace and its files, the limits and sources', async ({ page }) => {
+test('Settings › Computer: the sandbox and its page (D176, D249), the internet changed in place and its sites, the workspace and its files, the limits and sources', { tag: '@chromium' }, async ({ page }) => {
   test.setTimeout(120_000)
   await start(page)
   await turnOn(page, 'Computer in this tab')
@@ -643,7 +643,7 @@ test('Settings › Computer: the sandbox and its page (D176, D249), the internet
 
 // Approvals' Using the internet is the most the computer may do: an organization's rule, locked short of Do it,
 // takes Any site away, saying who set it, and a new site is asked about even had Any site been chosen.
-test('an organization’s locked Using the internet takes Any site away from the computer', async ({ page }) => {
+test('an organization’s locked Using the internet takes Any site away from the computer', { tag: '@chromium' }, async ({ page }) => {
   await withPolicy(page, { rules: { fetch: 'ask' } })
   await start(page)
   await turnOn(page, 'Computer in this tab')

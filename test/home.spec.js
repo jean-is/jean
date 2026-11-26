@@ -88,7 +88,7 @@ test('on jean.is, the page is under the first screen, its tries fill the box, a 
   expect(await page.evaluate(() => scrollY)).toBe(0)
 })
 
-test('at a language’s own address, the page and the app speak it; once hidden, the address is the site’s own, and Homepage opens that language’s page', async ({ page, browserName, context }) => {
+test('at a language’s own address, the page and the app speak it; once hidden, the address is the site’s own, and Homepage opens that language’s page', { tag: '@chromium' }, async ({ page, browserName, context }) => {
   await page.goto(`${JEAN_IS}ja`)
   await expect(shown(page, 'ja')).toBeVisible()
   // The browser asks for English: the address wins, until the person picks a language.
@@ -120,7 +120,7 @@ test('at a language’s own address, the page and the app speak it; once hidden,
   expect(context.pages()).toHaveLength(1)
 })
 
-test('the Vous menu’s Homepage leads to the page in place, on a new task at its top, and Help center opens in a new tab; the site’s foot links the page at its own address', async ({ page, context }) => {
+test('the Vous menu’s Homepage leads to the page in place, on a new task at its top, and Help center opens in a new tab; the site’s foot links the page at its own address', { tag: '@chromium' }, async ({ page, context }) => {
   await page.goto(JEAN_IS)
   await expect(shown(page, 'en')).toBeVisible()
   await connectFakeBrain(page)
@@ -273,7 +273,7 @@ test('translated by the browser into a language Jean has, the app speaks it itse
   expect(await page.evaluate(async () => JSON.parse(await (await import('/ui/state.js')).app.fs.read('settings.json') ?? '{}').locale)).toBe('ar')
 })
 
-test.describe('in a Japanese browser', () => {
+test.describe('in a Japanese browser', { tag: '@chromium' }, () => {
   test.use({ locale: 'ja-JP' })
 
   test('one language: jean.is opens on its Japanese page, the page’s menu sets the app’s language as Settings does, and the place read stays', async ({ page }) => {

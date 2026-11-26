@@ -25,7 +25,7 @@ async function capable(page) {
   await page.route('**/caps/brain-local/brain-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: WORKER }))
 }
 
-test('the first message opens one free way and two doors; through the plans and keys, a brain connects and the request is answered', async ({ page }) => {
+test('the first message opens one free way and two doors; through the plans and keys, a brain connects and the request is answered', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await ask(page, 'Explain photosynthesis in simple words')
   const dialog = page.locator('app-first .first')
@@ -59,7 +59,7 @@ test('the first message opens one free way and two doors; through the plans and 
   await expect(page.locator('.msg-jean .prose').last()).not.toBeEmpty()
 })
 
-test('a search from the browser’s bar is sent as a new task, here the first, which asks for a brain, then answered; the address forgets it', async ({ page }) => {
+test('a search from the browser’s bar is sent as a new task, here the first, which asks for a brain, then answered; the address forgets it', { tag: '@chromium' }, async ({ page }) => {
   await page.goto(`./?q=${encodeURIComponent('光合成を簡単に説明して & more')}`)
   const dialog = page.locator('app-first .first')
   await expect(dialog.locator('h2')).toHaveText('One step before I answer')
@@ -87,7 +87,7 @@ test('with a brain already, a search from the browser’s bar is answered at onc
   await expect(page).toHaveURL(/\/#\/c\/[0-9A-Z]{26}$/)
 })
 
-test('the chip opens it too; what matters: the private answer says why it can’t be had here, the button says what each answer does, and Back returns', async ({ page }) => {
+test('the chip opens it too; what matters: the private answer says why it can’t be had here, the button says what each answer does, and Back returns', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await page.locator('.brain-chip').click()
   const dialog = page.locator('app-first .first')
@@ -111,7 +111,7 @@ test('the chip opens it too; what matters: the private answer says why it can’
   await expect(page.locator('#prompt')).toBeFocused()
 })
 
-test('back from OpenRouter’s sign-in, the request is answered with the file it shared, here the sample spreadsheet (D366)', async ({ page }) => {
+test('back from OpenRouter’s sign-in, the request is answered with the file it shared, here the sample spreadsheet (D366)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await page.locator('.starter', { hasText: 'Try a spreadsheet' }).click()
   await expect(page.locator('.attachment')).toContainText('sales.csv')

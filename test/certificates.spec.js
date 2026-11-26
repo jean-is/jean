@@ -307,7 +307,7 @@ for (const lang of ['en', 'ar', 'ja']) {
   })
 }
 
-test('a Word document Jean made, shared in a conversation, brings what checks it, which reads what it says of itself (D410)', async ({ page }) => {
+test('a Word document Jean made, shared in a conversation, brings what checks it, which reads what it says of itself (D410)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await page.locator('.composer input[type="file"]').setInputFiles([await madeDocument()])
@@ -319,7 +319,7 @@ test('a Word document Jean made, shared in a conversation, brings what checks it
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Report.docx: no Content Credentials, but its file says, unsigned, that AI made it, with Jean.')
 })
 
-test('a certificate shared in a conversation brings what checks it, and its card knows this device’s seal', async ({ page }) => {
+test('a certificate shared in a conversation brings what checks it, and its card knows this device’s seal', { tag: '@chromium' }, async ({ page }) => {
   const { certificate, proof } = await saved(page)
   await (await openTasks(page)).locator('.place', { hasText: 'New task' }).click()
   await expect(page.locator('.msg-jean')).toHaveCount(0)
@@ -342,7 +342,7 @@ const witnessed = (page, sent) => page.route('https://timestamp.sigstore.dev/**'
   return route.fulfill({ headers: { ...cors, 'content-type': 'application/timestamp-reply' }, body: Buffer.from(await reply(new Uint8Array(route.request().postDataBuffer() ?? []))) })
 })
 
-test('witnesses date a certificate and a public log records it once the user chooses so, and the check page says by whom, and that the log vouches for it once its key is downloaded (D276)', async ({ page, browser, baseURL }) => {
+test('witnesses date a certificate and a public log records it once the user chooses so, and the check page says by whom, and that the log vouches for it once its key is downloaded (D276)', { tag: '@chromium' }, async ({ page, browser, baseURL }) => {
   // A whole answer, then the check page in a context of its own: under a full run's load, WebKit needs more than a minute.
   test.setTimeout(90_000)
   /** @type {string[]} */
@@ -402,7 +402,7 @@ test('witnesses date a certificate and a public log records it once the user cho
   await context.close()
 })
 
-test('a certificate saved undated, shared in a conversation, is dated from its card, which saves it again, its seal untouched (D276)', async ({ page }) => {
+test('a certificate saved undated, shared in a conversation, is dated from its card, which saves it again, its seal untouched (D276)', { tag: '@chromium' }, async ({ page }) => {
   /** @type {string[]} */
   const sent = []
   await witnessed(page, sent)

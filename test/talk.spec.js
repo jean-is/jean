@@ -34,7 +34,7 @@ async function holdRequest(page) {
 const WAITING = { en: ['Compare the phone plans', 'and the next one'], ar: ['قارن بين خطط الهاتف', 'والخطة التالية'], ja: ['電話プランを比較して', '次のプランも'] }
 
 for (const lang of /** @type {const} */ (['en', 'ar', 'ja'])) {
-  test(`what is typed while a first request gets ready stays in the box, as its task's draft, and only its words leave (${lang})`, async ({ page }) => {
+  test(`what is typed while a first request gets ready stays in the box, as its task's draft, and only its words leave (${lang})`, { tag: '@chromium' }, async ({ page }) => {
     const [asked, more] = WAITING[lang]
     await start(page, lang)
     await connectFakeBrain(page)
@@ -61,7 +61,7 @@ for (const lang of /** @type {const} */ (['en', 'ar', 'ja'])) {
   })
 }
 
-test('what is typed while a later request gets ready stays in the box; words changed meanwhile stay as they are', async ({ page }) => {
+test('what is typed while a later request gets ready stays in the box; words changed meanwhile stay as they are', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Explain gravity')
@@ -87,7 +87,7 @@ test('what is typed while a later request gets ready stays in the box; words cha
   await expect(box).toHaveValue('Then the season')
 })
 
-test('Enter while a request gets ready asks nothing twice: one task, its words sent once, and what was typed stays', async ({ page }) => {
+test('Enter while a request gets ready asks nothing twice: one task, its words sent once, and what was typed stays', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   const { reached, letGo } = await holdRequest(page)
@@ -118,7 +118,7 @@ test('Enter while a request gets ready asks nothing twice: one task, its words s
   expect(await page.evaluate(async () => (await import('/ui/state.js')).app.conversations.value.length)).toBe(2)
 })
 
-test('a request that fails before its run gives the box back, its words still there', async ({ page }) => {
+test('a request that fails before its run gives the box back, its words still there', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await page.evaluate(async () => {
@@ -141,7 +141,7 @@ test('a request that fails before its run gives the box back, its words still th
   await expect(box).toHaveValue('')
 })
 
-test('a request that isn’t the box’s words leaves them: in the task, in the box; on a new task, as its draft', async ({ page }) => {
+test('a request that isn’t the box’s words leaves them: in the task, in the box; on a new task, as its draft', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   const box = page.locator('#prompt')
@@ -161,7 +161,7 @@ test('a request that isn’t the box’s words leaves them: in the task, in the 
   await expect(box).toHaveValue('Others of mine')
 })
 
-test('a request no brain here may answer stays in the box, and nothing is asked', async ({ page }) => {
+test('a request no brain here may answer stays in the box, and nothing is asked', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   // Kept on this device, with only a brain in the cloud.
@@ -176,7 +176,7 @@ test('a request no brain here may answer stays in the box, and nothing is asked'
   expect(await page.evaluate(async () => (await import('/ui/state.js')).app.busy.value)).toBe(false)
 })
 
-test('an answer, then its follow-ups as buttons', async ({ page }) => {
+test('an answer, then its follow-ups as buttons', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Explain photosynthesis in simple words')
@@ -193,7 +193,7 @@ test('an answer, then its follow-ups as buttons', async ({ page }) => {
   await expect(page.locator('.msg-user').last()).toHaveText('Show it as a chart')
 })
 
-test('once a task has started, a line under the box says the assistant is an AI, and the box says it to a screen reader (D273)', async ({ page }) => {
+test('once a task has started, a line under the box says the assistant is an AI, and the box says it to a screen reader (D273)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   // Not on the welcome: nothing has been asked yet. The line links to the privacy policy and the terms instead.
   await expect(page.locator('.ai-note')).toHaveCount(0)
@@ -264,7 +264,7 @@ test('a request whose connection drops before its answer starts is asked again a
   await expect(page.locator('.msg-jean .activity > summary')).toContainText('Thought for')
 })
 
-test('a service account’s file connects Vertex AI: it names its project, and only tokens signed from it leave', async ({ page }) => {
+test('a service account’s file connects Vertex AI: it names its project, and only tokens signed from it leave', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   const { privateKey } = await crypto.subtle.generateKey({ name: 'RSASSA-PKCS1-v1_5', modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: 'SHA-256' }, true, ['sign'])
   const pem = `-----BEGIN PRIVATE KEY-----\n${Buffer.from(await crypto.subtle.exportKey('pkcs8', privateKey)).toString('base64')}\n-----END PRIVATE KEY-----\n`
@@ -296,7 +296,7 @@ test('a service account’s file connects Vertex AI: it names its project, and o
   for (const request of sent) expect(request.headers().authorization).toMatch(/^Bearer eyJ[\w-]+\.eyJ[\w-]+\.[\w-]+$/)
 })
 
-test('a key whose service is too busy to list its models connects all the same, on its first model, and the list is asked for later', async ({ page }) => {
+test('a key whose service is too busy to list its models connects all the same, on its first model, and the list is asked for later', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   // Gemini counts its list of models against the key's limits, and has taken the key when it answers 429.
   let listed = 0
@@ -321,7 +321,7 @@ test('a key whose service is too busy to list its models connects all the same, 
   await expect.poll(() => listed).toBe(2)
 })
 
-test('each service that takes a key is listed with its logo; Meta’s starts on its own model, not the first it lists, and its brain has its logo', async ({ page }) => {
+test('each service that takes a key is listed with its logo; Meta’s starts on its own model, not the first it lists, and its brain has its logo', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   // Meta lists a picture's model and one it trains on before the one to start on.
   const data = ['muse-image-1.0', 'muse-spark-1.3-contributor', 'muse-spark-1.3'].map((id) => ({ id, object: 'model' }))
@@ -349,7 +349,7 @@ test('each service that takes a key is listed with its logo; Meta’s starts on 
   await closeSettings(page)
 })
 
-test('under a request, when it was asked, Copy and Try again; under an answer, when it came (D188)', async ({ page }) => {
+test('under a request, when it was asked, Copy and Try again; under an answer, when it came (D188)', { tag: '@chromium' }, async ({ page }) => {
   // The clipboard is the browser's: record what reaches it.
   await page.addInitScript(() => {
     Object.defineProperty(navigator.clipboard, 'writeText', { value: async (/** @type {string} */ text) => { /** @type {any} */ (window).copied = text } })
@@ -512,7 +512,7 @@ test('a request the page closed on before anything came stays apart from the nex
   await expect(page.locator('.msg-jean .prose').last()).toContainText('You asked: Then count to two')
 })
 
-test('Continue in a new task: a new task with what led up to a request, asked again now, answers it, and the first stays as it was (D230)', async ({ page }) => {
+test('Continue in a new task: a new task with what led up to a request, asked again now, answers it, and the first stays as it was (D230)', { tag: '@chromium' }, async ({ page }) => {
   await page.clock.install()
   await start(page)
   await connectFakeBrain(page)

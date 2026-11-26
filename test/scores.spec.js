@@ -66,7 +66,7 @@ test('a tune is drawn as a score once its skill is added, and plays, each note l
   expect((await whole.read())['text/html']).toMatch(/<img [^>]*src="data:image\/png;base64,[^"]+"[^>]*alt="The Legacy Jig"/)
 })
 
-test('an organisation’s own copy of the instruments, beside Jean, plays a score, and jsDelivr is asked nothing', async ({ page }) => {
+test('an organisation’s own copy of the instruments, beside Jean, plays a score, and jsDelivr is asked nothing', { tag: '@chromium' }, async ({ page }) => {
   // As deploy/docker/README.md has it: the package's files at vendor/sounds/, which the policy names, relative to Jean.
   await withPolicy(page, { urls: { sounds: 'vendor/sounds/' } })
   const own = /** @type {string[]} */ ([])
@@ -93,7 +93,7 @@ test('an organisation’s own copy of the instruments, beside Jean, plays a scor
   expect(await score.evaluate((element) => (/** @type {any} */ (element)).parts.reduce((/** @type {number} */ peak, /** @type {any} */ part) => part.buffer.getChannelData(0).reduce((/** @type {number} */ most, /** @type {number} */ value) => Math.max(most, Math.abs(value)), peak), 0))).toBeGreaterThan(0.05)
 })
 
-test('a tune saved as a .abc file shows as its text, and as its score once Music score is a skill of the room, even while it is open, in the preview and in the browser, as one in a Markdown file does', async ({ page }) => {
+test('a tune saved as a .abc file shows as its text, and as its score once Music score is a skill of the room, even while it is open, in the preview and in the browser, as one in a Markdown file does', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Write the jig as a file')
@@ -129,7 +129,7 @@ test('a tune saved as a .abc file shows as its text, and as its score once Music
   await expect(page.locator('app-browser .view .view-sheet app-score .score-sheet')).toHaveAttribute('aria-label', 'Round')
 })
 
-test('asked for sheet music, the brain reads Jean’s own Music score where <skills> lists it, which adds it, and the tune is drawn (D401)', async ({ page }) => {
+test('asked for sheet music, the brain reads Jean’s own Music score where <skills> lists it, which adds it, and the tune is drawn (D401)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await turnOn(page, 'Skills')
@@ -148,7 +148,7 @@ test('asked for sheet music, the brain reads Jean’s own Music score where <ski
   expect(JSON.stringify(await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records))).not.toContain('The <skills> section is now')
 })
 
-test('before Skills is found, `skill`’s line names Jean’s own, and the brain reading Music score finds Skills, adds it and draws the tune (D406)', async ({ page }) => {
+test('before Skills is found, `skill`’s line names Jean’s own, and the brain reading Music score finds Skills, adds it and draws the tune (D406)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   const unlocked = () => page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.unlocked.includes('skills'))
@@ -176,7 +176,7 @@ test('before Skills is found, `skill`’s line names Jean’s own, and the brain
   expect(records).toContain('save_skill')
 })
 
-test('the tunes answers hold are among the creations, each drawn on its card and opening beside the task, waiting for Play, and Create\'s Score asks for one in the box with Music score (D542)', async ({ page }) => {
+test('the tunes answers hold are among the creations, each drawn on its card and opening beside the task, waiting for Play, and Create\'s Score asks for one in the box with Music score (D542)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await turnOn(page, 'Skills')
@@ -333,7 +333,7 @@ test('beside the task, the pane’s button sends a tune to an app here, saves it
   expect(await page.evaluate(async () => (await import('/caps/share/share.js')).sharing.value?.item)).toEqual({ text: expect.stringMatching(/^```abc\nX:1\nT:The Legacy Jig\n[^]*\n```$/) })
 })
 
-test('beside a score, its notes open as text', async ({ page }) => {
+test('beside a score, its notes open as text', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await turnOn(page, 'Skills')

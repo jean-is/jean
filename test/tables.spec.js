@@ -125,7 +125,7 @@ test('a table Jean keeps: offered, made from a request and filled, its changes a
   await expect(card.locator('.creation-preview tr').nth(1).locator('td').first()).toHaveText('Atelier Lune')
 })
 
-test('Jean’s changes to three rows are each accepted or rejected, on the table and on the board, and Reject all leaves what was decided (D505)', async ({ page }) => {
+test('Jean’s changes to three rows are each accepted or rejected, on the table and on the board, and Reject all leaves what was decided (D505)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await planBrain(page)
   await ask(page, 'Keep track of my job applications: Atelier Lune, Brightwater and Kōsha Studio')
@@ -182,7 +182,7 @@ test('Jean’s changes to three rows are each accepted or rejected, on the table
   await expect(review).toContainText('2 changes to review')
 })
 
-test('a collection Jean made and filled is one decision, a cell the person changes meanwhile changing nothing of it; Rejected, its rows go, leaving it empty; a row Jean made then changed goes whole, never left empty (D752)', async ({ page }) => {
+test('a collection Jean made and filled is one decision, a cell the person changes meanwhile changing nothing of it; Rejected, its rows go, leaving it empty; a row Jean made then changed goes whole, never left empty (D752)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   /** A collection Jean made, its rows Jean's from one change, then each step given. @param {string} name @param {object[][]} more each a change's lines */
   const seed = (name, more = []) => page.evaluate(async ([name, more]) => {
@@ -218,7 +218,7 @@ test('a collection Jean made and filled is one decision, a cell the person chang
   await expect(page.locator('.table-view .table-none [role="status"]')).toHaveText('No rows yet.')
 })
 
-test('a brain on this computer gets neither table_create nor table_change, nor offers Tables: it says it can’t keep tables yet', async ({ page }) => {
+test('a brain on this computer gets neither table_create nor table_change, nor offers Tables: it says it can’t keep tables yet', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await turnOn(page, 'Collections')
@@ -233,7 +233,7 @@ test('a brain on this computer gets neither table_create nor table_change, nor o
   expect(prompt).not.toContain('table_create')
 })
 
-test('a brain on this computer reads a collection all the same, opening nothing, and finds what collections and documents hold with search_files, whose sources open them', async ({ page }) => {
+test('a brain on this computer reads a collection all the same, opening nothing, and finds what collections and documents hold with search_files, whose sources open them', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await page.evaluate(async () => {
@@ -459,7 +459,7 @@ test('under forced colours a collection\'s fields show and its readings go; with
   await expect(first.getByTitle('Cost')).toHaveCSS('opacity', '1')
 })
 
-test('in each of the 12 looks, by day and by night, a collection\'s readings read at AA (D752)', async ({ page }) => {
+test('in each of the 12 looks, by day and by night, a collection\'s readings read at AA (D752)', { tag: '@chromium' }, async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await start(page)
   await budget(page)
@@ -868,7 +868,7 @@ test('a value its column refuses stays, marked, its form said beside it, the key
   await expect(rows.nth(1).getByTitle('Name')).toHaveValue('Grace')
 })
 
-test('a Formula column’s cells are worked out from each row’s others, and a click or Enter on one opens a dialog to write the column’s formula, with Math’s functions by their names alone', async ({ page }) => {
+test('a Formula column’s cells are worked out from each row’s others, and a click or Enter on one opens a dialog to write the column’s formula, with Math’s functions by their names alone', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await page.evaluate(async () => {
     const [{ unlock }, { app }] = await Promise.all([import('/ui/caps.js'), import('/ui/state.js')])
@@ -1169,7 +1169,7 @@ test('in a document, a collection’s columns are as wide as their fields, a lon
   await expect(first).toBeInViewport()
 })
 
-test('a relation is to this collection or another, picked from the last head’s list or from Type, each of its cells a row there by its name, named again as that row is; the brain names rows by name too', async ({ page }) => {
+test('a relation is to this collection or another, picked from the last head’s list or from Type, each of its cells a row there by its name, named again as that row is; the brain names rows by name too', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   const companies = 'collections/01K85Z1T00000000000000000D-companies', contacts = 'collections/01K85Z1T00000000000000000E-contacts'
   /** A row's ULID, by a letter and a number. @param {string} letter @param {number} n */
@@ -1343,7 +1343,7 @@ test('a field in every row holds what it lists only in use: a select’s the lis
   expect((await near.boundingBox())?.width).toBe(width)
 })
 
-test('a brain makes a relation too, to a collection the project keeps or to the one it makes, by its name as the brain’s <tables> tells it, then fills it by a row’s name', async ({ page }) => {
+test('a brain makes a relation too, to a collection the project keeps or to the one it makes, by its name as the brain’s <tables> tells it, then fills it by a row’s name', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await planBrain(page)
   const companies = 'collections/01K85Z1T00000000000000000D-companies', globex = '01K8C000000000000000000002'
@@ -1608,7 +1608,7 @@ const visits = (page) => page.evaluate(async () => {
   ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'Visits.xlsx', title: 'Visits' }, true)
 })
 
-test('a choice reads as its pill, in a colour picked from its column’s menu; several choices are ticked in their menu; a person has a face and the names known are offered; a row opens as a sheet from its menu and from a board’s card, which a new card opens to be named', async ({ page }) => {
+test('a choice reads as its pill, in a colour picked from its column’s menu; several choices are ticked in their menu; a person has a face and the names known are offered; a row opens as a sheet from its menu and from a board’s card, which a new card opens to be named', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await visits(page)
   const rows = page.locator('.table-grid tbody tr'), menu = page.locator('.table-menu:popover-open')
@@ -1927,7 +1927,7 @@ test('a picture is added to its cell from the cell’s menu, kept in the collect
   expect(copied.text).toContain('Photo: villa.png; Papers: lease.txt')
 })
 
-test('a file that comes from someone a collection is worked on with is kept only where a cell’s file goes, and only if its content is what its name says', async ({ page }) => {
+test('a file that comes from someone a collection is worked on with is kept only where a cell’s file goes, and only if its content is what its name says', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   const folder = await homes(page)
   const taken = await page.evaluate(async (folder) => {
@@ -2160,7 +2160,7 @@ test('a collection with a date shows as a timeline, fetched as one is first show
   expect(await chip.evaluate((button) => button.getBoundingClientRect().right <= /** @type {Element} */ (button.closest('td')).getBoundingClientRect().right)).toBe(true)
 })
 
-test('a date takes a time of day from its head’s Type, its cell keeping the time a date already has; a calendar opens on the month of the next row to come when none is in this one', async ({ page }) => {
+test('a date takes a time of day from its head’s Type, its cell keeping the time a date already has; a calendar opens on the month of the next row to come when none is in this one', { tag: '@chromium' }, async ({ page }) => {
   await page.clock.setFixedTime(new Date('2026-08-03T10:00:00'))
   await start(page)
   await stays(page)
@@ -2238,7 +2238,7 @@ const viewsOf = (page) => page.evaluate(async () => {
 const together = (page) => page.evaluate(() => import('/ui/caps.js').then(({ register }) => register(/** @type {any} */ ({ id: 'others-here',
   slots: { others: { at: 0, draw: () => null, holds: () => true }, names: { at: 0, draw: () => null, of: () => ['Léa', 'Tom'], me: () => 'Léa' } } }))))
 
-test('what is arranged is kept as a view from Arrange, under a name the person writes: picked from the bar by its name, shown its own way, arranged on its own, renamed and deleted; the collection’s own is whole again, and a sort stays with its view until a row is moved by hand', async ({ page }) => {
+test('what is arranged is kept as a view from Arrange, under a name the person writes: picked from the bar by its name, shown its own way, arranged on its own, renamed and deleted; the collection’s own is whole again, and a sort stays with its view until a row is moved by hand', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await viewing(page)
   const places = () => page.locator('.table-grid tbody tr').getByTitle('Place').evaluateAll((fields) => fields.map((field) => /** @type {HTMLInputElement} */ (field).value))
@@ -2333,7 +2333,7 @@ test('what is arranged is kept as a view from Arrange, under a name the person w
   await expect.poll(async () => (await viewsOf(page)).views[2]).toMatchObject({ id, name: 'To see', deleted: expect.any(String) })
 })
 
-test('where others work on a collection too, what a person arranges is theirs alone until they keep it: said under the bar, kept in a file of their own, there again once reloaded, reset, kept as a view of its own, or kept into the view picked; a rule on Me keeps each person’s own rows', async ({ page, browserName }) => {
+test('where others work on a collection too, what a person arranges is theirs alone until they keep it: said under the bar, kept in a file of their own, there again once reloaded, reset, kept as a view of its own, or kept into the view picked; a rule on Me keeps each person’s own rows', { tag: '@chromium' }, async ({ page, browserName }) => {
   await start(page)
   await viewing(page)
   await together(page)
@@ -2427,7 +2427,7 @@ for (const [lang, all, keepView, only, keep, reset, me] of /** @type {const} */ 
   })
 }
 
-test('asked to show only some rows, the brain proposes a view: on show at once, the person’s alone, said under the bar, the collection as it was; kept, it is a view of the collection under its name; one Jean can’t make is refused in words, and No thanks takes one away (D755)', async ({ page }) => {
+test('asked to show only some rows, the brain proposes a view: on show at once, the person’s alone, said under the bar, the collection as it was; kept, it is a view of the collection under its name; one Jean can’t make is refused in words, and No thanks takes one away (D755)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await planBrain(page)
   await viewing(page)
@@ -2608,7 +2608,7 @@ test('a column is as wide as its kind needs (D752): a day’s as its words, its 
   expect(Math.round((await cellAt(page, 2, 2).boundingBox())?.width ?? 999)).toBeLessThanOrEqual(96)
 })
 
-test('rows take the colour of a choice picked in Arrange, said by a chip: along a card’s start in a list and on a board, on a calendar’s rows and a timeline’s bars, the choice said too; a step with none takes its group’s look; taken away from its chip', async ({ page }) => {
+test('rows take the colour of a choice picked in Arrange, said by a chip: along a card’s start in a list and on a board, on a calendar’s rows and a timeline’s bars, the choice said too; a step with none takes its group’s look; taken away from its chip', { tag: '@chromium' }, async ({ page }) => {
   await page.clock.setFixedTime(new Date('2026-11-03T10:00:00'))
   await page.setViewportSize({ width: 1280, height: 800 })
   await start(page)
@@ -2667,7 +2667,7 @@ test('rows take the colour of a choice picked in Arrange, said by a chip: along 
   expect((await held(page)).view.colour).toBeUndefined()
 })
 
-test('in each of the 12 looks, by day and by night, a calendar’s row and a timeline’s bar read at AA in each of a choice’s seven colours and a status’s three tones, a row’s time too (D760)', async ({ page }) => {
+test('in each of the 12 looks, by day and by night, a calendar’s row and a timeline’s bar read at AA in each of a choice’s seven colours and a status’s three tones, a row’s time too (D760)', { tag: '@chromium' }, async ({ page }) => {
   await page.clock.setFixedTime(new Date('2026-11-03T10:00:00'))
   await page.setViewportSize({ width: 1280, height: 800 })
   await start(page)
@@ -2789,7 +2789,7 @@ const apart = (row) => row.locator('th').evaluate((cell) => {
   })
 })
 
-test('a row opens from a button at the end of its name, shown with the pointer or the keys on its row; its sheet says every change, the last first, with all it set; Show as lists every layout, one whose column the collection lacks saying which and adding it', async ({ page }) => {
+test('a row opens from a button at the end of its name, shown with the pointer or the keys on its row; its sheet says every change, the last first, with all it set; Show as lists every layout, one whose column the collection lacks saying which and adding it', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await rents(page)
   const rows = page.locator('.table-grid tbody tr[data-row]'), sheet = page.locator('dialog.table-row'), none = page.locator('.table-none'), opens = rows.nth(1).getByRole('button', { name: 'Open' })

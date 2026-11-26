@@ -148,7 +148,7 @@ test('an extension read from its address is added, runs apart, draws under each 
   await expect(page.locator('.extensions-above')).toHaveCount(0)
 })
 
-test('with ?safe no extension runs until the user leaves safe mode, one that keeps failing is turned off and says so, and Settings opens Jean with no extension (D309)', async ({ page }) => {
+test('with ?safe no extension runs until the user leaves safe mode, one that keeps failing is turned off and says so, and Settings opens Jean with no extension (D309)', { tag: '@chromium' }, async ({ page }) => {
   // It fails on each record Jean keeps, a request and its answer make three, and draws 2,500 words on its page.
   await serve(page, {}, "export function register(on, $) { on('record', () => { throw new Error('Broken') }); $.slot('settings', () => Array(50).fill(Array(50).fill('word'))) }")
   await start(page)
@@ -200,7 +200,7 @@ test('with ?safe no extension runs until the user leaves safe mode, one that kee
   await page.waitForURL(/[?&]safe/)
 })
 
-test('the example extensions (examples/extensions/) are ready-made where policy names them, and work together: a log of the records, quiet hours that ask first, and a site trusted that opens without asking, which Approvals takes back', async ({ page }) => {
+test('the example extensions (examples/extensions/) are ready-made where policy names them, and work together: a log of the records, quiet hours that ask first, and a site trusted that opens without asking, which Approvals takes back', { tag: '@chromium' }, async ({ page }) => {
   const names = ['activity-log', 'quiet-hours', 'trusted-sites']
   // npm run dev serves them, as the tests' server does.
   await withPolicy(page, { extensions: { ready: names.map((name) => `http://127.0.0.1:4180/examples/extensions/${name}/`) } })
@@ -290,7 +290,7 @@ test('the example extensions (examples/extensions/) are ready-made where policy 
   await expect(settings.locator('.list.extensions > li', { hasText: 'Trusted sites' })).toContainText('Sees conversations')
 })
 
-test('At a glance (examples/extensions/glance/) draws under a long answer how long it takes to read and a map of its parts, each said in words too', async ({ page }) => {
+test('At a glance (examples/extensions/glance/) draws under a long answer how long it takes to read and a map of its parts, each said in words too', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await turnOn(page, 'Extensions')
@@ -319,7 +319,7 @@ test('At a glance (examples/extensions/glance/) draws under a long answer how lo
   await expect(short).toHaveCount(2)
 })
 
-test('asked, Jean writes an extension with the skill "Make an extension": its page shows its rights and code before anything of it runs or is kept, and added, it works (D692)', async ({ page }) => {
+test('asked, Jean writes an extension with the skill "Make an extension": its page shows its rights and code before anything of it runs or is kept, and added, it works (D692)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Make me an extension that counts answers')

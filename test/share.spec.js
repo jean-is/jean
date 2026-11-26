@@ -281,7 +281,7 @@ test('a page of parts shared by link from its pane opens in the host’s viewer 
   await context.close()
 })
 
-test('a link that can’t be made or updated says why, in sharing’s own words', async ({ page }) => {
+test('a link that can’t be made or updated says why, in sharing’s own words', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   const path = await page.evaluate(async (host) => {
     const [{ app, updateSettings }, { createConversation, appendRecords }, { metaRecord, userRecord }] = await Promise.all([

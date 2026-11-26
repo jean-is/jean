@@ -145,7 +145,7 @@ test('read aloud pressed again stops the natural voice at once, what it had made
   await answer.getByRole('button', { name: 'Stop reading' }).click()
 })
 
-test('Talking hands-free reads its answers in the natural voice while it is on, in the system’s once it is off', async ({ page }) => {
+test('Talking hands-free reads its answers in the natural voice while it is on, in the system’s once it is off', { tag: '@chromium' }, async ({ page }) => {
   const asked = await fake(page)
   await start(page)
   await connectFakeBrain(page)
@@ -179,7 +179,7 @@ test('Talking hands-free reads its answers in the natural voice while it is on, 
 
 // As on a visit after Jean pinned new weights: the voice's module, loaded, finds French kept at an older pin.
 // The cache is filled before it loads, since WebKit here keeps nothing for a next visit.
-test('a voice kept at an older pin of its weights is loaded again at the new one, nothing asked', async ({ page }) => {
+test('a voice kept at an older pin of its weights is loaded again at the new one, nothing asked', { tag: '@chromium' }, async ({ page }) => {
   const asked = await fake(page)
   await start(page)
   await connectFakeBrain(page)
@@ -215,7 +215,7 @@ for (const [lang, offerText, credit] of [['ar', 'هل تريد سماع الإج
 
 // Picked in Settings › General, a system voice reads its language ahead of the natural voice; the natural voice's page
 // reads each language here with Listen; Your data › Space used counts its languages apart and removes one.
-test('a voice picked reads ahead of the natural voice, whose languages Listen plays and Space used removes', async ({ page }) => {
+test('a voice picked reads ahead of the natural voice, whose languages Listen plays and Space used removes', { tag: '@chromium' }, async ({ page }) => {
   const asked = await fake(page)
   await start(page)
   await connectFakeBrain(page)

@@ -215,7 +215,7 @@ test('while Jean watches, a look with nothing to say leaves nothing, and one tha
   await expect(state).toHaveText(strings['cap.camera.name'])
 })
 
-test('an organisation that denies the camera never has it', async ({ page }) => {
+test('an organisation that denies the camera never has it', { tag: '@chromium' }, async ({ page }) => {
   const strings = stringsOf('en')
   await withPolicy(page, { capabilities: { deny: ['camera', 'live'] } })
   await page.addInitScript(camera)
@@ -229,7 +229,7 @@ test('an organisation that denies the camera never has it', async ({ page }) => 
   await expect(page.locator('#add-menu').getByRole('button', { name: strings['cap.camera.name'] })).toHaveCount(0)
 })
 
-test('a brain that can\'t see sends the user to pick one that can', async ({ page }) => {
+test('a brain that can\'t see sends the user to pick one that can', { tag: '@chromium' }, async ({ page }) => {
   const strings = stringsOf('en')
   await withPolicy(page, { capabilities: { deny: ['live'] } })
   await page.addInitScript(camera)

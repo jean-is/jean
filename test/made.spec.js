@@ -117,7 +117,7 @@ test('in French, a table downloads with semicolons, as Excel reads it there', as
   expect(csv).toBe('﻿Région;Total\r\nNord;"2540,5"\r\n')
 })
 
-test('a Word document from the first message, saved, then changed', async ({ page }) => {
+test('a Word document from the first message, saved, then changed', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Write the bakery plan as a Word document')
@@ -149,7 +149,7 @@ test('a Word document from the first message, saved, then changed', async ({ pag
   await expect(drawn).not.toContainText('Sell the rest')
 })
 
-test('a Word document holds a picture Jean made in the task, named in its Markdown by the name it was made under (D730)', async ({ page }) => {
+test('a Word document holds a picture Jean made in the task, named in its Markdown by the name it was made under (D730)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   const uri = await paint(page, 'portrait-lea', 'Léa at seven, laughing, balloons behind her')
@@ -187,7 +187,7 @@ test('a spreadsheet written by a script, with exact totals', async ({ page }) =>
 })
 
 
-test('in the organisation\'s or the project\'s look, a Word document\'s headings and its table\'s head line take its colour and its voice\'s faces, and so does an answer printed (D601)', async ({ page }) => {
+test('in the organisation\'s or the project\'s look, a Word document\'s headings and its table\'s head line take its colour and its voice\'s faces, and so does an answer printed (D601)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Explain photosynthesis in simple words')

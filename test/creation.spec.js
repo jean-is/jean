@@ -88,7 +88,7 @@ for (const [address, sections, waiting, group, accept] of [
   ['whiteboards', ['Went well', 'To change', 'To try'], 'The café was a hit', 'Group them', 'Accept all'],
   ['fr/tableaux-blancs', ['Réussi', 'À changer', 'À essayer'], 'Le café a eu du succès', 'Les regrouper', 'Tout accepter'],
 ]) {
-  test(`/${address}: its pane is the whiteboard itself, its waiting notes sorted when asked, for the reader to accept`, async ({ page }) => {
+  test(`/${address}: its pane is the whiteboard itself, its waiting notes sorted when asked, for the reader to accept`, { tag: '@chromium' }, async ({ page }) => {
     const { pane, wrong } = await shown(page, address)
     const board = pane.locator('app-whiteboard')
     await expect(board.locator('.wb-area .wb-area-head span[id]')).toHaveText(sections)
@@ -132,7 +132,7 @@ for (const [address, company, added, accept, board] of [
   ['collections', 'Atelier Nord', 'Atelier Terre', 'Accept all', 'Board'],
   ['fr/collections', 'Atelier Nord', 'Atelier Terre', 'Tout accepter', 'Colonnes'],
 ]) {
-  test(`/${address}: its pane is the collection itself, Jean’s change of three rows marked, for the reader to accept`, async ({ page }) => {
+  test(`/${address}: its pane is the collection itself, Jean’s change of three rows marked, for the reader to accept`, { tag: '@chromium' }, async ({ page }) => {
     const { pane, wrong } = await shown(page, address)
     const table = pane.locator('app-table')
     // Seven rows, the person's six and the one Jean added; three of them hold Jean's changes, which wait.

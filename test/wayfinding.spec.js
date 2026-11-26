@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs'
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, answered, openSettings, closeSettings, openTasks } from './helpers.js'
 
-test('the window’s title says the page: a task’s name, a Settings section, search, Creations, and the first screen again', async ({ page }) => {
+test('the window’s title says the page: a task’s name, a Settings section, search, Creations, and the first screen again', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   const first = await page.title()
@@ -35,7 +35,7 @@ test('the window’s title says the page: a task’s name, a Settings section, s
   await expect(page).toHaveTitle(/^Creations · /)
 })
 
-test('a screen reader hears that Jean is thinking, writing and has answered, not the stream of its words', async ({ page }) => {
+test('a screen reader hears that Jean is thinking, writing and has answered, not the stream of its words', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await expect(page.locator('body > [role="status"].visually-hidden')).toHaveCount(1)
@@ -58,7 +58,7 @@ test('a screen reader hears that Jean is thinking, writing and has answered, not
 })
 
 for (const lang of ['en', 'ar', 'ja']) {
-  test(`a screen reader hears that a decision waits on the person, and so does the line above it, not that Jean is thinking (${lang})`, async ({ page }) => {
+  test(`a screen reader hears that a decision waits on the person, and so does the line above it, not that Jean is thinking (${lang})`, { tag: '@chromium' }, async ({ page }) => {
     const strings = JSON.parse(readFileSync(new URL(`../app/locales/${lang}.json`, import.meta.url), 'utf8'))
     const waiting = (strings['inbox.waiting'].one ?? strings['inbox.waiting'].other).replace('{count}', new Intl.NumberFormat(lang).format(1))
     await start(page, lang)
@@ -78,7 +78,7 @@ for (const lang of ['en', 'ar', 'ja']) {
     await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
   })
 
-  test(`what went wrong is an alert, what went well a status, each said by the toast's own words (${lang})`, async ({ page }) => {
+  test(`what went wrong is an alert, what went well a status, each said by the toast's own words (${lang})`, { tag: '@chromium' }, async ({ page }) => {
     const strings = JSON.parse(readFileSync(new URL(`../app/locales/${lang}.json`, import.meta.url), 'utf8'))
     await start(page, lang)
     await connectFakeBrain(page)
@@ -97,7 +97,7 @@ for (const lang of ['en', 'ar', 'ja']) {
   })
 }
 
-test('a screen reader hears that an offer in the answer waits on the person too', async ({ page }) => {
+test('a screen reader hears that an offer in the answer waits on the person too', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Show me the bakery site')
@@ -107,7 +107,7 @@ test('a screen reader hears that an offer in the answer waits on the person too'
   await expect(page.locator('body > [role="status"].visually-hidden')).not.toHaveText('1 decision is waiting for you')
 })
 
-test('a request that failed and is asked again is said, in the status line and the line above the answer', async ({ page }) => {
+test('a request that failed and is asked again is said, in the status line and the line above the answer', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   let failed = false

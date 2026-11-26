@@ -44,7 +44,7 @@ async function farBrain(page, answer = () => undefined) {
 const useCorp = (/** @type {import('@playwright/test').Page} */ page) => page.evaluate(async () => { await (await import('/ui/state.js')).updateSettings({ activeBrain: 'corp' }) })
 const quiet = (/** @type {import('@playwright/test').Page} */ page) => expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
 
-test('a brain in the cloud reads marks, and the person the real thing', async ({ page, browserName }) => {
+test('a brain in the cloud reads marks, and the person the real thing', { tag: '@chromium' }, async ({ page, browserName }) => {
   const asked = await farBrain(page)
   await withPolicy(page, POLICY)
   await start(page)
@@ -94,7 +94,7 @@ test('a brain in the cloud reads marks, and the person the real thing', async ({
   for (const body of asked) expect(body).not.toContain('Mélusine')
 })
 
-test('on every road, a shared file, memory, a call and its result, a title and a guard’s question, nothing real goes, and what it makes is real', async ({ page }) => {
+test('on every road, a shared file, memory, a call and its result, a title and a guard’s question, nothing real goes, and what it makes is real', { tag: '@chromium' }, async ({ page }) => {
   // It writes a file with the marks it read, its chunks cutting them in two, then says so.
   const answer = (/** @type {any} */ body) => {
     // A title, with a mark whose brackets it dropped, as a brain may; a guard's question.
@@ -166,7 +166,7 @@ test('on every road, a shared file, memory, a call and its result, a title and a
   expect(asked.join()).not.toContain('Dupont')
 })
 
-test('what can’t be masked isn’t sent, and the person is told', async ({ page }) => {
+test('what can’t be masked isn’t sent, and the person is told', { tag: '@chromium' }, async ({ page }) => {
   const asked = await farBrain(page)
   // A tool's name can't be masked: a word in it stops the request.
   await withPolicy(page, { ...POLICY, dlp: { mask: { words: ['write'] } } })
@@ -215,7 +215,7 @@ test('people’s names are found on this device, in a real worker on real weight
   expect(kept).toBeGreaterThan(0)
 })
 
-test('text in another script isn’t read or sent', async ({ page, context }) => {
+test('text in another script isn’t read or sent', { tag: '@chromium' }, async ({ page, context }) => {
   let weights = 0
   await context.route('https://huggingface.co/**', (route) => { weights++; return route.abort() })
   const asked = await farBrain(page)
@@ -228,7 +228,7 @@ test('text in another script isn’t read or sent', async ({ page, context }) =>
   expect(asked.filter((body) => JSON.parse(body).tools?.length)).toEqual([])
 })
 
-test('when names can’t be read, nothing is sent', async ({ page, context }) => {
+test('when names can’t be read, nothing is sent', { tag: '@chromium' }, async ({ page, context }) => {
   let weights = 0
   await context.route('https://huggingface.co/**', (route) => { weights++; return route.abort() })
   const asked = await farBrain(page)

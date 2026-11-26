@@ -174,7 +174,7 @@ test('a site that refuses to be framed opens in a tab of its own, and Jean recom
   await expect(page.locator('.toast')).toContainText('That address can’t be opened.')
 })
 
-test('links from answers open beside the conversation once the browser is found', async ({ page, context }) => {
+test('links from answers open beside the conversation once the browser is found', { tag: '@chromium' }, async ({ page, context }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Give me a link to the bakery')
@@ -193,7 +193,7 @@ test('links from answers open beside the conversation once the browser is found'
   await expect(site(page).locator('h1')).toHaveText('The bakery')
 })
 
-test('on a phone, a page Jean opens as the person types waits to be opened, the keys in the box (D582)', async ({ page }) => {
+test('on a phone, a page Jean opens as the person types waits to be opened, the keys in the box (D582)', { tag: '@chromium' }, async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 800 })
   await start(page)
   await connectFakeBrain(page)
@@ -215,7 +215,7 @@ test('on a phone, a page Jean opens as the person types waits to be opened, the 
   await expect(site(page).locator('h1')).toHaveText('The bakery')
 })
 
-test('the brain offers the browser, then opens a page there and reads it, asking first', async ({ page }) => {
+test('the brain offers the browser, then opens a page there and reads it, asking first', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Show me the bakery site')
@@ -238,7 +238,7 @@ test('the brain offers the browser, then opens a page there and reads it, asking
   expect(notes).toContain(`The <page> section is now:\nThe browser beside the conversation shows ${SITE}/bakery.html.`)
 })
 
-test('an article of Wikipedia’s, whose page refuses other sites’ reads, is read through its API, and the answer shows its picture (D35)', async ({ page }) => {
+test('an article of Wikipedia’s, whose page refuses other sites’ reads, is read through its API, and the answer shows its picture (D35)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await page.evaluate(async () => {
@@ -262,7 +262,7 @@ test('an article of Wikipedia’s, whose page refuses other sites’ reads, is r
   expect(asked.map((url) => url.searchParams.get('titles'))).toEqual(['Lighthouse'])
 })
 
-test('No thanks is for good: the brain hears it again in a new task, and the user sees no card (D219)', async ({ page }) => {
+test('No thanks is for good: the brain hears it again in a new task, and the user sees no card (D219)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Show me the bakery site')
@@ -282,7 +282,7 @@ test('No thanks is for good: the brain hears it again in a new task, and the use
   expect(results).toContain('The user said no to it before. Go on without it.')
 })
 
-test('Stop is not No: the brain offers it again, and once it is on from elsewhere, the answer goes on', async ({ page }) => {
+test('Stop is not No: the brain offers it again, and once it is on from elsewhere, the answer goes on', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Show me the bakery site')

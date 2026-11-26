@@ -21,9 +21,11 @@ const RELAY = 4187
 // The gateway (D191) serves Jean's origin, and holds the app the fake mail's closed service registered.
 // WebKit runs what can differ between engines: frames and the sandbox, storage, editing, the keyboard, media, drawing. These
 // specs check what Jean decides, the same JavaScript in every engine (protocols, policy, offers, skills, routines, the site's
-// pages through axe), so Chromium alone runs them; discover.spec.js still loads every capability's modules in WebKit. And a
-// language's run is Chromium's alone: a language changes the words and the layout, which are style sheets, not the engine's logic.
-const CHROMIUM_ONLY = ['out', 'report', 'begin', 'collect', 'soon', 'look', 'related', 'sources', 'people', 'together', 'colleagues', 'about', 'approvals', 'ask', 'audit', 'authority', 'away', 'compact', 'compare', 'delegate', 'demo', 'dlp', 'find', 'flows', 'google', 'session', 'starters',
+// pages through axe), so Chromium alone runs them; discover.spec.js still loads every capability's modules in WebKit. A test
+// of that in a spec WebKit runs is tagged @chromium: what the brain is told, an offer, policy, a decision, the Creations page,
+// a Settings page, contrast in every look. And a language's run is Chromium's alone, any language but English: a language
+// changes the words and the layout, which are style sheets, not the engine's logic.
+const CHROMIUM_ONLY = ['out', 'report', 'begin', 'collect', 'soon', 'look', 'related', 'sources', 'people', 'together', 'colleagues', 'about', 'approvals', 'ask', 'audit', 'authority', 'away', 'compact', 'compare', 'delegate', 'demo', 'dlp', 'find', 'flows', 'google', 'session', 'starters', 'feedback', 'company-server', 'tour',
   'guards', 'help', 'learn', 'lists', 'meaning', 'microsoft', 'notifications', 'panes', 'plan', 'policy', 'reach', 'remember', 'retention', 'signin', 'site', 'steer',
   'thinking', 'you', 'compose']
 const RELAYED = { origins: [`http://127.0.0.1:${APP}`], hosts: ['127.0.0.1'],
@@ -53,7 +55,7 @@ export default defineConfig({
     // Muted: a score's test plays music (WebKit has no such flag: start() in helpers.js silences it).
     { name: 'chromium', use: { ...devices['Desktop Chrome'], launchOptions: { args: ['--mute-audio'] } } },
     { name: 'webkit', use: { ...devices['Desktop Safari'] }, testIgnore: ['**/.cache/**', ...CHROMIUM_ONLY.map((name) => `**/${name}.spec.js`)],
-      grepInvert: /\((?:[^)]*, )?(?:ar|ja)[,)]|\bin (?:ar|ja|Arabic|Japanese)\b/ },
+      grepInvert: [/@chromium/, /\((?:[^)]*, )?(?!en[,)])[a-z]{2}(?:-[A-Za-z]+)?[,)]|\bin (?:ar|ja|fr|Arabic|Japanese|French)\b/] },
   ],
   webServer: [
     { command: 'node scripts/serve.js', cwd: '..', port: APP, env: { PORT: String(APP) }, reuseExistingServer: false },

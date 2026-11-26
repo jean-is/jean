@@ -246,7 +246,7 @@ test('a deck Jean opens beside the task leaves the keys in the box, where letter
   await expect(pane.locator('.pane-head button:not(.pane-moves, .pane-menu button)').first()).toBeFocused()
 })
 
-test('on a phone, a deck Jean opens waits to be opened, and says so with a way to open it; the task stays as it was (D582)', async ({ page }) => {
+test('on a phone, a deck Jean opens waits to be opened, and says so with a way to open it; the task stays as it was (D582)', { tag: '@chromium' }, async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 800 })
   await start(page)
   await connectFakeBrain(page)

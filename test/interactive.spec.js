@@ -290,7 +290,7 @@ test('a page of parts a brain left open, in a tag of its own making and its fenc
   expect(await page.locator('.msg-jean .prose').nth(1).evaluate((element) => getComputedStyle(element.querySelector(':scope > p:last-of-type') ?? element).direction)).toBe('rtl')
 })
 
-test('Visual answers, a mode + turns on: shown pressed at the box’s foot, its skill’s steps told once in a task, then its name, until it is pressed off', async ({ page }) => {
+test('Visual answers, a mode + turns on: shown pressed at the box’s foot, its skill’s steps told once in a task, then its name, until it is pressed off', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   /** Asks, then waits for the answer to end. @param {string} text */
@@ -391,7 +391,7 @@ test('a page of parts leaves Jean drawn as Jean draws it and live without Jean: 
   await expect(pane.locator('.out-menu button', { hasText: 'Share…' })).toHaveCount(1)
 })
 
-test('the pages answers hold are apps among the creations once there is one, the newest of each name alone, still on its card, working beside the task, marked in its task, and Create asks for one (D553)', async ({ page }) => {
+test('the pages answers hold are apps among the creations once there is one, the newest of each name alone, still on its card, working beside the task, marked in its task, and Create asks for one (D553)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   const tasks = await openTasks(page)

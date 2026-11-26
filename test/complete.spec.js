@@ -27,7 +27,7 @@ async function answered(page) {
   await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
 }
 
-test('/ names what Jean can do, and once Skills is found, a ready-made skill, read before it is added', async ({ page }) => {
+test('/ names what Jean can do, and once Skills is found, a ready-made skill, read before it is added', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   const box = page.locator('#prompt')
@@ -178,7 +178,7 @@ test('what / names is a chip in the box, by its name, removed whole and sent as 
   await expect(page.locator('app-creations input[type="search"]')).toHaveValue('#sales')
 })
 
-test('+ opens a menu beside its Skills row, the room’s skills by name, and beside its Connections row; each picked is named in the box as / names it', async ({ page }) => {
+test('+ opens a menu beside its Skills row, the room’s skills by name, and beside its Connections row; each picked is named in the box as / names it', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   const box = page.locator('#prompt')
@@ -270,7 +270,7 @@ test('+ opens a menu beside its Skills row, the room’s skills by name, and bes
   await expect(box).toHaveAttribute('dir', 'auto')
 })
 
-test('@ attaches a file shared before and points at an earlier task', async ({ page }) => {
+test('@ attaches a file shared before and points at an earlier task', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await page.locator('.composer input[type="file"]').setInputFiles({ name: 'Quarterly notes.txt', mimeType: 'text/plain', buffer: Buffer.from('Revenue grew 12% in Q3.') })

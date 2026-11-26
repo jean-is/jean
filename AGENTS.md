@@ -94,7 +94,7 @@ The prompt and the declared tools are frozen for the life of a conversation. Cha
 
 - Use `node --test` for `core/`, test-first for `core/` and storage.
 - One Playwright smoke test per capability, `test/<capability>.spec.js` beside the unit tests' `*.test.js`, run against the fake brain (`npm run e2e`). It is separate from `npm run check` because it needs browsers.
-- A browser test checks what only a browser can tell; logic goes under `node --test`. Chromium runs every spec. WebKit runs what can differ between engines (frames, the sandbox, storage, editing, the keyboard, media, drawing), in English; a spec of what Jean decides, the same JavaScript everywhere, joins `CHROMIUM_ONLY` in `test/playwright.config.js`.
+- A browser test checks what only a browser can tell; logic goes under `node --test`. Chromium runs every spec. WebKit runs what can differ between engines (frames, the sandbox, storage, editing, the keyboard, media, drawing), in English; a spec of what Jean decides, the same JavaScript everywhere, joins `CHROMIUM_ONLY` in `test/playwright.config.js`, and such a test in a spec WebKit runs is tagged `@chromium` (`{ tag: '@chromium' }`).
 - A run repeated over looks, languages or sizes earns its time. A rule about colour runs in every look, in English; one about layout in the looks that size their own; a look's own motion only where its sheet has some. A flow's words run in Arabic and Japanese once.
 - Every UI change gets checked in one right-to-left locale (Arabic) and one CJK locale (Japanese).
 - Jean's own Node, in CI, the images and the server, is the newest LTS, named once in `.nvmrc` (D701). A new LTS means `npm run lts -- --write`, then `npm run check` on it, never a `node:<major>` or `node-version` changed by hand.

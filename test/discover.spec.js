@@ -42,7 +42,7 @@ async function installedOffline(browser, baseURL, lang) {
   return { context, page }
 }
 
-test('Jean starts offline from a fresh install, with no capability found, and a first request has all that one online has (D667)', async ({ browser, baseURL }) => {
+test('Jean starts offline from a fresh install, with no capability found, and a first request has all that one online has (D667)', { tag: '@chromium' }, async ({ browser, baseURL }) => {
   const { context, page } = await installedOffline(browser, baseURL)
   const failed = /** @type {string[]} */ ([])
   page.on('requestfailed', (request) => failed.push(request.url()))
@@ -73,7 +73,7 @@ test('Jean starts offline from a fresh install, with no capability found, and a 
   await context.close()
 })
 
-test('offline with no brain yet, the chip and a request open Settings › Brains, which says why; back online, the first step comes (D329, D667)', async ({ browser, baseURL }) => {
+test('offline with no brain yet, the chip and a request open Settings › Brains, which says why; back online, the first step comes (D329, D667)', { tag: '@chromium' }, async ({ browser, baseURL }) => {
   const { context, page } = await installedOffline(browser, baseURL)
   const settings = page.locator('app-settings dialog[open]')
   await page.locator('.brain-chip').click()
@@ -112,7 +112,7 @@ for (const [lang, words] of [['ar', 'أنت غير متصل بالإنترنت']
   })
 }
 
-test('the first idea shares a sample spreadsheet with a request about it, and Files is found (D366)', async ({ page }) => {
+test('the first idea shares a sample spreadsheet with a request about it, and Files is found (D366)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   const first = page.locator('.starter').first()
@@ -129,7 +129,7 @@ test('the first idea shares a sample spreadsheet with a request about it, and Fi
   expect(await page.evaluate(async () => (await import('/ui/caps.js')).loaded.value.has('files'))).toBe(true)
 })
 
-test('the ideas for a tune and a quiz add Jean’s own skill for each before their request (D400)', async ({ page }) => {
+test('the ideas for a tune and a quiz add Jean’s own skill for each before their request (D400)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await page.locator('.starter', { hasText: 'Compose a tune' }).click()
@@ -140,7 +140,7 @@ test('the ideas for a tune and a quiz add Jean’s own skill for each before the
   expect(await page.evaluate(async () => (await (await import('/caps/skills/skills.js')).skills()).map((skill) => skill.name).sort())).toEqual(['music-score', 'quiz'])
 })
 
-test('Capabilities groups the capabilities by what each is for, a page each, and says what still waits', async ({ page }) => {
+test('Capabilities groups the capabilities by what each is for, a page each, and says what still waits', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   const settings = await openSettings(page, 'Capabilities')
   await expect(page.locator('app-settings [aria-current="page"]')).toHaveText('Capabilities')
@@ -180,7 +180,7 @@ test('Capabilities groups the capabilities by what each is for, a page each, and
   await expect(settings.locator('.case-wait').getByRole('button', { name: 'Download (345 MB)' })).toBeVisible()
 })
 
-test('a capability found turns off from its page, asked first, still found, the page opening afresh without it, and on again (D433)', async ({ page }) => {
+test('a capability found turns off from its page, asked first, still found, the page opening afresh without it, and on again (D433)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await turnOn(page, 'Web search')
   const settings = page.locator('app-settings dialog[open]')
@@ -230,7 +230,7 @@ test('a capability found turns off from its page, asked first, still found, the 
   await expect(nav).toContainText('Web search')
 })
 
-test('what the organisation turned on says so, and only the organisation turns it off', async ({ page }) => {
+test('what the organisation turned on says so, and only the organisation turns it off', { tag: '@chromium' }, async ({ page }) => {
   await withPolicy(page, { capabilities: { preUnlock: ['web-search'] } })
   await start(page)
   await expect.poll(() => page.evaluate(async () => (await import('/ui/caps.js')).loaded.value.has('web-search'))).toBe(true)
@@ -256,7 +256,7 @@ async function tasksElsewhere(page, count) {
   }, count)
 }
 
-test('offers count the tasks of every project, wait their turn when due, and give way to what the user does now', async ({ page }) => {
+test('offers count the tasks of every project, wait their turn when due, and give way to what the user does now', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   // Three tasks in another project: Backup and Intuition are about all of them, so they are due.
@@ -281,7 +281,7 @@ test('offers count the tasks of every project, wait their turn when due, and giv
 test.describe('on a phone', () => {
   test.use({ userAgent: 'Mozilla/5.0 (Linux; Android 16; Pixel 7 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Mobile Safari/537.36', viewport: { width: 412, height: 892 }, hasTouch: true, isMobile: true })
 
-  test('Intuition is never offered, listed or loaded, even turned on ahead with its weights here (D660)', async ({ page }) => {
+  test('Intuition is never offered, listed or loaded, even turned on ahead with its weights here (D660)', { tag: '@chromium' }, async ({ page }) => {
     const workers = /** @type {string[]} */ ([])
     page.on('worker', (worker) => workers.push(worker.url()))
     await page.goto('./')
@@ -337,7 +337,7 @@ test('an offer on the first screen keeps above the ideas and the box, never unde
 // A plain 1×1 PNG.
 const PIXEL = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==', 'base64')
 
-test('what brains rarely offer is offered on events with no language: a file from a service, a picture (D286)', async ({ page }) => {
+test('what brains rarely offer is offered on events with no language: a file from a service, a picture (D286)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   const offer = page.locator('aside.offer')
@@ -350,7 +350,7 @@ test('what brains rarely offer is offered on events with no language: a file fro
   await expect(offer).toContainText('change a picture you share')
 })
 
-test('something said again from an earlier task offers memory, and a task continued on three days a project (D286)', async ({ page }) => {
+test('something said again from an earlier task offers memory, and a task continued on three days a project (D286)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   const offer = page.locator('aside.offer')
@@ -378,7 +378,7 @@ test('something said again from an earlier task offers memory, and a task contin
   await expect(offer).toContainText('make this a project')
 })
 
-test('the picker: a menu above the chip, Auto by default, a brain by hand, kept on this device', async ({ page }) => {
+test('the picker: a menu above the chip, Auto by default, a brain by hand, kept on this device', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   const chip = page.locator('.brain-chip')
@@ -444,7 +444,7 @@ test('the picker: a menu above the chip, Auto by default, a brain by hand, kept 
   await expect(brains.locator('[data-brain="key"]')).toBeFocused()
 })
 
-test('beside the organisation’s brains, a person keeps their own of the providers policy leaves them, each of policy’s locked, and adds only those', async ({ page }) => {
+test('beside the organisation’s brains, a person keeps their own of the providers policy leaves them, each of policy’s locked, and adds only those', { tag: '@chromium' }, async ({ page }) => {
   await withPolicy(page, { brains: [{ id: 'corp', provider: 'custom', api: 'openai', baseURL: BRAIN_URL, model: 'fake-brain-1', label: 'Corp' }], ownBrains: ['openai'] })
   await start(page)
   // Two of the person's own: OpenAI's, which policy leaves them, and Mistral's, which it doesn't.
@@ -471,7 +471,7 @@ test('beside the organisation’s brains, a person keeps their own of the provid
   await expect(brains.locator('#brain-provider option')).toHaveText(['OpenAI'])
 })
 
-test('a service’s refusal says what its tool takes, and a script parses a long result whole', async ({ page }) => {
+test('a service’s refusal says what its tool takes, and a script parses a long result whole', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await turnOn(page, 'Computer in this tab')

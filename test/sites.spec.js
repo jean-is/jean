@@ -112,7 +112,7 @@ test('a site made with its skill is checked from its files and as its pages show
   expect(await page.evaluate(async () => /** @type {any} */ ((await import('/caps/share/share.js')).sharing.value?.item))).toMatchObject({ files: [{ name: 'Atelier Nord.html', mimeType: 'text/html' }] })
 })
 
-test('a picture Jean made in the task goes into its site by the name it was made under, its lists as JSON text read as lists (D730)', async ({ page }) => {
+test('a picture Jean made in the task goes into its site by the name it was made under, its lists as JSON text read as lists (D730)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   const answer = await make(page), place = /sites\/[^:]+/.exec(await answer.innerText())?.[0] ?? ''
@@ -144,7 +144,7 @@ test('a picture Jean made in the task goes into its site by the name it was made
   expect(await card.locator('.creation-preview').evaluate((element) => /** @type {HTMLElement} */ (element).inert)).toBe(true)
 })
 
-test('from another task, @ names a site by its place, opening it beside the task for the brain to change (D730)', async ({ page }) => {
+test('from another task, @ names a site by its place, opening it beside the task for the brain to change (D730)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   const place = /sites\/[^:]+/.exec(await (await make(page)).innerText())?.[0] ?? ''
@@ -395,7 +395,7 @@ async function throughHost(context) {
   })
 }
 
-test('a site goes online at a name of its own, asked first, its recovery code shown once and kept apart; published again, only what changed goes; a new code takes the old one back; taken offline (D720)', async ({ page, context, browserName }) => {
+test('a site goes online at a name of its own, asked first, its recovery code shown once and kept apart; published again, only what changed goes; a new code takes the old one back; taken offline (D720)', { tag: '@chromium' }, async ({ page, context, browserName }) => {
   // One host serves every browser's run, its retries and repeats, so each takes a name of its own.
   const name = `atelier-nord-${browserName}-${test.info().retry}-${test.info().repeatEachIndex}`, address = `http://${name}.localhost:4185/`
   await start(page)
@@ -593,7 +593,7 @@ test('a visitor’s reply to a published site’s form is sealed in their browse
   expect(left).toEqual([])
 })
 
-test('a page on its own goes online from its pane as a site of one page, its script and its on…="" in files of their own as the host runs them, made again from the page each time (D720)', async ({ page, context, browserName }) => {
+test('a page on its own goes online from its pane as a site of one page, its script and its on…="" in files of their own as the host runs them, made again from the page each time (D720)', { tag: '@chromium' }, async ({ page, context, browserName }) => {
   const name = `hours-${browserName}-${test.info().retry}-${test.info().repeatEachIndex}`, address = `http://${name}.localhost:4185/`
   // A page Jean wrote in a task, as a file: a script inside it, and a button's onclick.
   await start(page)
@@ -690,7 +690,7 @@ test('a page of parts goes online from its pane as a site its host runs: drawn a
   await visit.close()
 })
 
-test('a game goes online from its pane as a site its host runs: its code, Phaser and ZzFX in files beside its page that it imports by path, no policy of its own stopping them, and it plays there (D720, D648)', async ({ page, context, browserName }) => {
+test('a game goes online from its pane as a site its host runs: its code, Phaser and ZzFX in files beside its page that it imports by path, no policy of its own stopping them, and it plays there (D720, D648)', { tag: '@chromium' }, async ({ page, context, browserName }) => {
   const name = `star-${browserName}-${test.info().retry}-${test.info().repeatEachIndex}`, address = `http://${name}.localhost:4185/`
   await start(page)
   await page.evaluate(async (host) => {

@@ -122,7 +122,7 @@ test('a design: offered, laid out three ways, its weekday fixed, finished by han
 
 // Add: a shape, an ornament and a QR code go behind the words, never over them; Arrange puts one in front or at the back, ⌘D
 // duplicates it; a picture's frame goes round; and the file draws them all, as drawings of their own where they are.
-test('a picture Jean made in the task goes into a design by its name, as it is, saying what it shows; a change puts in another the same way (D730)', async ({ page }) => {
+test('a picture Jean made in the task goes into a design by its name, as it is, saying what it shows; a change puts in another the same way (D730)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('designs') })
@@ -218,7 +218,7 @@ test('Add puts a shape, an ornament and a QR code behind the words, Arrange brin
 
 // An invitation the brain wrote as a web page, as one did in Japanese 7 times in 11 (D587): Designs is offered above the box, and a
 // yes asks for the same thing as a design.
-test('in a project with a colour, a design\'s first take wears the project\'s colours, which its Colours menu names; the others Designs\' own (D601)', async ({ page }) => {
+test('in a project with a colour, a design\'s first take wears the project\'s colours, which its Colours menu names; the others Designs\' own (D601)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   const green = await page.evaluate(async () => {
@@ -318,7 +318,7 @@ test('a HEIC photo goes in as a JPEG where the browser opens it, else it says wh
   await expect.poll(() => picked(page.locator('.design-edit'))).toBe('20 November')
 })
 
-test('an invitation written as a web page offers Designs, and a yes lays it out as one', async ({ page }) => {
+test('an invitation written as a web page offers Designs, and a yes lays it out as one', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Write the invitation for Léa’s 7th birthday as a web page')

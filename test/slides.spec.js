@@ -332,7 +332,7 @@ test('a schema asked for on the deck on show is made as a picture first, then pu
   await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).printed)).toEqual([96, 1])
 })
 
-test('while its block is written, the slide being written shows, then the first, unless the user has paged; fenced as Markdown, it is a deck too', async ({ page }) => {
+test('while its block is written, the slide being written shows, then the first, unless the user has paged; fenced as Markdown, it is a deck too', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await page.evaluate(async () => {
     const { app } = await import('/ui/state.js')
@@ -499,7 +499,7 @@ for (const [lang, title, sold, oven] of /** @type {const} */ ([
   ['ar', 'المبيعات حسب السنة', 'المباع', 'فرن'],
   ['ja', '年別の売上', '販売数', 'オーブン'],
 ])) {
-  test(`${lang === 'en' ? 'a' : `in ${lang === 'ar' ? 'Arabic' : 'Japanese'}, a`} chart's words read at AA on every paper a slide has, in a light room and a dark one, a tile's and a part's too; what it names itself stays`, async ({ page }) => {
+  test(`${lang === 'en' ? 'a' : `in ${lang === 'ar' ? 'Arabic' : 'Japanese'}, a`} chart's words read at AA on every paper a slide has, in a light room and a dark one, a tile's and a part's too; what it names itself stays`, { tag: '@chromium' }, async ({ page }) => {
     await start(page, lang)
     const fence = (/** @type {object} */ own = {}, /** @type {string} */ indent = '') => `\`\`\`echarts\n${JSON.stringify({ title: { text: title, subtext: sold }, legend: { bottom: 0 }, xAxis: { type: 'category', name: sold, data: ['2024', '2025'] }, yAxis: { type: 'value', name: sold },
       series: [{ name: oven, type: 'bar', data: [1200, 1500], label: { show: true, position: 'top' } }, { name: sold, type: 'line', data: [700, 1100], label: { show: true } }], ...own })}\n\`\`\``.replaceAll('\n', `\n${indent}`)
@@ -547,7 +547,7 @@ for (const [lang, title, sold, oven] of /** @type {const} */ ([
   })
 }
 
-test('a project\'s new look is offered to its decks kept, as Jean\'s version: in the new look, Before, accepted or rejected, offered once (D601)', async ({ page }) => {
+test('a project\'s new look is offered to its decks kept, as Jean\'s version: in the new look, Before, accepted or rejected, offered once (D601)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await addSlides(page)
@@ -605,7 +605,7 @@ test('a project\'s new look is offered to its decks kept, as Jean\'s version: in
   await expect(line).toHaveCount(0)
 })
 
-test('a design system: Jean\'s own and a project\'s, its colours written or picked, logo and layouts, a kit and a PowerPoint template brought in with its art, saved as a file; decks drawn with it (D602, D606)', async ({ page }) => {
+test('a design system: Jean\'s own and a project\'s, its colours written or picked, logo and layouts, a kit and a PowerPoint template brought in with its art, saved as a file; decks drawn with it (D602, D606)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await addSlides(page)

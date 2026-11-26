@@ -276,7 +276,7 @@ test('the arrow keys walk notes, drawings and arrows; an arrow points elsewhere 
   await expect(board.locator('.wb-card .creation-preview svg')).toHaveCount(1)
 })
 
-test('a whiteboard fills as Jean writes the call, its sections first, and stays where it showed once made', async ({ page }) => {
+test('a whiteboard fills as Jean writes the call, its sections first, and stays where it showed once made', { tag: '@chromium' }, async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 960 })
   await start(page)
   await planBrain(page)

@@ -319,7 +319,7 @@ test('a segmented control’s fill is one mark that slides to the choice, whiche
   await expect.poll(() => page.locator('.segmented[aria-keyshortcuts]').evaluate((group) => getComputedStyle(group, '::before').content)).toBe('none')
 })
 
-test('Appearance says what each choice follows, shows each theme by day and by night on Auto, picks an accent from swatches, and undoes it all from its head', async ({ page }) => {
+test('Appearance says what each choice follows, shows each theme by day and by night on Auto, picks an accent from swatches, and undoes it all from its head', { tag: '@chromium' }, async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'reduce' })
   await start(page)
   const settings = await openSettings(page, 'Appearance')
@@ -358,7 +358,7 @@ test('Appearance says what each choice follows, shows each theme by day and by n
 })
 
 for (const [lang, accept, reject, before] of /** @type {const} */ ([['en', 'Accept', 'Reject', 'Before'], ['ar', 'قبول', 'رفض', 'قبل'], ['ja', '承認', '却下', '変更前']])) {
-  test(`asked, Jean proposes a look, worn at once above the box with Before, Reject and Accept, kept only once accepted, never CSS (D693, ${lang})`, async ({ page }) => {
+  test(`asked, Jean proposes a look, worn at once above the box with Before, Reject and Accept, kept only once accepted, never CSS (D693, ${lang})`, { tag: '@chromium' }, async ({ page }) => {
     await start(page, lang)
     await connectFakeBrain(page)
     const root = page.locator('html'), bar = page.locator('.look-proposed')

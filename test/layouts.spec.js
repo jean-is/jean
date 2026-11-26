@@ -80,7 +80,7 @@ async function watched(page) {
 }
 
 for (const [lang, request] of [['en', 'Compare the phone plans'], ['ar', 'قارن باقات الهاتف'], ['ja', '携帯プランを比べて']]) {
-  test(`while an answer is written, its tables and steps take their shape once and show no marks (${lang})`, async ({ page }) => {
+  test(`while an answer is written, its tables and steps take their shape once and show no marks (${lang})`, { tag: '@chromium' }, async ({ page }) => {
     await start(page, lang)
     await connectFakeBrain(page)
     const seen = await watched(page)
@@ -90,7 +90,7 @@ for (const [lang, request] of [['en', 'Compare the phone plans'], ['ar', 'قار
   })
 }
 
-test('steps written apart, each a paragraph that starts in bold with its number, are one list of steps', async ({ page }) => {
+test('steps written apart, each a paragraph that starts in bold with its number, are one list of steps', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Steps to buy a phone')
@@ -161,7 +161,7 @@ test('in Japanese, emphasis that ends on a bracket before the next word is bold,
   await expect(answer).not.toContainText('*')
 })
 
-test('a timeline, key figures and a checklist are laid out as what they are, and what is ticked is kept in the conversation (D291)', async ({ page }) => {
+test('a timeline, key figures and a checklist are laid out as what they are, and what is ticked is kept in the conversation (D291)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Plan my Saturday')

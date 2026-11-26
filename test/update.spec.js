@@ -81,7 +81,7 @@ test('a page not used yet takes a new version once it is ready, where it was', a
   await context.close()
 })
 
-test('Settings looks for a new version when asked, says when there is none, and brings one in, said there alone', async ({ browser }) => {
+test('Settings looks for a new version when asked, says when there is none, and brings one in, said there alone', { tag: '@chromium' }, async ({ browser }) => {
   const context = await browser.newContext({ serviceWorkers: 'allow' })
   const { page } = await open(context, '#/settings')
   const said = page.locator('.version-check [role="status"]'), look = page.getByRole('button', { name: dialogs['settings.checkVersion'] })
@@ -97,7 +97,7 @@ test('Settings looks for a new version when asked, says when there is none, and 
   await context.close()
 })
 
-test('a toast closed comes back once the page is back on screen a quarter of an hour later', async ({ browser }) => {
+test('a toast closed comes back once the page is back on screen a quarter of an hour later', { tag: '@chromium' }, async ({ browser }) => {
   const context = await browser.newContext({ serviceWorkers: 'allow' })
   const { page } = await open(context)
   await page.locator('#prompt').click()

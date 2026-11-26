@@ -149,7 +149,7 @@ test('a server refused in the sandbox runs on this computer instead, and shows i
 // This computer's browser (D746): with the bridge, the pane's sites show in a browser of this computer, played here by
 // Playwright's own Chromium, drawn in the pane; the brain reads the page as its parts and acts on them, each action asked;
 // the person's own Back is the tab's.
-test('the browser beside the conversation is this computer’s, whose page the brain reads and acts on', async ({ page }) => {
+test('the browser beside the conversation is this computer’s, whose page the brain reads and acts on', { tag: '@chromium' }, async ({ page }) => {
   test.setTimeout(120_000)
   const disk = mkdtempSync(join(tmpdir(), 'jean-e2e-'))
   mkdirSync(join(disk, 'shop'))
@@ -232,7 +232,7 @@ test('the browser beside the conversation is this computer’s, whose page the b
 // Claude Code (D235): the user's own, signed in with their Claude plan, answers through the bridge; played here by
 // test/fixtures/claude.js, never the real one. It isn't on this computer at first: the bridge installs it with the installer
 // Jean names, played here too, then signs it in with its own `auth login`, as Anthropic's page in the browser would (D768).
-test('the user’s Claude plan answers, through Claude Code on this computer, which Connect installs and signs in', async ({ page }) => {
+test('the user’s Claude plan answers, through Claude Code on this computer, which Connect installs and signs in', { tag: '@chromium' }, async ({ page }) => {
   test.setTimeout(120_000)
   const disk = mkdtempSync(join(tmpdir(), 'jean-e2e-'))
   const { site, env, url } = await notHere(disk, 'claude')
@@ -278,7 +278,7 @@ test('the user’s Claude plan answers, through Claude Code on this computer, wh
 // Copilot (D262): the user's own Copilot CLI, signed in with their plan, answers through the bridge, over ACP; played here by
 // test/fixtures/copilot.js, first on the PATH of the terminal the line is pasted in, but signed out: Connect signs it in with
 // `copilot login`, the sign-in its ACP server offers as a command to run, as GitHub's page in the browser would (D768).
-test('the user’s Copilot plan answers, through Copilot on this computer, which Connect signs in', async ({ page }) => {
+test('the user’s Copilot plan answers, through Copilot on this computer, which Connect signs in', { tag: '@chromium' }, async ({ page }) => {
   test.setTimeout(120_000)
   const disk = mkdtempSync(join(tmpdir(), 'jean-e2e-'))
   const bin = join(disk, 'bin')
@@ -308,7 +308,7 @@ test('the user’s Copilot plan answers, through Copilot on this computer, which
 // A Gemini plan (D756): the user's own Antigravity CLI, signed in with Google, answers through the bridge, over ACP, as an
 // agent with Jean's prompt; played here by test/fixtures/antigravity.js. It isn't on this computer at first: the bridge
 // installs it with the installer Jean names, played here too, then signs it in, as Google's page in the browser would.
-test('the user’s Gemini plan answers, through Antigravity on this computer, which Connect installs and signs in', async ({ page }) => {
+test('the user’s Gemini plan answers, through Antigravity on this computer, which Connect installs and signs in', { tag: '@chromium' }, async ({ page }) => {
   test.setTimeout(120_000)
   const disk = mkdtempSync(join(tmpdir(), 'jean-e2e-'))
   const { site, env, url } = await notHere(disk, 'antigravity')
@@ -338,7 +338,7 @@ test('the user’s Gemini plan answers, through Antigravity on this computer, wh
 })
 
 // ChatGPT (D262): back from its sign-in without the plan's use, Settings › Brains says so, on its way's page.
-test('back from ChatGPT’s sign-in, declined, Settings › Brains says why', async ({ page }) => {
+test('back from ChatGPT’s sign-in, declined, Settings › Brains says why', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await page.evaluate(() => sessionStorage.setItem('app.draft', 'kept while away'))
   await page.goto('/?chatgpt=declined')

@@ -390,7 +390,7 @@ test.describe('a passkey', () => {
   })
 })
 
-test('Privacy holds who can open or see things, once found: Lock and Profiles on this device, its pages under it, and Your data keeps neither (D729)', async ({ page }) => {
+test('Privacy holds who can open or see things, once found: Lock and Profiles on this device, its pages under it, and Your data keeps neither (D729)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await expect((await openSettings(page)).locator('.settings-nav')).not.toContainText('Privacy')
   await closeSettings(page)

@@ -222,7 +222,7 @@ test('↑ from an empty box brings back what was asked, newest first, and ↓ go
   await expect(box).toHaveValue('Hello')
 })
 
-test('Settings lists the shortcuts to read, a capability\'s once it is found (D236)', async ({ page }) => {
+test('Settings lists the shortcuts to read, a capability\'s once it is found (D236)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   // The buttons say their keys too.
   await expect(page.getByRole('button', { name: 'Dictate' })).toHaveAttribute('aria-keyshortcuts', /^(Meta|Control)\+Shift\+S$/)

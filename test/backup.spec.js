@@ -52,7 +52,7 @@ test('a backup holds the conversations but no key, and restores on a fresh devic
   await context.close()
 })
 
-test('Your data says what matters most, then where each copy is, and a backup changes Backup’s row', async ({ page }) => {
+test('Your data says what matters most, then where each copy is, and a backup changes Backup’s row', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Explain photosynthesis in simple words')
@@ -77,7 +77,7 @@ test('Your data says what matters most, then where each copy is, and a backup ch
   await expect(backup).toBeFocused()
 })
 
-test('what takes up space: the tasks among the rest, each with its share, on Space used’s page', async ({ page }) => {
+test('what takes up space: the tasks among the rest, each with its share, on Space used’s page', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Explain photosynthesis in simple words')
@@ -93,7 +93,7 @@ test('what takes up space: the tasks among the rest, each with its share, on Spa
   await expect(settings.locator('.parts li').last()).toContainText('Everything else')
 })
 
-test('a file that isn’t a backup is refused, and nothing changes', async ({ page }) => {
+test('a file that isn’t a backup is refused, and nothing changes', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   page.on('dialog', (dialog) => dialog.accept())
   const settings = await openSettings(page, 'Your data')
@@ -102,7 +102,7 @@ test('a file that isn’t a backup is refused, and nothing changes', async ({ pa
   await expect(page.locator('.toast')).toContainText('This file isn’t a backup.')
 })
 
-test('an export of Gemini’s from Google Takeout comes in once, shared in the box or restored in Settings (D340)', async ({ page }) => {
+test('an export of Gemini’s from Google Takeout comes in once, shared in the box or restored in Settings (D340)', { tag: '@chromium' }, async ({ page }) => {
   const dir = 'Takeout/My Activity/Gemini Apps/'
   const activity = (/** @type {Record<string, any>} */ fields) => ({ header: 'Gemini Apps', products: ['Gemini Apps'], activityControls: ['Gemini Apps Activity'], ...fields })
   const activities = [
@@ -145,7 +145,7 @@ test('an export of Gemini’s from Google Takeout comes in once, shared in the b
   await expect(page.locator('.toast').last()).toContainText('0 conversations brought in.')
 })
 
-test('ChatGPT’s export shared in the box and Claude’s restored in Settings, its parts together, come in by what they hold (D341)', async ({ page }) => {
+test('ChatGPT’s export shared in the box and Claude’s restored in Settings, its parts together, come in by what they hold (D341)', { tag: '@chromium' }, async ({ page }) => {
   const json = (/** @type {unknown} */ value) => new TextEncoder().encode(JSON.stringify(value))
   /** A ChatGPT message. @param {string} role @param {string} text @param {number} time @param {Record<string, any>} [metadata] */
   const said = (role, text, time, metadata = {}) => ({ author: { role }, create_time: time, content: { content_type: 'text', parts: [text] }, metadata })
@@ -191,7 +191,7 @@ test('ChatGPT’s export shared in the box and Claude’s restored in Settings, 
   expect(tax).toContain('Answer as a tax adviser.')
 })
 
-test('Delete old tasks in Your data: what it means said first, then tasks nothing changed in for that long go at once, pinned ones kept (D718)', async ({ page }) => {
+test('Delete old tasks in Your data: what it means said first, then tasks nothing changed in for that long go at once, pinned ones kept (D718)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await page.evaluate(async () => {
     const [{ app, keepRecords, refreshConversations }, { createConversation }, { metaRecord }] = await Promise.all([import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js')])

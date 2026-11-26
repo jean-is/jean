@@ -93,7 +93,7 @@ for (const [lang, end] of Object.entries(ENDS)) {
   })
 }
 
-test('a capture of the screen offers sharing it, which starts once accepted', async ({ page }) => {
+test('a capture of the screen offers sharing it, which starts once accepted', { tag: '@chromium' }, async ({ page }) => {
   const strings = stringsOf('en')
   await page.addInitScript(screen)
   await start(page, 'en')
@@ -152,7 +152,7 @@ test('while Jean watches the screen, a look with nothing to say leaves nothing, 
   await expect(state).toHaveText(strings['cap.screen.name'])
 })
 
-test('an organisation that denies screen sharing never has it', async ({ page }) => {
+test('an organisation that denies screen sharing never has it', { tag: '@chromium' }, async ({ page }) => {
   const strings = stringsOf('en')
   await withPolicy(page, { capabilities: { deny: ['screen'] } })
   await page.addInitScript(screen)
@@ -166,7 +166,7 @@ test('an organisation that denies screen sharing never has it', async ({ page })
   await expect(page.locator('#add-menu').getByRole('button', { name: strings['cap.screen.name'] })).toHaveCount(0)
 })
 
-test('a brain that can\'t see sends the user to pick one that can, and nothing is shared', async ({ page }) => {
+test('a brain that can\'t see sends the user to pick one that can, and nothing is shared', { tag: '@chromium' }, async ({ page }) => {
   const strings = stringsOf('en')
   await page.addInitScript(screen)
   await start(page, 'en')

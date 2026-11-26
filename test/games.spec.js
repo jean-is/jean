@@ -85,7 +85,7 @@ test('a game made with its skill is played out of sight and reported, opens besi
   await expect(page.locator('app-creations .creation .creation-preview img.game-picture')).toHaveJSProperty('naturalWidth', 480)
 })
 
-test('a game’s card under its answer names it as it is now, shows its picture, and opens it beside the task to play, never in the browser, where its code is inert (D648)', async ({ page }) => {
+test('a game’s card under its answer names it as it is now, shows its picture, and opens it beside the task to play, never in the browser, where its code is inert (D648)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('browser') })
@@ -269,7 +269,7 @@ test('the proof game, made unguided by the skill (test/games/proof/), plays clea
   await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).states)).toContain('play')
 })
 
-test('with pages’ scripts off, a game shows its card and why it can’t run (D648)', async ({ page }) => {
+test('with pages’ scripts off, a game shows its card and why it can’t run (D648)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await make(page, { name: 'Star Catcher', code: STAR })
