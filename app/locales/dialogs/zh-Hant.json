@@ -134,6 +134,8 @@
   "keyboard.profileBefore": "上一個個人檔案",
   "keyboard.language": "下一種語言",
   "keyboard.languageBefore": "上一種語言",
+  "keyboard.task": "下一個任務",
+  "keyboard.taskBefore": "上一個任務",
   "keyboard.line": "換行",
   "keyboard.leave": "若要離開表格或清單，請按 Esc，再按 Tab。",
   "keyboard.recall": "先前的請求（訊息為空時）",

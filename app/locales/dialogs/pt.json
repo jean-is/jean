@@ -138,6 +138,8 @@
   "keyboard.profileBefore": "Perfil anterior",
   "keyboard.language": "Idioma seguinte",
   "keyboard.languageBefore": "Idioma anterior",
+  "keyboard.task": "Tarefa seguinte",
+  "keyboard.taskBefore": "Tarefa anterior",
   "keyboard.line": "Nova linha",
   "keyboard.leave": "Para sair de uma tabela ou lista, prime Esc e depois Tab.",
   "keyboard.recall": "Pedidos anteriores, quando a tua mensagem está vazia",

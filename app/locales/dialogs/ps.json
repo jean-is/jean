@@ -136,6 +136,8 @@
   "keyboard.profileBefore": "مخکینی پروفایل",
   "keyboard.language": "بله ژبه",
   "keyboard.languageBefore": "مخکینۍ ژبه",
+  "keyboard.task": "بله دنده",
+  "keyboard.taskBefore": "مخکینۍ دنده",
   "keyboard.line": "نوې کرښه",
   "keyboard.leave": "له جدول یا لېست څخه د وتلو لپاره، Esc، بیا Tab ووهئ.",
   "keyboard.recall": "پخوانۍ غوښتنې، کله چې ستاسو پیغام تش وي",

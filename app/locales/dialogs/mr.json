@@ -136,6 +136,8 @@
   "keyboard.profileBefore": "मागील प्रोफाइल",
   "keyboard.language": "पुढची भाषा",
   "keyboard.languageBefore": "मागची भाषा",
+  "keyboard.task": "पुढील कार्य",
+  "keyboard.taskBefore": "मागील कार्य",
   "keyboard.line": "नवी ओळ",
   "keyboard.leave": "तक्ता किंवा यादीतून बाहेर पडण्यासाठी Esc, मग Tab दाबा.",
   "keyboard.recall": "आधीच्या विनंत्या, तुमचा संदेश रिकामा असताना",

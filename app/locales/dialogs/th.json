@@ -134,6 +134,8 @@
   "keyboard.profileBefore": "โปรไฟล์ก่อนหน้า",
   "keyboard.language": "ภาษาถัดไป",
   "keyboard.languageBefore": "ภาษาก่อนหน้า",
+  "keyboard.task": "งานถัดไป",
+  "keyboard.taskBefore": "งานก่อนหน้า",
   "keyboard.line": "ขึ้นบรรทัดใหม่",
   "keyboard.leave": "หากต้องการออกจากตารางหรือรายการ ให้กด Esc แล้วกด Tab",
   "keyboard.recall": "คำขอก่อนหน้า เมื่อข้อความของคุณว่างอยู่",

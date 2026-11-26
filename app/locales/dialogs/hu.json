@@ -136,6 +136,8 @@
   "keyboard.profileBefore": "Előző profil",
   "keyboard.language": "Következő nyelv",
   "keyboard.languageBefore": "Előző nyelv",
+  "keyboard.task": "Következő feladat",
+  "keyboard.taskBefore": "Előző feladat",
   "keyboard.line": "Új sor",
   "keyboard.leave": "A táblázatból vagy listából az Esc, majd a Tab lenyomásával léphet ki.",
   "keyboard.recall": "Korábbi kérések, ha az üzeneted üres",

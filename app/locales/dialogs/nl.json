@@ -136,6 +136,8 @@
   "keyboard.profileBefore": "Vorig profiel",
   "keyboard.language": "Volgende taal",
   "keyboard.languageBefore": "Vorige taal",
+  "keyboard.task": "Volgende taak",
+  "keyboard.taskBefore": "Vorige taak",
   "keyboard.line": "Nieuwe regel",
   "keyboard.leave": "Om een tabel of lijst te verlaten, druk je op Esc en dan op Tab.",
   "keyboard.recall": "Eerdere verzoeken, als je bericht leeg is",

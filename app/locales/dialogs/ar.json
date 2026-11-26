@@ -144,6 +144,8 @@
   "keyboard.profileBefore": "الملف الشخصي السابق",
   "keyboard.language": "اللغة التالية",
   "keyboard.languageBefore": "اللغة السابقة",
+  "keyboard.task": "المهمة التالية",
+  "keyboard.taskBefore": "المهمة السابقة",
   "keyboard.line": "سطر جديد",
   "keyboard.leave": "للخروج من جدول أو قائمة، اضغط Esc ثم Tab.",
   "keyboard.recall": "الطلبات السابقة، حين تكون رسالتك فارغة",

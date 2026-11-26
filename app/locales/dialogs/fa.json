@@ -136,6 +136,8 @@
   "keyboard.profileBefore": "نمایهٔ قبلی",
   "keyboard.language": "زبان بعدی",
   "keyboard.languageBefore": "زبان قبلی",
+  "keyboard.task": "کار بعدی",
+  "keyboard.taskBefore": "کار قبلی",
   "keyboard.line": "خط جدید",
   "keyboard.leave": "برای خروج از جدول یا فهرست، Esc و سپس Tab را بزنید.",
   "keyboard.recall": "درخواست‌های قبلی، وقتی پیام شما خالی است",

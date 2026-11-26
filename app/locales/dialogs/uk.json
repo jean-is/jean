@@ -140,6 +140,8 @@
   "keyboard.profileBefore": "Попередній профіль",
   "keyboard.language": "Наступна мова",
   "keyboard.languageBefore": "Попередня мова",
+  "keyboard.task": "Наступне завдання",
+  "keyboard.taskBefore": "Попереднє завдання",
   "keyboard.line": "Новий рядок",
   "keyboard.leave": "Щоб вийти з таблиці або списку, натисніть Esc, а потім Tab.",
   "keyboard.recall": "Попередні прохання, коли повідомлення порожнє",

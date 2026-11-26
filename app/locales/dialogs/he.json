@@ -140,6 +140,8 @@
   "keyboard.profileBefore": "הפרופיל הקודם",
   "keyboard.language": "השפה הבאה",
   "keyboard.languageBefore": "השפה הקודמת",
+  "keyboard.task": "המשימה הבאה",
+  "keyboard.taskBefore": "המשימה הקודמת",
   "keyboard.line": "שורה חדשה",
   "keyboard.leave": "כדי לצאת מטבלה או מרשימה, יש ללחוץ על Esc ואז על Tab.",
   "keyboard.recall": "בקשות קודמות, כשההודעה שלך ריקה",

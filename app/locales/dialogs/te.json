@@ -136,6 +136,8 @@
   "keyboard.profileBefore": "మునుపటి ప్రొఫైల్",
   "keyboard.language": "తదుపరి భాష",
   "keyboard.languageBefore": "మునుపటి భాష",
+  "keyboard.task": "తదుపరి పని",
+  "keyboard.taskBefore": "మునుపటి పని",
   "keyboard.line": "కొత్త పంక్తి",
   "keyboard.leave": "పట్టిక లేదా జాబితా నుండి బయటకు రావడానికి Esc, తర్వాత Tab నొక్కండి.",
   "keyboard.recall": "మునుపటి అభ్యర్థనలు, మీ సందేశం ఖాళీగా ఉన్నప్పుడు",

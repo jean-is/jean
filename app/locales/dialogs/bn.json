@@ -136,6 +136,8 @@
   "keyboard.profileBefore": "আগের প্রোফাইল",
   "keyboard.language": "পরের ভাষা",
   "keyboard.languageBefore": "আগের ভাষা",
+  "keyboard.task": "পরের কাজ",
+  "keyboard.taskBefore": "আগের কাজ",
   "keyboard.line": "নতুন লাইন",
   "keyboard.leave": "টেবিল বা তালিকা থেকে বেরোতে Esc, তারপর Tab চাপুন।",
   "keyboard.recall": "আগের অনুরোধ, যখন আপনার বার্তা খালি",

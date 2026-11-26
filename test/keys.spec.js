@@ -4,7 +4,8 @@
 // ⌘⇧O does too, and is the one shown, since a browser tab keeps ⌘N for a new window (D236).
 // ⌘⇧D switches between light and dark, ⌘⇧E goes to the next theme and ⌘⇧L to the next language, ⌥ to
 // the one before (D130, D238, D253, D584); ⌘B opens the drawer or puts it away (D234); ⌘/ shows the shortcuts (D257);
-// ⌘S saves a copy of the open task, and no key deletes one (D313); Escape stops an answer (D315).
+// ⌘S saves a copy of the open task, and no key deletes one (D313); Escape stops an answer (D315); ⌥↓ and ⌥↑ go
+// through the project's tasks, and ⌃Tab and ⌃⇧Tab too where Jean has a window of its own.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openSettings, closeSettings, openTasks, nameOf } from './helpers.js'
 
@@ -244,7 +245,7 @@ test('Settings lists the shortcuts to read, a capability\'s once it is found (D2
   await expect(row('Talk hands-free')).toHaveCount(0)
   // Search's from the start (D5); over it, ⌘, comes back to Settings.
   await expect(row('Search').locator('kbd')).toHaveText(/^(⌘K|Ctrl\+K)$/)
-  await expect(groups.first().locator('dt')).toHaveText(['New task', 'Search', 'Save a copy'])
+  await expect(groups.first().locator('dt')).toHaveText(['New task', 'Next task', 'Previous task', 'Search', 'Save a copy'])
   await closeSettings(page)
   await page.keyboard.press('ControlOrMeta+KeyK')
   await expect(page.locator('app-find dialog[open]')).toBeVisible()
@@ -271,6 +272,81 @@ test('⌘/ opens Settings on its keyboard shortcuts, from anywhere, Settings too
   await expect(here).toHaveText('Keyboard shortcuts')
   await closeSettings(page)
   await expect(page.locator('#prompt')).toHaveValue('Hello')
+})
+
+/** Three tasks, the first pinned: the drawer lists Plan the week, then Call the bank and Book a table, newest first. @param {import('@playwright/test').Page} page */
+const threeTasks = (page) => page.evaluate(async () => {
+  const [{ app, refreshConversations }, { createConversation, appendRecords }, { metaRecord, userRecord }] = await Promise.all([import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js')])
+  for (const [title, later, pinned] of /** @type {const} */ ([['Plan the week', 0, true], ['Book a table', 1000, false], ['Call the bank', 2000, false]])) {
+    const { path } = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId, now: new Date(Date.now() + later) })
+    await appendRecords(app.fs, path, [metaRecord(app.deviceId, { title, pinned }), userRecord(title, app.deviceId)])
+  }
+  await refreshConversations()
+})
+
+test('⌥↓ opens the project\'s next task, in the drawer\'s order, pinned first, and ⌥↑ the one before, saying its name, outside words being written (D118)', async ({ page }) => {
+  await start(page)
+  await threeTasks(page)
+  const asked = page.locator('.msg-user'), toast = page.locator('.toast'), box = page.locator('#prompt')
+  // From a new task, the first; the box keeps the keyboard.
+  await page.keyboard.press('Alt+ArrowDown')
+  await expect(asked).toHaveText('Plan the week')
+  await expect(toast).toHaveText('Plan the week')
+  await expect(box).toBeFocused()
+  for (const name of ['Call the bank', 'Book a table', 'Plan the week']) {
+    await page.keyboard.press('Alt+ArrowDown')
+    await expect(asked).toHaveText(name)
+  }
+  await page.keyboard.press('Alt+ArrowUp')
+  await expect(asked).toHaveText('Book a table')
+  await expect(toast).toHaveText('Book a table')
+  // Pressed one after the other at once, each goes one further.
+  await page.keyboard.press('Alt+ArrowUp')
+  await page.keyboard.press('Alt+ArrowUp')
+  await expect(asked).toHaveText('Plan the week')
+
+  // Words being written keep ⌥ with the arrows, which moves through them on a Mac: in the box, and in any text one edits.
+  await box.fill('Hello\nthere')
+  await box.press('Alt+ArrowDown')
+  await page.evaluate(() => { const words = document.createElement('div'); words.contentEditable = 'true'; words.textContent = 'Some words'; words.id = 'words'; document.body.append(words); words.focus() })
+  await page.keyboard.press('Alt+ArrowDown')
+  await page.waitForTimeout(300)
+  await expect(asked).toHaveText('Plan the week')
+  await page.evaluate(() => document.getElementById('words')?.remove())
+  // From the drawer's list too.
+  const tasks = await openTasks(page)
+  await tasks.locator('.history-item', { hasText: 'Plan the week' }).focus()
+  await page.keyboard.press('Alt+ArrowDown')
+  await expect(asked).toHaveText('Call the bank')
+  await expect(tasks.locator('.history-item[aria-current="true"] .history-title')).toHaveText('Call the bank')
+  // ⌃Tab is the browser's in its tabs, and not listed there.
+  const settings = await openSettings(page, 'Keyboard shortcuts')
+  const row = (/** @type {string} */ name) => settings.locator('.keyboard > div', { hasText: name })
+  await expect(row('Next task').locator('kbd')).toHaveText(/^(⌥↓|Alt\+↓)$/)
+  await expect(row('Previous task').locator('kbd')).toHaveText(/^(⌥↑|Alt\+↑)$/)
+})
+
+test('⌃Tab and ⌃⇧Tab do the same where Jean has a window of its own, from words too, and are listed beside them there (D118)', async ({ page }) => {
+  // Installed, as a browser's tab keeps ⌃Tab for its tabs.
+  await page.addInitScript(() => { const media = matchMedia.bind(window); window.matchMedia = (query) => media(query === '(display-mode: browser)' ? 'not all' : query) })
+  await start(page)
+  await threeTasks(page)
+  const asked = page.locator('.msg-user')
+  await page.locator('#prompt').fill('Hello')
+  await page.keyboard.press('Control+Tab')
+  await expect(asked).toHaveText('Plan the week')
+  await expect(page.locator('.toast')).toHaveText('Plan the week')
+  await page.keyboard.press('Control+Tab')
+  await expect(asked).toHaveText('Call the bank')
+  await page.keyboard.press('Control+Shift+Tab')
+  await page.keyboard.press('Control+Shift+Tab')
+  await expect(asked).toHaveText('Book a table')
+
+  const settings = await openSettings(page, 'Keyboard shortcuts')
+  const row = (/** @type {string} */ name) => settings.locator('.keyboard > div', { hasText: name })
+  await expect(settings.locator('.settings-panel section').first().locator('dt')).toHaveText(['New task', 'Next task', 'Previous task', 'Search', 'Save a copy'])
+  await expect(row('Next task').locator('kbd')).toHaveText(/^(⌥↓ ⌃Tab|Alt\+↓ Ctrl\+Tab)$/)
+  await expect(row('Previous task').locator('kbd')).toHaveText(/^(⌥↑ ⌃⇧Tab|Alt\+↑ Ctrl\+Shift\+Tab)$/)
 })
 
 test('⌘S saves a copy of the open task, as its ⋮ menu shows, and no key deletes it (D313)', async ({ page }) => {

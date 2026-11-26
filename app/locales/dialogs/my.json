@@ -134,6 +134,8 @@
   "keyboard.profileBefore": "ယခင်ပရိုဖိုင်",
   "keyboard.language": "နောက်ဘာသာစကား",
   "keyboard.languageBefore": "ယခင်ဘာသာစကား",
+  "keyboard.task": "နောက်လုပ်ငန်း",
+  "keyboard.taskBefore": "ယခင်လုပ်ငန်း",
   "keyboard.line": "စာကြောင်းသစ်",
   "keyboard.leave": "ဇယား သို့မဟုတ် စာရင်းမှ ထွက်ရန် Esc ပြီးနောက် Tab နှိပ်ပါ။",
   "keyboard.recall": "စာကွက် လွတ်နေလျှင် ယခင်တောင်းဆိုမှုများ",

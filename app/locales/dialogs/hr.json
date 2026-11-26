@@ -138,6 +138,8 @@
   "keyboard.profileBefore": "Prethodni profil",
   "keyboard.language": "Sljedeći jezik",
   "keyboard.languageBefore": "Prethodni jezik",
+  "keyboard.task": "Sljedeći zadatak",
+  "keyboard.taskBefore": "Prethodni zadatak",
   "keyboard.line": "Novi redak",
   "keyboard.leave": "Za izlazak iz tablice ili popisa pritisnite Esc, a zatim Tab.",
   "keyboard.recall": "Raniji zahtjevi, kad je poruka prazna",

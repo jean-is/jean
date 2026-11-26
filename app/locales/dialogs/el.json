@@ -136,6 +136,8 @@
   "keyboard.profileBefore": "Προηγούμενο προφίλ",
   "keyboard.language": "Επόμενη γλώσσα",
   "keyboard.languageBefore": "Προηγούμενη γλώσσα",
+  "keyboard.task": "Επόμενη εργασία",
+  "keyboard.taskBefore": "Προηγούμενη εργασία",
   "keyboard.line": "Νέα γραμμή",
   "keyboard.leave": "Για έξοδο από πίνακα ή λίστα, πατήστε Esc και μετά Tab.",
   "keyboard.recall": "Προηγούμενα αιτήματα, όταν το μήνυμά σας είναι κενό",

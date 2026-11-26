@@ -136,6 +136,8 @@
   "keyboard.profileBefore": "Предишен профил",
   "keyboard.language": "Следващ език",
   "keyboard.languageBefore": "Предишен език",
+  "keyboard.task": "Следваща задача",
+  "keyboard.taskBefore": "Предишна задача",
   "keyboard.line": "Нов ред",
   "keyboard.leave": "За да излезете от таблица или списък, натиснете Esc, а после Tab.",
   "keyboard.recall": "По-ранни заявки, когато съобщението е празно",

@@ -134,6 +134,8 @@
   "keyboard.profileBefore": "上一个个人资料",
   "keyboard.language": "下一种语言",
   "keyboard.languageBefore": "上一种语言",
+  "keyboard.task": "下一个任务",
+  "keyboard.taskBefore": "上一个任务",
   "keyboard.line": "换行",
   "keyboard.leave": "要离开表格或列表，请按 Esc，再按 Tab。",
   "keyboard.recall": "之前的请求（消息为空时）",

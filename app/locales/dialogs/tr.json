@@ -136,6 +136,8 @@
   "keyboard.profileBefore": "Önceki profil",
   "keyboard.language": "Sonraki dil",
   "keyboard.languageBefore": "Önceki dil",
+  "keyboard.task": "Sonraki görev",
+  "keyboard.taskBefore": "Önceki görev",
   "keyboard.line": "Yeni satır",
   "keyboard.leave": "Tablodan veya listeden çıkmak için Esc’e, sonra Tab’a bas.",
   "keyboard.recall": "Önceki istekler, mesajın boşken",

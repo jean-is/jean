@@ -77,6 +77,9 @@ export const findButton = () => (loaded.value.has('find') ? html`<search><button
 const PLACES = /** @type {Record<string, string>} */ ({ Comma: ',', Slash: '/', KeyN: 'n', KeyO: 'o', KeyD: 'd', KeyE: 'e', KeyL: 'l', KeyP: 'p', KeyS: 's', KeyH: 'h', KeyK: 'k', KeyB: 'b', KeyJ: 'j', KeyU: 'u' })
 
 document.addEventListener('keydown', (event) => {
+  const at = /** @type {HTMLTextAreaElement} */ (event.target), tab = event.key === 'Tab' && event.ctrlKey && !event.altKey
+  const arrow = /^Arrow(Up|Down)$/.test(event.key) && event.altKey && !event.ctrlKey && !event.shiftKey && !(at.matches?.(':read-write, select') && (at.id !== 'prompt' || at.value))
+  if ((tab || arrow) && !event.metaKey && !event.isComposing && !event.defaultPrevented) return void (event.preventDefault(), import('./inbox.js').then((module) => module.nextTask(tab ? event.shiftKey : event.key === 'ArrowUp')))
   const command = APPLE ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey
   // ⌥ goes back a theme, a language or a profile, by the key's place, never as AltGr, which types Ę and Ł (D584).
   if (!command || event.isComposing || (event.altKey && (!/^Key[ELP]$/.test(event.code) || (!APPLE && event.getModifierState('AltGraph'))))) return

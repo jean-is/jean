@@ -136,6 +136,8 @@
   "keyboard.profileBefore": "ቀዳሚ መገለጫ",
   "keyboard.language": "ቀጣዩ ቋንቋ",
   "keyboard.languageBefore": "ቀዳሚው ቋንቋ",
+  "keyboard.task": "ቀጣይ ተግባር",
+  "keyboard.taskBefore": "ቀዳሚ ተግባር",
   "keyboard.line": "አዲስ መስመር",
   "keyboard.leave": "ከሠንጠረዥ ወይም ከዝርዝር ለመውጣት Esc፣ ከዚያ Tab ይጫኑ።",
   "keyboard.recall": "ቀደም ያሉ ጥያቄዎች፣ መልእክትዎ ባዶ ሲሆን",

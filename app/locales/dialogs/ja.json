@@ -134,6 +134,8 @@
   "keyboard.profileBefore": "前のプロフィール",
   "keyboard.language": "次の言語",
   "keyboard.languageBefore": "前の言語",
+  "keyboard.task": "次のタスク",
+  "keyboard.taskBefore": "前のタスク",
   "keyboard.line": "改行",
   "keyboard.leave": "表やリストから出るには、Esc を押してから Tab を押します。",
   "keyboard.recall": "以前の依頼（メッセージが空のとき）",

@@ -167,9 +167,9 @@ async function move(event) {
 
 /** The shortcut that goes back where this one goes on: ⌘⌥⇧E beside ⌘⇧E (D584). @param {string} shortcut */
 export const backwards = (shortcut) => shortcut.replace('+', '+Alt+')
-/** A shortcut as the keyboard shows it: ⌘⌥⇧L and ⇧↩ on Apple's systems, Ctrl+Alt+Shift+L and Shift+Enter elsewhere. @param {string} shortcut */
-export const keyNames = (shortcut) => (SHORTCUTS.new.startsWith('Meta') ? shortcut.replace('Meta+', '⌘').replace('Alt+', '⌥').replace('Shift+', '⇧').replace('Enter', '↩')
-  : shortcut.replace('Control', 'Ctrl')).replace('Escape', 'Esc').replace('ArrowUp ArrowDown', '↑ ↓')
+/** A shortcut as the keyboard shows it: ⌘⌥⇧L, ⌃⇧Tab and ⇧↩ on Apple's systems, Ctrl+Alt+Shift+L, Ctrl+Shift+Tab and Shift+Enter elsewhere. @param {string} shortcut */
+export const keyNames = (shortcut) => (SHORTCUTS.new.startsWith('Meta') ? shortcut.replace('Meta+', '⌘').replace('Control+', '⌃').replace('Alt+', '⌥').replace('Shift+', '⇧').replace('Enter', '↩')
+  : shortcut.replace('Control', 'Ctrl')).replace('Escape', 'Esc').replace('ArrowUp', '↑').replace('ArrowDown', '↓')
 /** The same, left to right in any language. @param {string} shortcut */
 const keys = (shortcut) => html`<kbd aria-hidden="true"><bdi dir="ltr">${keyNames(shortcut)}</bdi></kbd>`
 
@@ -268,6 +268,22 @@ export async function nextLanguage(back) {
   await setLocale(code)
   notify(languageName(code))
 }
+
+/**
+ * The project's next task, in the drawer's order, the pinned first, a routine's runs as its row, the first again after the last,
+ * or the one before, its name shown: read once the page asked for before shows, so each press goes one further (D118). ⌥↓ and ⌥↑
+ * ask for it as Slack goes through channels, outside words being written (the box once empty); ⌃Tab and ⌃⇧Tab where a browser's tab
+ * doesn't keep them, Control on every system, as tabs have it (ui/shell.js); neither when what has the keyboard took it first.
+ * @param {boolean} back
+ */
+export const nextTask = (back) => turnPage(() => {
+  const all = oneRowEach(app.conversations.value), rows = [...all.filter((item) => item.pinned), ...all.filter((item) => !item.pinned)]
+  const path = app.current.value?.path, at = rows.findIndex((item) => item.path === path || item.earlier?.some((run) => run.path === path))
+  const to = rows.at(at < 0 ? (back ? -1 : 0) : (at + (back ? -1 : 1)) % rows.length)
+  if (!to || to.path === path) return
+  notify(to.title || t('conversation.untitled'))
+  return openConversation(to.path)
+})
 
 /** The arrow keys, Home and End walk a menu's rows. @param {KeyboardEvent} event */
 function walk(event) {

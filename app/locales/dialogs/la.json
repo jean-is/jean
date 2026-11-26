@@ -138,6 +138,8 @@
   "keyboard.profileBefore": "Persona prior",
   "keyboard.language": "Lingua sequens",
   "keyboard.languageBefore": "Lingua prior",
+  "keyboard.task": "Opus sequens",
+  "keyboard.taskBefore": "Opus prius",
   "keyboard.line": "Linea nova",
   "keyboard.leave": "Ut tabulam aut indicem relinquas, preme Esc, deinde Tab.",
   "keyboard.recall": "Petitiones priores, cum epistula tua vacua est",

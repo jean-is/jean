@@ -140,6 +140,8 @@
   "keyboard.profileBefore": "Předchozí profil",
   "keyboard.language": "Další jazyk",
   "keyboard.languageBefore": "Předchozí jazyk",
+  "keyboard.task": "Další úkol",
+  "keyboard.taskBefore": "Předchozí úkol",
   "keyboard.line": "Nový řádek",
   "keyboard.leave": "Z tabulky nebo seznamu odejdete klávesou Esc a poté Tab.",
   "keyboard.recall": "Dřívější požadavky, když je zpráva prázdná",

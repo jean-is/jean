@@ -7,7 +7,7 @@ import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import {
   app, effective, setLocale, updateSettings, loadModels,
-  offeredLocales, SHORTCUTS,
+  offeredLocales, inTab, SHORTCUTS,
 } from './state.js'
 import { unlock, loaded, slots, isDenied } from './caps.js'
 import { BRAND } from '../brand.js'
@@ -219,6 +219,8 @@ const reporting = async (what) => { if (await unlock('report')) (await import('.
 
 /** ⌘/, beside ⌘,: Settings on its keyboard shortcuts (D257). */
 const KEYBOARD_KEYS = SHORTCUTS.settings.replace(',', '/')
+/** ⌥↓ or ⌥↑, and ⌃Tab or ⌃⇧Tab too where the page gets them, in a window of Jean's own. @param {string} keys @param {string} tab */
+const tabs = (keys, tab) => (inTab() ? keys : `${keys} ${tab}`)
 /**
  * The shortcuts in groups, the most used first, each under a name the user already knows: the tasks', in their ⋮ menu's
  * words, the box's, then the rest under the section of Settings where each is set (D313). Each with the capability it
@@ -226,7 +228,7 @@ const KEYBOARD_KEYS = SHORTCUTS.settings.replace(',', '/')
  * @type {[string, [string, string, string?][]][]}
  */
 export const KEYS = [
-  ['history.title', [['action.new', SHORTCUTS.new], ['cap.find.name', SHORTCUTS.find, 'find'], ['history.save', SHORTCUTS.save], ['cap.share.name', SHORTCUTS.share, 'share']]],
+  ['history.title', [['action.new', SHORTCUTS.new], ['keyboard.task', tabs(SHORTCUTS.task, SHORTCUTS.tab)], ['keyboard.taskBefore', tabs(SHORTCUTS.taskBefore, SHORTCUTS.tabBefore)], ['cap.find.name', SHORTCUTS.find, 'find'], ['history.save', SHORTCUTS.save], ['cap.share.name', SHORTCUTS.share, 'share']]],
   ['composer.label', [['action.send', 'Enter'], ['action.stop', 'Escape'], ['keyboard.line', 'Shift+Enter'], ['keyboard.recall', 'ArrowUp ArrowDown'], ['keyboard.edit', 'Enter'], ['dictation.start', SHORTCUTS.dictation, 'dictation'], ['live.start', SHORTCUTS.live, 'live']]],
   ['settings.general', [['keyboard.sidebar', SHORTCUTS.sidebar], ['cap.browser.name', SHORTCUTS.browser, 'browser'], ['cap.computer.name', SHORTCUTS.terminal, 'computer'],
     ['settings.title', SHORTCUTS.settings], ['settings.keyboard', KEYBOARD_KEYS], ['keyboard.language', SHORTCUTS.language, 'locale'],

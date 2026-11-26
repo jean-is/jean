@@ -136,6 +136,8 @@
   "keyboard.profileBefore": "Edellinen profiili",
   "keyboard.language": "Seuraava kieli",
   "keyboard.languageBefore": "Edellinen kieli",
+  "keyboard.task": "Seuraava tehtävä",
+  "keyboard.taskBefore": "Edellinen tehtävä",
   "keyboard.line": "Uusi rivi",
   "keyboard.leave": "Poistu taulukosta tai luettelosta painamalla Esc ja sitten Tab.",
   "keyboard.recall": "Aiemmat pyynnöt, kun viestisi on tyhjä",

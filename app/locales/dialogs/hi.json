@@ -136,6 +136,8 @@
   "keyboard.profileBefore": "पिछली प्रोफ़ाइल",
   "keyboard.language": "अगली भाषा",
   "keyboard.languageBefore": "पिछली भाषा",
+  "keyboard.task": "अगला कार्य",
+  "keyboard.taskBefore": "पिछला कार्य",
   "keyboard.line": "नई पंक्ति",
   "keyboard.leave": "तालिका या सूची से बाहर निकलने के लिए Esc, फिर Tab दबाएँ।",
   "keyboard.recall": "पिछले अनुरोध, जब आपका संदेश खाली हो",

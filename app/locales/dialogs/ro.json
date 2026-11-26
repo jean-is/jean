@@ -138,6 +138,8 @@
   "keyboard.profileBefore": "Profilul anterior",
   "keyboard.language": "Limba următoare",
   "keyboard.languageBefore": "Limba anterioară",
+  "keyboard.task": "Sarcina următoare",
+  "keyboard.taskBefore": "Sarcina anterioară",
   "keyboard.line": "Rând nou",
   "keyboard.leave": "Pentru a ieși dintr-un tabel sau dintr-o listă, apăsați Esc, apoi Tab.",
   "keyboard.recall": "Cereri anterioare, când mesajul este gol",

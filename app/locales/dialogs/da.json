@@ -136,6 +136,8 @@
   "keyboard.profileBefore": "Forrige profil",
   "keyboard.language": "Næste sprog",
   "keyboard.languageBefore": "Forrige sprog",
+  "keyboard.task": "Næste opgave",
+  "keyboard.taskBefore": "Forrige opgave",
   "keyboard.line": "Ny linje",
   "keyboard.leave": "Tryk på Esc og derefter Tab for at forlade en tabel eller en liste.",
   "keyboard.recall": "Tidligere forespørgsler, når din besked er tom",
