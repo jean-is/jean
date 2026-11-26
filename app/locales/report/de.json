@@ -1,0 +1,80 @@
+{
+  "report.title": "Ein Problem melden",
+  "report.intro": "Der Support erhält, was gerade lief und wie lange jeder Schritt dauerte, die Version, deinen Browser und deine Einstellungen. Nichts von deinen Worten, Dateien, Namen oder Schlüsseln ist dabei.",
+  "report.row.version": "Version",
+  "report.row.browser": "Browser",
+  "report.row.where": "In Arbeit",
+  "report.row.brains": "Gehirne",
+  "report.row.context": "Eingeschaltet",
+  "report.row.task": "Diese Aufgabe",
+  "report.row.log": "Warnungen und Fehler",
+  "report.count.capabilities": {
+    "one": "{count} Fähigkeit",
+    "other": "{count} Fähigkeiten"
+  },
+  "report.count.connections": {
+    "one": "{count} Verbindung",
+    "other": "{count} Verbindungen"
+  },
+  "report.count.extensions": {
+    "one": "{count} Erweiterung",
+    "other": "{count} Erweiterungen"
+  },
+  "report.count.skills": {
+    "one": "{count} Fähigkeit",
+    "other": "{count} Fähigkeiten"
+  },
+  "report.count.records": {
+    "one": "{count} Schritt gespeichert",
+    "other": "{count} Schritte gespeichert"
+  },
+  "report.count.lines": {
+    "one": "{count} Zeile",
+    "other": "{count} Zeilen"
+  },
+  "report.none": "Keine",
+  "report.idle": "Nichts in Arbeit",
+  "report.words": "Die Worte dieser Aufgabe mitschicken",
+  "report.wordsHint": "Nur wenn der Support sie braucht, um zu sehen, was schiefging.",
+  "report.json": "Alles, wie der Support es liest",
+  "report.save": "Als Datei speichern",
+  "report.write": "An den Support schreiben",
+  "report.link": "Link für den Support erstellen",
+  "report.saved": "Gespeichert.",
+  "report.written": "Der Bericht ist kopiert: Füge ihn in deine Nachricht ein.",
+  "report.linked": "Link kopiert. Nach einer Woche funktioniert er nicht mehr, und unter deinen Links kannst du ihn früher beenden.",
+  "report.refused": "Die Regeln deiner Organisation behalten diesen Bericht auf diesem Gerät.",
+  "report.failed": "Das hat nicht geklappt. Versuche es erneut oder speichere ihn als Datei.",
+  "report.fileName": "bericht-{date}",
+  "report.subject": "{name} {version}: ein Problem",
+  "report.mailBody": "Der Bericht ist in deiner Zwischenablage: Füge ihn hier ein.",
+  "report.slow": "Dauert es lange?",
+  "report.stage.choose": "Ein Gehirn wird gewählt",
+  "report.stage.prepare": "Deine Anfrage wird vorbereitet",
+  "report.stage.read": "Die Dateien, die du geteilt hast, werden gelesen",
+  "report.stage.key": "Dein Schlüssel für {brain} wird gelesen",
+  "report.stage.ask": "Warten auf {brain}",
+  "report.stage.hook": "Warten auf {name}",
+  "report.stage.check": "Warten auf eine Prüfung",
+  "report.stage.receipt": "Das Limit dieses Monats wird geprüft",
+  "report.stage.compact": "Die bisherige Aufgabe wird zusammengefasst",
+  "report.unsent.held": "Nicht gesendet: Deine letzte Anfrage läuft noch.",
+  "report.unsent.unreached": "Nicht gesendet: Deine Anfrage ist nicht angekommen.",
+  "report.unsent.loading": "Nicht gesendet: Der Teil, der sie sendet, lädt noch.",
+  "report.unsent.unloaded": "Nicht gesendet: Der Teil, der sie sendet, wurde nicht geladen.",
+  "report.take": "Einen Bericht öffnen",
+  "report.takeIntro": "Ein Bericht, den dir jemand geschickt hat, wird zu einem Double: dieselbe Einrichtung, mit Füllwörtern gleicher Länge, zum Wiederherstellen in einem neuen Profil.",
+  "report.paste": "Füge den Bericht ein oder die Seite, die sein Link zeigt",
+  "report.pick": "Datei auswählen",
+  "report.notReport": "Das ist kein Bericht.",
+  "report.standIn": "Das Double speichern",
+  "report.standInName": "double-{date}",
+  "report.standInSaved": "Gespeichert. Stelle es in einem neuen Profil wieder her, unter „Deine Daten“. Nicht enthalten: {missing}.",
+  "report.missing.keys": "Schlüssel und Konten",
+  "report.missing.files": "geteilte Dateien und Ordner",
+  "report.missing.routines": "Erweiterungen, Routinen und vorgefertigte Fähigkeiten",
+  "report.missing.own": "eigene Dienste und Adressen der sendenden Person",
+  "report.missing.device": "eigene Einstellungen dieses Geräts, etwa das Monatslimit",
+  "report.missing.browser": "Browser und Betriebssystem",
+  "report.missing.policy": "Regeln der Organisation"
+}

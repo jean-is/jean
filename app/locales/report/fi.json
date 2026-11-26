@@ -1,0 +1,80 @@
+{
+  "report.title": "Ilmoita ongelmasta",
+  "report.intro": "Tuki saa tiedon siitä, mikä oli käynnissä ja kauanko kukin vaihe kesti, sekä version, selaimesi ja asetuksesi. Sanojasi, tiedostojasi, nimiä tai avaimiasi ei lähetetä mukana.",
+  "report.row.version": "Versio",
+  "report.row.browser": "Selain",
+  "report.row.where": "Käynnissä",
+  "report.row.brains": "Aivot",
+  "report.row.context": "Käytössä",
+  "report.row.task": "Tämä tehtävä",
+  "report.row.log": "Varoitukset ja virheet",
+  "report.count.capabilities": {
+    "one": "{count} kyky",
+    "other": "{count} kykyä"
+  },
+  "report.count.connections": {
+    "one": "{count} yhteys",
+    "other": "{count} yhteyttä"
+  },
+  "report.count.extensions": {
+    "one": "{count} laajennus",
+    "other": "{count} laajennusta"
+  },
+  "report.count.skills": {
+    "one": "{count} taito",
+    "other": "{count} taitoa"
+  },
+  "report.count.records": {
+    "one": "{count} tallennettu vaihe",
+    "other": "{count} tallennettua vaihetta"
+  },
+  "report.count.lines": {
+    "one": "{count} rivi",
+    "other": "{count} riviä"
+  },
+  "report.none": "Ei mitään",
+  "report.idle": "Mikään ei ole käynnissä",
+  "report.words": "Liitä mukaan tämän tehtävän teksti",
+  "report.wordsHint": "Vain jos tuki tarvitsee sitä nähdäkseen, mikä meni vikaan.",
+  "report.json": "Kaikki, niin kuin tuki sen lukee",
+  "report.save": "Tallenna tiedostoksi",
+  "report.write": "Kirjoita tuelle",
+  "report.link": "Luo linkki tuelle",
+  "report.saved": "Tallennettu.",
+  "report.written": "Raportti on kopioitu: liitä se viestiisi.",
+  "report.linked": "Linkki kopioitu. Se lakkaa toimimasta viikon kuluttua, ja voit lopettaa sen aiemmin linkkiesi joukosta.",
+  "report.refused": "Organisaatiosi säännöt pitävät tämän raportin tällä laitteella.",
+  "report.failed": "Se ei onnistunut. Yritä uudelleen tai tallenna se tiedostoksi.",
+  "report.fileName": "raportti-{date}",
+  "report.subject": "{name} {version}: ongelma",
+  "report.mailBody": "Raportti on leikepöydälläsi: liitä se tähän.",
+  "report.slow": "Kestääkö liian kauan?",
+  "report.stage.choose": "Valitaan aivoja",
+  "report.stage.prepare": "Valmistellaan pyyntöäsi",
+  "report.stage.read": "Luetaan jakamiasi tiedostoja",
+  "report.stage.key": "Luetaan avaintasi palveluun {brain}",
+  "report.stage.ask": "Odotetaan, että {brain} vastaa",
+  "report.stage.hook": "Odotetaan: {name}",
+  "report.stage.check": "Odotetaan tarkistusta",
+  "report.stage.receipt": "Tarkistetaan tämän kuun rajaa",
+  "report.stage.compact": "Tiivistetään tähänastista työtä",
+  "report.unsent.held": "Ei lähetetty: edellinen pyyntösi on yhä käynnissä.",
+  "report.unsent.unreached": "Ei lähetetty: pyyntösi ei mennyt perille.",
+  "report.unsent.loading": "Ei lähetetty: lähettävä osa latautuu vielä.",
+  "report.unsent.unloaded": "Ei lähetetty: lähettävä osa ei latautunut.",
+  "report.take": "Avaa raportti",
+  "report.takeIntro": "Sinulle lähetetystä raportista tulee sijaiskopio: samat asetukset, mutta sanojen tilalla yhtä pitkät täytesanat, palautettavaksi uuteen profiiliin.",
+  "report.paste": "Liitä raportti tai sivu, jonka sen linkki näyttää",
+  "report.pick": "Valitse tiedosto",
+  "report.notReport": "Tämä ei ole raportti.",
+  "report.standIn": "Tallenna sijaiskopio",
+  "report.standInName": "sijaiskopio-{date}",
+  "report.standInSaved": "Tallennettu. Palauta se uuteen profiiliin kohdasta Tietosi. Siitä puuttuvat: {missing}.",
+  "report.missing.keys": "avaimet ja tilit",
+  "report.missing.files": "jaetut tiedostot ja kansiot",
+  "report.missing.routines": "laajennukset, rutiinit ja valmiit taidot",
+  "report.missing.own": "lähettäjän omat palvelut ja osoitteet",
+  "report.missing.device": "tämän laitteen omat valinnat, kuten kuukausiraja",
+  "report.missing.browser": "selain ja sen järjestelmä",
+  "report.missing.policy": "organisaation säännöt"
+}

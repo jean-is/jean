@@ -1,0 +1,80 @@
+{
+  "report.title": "گزارش یک مشکل",
+  "report.intro": "پشتیبانی آنچه در حال انجام بود و مدت هر مرحله، نسخه، مرورگر و تنظیمات شما را دریافت می‌کند. هیچ‌یک از نوشته‌ها، فایل‌ها، نام‌ها یا کلیدهای شما همراه آن نمی‌رود.",
+  "report.row.version": "نسخه",
+  "report.row.browser": "مرورگر",
+  "report.row.where": "در حال انجام",
+  "report.row.brains": "مغزها",
+  "report.row.context": "روشن‌شده",
+  "report.row.task": "این کار",
+  "report.row.log": "هشدارها و خطاها",
+  "report.count.capabilities": {
+    "one": "{count} توانایی",
+    "other": "{count} توانایی"
+  },
+  "report.count.connections": {
+    "one": "{count} اتصال",
+    "other": "{count} اتصال"
+  },
+  "report.count.extensions": {
+    "one": "{count} افزونه",
+    "other": "{count} افزونه"
+  },
+  "report.count.skills": {
+    "one": "{count} مهارت",
+    "other": "{count} مهارت"
+  },
+  "report.count.records": {
+    "one": "{count} مرحلهٔ ذخیره‌شده",
+    "other": "{count} مرحلهٔ ذخیره‌شده"
+  },
+  "report.count.lines": {
+    "one": "{count} خط",
+    "other": "{count} خط"
+  },
+  "report.none": "هیچ",
+  "report.idle": "چیزی در حال انجام نیست",
+  "report.words": "گنجاندن نوشته‌های این کار",
+  "report.wordsHint": "فقط اگر پشتیبانی برای دیدن اینکه چه چیزی خراب شد به آن‌ها نیاز داشته باشد.",
+  "report.json": "همهٔ آن، همان‌طور که پشتیبانی می‌خواند",
+  "report.save": "ذخیره به‌صورت فایل",
+  "report.write": "نوشتن به پشتیبانی",
+  "report.link": "ساختن پیوند برای پشتیبانی",
+  "report.saved": "ذخیره شد.",
+  "report.written": "گزارش رونوشت شد: آن را در پیامتان بچسبانید.",
+  "report.linked": "پیوند رونوشت شد. پس از یک هفته از کار می‌افتد، و می‌توانید زودتر آن را از میان پیوندهایتان متوقف کنید.",
+  "report.refused": "قواعد سازمان شما این گزارش را روی همین دستگاه نگه می‌دارد.",
+  "report.failed": "نشد. دوباره امتحان کنید، یا آن را به‌صورت فایل ذخیره کنید.",
+  "report.fileName": "report-{date}",
+  "report.subject": "{name} {version}: یک مشکل",
+  "report.mailBody": "گزارش در کلیپ‌بورد شماست: آن را اینجا بچسبانید.",
+  "report.slow": "طول کشیده؟",
+  "report.stage.choose": "در حال انتخاب مغز",
+  "report.stage.prepare": "در حال آماده کردن درخواست شما",
+  "report.stage.read": "در حال خواندن فایل‌هایی که هم‌رسانی کردید",
+  "report.stage.key": "در حال خواندن کلید شما برای {brain}",
+  "report.stage.ask": "در انتظار {brain}",
+  "report.stage.hook": "در انتظار {name}",
+  "report.stage.check": "در انتظار یک بررسی",
+  "report.stage.receipt": "در حال بررسی سقف این ماه",
+  "report.stage.compact": "در حال خلاصه کردن کار تا اینجا",
+  "report.unsent.held": "فرستاده نشد: درخواست قبلی شما هنوز در حال انجام است.",
+  "report.unsent.unreached": "فرستاده نشد: درخواست شما نرسید.",
+  "report.unsent.loading": "فرستاده نشد: بخش فرستادن هنوز در حال بارگذاری است.",
+  "report.unsent.unloaded": "فرستاده نشد: بخش فرستادن بارگذاری نشد.",
+  "report.take": "باز کردن یک گزارش",
+  "report.takeIntro": "گزارشی که کسی برایتان فرستاده به یک نسخهٔ جایگزین تبدیل می‌شود: همان پیکربندی، با کلمه‌های پرکننده به همان طول، برای بازیابی در یک نمایهٔ تازه.",
+  "report.paste": "گزارش، یا صفحه‌ای را که پیوندش نشان می‌دهد، بچسبانید",
+  "report.pick": "انتخاب فایل",
+  "report.notReport": "این یک گزارش نیست.",
+  "report.standIn": "ذخیرهٔ نسخهٔ جایگزین",
+  "report.standInName": "stand-in-{date}",
+  "report.standInSaved": "ذخیره شد. آن را در یک نمایهٔ تازه، از داده‌های شما، بازیابی کنید. در آن نیست: {missing}.",
+  "report.missing.keys": "کلیدها و حساب‌ها",
+  "report.missing.files": "فایل‌ها و پوشه‌های هم‌رسانی‌شده",
+  "report.missing.routines": "افزونه‌ها، روال‌ها و مهارت‌های آماده",
+  "report.missing.own": "سرویس‌ها و نشانی‌های خود فرستنده",
+  "report.missing.device": "انتخاب‌های خود این دستگاه، مانند سقف ماهانه",
+  "report.missing.browser": "مرورگر و سیستم آن",
+  "report.missing.policy": "قواعد سازمان"
+}

@@ -1,0 +1,74 @@
+{
+  "report.title": "Báo cáo sự cố",
+  "report.intro": "Bộ phận hỗ trợ nhận được những gì đang diễn ra và mỗi bước mất bao lâu, phiên bản, trình duyệt và cài đặt của bạn. Không có lời bạn viết, tệp, tên hay khóa nào của bạn đi kèm.",
+  "report.row.version": "Phiên bản",
+  "report.row.browser": "Trình duyệt",
+  "report.row.where": "Đang diễn ra",
+  "report.row.brains": "Bộ não",
+  "report.row.context": "Đang bật",
+  "report.row.task": "Nhiệm vụ này",
+  "report.row.log": "Cảnh báo và lỗi",
+  "report.count.capabilities": {
+    "other": "{count} khả năng"
+  },
+  "report.count.connections": {
+    "other": "{count} kết nối"
+  },
+  "report.count.extensions": {
+    "other": "{count} tiện ích"
+  },
+  "report.count.skills": {
+    "other": "{count} kỹ năng"
+  },
+  "report.count.records": {
+    "other": "{count} bước đã lưu"
+  },
+  "report.count.lines": {
+    "other": "{count} dòng"
+  },
+  "report.none": "Không có",
+  "report.idle": "Không có gì đang diễn ra",
+  "report.words": "Kèm lời trong nhiệm vụ này",
+  "report.wordsHint": "Chỉ khi bộ phận hỗ trợ cần chúng để thấy điều gì đã sai.",
+  "report.json": "Toàn bộ, theo cách bộ phận hỗ trợ đọc",
+  "report.save": "Lưu thành tệp",
+  "report.write": "Viết cho bộ phận hỗ trợ",
+  "report.link": "Tạo đường liên kết cho bộ phận hỗ trợ",
+  "report.saved": "Đã lưu.",
+  "report.written": "Đã sao chép báo cáo: hãy dán vào tin nhắn của bạn.",
+  "report.linked": "Đã sao chép đường liên kết. Nó ngừng hoạt động sau một tuần, và bạn có thể dừng sớm hơn trong danh sách đường liên kết của mình.",
+  "report.refused": "Quy tắc của tổ chức bạn giữ báo cáo này trên thiết bị này.",
+  "report.failed": "Không được. Hãy thử lại, hoặc lưu thành tệp.",
+  "report.fileName": "báo-cáo-{date}",
+  "report.subject": "{name} {version}: gặp sự cố",
+  "report.mailBody": "Báo cáo đang ở trong bộ nhớ tạm: hãy dán vào đây.",
+  "report.slow": "Chờ lâu quá?",
+  "report.stage.choose": "Đang chọn bộ não",
+  "report.stage.prepare": "Đang chuẩn bị yêu cầu của bạn",
+  "report.stage.read": "Đang đọc các tệp bạn đã chia sẻ",
+  "report.stage.key": "Đang đọc khóa của bạn cho {brain}",
+  "report.stage.ask": "Đang chờ {brain}",
+  "report.stage.hook": "Đang chờ {name}",
+  "report.stage.check": "Đang chờ một bước kiểm tra",
+  "report.stage.receipt": "Đang kiểm tra giới hạn tháng này",
+  "report.stage.compact": "Đang tóm tắt nhiệm vụ đến lúc này",
+  "report.unsent.held": "Chưa gửi: yêu cầu trước của bạn vẫn đang diễn ra.",
+  "report.unsent.unreached": "Chưa gửi: yêu cầu của bạn không đến được nơi nhận.",
+  "report.unsent.loading": "Chưa gửi: phần dùng để gửi vẫn đang tải.",
+  "report.unsent.unloaded": "Chưa gửi: phần dùng để gửi không tải được.",
+  "report.take": "Mở báo cáo",
+  "report.takeIntro": "Báo cáo ai đó gửi cho bạn trở thành một bản tái hiện: cùng thiết lập, với chữ giả có cùng độ dài, để khôi phục trong một hồ sơ mới.",
+  "report.paste": "Dán báo cáo, hoặc trang mà đường liên kết của nó hiển thị",
+  "report.pick": "Chọn tệp",
+  "report.notReport": "Đây không phải là báo cáo.",
+  "report.standIn": "Lưu bản tái hiện",
+  "report.standInName": "bản-tái-hiện-{date}",
+  "report.standInSaved": "Đã lưu. Hãy khôi phục nó trong một hồ sơ mới, từ Dữ liệu của bạn. Không có trong đó: {missing}.",
+  "report.missing.keys": "khóa và tài khoản",
+  "report.missing.files": "tệp và thư mục được chia sẻ",
+  "report.missing.routines": "tiện ích, tác vụ định kỳ và kỹ năng có sẵn",
+  "report.missing.own": "dịch vụ và địa chỉ riêng của người gửi",
+  "report.missing.device": "lựa chọn riêng của thiết bị này, như giới hạn hằng tháng",
+  "report.missing.browser": "trình duyệt và hệ thống của nó",
+  "report.missing.policy": "quy tắc của tổ chức"
+}

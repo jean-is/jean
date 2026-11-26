@@ -1,0 +1,80 @@
+{
+  "report.title": "Probléma bejelentése",
+  "report.intro": "Az ügyfélszolgálat megkapja, mi volt folyamatban és mennyi ideig tartott egy-egy lépés, valamint a verziót, a böngésződet és a beállításaidat. A szavaid, fájljaid, neveid és kulcsaid nem kerülnek bele.",
+  "report.row.version": "Verzió",
+  "report.row.browser": "Böngésző",
+  "report.row.where": "Folyamatban",
+  "report.row.brains": "Agyak",
+  "report.row.context": "Bekapcsolva",
+  "report.row.task": "Ez a feladat",
+  "report.row.log": "Figyelmeztetések és hibák",
+  "report.count.capabilities": {
+    "one": "{count} képesség",
+    "other": "{count} képesség"
+  },
+  "report.count.connections": {
+    "one": "{count} kapcsolat",
+    "other": "{count} kapcsolat"
+  },
+  "report.count.extensions": {
+    "one": "{count} bővítmény",
+    "other": "{count} bővítmény"
+  },
+  "report.count.skills": {
+    "one": "{count} készség",
+    "other": "{count} készség"
+  },
+  "report.count.records": {
+    "one": "{count} megőrzött lépés",
+    "other": "{count} megőrzött lépés"
+  },
+  "report.count.lines": {
+    "one": "{count} sor",
+    "other": "{count} sor"
+  },
+  "report.none": "Nincs",
+  "report.idle": "Semmi sincs folyamatban",
+  "report.words": "A feladat szövegének mellékelése",
+  "report.wordsHint": "Csak ha az ügyfélszolgálatnak szüksége van rá, hogy lássa, mi romlott el.",
+  "report.json": "Az egész, ahogy az ügyfélszolgálat olvassa",
+  "report.save": "Mentés fájlként",
+  "report.write": "Írás az ügyfélszolgálatnak",
+  "report.link": "Link készítése az ügyfélszolgálatnak",
+  "report.saved": "Mentve.",
+  "report.written": "A jelentés kimásolva: illeszd be az üzenetedbe.",
+  "report.linked": "Link kimásolva. Egy hét múlva megszűnik működni, de hamarabb is leállíthatod a linkjeid között.",
+  "report.refused": "A szervezeted szabályai ezen az eszközön tartják ezt a jelentést.",
+  "report.failed": "Ez nem sikerült. Próbáld újra, vagy mentsd fájlként.",
+  "report.fileName": "jelentés-{date}",
+  "report.subject": "{name} {version}: probléma",
+  "report.mailBody": "A jelentés a vágólapon van: illeszd be ide.",
+  "report.slow": "Sokáig tart?",
+  "report.stage.choose": "Agy kiválasztása",
+  "report.stage.prepare": "A kérésed előkészítése",
+  "report.stage.read": "Az általad megosztott fájlok olvasása",
+  "report.stage.key": "A kulcsod olvasása ehhez: {brain}",
+  "report.stage.ask": "Várakozás a válaszra: {brain}",
+  "report.stage.hook": "Várakozás erre: {name}",
+  "report.stage.check": "Várakozás egy ellenőrzésre",
+  "report.stage.receipt": "A havi keret ellenőrzése",
+  "report.stage.compact": "Az eddigi munka összefoglalása",
+  "report.unsent.held": "Nincs elküldve: az előző kérésed még folyamatban van.",
+  "report.unsent.unreached": "Nincs elküldve: a kérésed nem jutott át.",
+  "report.unsent.loading": "Nincs elküldve: ami az üzeneteket küldi, még töltődik.",
+  "report.unsent.unloaded": "Nincs elküldve: ami az üzeneteket küldi, nem töltődött be.",
+  "report.take": "Jelentés megnyitása",
+  "report.takeIntro": "Egy neked küldött jelentésből helyettesítő másolat lesz: ugyanazok a beállítások, azonos hosszúságú kitöltő szavakkal, hogy egy új profilban visszaállítsd.",
+  "report.paste": "Illeszd be a jelentést vagy azt az oldalt, amelyet a linkje mutat",
+  "report.pick": "Fájl kiválasztása",
+  "report.notReport": "Ez nem jelentés.",
+  "report.standIn": "A helyettesítő másolat mentése",
+  "report.standInName": "helyettesítő-{date}",
+  "report.standInSaved": "Mentve. Állítsd vissza egy új profilban, az „Adataid” résznél. Nincs benne: {missing}.",
+  "report.missing.keys": "kulcsok és fiókok",
+  "report.missing.files": "megosztott fájlok és mappák",
+  "report.missing.routines": "bővítmények, rutinok és kész készségek",
+  "report.missing.own": "a küldő saját szolgáltatásai és címei",
+  "report.missing.device": "ennek az eszköznek a saját beállításai, például a havi keret",
+  "report.missing.browser": "a böngésző és a rendszere",
+  "report.missing.policy": "a szervezet szabályai"
+}

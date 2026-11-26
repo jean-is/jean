@@ -1,0 +1,80 @@
+{
+  "report.title": "ਸਮੱਸਿਆ ਦੀ ਰਿਪੋਰਟ ਕਰੋ",
+  "report.intro": "ਸਹਾਇਤਾ ਟੀਮ ਨੂੰ ਇਹ ਮਿਲਦਾ ਹੈ ਕਿ ਕੀ ਚੱਲ ਰਿਹਾ ਸੀ ਅਤੇ ਹਰ ਕਦਮ ਨੂੰ ਕਿੰਨਾ ਸਮਾਂ ਲੱਗਾ, ਨਾਲ ਹੀ ਸੰਸਕਰਣ, ਤੁਹਾਡਾ ਬ੍ਰਾਊਜ਼ਰ ਅਤੇ ਤੁਹਾਡੀਆਂ ਸੈਟਿੰਗਾਂ। ਤੁਹਾਡੇ ਸ਼ਬਦ, ਫ਼ਾਈਲਾਂ, ਨਾਂ ਜਾਂ ਕੁੰਜੀਆਂ ਇਸ ਨਾਲ ਨਹੀਂ ਜਾਂਦੀਆਂ।",
+  "report.row.version": "ਸੰਸਕਰਣ",
+  "report.row.browser": "ਬ੍ਰਾਊਜ਼ਰ",
+  "report.row.where": "ਚੱਲ ਰਿਹਾ",
+  "report.row.brains": "ਦਿਮਾਗ਼",
+  "report.row.context": "ਚਾਲੂ",
+  "report.row.task": "ਇਹ ਕੰਮ",
+  "report.row.log": "ਚੇਤਾਵਨੀਆਂ ਅਤੇ ਗ਼ਲਤੀਆਂ",
+  "report.count.capabilities": {
+    "one": "{count} ਯੋਗਤਾ",
+    "other": "{count} ਯੋਗਤਾਵਾਂ"
+  },
+  "report.count.connections": {
+    "one": "{count} ਕਨੈਕਸ਼ਨ",
+    "other": "{count} ਕਨੈਕਸ਼ਨ"
+  },
+  "report.count.extensions": {
+    "one": "{count} ਐਕਸਟੈਂਸ਼ਨ",
+    "other": "{count} ਐਕਸਟੈਂਸ਼ਨ"
+  },
+  "report.count.skills": {
+    "one": "{count} ਹੁਨਰ",
+    "other": "{count} ਹੁਨਰ"
+  },
+  "report.count.records": {
+    "one": "{count} ਸੰਭਾਲਿਆ ਕਦਮ",
+    "other": "{count} ਸੰਭਾਲੇ ਕਦਮ"
+  },
+  "report.count.lines": {
+    "one": "{count} ਲਾਈਨ",
+    "other": "{count} ਲਾਈਨਾਂ"
+  },
+  "report.none": "ਕੋਈ ਨਹੀਂ",
+  "report.idle": "ਕੁਝ ਨਹੀਂ ਚੱਲ ਰਿਹਾ",
+  "report.words": "ਇਸ ਕੰਮ ਦੇ ਸ਼ਬਦ ਵੀ ਸ਼ਾਮਲ ਕਰੋ",
+  "report.wordsHint": "ਸਿਰਫ਼ ਤਾਂ, ਜੇ ਸਹਾਇਤਾ ਟੀਮ ਨੂੰ ਇਹ ਦੇਖਣ ਲਈ ਉਨ੍ਹਾਂ ਦੀ ਲੋੜ ਹੋਵੇ ਕਿ ਕੀ ਗ਼ਲਤ ਹੋਇਆ।",
+  "report.json": "ਸਾਰੀ ਰਿਪੋਰਟ, ਜਿਵੇਂ ਸਹਾਇਤਾ ਟੀਮ ਇਸਨੂੰ ਪੜ੍ਹਦੀ ਹੈ",
+  "report.save": "ਫ਼ਾਈਲ ਵਜੋਂ ਸੰਭਾਲੋ",
+  "report.write": "ਸਹਾਇਤਾ ਟੀਮ ਨੂੰ ਲਿਖੋ",
+  "report.link": "ਸਹਾਇਤਾ ਟੀਮ ਲਈ ਲਿੰਕ ਬਣਾਓ",
+  "report.saved": "ਸੰਭਾਲ ਲਿਆ।",
+  "report.written": "ਰਿਪੋਰਟ ਕਾਪੀ ਹੋ ਗਈ ਹੈ: ਇਸਨੂੰ ਆਪਣੇ ਸੁਨੇਹੇ ਵਿੱਚ ਪੇਸਟ ਕਰੋ।",
+  "report.linked": "ਲਿੰਕ ਕਾਪੀ ਹੋ ਗਿਆ। ਇਹ ਇੱਕ ਹਫ਼ਤੇ ਬਾਅਦ ਕੰਮ ਕਰਨਾ ਬੰਦ ਕਰ ਦਿੰਦਾ ਹੈ, ਅਤੇ ਤੁਸੀਂ ਇਸਨੂੰ ਆਪਣੇ ਲਿੰਕਾਂ ਵਿੱਚੋਂ ਪਹਿਲਾਂ ਵੀ ਬੰਦ ਕਰ ਸਕਦੇ ਹੋ।",
+  "report.refused": "ਤੁਹਾਡੀ ਸੰਸਥਾ ਦੇ ਨਿਯਮ ਇਸ ਰਿਪੋਰਟ ਨੂੰ ਇਸੇ ਡਿਵਾਈਸ ’ਤੇ ਰੱਖਦੇ ਹਨ।",
+  "report.failed": "ਇਹ ਨਹੀਂ ਹੋ ਸਕਿਆ। ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ, ਜਾਂ ਇਸਨੂੰ ਫ਼ਾਈਲ ਵਜੋਂ ਸੰਭਾਲੋ।",
+  "report.fileName": "report-{date}",
+  "report.subject": "{name} {version}: ਇੱਕ ਸਮੱਸਿਆ",
+  "report.mailBody": "ਰਿਪੋਰਟ ਤੁਹਾਡੇ ਕਲਿੱਪਬੋਰਡ ’ਤੇ ਹੈ: ਇਸਨੂੰ ਇੱਥੇ ਪੇਸਟ ਕਰੋ।",
+  "report.slow": "ਬਹੁਤ ਸਮਾਂ ਲੱਗ ਰਿਹਾ ਹੈ?",
+  "report.stage.choose": "ਦਿਮਾਗ਼ ਚੁਣਿਆ ਜਾ ਰਿਹਾ ਹੈ",
+  "report.stage.prepare": "ਤੁਹਾਡੀ ਬੇਨਤੀ ਤਿਆਰ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ",
+  "report.stage.read": "ਤੁਹਾਡੀਆਂ ਸਾਂਝੀਆਂ ਕੀਤੀਆਂ ਫ਼ਾਈਲਾਂ ਪੜ੍ਹੀਆਂ ਜਾ ਰਹੀਆਂ ਹਨ",
+  "report.stage.key": "{brain} ਲਈ ਤੁਹਾਡੀ ਕੁੰਜੀ ਪੜ੍ਹੀ ਜਾ ਰਹੀ ਹੈ",
+  "report.stage.ask": "{brain} ਦੇ ਜਵਾਬ ਦੀ ਉਡੀਕ ਹੋ ਰਹੀ ਹੈ",
+  "report.stage.hook": "ਉਡੀਕ: {name}",
+  "report.stage.check": "ਇੱਕ ਜਾਂਚ ਦੀ ਉਡੀਕ ਹੋ ਰਹੀ ਹੈ",
+  "report.stage.receipt": "ਇਸ ਮਹੀਨੇ ਦੀ ਹੱਦ ਜਾਂਚੀ ਜਾ ਰਹੀ ਹੈ",
+  "report.stage.compact": "ਹੁਣ ਤੱਕ ਦੇ ਕੰਮ ਦਾ ਸਾਰ ਬਣ ਰਿਹਾ ਹੈ",
+  "report.unsent.held": "ਨਹੀਂ ਭੇਜਿਆ ਗਿਆ: ਤੁਹਾਡੀ ਪਿਛਲੀ ਬੇਨਤੀ ਅਜੇ ਚੱਲ ਰਹੀ ਹੈ।",
+  "report.unsent.unreached": "ਨਹੀਂ ਭੇਜਿਆ ਗਿਆ: ਤੁਹਾਡੀ ਬੇਨਤੀ ਪਹੁੰਚ ਨਹੀਂ ਸਕੀ।",
+  "report.unsent.loading": "ਨਹੀਂ ਭੇਜਿਆ ਗਿਆ: ਭੇਜਣ ਵਾਲਾ ਹਿੱਸਾ ਅਜੇ ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ।",
+  "report.unsent.unloaded": "ਨਹੀਂ ਭੇਜਿਆ ਗਿਆ: ਭੇਜਣ ਵਾਲਾ ਹਿੱਸਾ ਲੋਡ ਨਹੀਂ ਹੋਇਆ।",
+  "report.take": "ਰਿਪੋਰਟ ਖੋਲ੍ਹੋ",
+  "report.takeIntro": "ਕਿਸੇ ਵੱਲੋਂ ਤੁਹਾਨੂੰ ਭੇਜੀ ਰਿਪੋਰਟ ਇੱਕ ਬਦਲਵੀਂ ਕਾਪੀ ਬਣ ਜਾਂਦੀ ਹੈ: ਉਹੀ ਸੈੱਟਅੱਪ, ਉਸੇ ਲੰਬਾਈ ਦੇ ਭਰਤੀ ਵਾਲੇ ਸ਼ਬਦਾਂ ਨਾਲ, ਨਵੀਂ ਪ੍ਰੋਫ਼ਾਈਲ ਵਿੱਚ ਮੁੜ-ਬਹਾਲ ਕਰਨ ਲਈ।",
+  "report.paste": "ਰਿਪੋਰਟ, ਜਾਂ ਉਸਦਾ ਲਿੰਕ ਜੋ ਪੰਨਾ ਦਿਖਾਉਂਦਾ ਹੈ, ਪੇਸਟ ਕਰੋ",
+  "report.pick": "ਫ਼ਾਈਲ ਚੁਣੋ",
+  "report.notReport": "ਇਹ ਰਿਪੋਰਟ ਨਹੀਂ ਹੈ।",
+  "report.standIn": "ਬਦਲਵੀਂ ਕਾਪੀ ਸੰਭਾਲੋ",
+  "report.standInName": "stand-in-{date}",
+  "report.standInSaved": "ਸੰਭਾਲ ਲਿਆ। ਇਸਨੂੰ ਨਵੀਂ ਪ੍ਰੋਫ਼ਾਈਲ ਵਿੱਚ ‘ਤੁਹਾਡਾ ਡਾਟਾ’ ਤੋਂ ਮੁੜ-ਬਹਾਲ ਕਰੋ। ਇਸ ਵਿੱਚ ਨਹੀਂ: {missing}।",
+  "report.missing.keys": "ਕੁੰਜੀਆਂ ਅਤੇ ਖਾਤੇ",
+  "report.missing.files": "ਸਾਂਝੀਆਂ ਕੀਤੀਆਂ ਫ਼ਾਈਲਾਂ ਅਤੇ ਫੋਲਡਰ",
+  "report.missing.routines": "ਐਕਸਟੈਂਸ਼ਨ, ਰੁਟੀਨ ਅਤੇ ਤਿਆਰ ਹੁਨਰ",
+  "report.missing.own": "ਭੇਜਣ ਵਾਲੇ ਦੀਆਂ ਆਪਣੀਆਂ ਸੇਵਾਵਾਂ ਅਤੇ ਪਤੇ",
+  "report.missing.device": "ਇਸ ਡਿਵਾਈਸ ਦੀਆਂ ਆਪਣੀਆਂ ਚੋਣਾਂ, ਜਿਵੇਂ ਮਹੀਨਾਵਾਰ ਹੱਦ",
+  "report.missing.browser": "ਬ੍ਰਾਊਜ਼ਰ ਅਤੇ ਉਸਦਾ ਸਿਸਟਮ",
+  "report.missing.policy": "ਸੰਸਥਾ ਦੇ ਨਿਯਮ"
+}

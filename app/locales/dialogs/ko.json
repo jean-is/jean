@@ -155,6 +155,8 @@
   "settings.listen": "듣기",
   "settings.version": "{name} {version} ({date})",
   "settings.checkVersion": "새 버전 확인",
+  "settings.report": "문제 보고",
+  "settings.openReport": "보고서 열기",
   "settings.checking": "새 버전 확인 중…",
   "settings.newest": "최신 버전이에요.",
   "settings.sample": "안녕하세요! 답변을 소리 내어 읽으면 이렇게 들려요.",

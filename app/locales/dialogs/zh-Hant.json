@@ -155,6 +155,8 @@
   "settings.listen": "試聽",
   "settings.version": "{name} {version}（{date}）",
   "settings.checkVersion": "檢查新版本",
+  "settings.report": "回報問題",
+  "settings.openReport": "開啟報告",
   "settings.checking": "正在檢查新版本…",
   "settings.newest": "這已是最新版本。",
   "settings.sample": "你好！你的回答朗讀出來時就是這樣的聲音。",

@@ -157,6 +157,8 @@
   "settings.listen": "Чуй",
   "settings.version": "{name} {version} от {date}",
   "settings.checkVersion": "Провери за нова версия",
+  "settings.report": "Съобщи за проблем",
+  "settings.openReport": "Отвори доклад",
   "settings.checking": "Търсене на нова версия…",
   "settings.newest": "Това е най-новата версия.",
   "settings.sample": "Здравейте! Така ще звучат отговорите ви, когато се четат на глас.",

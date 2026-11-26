@@ -157,6 +157,8 @@
   "settings.listen": "Sikiliza",
   "settings.version": "{name} {version}, tarehe {date}",
   "settings.checkVersion": "Tafuta toleo jipya",
+  "settings.report": "Ripoti tatizo",
+  "settings.openReport": "Fungua ripoti",
   "settings.checking": "Inatafuta toleo jipya…",
   "settings.newest": "Hili ndilo toleo jipya zaidi.",
   "settings.sample": "Habari! Hivi ndivyo majibu yako yatakavyosikika yakisomwa kwa sauti.",

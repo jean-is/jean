@@ -5,10 +5,10 @@ import { repeat } from 'lit-html/directives/repeat.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import { app, retry, effective, brainLabel, openFile, send, canStepUp, askSmarter, assistantName, decisionsHere, notify, rewind, fork } from './state.js'
-import { unlock, slots, SIZES } from './caps.js'
+import { unlock, slots } from './caps.js'
 import { foldTurns, titleOf, linkedFiles, splitSuggestions, isPicture, filesMade, flow } from '../core/events.js'
 import { serviceURL } from '../core/settings.js'
-import { t, locale, intlLocales, formatBytes, formatDuration, relativeTime } from '../core/i18n.js'
+import { t, locale, intlLocales, formatDuration, relativeTime } from '../core/i18n.js'
 import { markdown, withFormulas } from './markdown.js'
 import { icons } from './icons.js'
 import { mine } from './opfs.js'
@@ -234,8 +234,8 @@ function turnView(turn, live, files, upTo, last, sources, steered) {
     ${summed ? html`<app-compaction .record=${summed}></app-compaction>` : nothing}
     ${streaming || text || entries.length ? html`
       <article class="msg msg-jean ${streaming ? 'is-streaming' : ''}" aria-busy=${streaming ? 'true' : 'false'}>
-        ${slots('progress').map((entry) => entry.draw({ plan }))}
-        ${answer(steps, sources, streaming, files, plan?.find((entry) => entry.status === 'in_progress')?.content, steered)}
+        ${slots('progress').map((entry) => entry.draw({ plan, streaming, drawing }))}
+        ${answer(steps, sources, streaming, files, plan?.find((entry) => entry.status === 'in_progress')?.content ?? slots('stage')[0]?.words(drawing.path), steered)}
         ${entries.flatMap((entry) => (entry._meta?.picture || (entry._meta?.making && entry.status === 'in_progress') ? [html`<app-picture .call=${{ ...entry }}></app-picture>`] : []))}
         ${entries.flatMap((entry) => (entry._meta?.checked ? [html`<app-certificate .call=${entry}></app-certificate>`] : []))}
         ${[...new Map(entries.flatMap(({ _meta }) => [...(_meta?.file ? [_meta.file] : []), ...(_meta?.files ?? [])].map((file) => [file.name, file]))).values()].map((file) => html`<app-file uri=${file.uri} name=${file.name} type=${file.mimeType} size=${file.size} version=${file.version ?? ''}></app-file>`)}
@@ -347,7 +347,7 @@ function answer(steps, sources, streaming, files, doing, steered) {
       : html`<div class="prose" dir="auto">${markdown(segment.text, sources, streaming && i === at)}${streaming && i === at ? html`<span class="caret" aria-hidden="true"></span>` : nothing}</div>`))}
     ${hurry ? html`<div><button class="link-button" @click=${() => import('./send.js').then((module) => module.answerNow())}>${t('activity.answerNow')}</button></div>` : nothing}
     ${streaming ? inbox(entries, files) : nothing}
-    ${streaming && offering ? offerCard(offering) : nothing}`
+    ${streaming && offering ? drawn.value?.offerCard(offering) : nothing}`
 }
 
 /**
@@ -413,21 +413,6 @@ function inbox(entries, files) {
 
 /** Who a card is from, when a helper asks. @param {string | undefined} helper */
 const asking = (helper) => (helper ? html`<p class="approval-from">${icons.helpers}<span dir="auto">${helper}</span></p>` : nothing)
-
-/** Offers whose sentence above the box says what set them off: in an answer, they say what they do (D322). */
-const IN_ANSWER = new Set(['skills', 'routines', 'flows'])
-
-/** The brain's offer, in the answer it is part of. @param {NonNullable<typeof app.offering.value>} offering */
-function offerCard({ id, resolve }) {
-  return html`<div class="approval" role="group" aria-label=${t('offer.title')}>
-    <p><strong>${t(`cap.${id}.name`)}</strong></p>
-    <p>${t(IN_ANSWER.has(id) ? `cap.${id}.inAnswer` : `cap.${id}.offer`, { name: assistantName(), size: formatBytes(SIZES[id] ?? 0) })}</p>
-    <div class="approval-actions">
-      <button class="button primary" @click=${() => resolve(true)}>${t('offer.yes')}</button>
-      <button class="button subtle" @click=${() => resolve(false)}>${t('offer.no')}</button>
-    </div>
-  </div>`
-}
 
 /** Brain label rendered in the current language from structured data. @param {ToolCallInfo} entry */
 export function brainName(entry) {

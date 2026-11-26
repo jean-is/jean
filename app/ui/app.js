@@ -157,7 +157,7 @@ async function start() {
   if (matchMedia('(pointer: fine)').matches) focusComposer()
   else import('./keyboard.js')
   // What the user discovered (and policy unlocks) comes back, after first paint.
-  app.ready = Promise.all([import('./discovery.js'), ...[...new Set([...app.settings.value.unlocked, ...preUnlock])].map(unlock)])
+  app.ready = Promise.all([import('./trail.js'), import('./discovery.js'), ...[...new Set([...app.settings.value.unlocked, ...preUnlock])].map(unlock)])
   if (document.getElementById('curtain')) import('./curtain.js').then((curtain) => curtain.lift()).catch(failed)
   // A search from the browser's bar is sent, the family page's ?child begins a profile,
   // or back from signing in: to a connection (?state=…), or to OpenRouter or ChatGPT.

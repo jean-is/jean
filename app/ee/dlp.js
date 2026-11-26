@@ -11,7 +11,7 @@ import { notify } from '../ui/state.js'
 import { LLMError } from '../core/llm.js'
 import { isLocal } from '../core/settings.js'
 import { t, useStrings, intlLocales } from '../core/i18n.js'
-import { checked, dlpHooks } from './detect.js'
+import { checked, dlpHooks, finder } from './detect.js'
 
 /** @param {{ dlp?: unknown, brains?: import('../core/types.js').BrainConfig[] }} policy */
 export async function start(policy) {
@@ -26,9 +26,14 @@ export async function start(policy) {
     return id === 'card' || id === 'iban' ? t('dlp.bank') : id === 'nir' || id === 'ssn' ? t('dlp.social') : id === 'secret' ? t('dlp.secret') : t('dlp.label')
   }
   const brains = () => list((dlp.brains ?? []).map((id) => policy.brains?.find((brain) => brain.id === id)?.label ?? id))
+  const find = finder(dlp)
   register({
     id: 'dlp',
-    hooks: dlpHooks(dlp, {
+    // A report for support is checked as it leaves (caps/report, D771): one the detectors find something in stays, failing closed.
+    hooks: [{ on: 'report.check', tier: 'policy', refuse: 'unchecked', run: (/** @type {{ text: string }} */ e, /** @type {(e: unknown) => Promise<unknown>} */ next) => {
+      const found = find(e.text)
+      return found.length ? (act('dlp.found', { detectors: found, where: 'report' }), { refuse: found.join(', ') }) : next(e)
+    } }, ...dlpHooks(dlp, {
       isLocal,
       told: (found, where) => act('dlp.found', { detectors: found, where }),
       why: (found) => t('dlp.call', { what: list(found.map(nameOf)) }),
@@ -38,7 +43,7 @@ export async function start(policy) {
         ;(await import('../ui/picker.js')).openPicker()
         throw new LLMError(`This task holds ${found.join(', ')}, which the organisation lets only some brains read.`, { code: 'aborted' })
       },
-    }),
+    })],
     slots: {
       by: { at: 0, draw: (/** @type {{ by?: string }} */ { by }) => (by === 'dlp' ? t('activity.by.policy') : '') },
       organization: { at: 3, draw: () => html`<section><h3>${t('dlp.title')}</h3><p class="muted">${t('dlp.text', { what: list([...(dlp.detect ?? []).map((one) => nameOf(typeof one === 'string' ? one : one.id)), ...dlp.labels?.length ? [t('dlp.label')] : []]) })}</p></section>` },

@@ -155,6 +155,8 @@
   "settings.listen": "Ẹ fetí sí i",
   "settings.version": "{name} {version} ({date})",
   "settings.checkVersion": "Wá ẹ̀yà tuntun",
+  "settings.report": "Jábọ̀ ìṣòro kan",
+  "settings.openReport": "Ṣí ìjábọ̀ kan",
   "settings.checking": "À ń wá ẹ̀yà tuntun…",
   "settings.newest": "Èyí ni ẹ̀yà tuntun jùlọ.",
   "settings.sample": "Ẹ n lẹ́ o! Báyìí ni ìdáhùn yín yóò ṣe dún nígbà tí a bá kà wọ́n sókè.",

@@ -157,6 +157,8 @@
   "settings.listen": "విను",
   "settings.version": "{name} {version} ({date})",
   "settings.checkVersion": "కొత్త వెర్షన్ కోసం చూడు",
+  "settings.report": "సమస్యను రిపోర్ట్ చేయి",
+  "settings.openReport": "రిపోర్ట్‌ను తెరువు",
   "settings.checking": "కొత్త వెర్షన్ కోసం చూస్తోంది…",
   "settings.newest": "ఇదే సరికొత్త వెర్షన్.",
   "settings.sample": "నమస్తే! మీ సమాధానాలు బిగ్గరగా చదివినప్పుడు ఇలా వినిపిస్తాయి.",

@@ -1,0 +1,74 @@
+{
+  "report.title": "回報問題",
+  "report.intro": "技術支援會收到當時正在進行的事項和每一步所花的時間、版本、你的瀏覽器和你的設定。你寫的內容、檔案、名字和金鑰都不會包含在內。",
+  "report.row.version": "版本",
+  "report.row.browser": "瀏覽器",
+  "report.row.where": "正在進行",
+  "report.row.brains": "大腦",
+  "report.row.context": "已開啟",
+  "report.row.task": "這個任務",
+  "report.row.log": "警告和錯誤",
+  "report.count.capabilities": {
+    "other": "{count} 項能力"
+  },
+  "report.count.connections": {
+    "other": "{count} 個連接"
+  },
+  "report.count.extensions": {
+    "other": "{count} 個擴充功能"
+  },
+  "report.count.skills": {
+    "other": "{count} 個技能"
+  },
+  "report.count.records": {
+    "other": "已儲存 {count} 個步驟"
+  },
+  "report.count.lines": {
+    "other": "{count} 行"
+  },
+  "report.none": "無",
+  "report.idle": "沒有正在進行的事項",
+  "report.words": "附上這個任務的文字內容",
+  "report.wordsHint": "只在技術支援需要用它們查明問題時附上。",
+  "report.json": "全部內容（技術支援看到的格式）",
+  "report.save": "儲存為檔案",
+  "report.write": "聯絡技術支援",
+  "report.link": "為技術支援建立連結",
+  "report.saved": "已儲存。",
+  "report.written": "報告已複製：請貼到你的訊息中。",
+  "report.linked": "連結已複製。它會在一週後失效，你也可以在你的連結中提早停止。",
+  "report.refused": "依照你組織的規則，這份報告只能留在這台裝置上。",
+  "report.failed": "沒有成功。請再試一次，或儲存為檔案。",
+  "report.fileName": "report-{date}",
+  "report.subject": "{name} {version}：遇到問題",
+  "report.mailBody": "報告在你的剪貼簿裡：請貼到這裡。",
+  "report.slow": "等太久了嗎？",
+  "report.stage.choose": "正在選擇大腦",
+  "report.stage.prepare": "正在準備你的請求",
+  "report.stage.read": "正在讀取你分享的檔案",
+  "report.stage.key": "正在讀取你的 {brain} 金鑰",
+  "report.stage.ask": "正在等待 {brain}",
+  "report.stage.hook": "正在等待 {name}",
+  "report.stage.check": "正在等待檢查",
+  "report.stage.receipt": "正在核對本月上限",
+  "report.stage.compact": "正在總結到目前為止的任務",
+  "report.unsent.held": "未傳送：你的上一個請求仍在進行中。",
+  "report.unsent.unreached": "未傳送：你的請求沒有送達。",
+  "report.unsent.loading": "未傳送：負責傳送的部分仍在載入。",
+  "report.unsent.unloaded": "未傳送：負責傳送的部分沒有載入成功。",
+  "report.take": "開啟報告",
+  "report.takeIntro": "別人傳給你的報告會變成一份重現用副本：設定相同，文字換成長度相同的佔位文字，用來在新的個人檔案中還原。",
+  "report.paste": "貼上報告，或它的連結所開啟的頁面",
+  "report.pick": "選擇檔案",
+  "report.notReport": "這不是報告。",
+  "report.standIn": "儲存重現用副本",
+  "report.standInName": "stand-in-{date}",
+  "report.standInSaved": "已儲存。請從「你的資料」把它還原到新的個人檔案。不包含：{missing}。",
+  "report.missing.keys": "金鑰和帳號",
+  "report.missing.files": "分享的檔案和資料夾",
+  "report.missing.routines": "擴充功能、例行任務和現成的技能",
+  "report.missing.own": "傳送者自己的服務和地址",
+  "report.missing.device": "每月上限等這台裝置自己的選擇",
+  "report.missing.browser": "瀏覽器及其系統",
+  "report.missing.policy": "組織的規則"
+}

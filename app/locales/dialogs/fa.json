@@ -157,6 +157,8 @@
   "settings.listen": "گوش دادن",
   "settings.version": "{name} {version}، به تاریخ {date}",
   "settings.checkVersion": "جست‌وجوی نسخهٔ تازه",
+  "settings.report": "گزارش یک مشکل",
+  "settings.openReport": "باز کردن یک گزارش",
   "settings.checking": "در حال جست‌وجوی نسخهٔ تازه…",
   "settings.newest": "این تازه‌ترین نسخه است.",
   "settings.sample": "سلام! پاسخ‌های شما وقتی بلند خوانده شوند این‌طور شنیده می‌شوند.",

@@ -59,7 +59,7 @@ export const SCHEMA = {
   guards: [{ 'id!': 'text', kind: 'text', service: 'text', if: 'text', 'then!': new Set(['ask', 'never']), reason: 'text' }],
   capabilities: { deny: ['capability'], preUnlock: ['capability'] },
   instructions: 'text',
-  urls: Object.fromEntries([...Object.keys(DEFAULT_URLS), 'render', 'brave', 'tavily', 'google', 'kagi', 'node', 'claude', 'copilot', 'antigravity'].map((name) => [name, 'link'])),
+  urls: Object.fromEntries([...Object.keys(DEFAULT_URLS), 'render', 'brave', 'tavily', 'google', 'kagi', 'node', 'claude', 'copilot', 'antigravity'].map((name) => [name, name === 'support' ? 'contact' : 'link'])),
   signIn: { 'issuer!': 'address', 'clientId!': 'text', scopes: ['text'] },
   connections: [{ 'id!': 'text', 'name!': 'text', 'url!': 'address', auth: new Set(['none', 'key', 'oauth', 'oidc']), servers: ['address'], projects: ['text'], gateway: 'flag' }],
   directory: [{ 'id!': 'text', '*': 'any' }],
@@ -111,7 +111,7 @@ function nearest(name, names) {
 }
 
 /** The type each kind of value has in JSON. */
-const KINDS = { text: 'string', flag: 'boolean', number: 'number', address: 'string', link: 'string', capability: 'string', locale: 'string', colour: 'string', picture: 'string' }
+const KINDS = { text: 'string', flag: 'boolean', number: 'number', address: 'string', link: 'string', contact: 'string', capability: 'string', locale: 'string', colour: 'string', picture: 'string' }
 /** An address, its {placeholders} filled, or null. @param {string} address */
 const parse = (address) => { try { return new URL(address.replace(/\{\w+\}/g, 'x')) } catch { return null } }
 
@@ -146,7 +146,9 @@ export function checkPolicy(policy, capabilities) {
     if (shape === 'colour' && !/^#[\da-f]{6}$/i.test(/** @type {string} */ (value))) problems.push([path, 'colour'])
     if (shape === 'picture' && !PICTURE.test(/** @type {string} */ (value))) problems.push([path, 'picture'])
     if (shape === 'capability' && capabilities && !capabilities.includes(/** @type {string} */ (value))) problems.push([path, 'capability'])
-    if (shape === 'address' || (shape === 'link' && /^[a-z][a-z\d+.-]*:/i.test(/** @type {string} */ (value)))) {
+    // Where a report goes to support (D771) may be a mail address too.
+    if (shape === 'contact' && /^mailto:/i.test(/** @type {string} */ (value))) { if (!/^mailto:[^@\s/?]+@[\w.-]+\.[a-z]{2,}$/i.test(/** @type {string} */ (value))) problems.push([path, 'address']) }
+    else if (shape === 'address' || ((shape === 'link' || shape === 'contact') && /^[a-z][a-z\d+.-]*:/i.test(/** @type {string} */ (value)))) {
       const url = parse(/** @type {string} */ (value))
       if (!url || !/^(https|wss|http|ws):$/.test(url.protocol)) problems.push([path, 'address'])
       else if (/^(http|ws):$/.test(url.protocol) && !LOCAL.test(url.hostname)) problems.push([path, 'https'])

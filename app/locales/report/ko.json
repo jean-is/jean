@@ -1,0 +1,74 @@
+{
+  "report.title": "문제 보고",
+  "report.intro": "지원팀에는 진행 중이던 일과 각 단계에 걸린 시간, 버전, 브라우저, 설정이 전달돼요. 내가 쓴 글, 파일, 이름, 키는 하나도 포함되지 않아요.",
+  "report.row.version": "버전",
+  "report.row.browser": "브라우저",
+  "report.row.where": "진행 중",
+  "report.row.brains": "두뇌",
+  "report.row.context": "켜 둔 항목",
+  "report.row.task": "이 작업",
+  "report.row.log": "경고 및 오류",
+  "report.count.capabilities": {
+    "other": "기능 {count}개"
+  },
+  "report.count.connections": {
+    "other": "연결 {count}개"
+  },
+  "report.count.extensions": {
+    "other": "확장 프로그램 {count}개"
+  },
+  "report.count.skills": {
+    "other": "스킬 {count}개"
+  },
+  "report.count.records": {
+    "other": "저장된 단계 {count}개"
+  },
+  "report.count.lines": {
+    "other": "{count}줄"
+  },
+  "report.none": "없음",
+  "report.idle": "진행 중인 일 없음",
+  "report.words": "이 작업의 글 포함",
+  "report.wordsHint": "무엇이 잘못됐는지 보는 데 지원팀이 필요로 할 때만 포함하세요.",
+  "report.json": "지원팀이 읽는 형식의 전체 내용",
+  "report.save": "파일로 저장",
+  "report.write": "지원팀에 문의",
+  "report.link": "지원팀용 링크 만들기",
+  "report.saved": "저장했어요.",
+  "report.written": "보고서를 복사했어요. 메시지에 붙여 넣으세요.",
+  "report.linked": "링크를 복사했어요. 일주일이 지나면 열리지 않으며, 링크 목록에서 그 전에 중지할 수도 있어요.",
+  "report.refused": "조직의 규칙에 따라 이 보고서는 이 기기 밖으로 보낼 수 없어요.",
+  "report.failed": "잘 되지 않았어요. 다시 시도하거나 파일로 저장하세요.",
+  "report.fileName": "report-{date}",
+  "report.subject": "{name} {version}: 문제 보고",
+  "report.mailBody": "보고서가 클립보드에 있어요. 여기에 붙여 넣으세요.",
+  "report.slow": "오래 걸리나요?",
+  "report.stage.choose": "두뇌 고르는 중",
+  "report.stage.prepare": "요청 준비 중",
+  "report.stage.read": "공유한 파일 읽는 중",
+  "report.stage.key": "{brain} 키 읽는 중",
+  "report.stage.ask": "{brain} 응답 기다리는 중",
+  "report.stage.hook": "{name} 기다리는 중",
+  "report.stage.check": "확인 기다리는 중",
+  "report.stage.receipt": "이번 달 한도 확인 중",
+  "report.stage.compact": "지금까지의 작업 요약 중",
+  "report.unsent.held": "보내지 않음: 마지막 요청이 아직 진행 중이에요.",
+  "report.unsent.unreached": "보내지 않음: 요청이 전달되지 않았어요.",
+  "report.unsent.loading": "보내지 않음: 보내는 데 필요한 부분을 아직 불러오는 중이에요.",
+  "report.unsent.unloaded": "보내지 않음: 보내는 데 필요한 부분을 불러오지 못했어요.",
+  "report.take": "보고서 열기",
+  "report.takeIntro": "받은 보고서로 재현용 사본을 만들어요. 설정은 같고 글은 같은 길이의 임의 단어로 바뀌며, 새 프로필에 복원해서 써요.",
+  "report.paste": "보고서나 그 링크가 보여 주는 페이지를 붙여 넣으세요",
+  "report.pick": "파일 선택",
+  "report.notReport": "보고서가 아니에요.",
+  "report.standIn": "재현용 사본 저장",
+  "report.standInName": "stand-in-{date}",
+  "report.standInSaved": "저장했어요. ‘내 데이터’에서 새 프로필에 복원하세요. 포함되지 않은 것: {missing}.",
+  "report.missing.keys": "키와 계정",
+  "report.missing.files": "공유된 파일과 폴더",
+  "report.missing.routines": "확장 프로그램, 루틴, 기본 제공 스킬",
+  "report.missing.own": "보낸 사람만의 서비스와 주소",
+  "report.missing.device": "월 한도처럼 이 기기에만 있는 선택",
+  "report.missing.browser": "브라우저와 그 시스템",
+  "report.missing.policy": "조직의 규칙"
+}

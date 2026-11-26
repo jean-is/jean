@@ -1,0 +1,80 @@
+{
+  "report.title": "समस्या कळवा",
+  "report.intro": "सहाय्य टीमला मिळते: काय चालू होते आणि प्रत्येक पायरीला किती वेळ लागला, आवृत्ती, तुमचा ब्राउझर आणि तुमची सेटिंग्ज. तुमचे शब्द, फाइल्स, नावे किंवा की यांपैकी काहीही सोबत जात नाही.",
+  "report.row.version": "आवृत्ती",
+  "report.row.browser": "ब्राउझर",
+  "report.row.where": "चालू आहे",
+  "report.row.brains": "मेंदू",
+  "report.row.context": "सुरू केलेले",
+  "report.row.task": "हे कार्य",
+  "report.row.log": "इशारे आणि त्रुटी",
+  "report.count.capabilities": {
+    "one": "{count} क्षमता",
+    "other": "{count} क्षमता"
+  },
+  "report.count.connections": {
+    "one": "{count} जोडणी",
+    "other": "{count} जोडण्या"
+  },
+  "report.count.extensions": {
+    "one": "{count} एक्सटेंशन",
+    "other": "{count} एक्सटेंशन"
+  },
+  "report.count.skills": {
+    "one": "{count} कौशल्य",
+    "other": "{count} कौशल्ये"
+  },
+  "report.count.records": {
+    "one": "{count} पायरी जतन केलेली",
+    "other": "{count} पायऱ्या जतन केलेल्या"
+  },
+  "report.count.lines": {
+    "one": "{count} ओळ",
+    "other": "{count} ओळी"
+  },
+  "report.none": "काहीही नाही",
+  "report.idle": "काहीही चालू नाही",
+  "report.words": "या कार्यातील शब्द समाविष्ट करा",
+  "report.wordsHint": "काय चुकले ते पाहण्यासाठी सहाय्य टीमला त्यांची गरज असेल तरच.",
+  "report.json": "सर्व काही, सहाय्य टीम वाचते तसे",
+  "report.save": "फाइल म्हणून जतन करा",
+  "report.write": "सहाय्य टीमला लिहा",
+  "report.link": "सहाय्य टीमसाठी लिंक बनवा",
+  "report.saved": "जतन केले.",
+  "report.written": "अहवाल कॉपी झाला: तो तुमच्या संदेशात पेस्ट करा.",
+  "report.linked": "लिंक कॉपी झाली. ती एका आठवड्यानंतर चालणे बंद होईल, आणि तुम्ही तुमच्या लिंकमधून ती त्याआधीही थांबवू शकता.",
+  "report.refused": "तुमच्या संस्थेचे नियम हा अहवाल या उपकरणावरच ठेवतात.",
+  "report.failed": "ते जमले नाही. पुन्हा प्रयत्न करा, किंवा फाइल म्हणून जतन करा.",
+  "report.fileName": "report-{date}",
+  "report.subject": "{name} {version}: एक समस्या",
+  "report.mailBody": "अहवाल तुमच्या क्लिपबोर्डवर आहे: तो इथे पेस्ट करा.",
+  "report.slow": "खूप वेळ लागतोय?",
+  "report.stage.choose": "मेंदू निवडत आहे",
+  "report.stage.prepare": "तुमची विनंती तयार करत आहे",
+  "report.stage.read": "तुम्ही शेअर केलेल्या फाइल्स वाचत आहे",
+  "report.stage.key": "{brain} साठी तुमची की वाचत आहे",
+  "report.stage.ask": "{brain} कडून उत्तराची वाट पाहत आहे",
+  "report.stage.hook": "{name} पूर्ण होण्याची वाट पाहत आहे",
+  "report.stage.check": "एका तपासणीची वाट पाहत आहे",
+  "report.stage.receipt": "या महिन्याची मर्यादा तपासत आहे",
+  "report.stage.compact": "आतापर्यंतच्या कार्याचा सारांश करत आहे",
+  "report.unsent.held": "पाठवले नाही: तुमची मागील विनंती अजून चालू आहे.",
+  "report.unsent.unreached": "पाठवले नाही: तुमची विनंती पोहोचली नाही.",
+  "report.unsent.loading": "पाठवले नाही: पाठवणारा भाग अजून लोड होत आहे.",
+  "report.unsent.unloaded": "पाठवले नाही: पाठवणारा भाग लोड झाला नाही.",
+  "report.take": "अहवाल उघडा",
+  "report.takeIntro": "कोणी पाठवलेला अहवाल एक प्रतिकृती बनतो: तोच सेटअप, तितक्याच लांबीच्या डमी शब्दांसह, नवीन प्रोफाइलमध्ये पुनर्संचयित करण्यासाठी.",
+  "report.paste": "अहवाल पेस्ट करा, किंवा त्याची लिंक दाखवते ते पेज",
+  "report.pick": "फाइल निवडा",
+  "report.notReport": "हा अहवाल नाही.",
+  "report.standIn": "प्रतिकृती जतन करा",
+  "report.standInName": "stand-in-{date}",
+  "report.standInSaved": "जतन केले. “तुमचा डेटा” मधून ती नवीन प्रोफाइलमध्ये पुनर्संचयित करा. यात नाही: {missing}.",
+  "report.missing.keys": "की आणि खाती",
+  "report.missing.files": "शेअर केलेल्या फाइल्स आणि फोल्डर",
+  "report.missing.routines": "एक्सटेंशन, नियमित कामे आणि तयार कौशल्ये",
+  "report.missing.own": "पाठवणाऱ्याच्या स्वतःच्या सेवा आणि पत्ते",
+  "report.missing.device": "या उपकरणाच्या स्वतःच्या निवडी, जसे की मासिक मर्यादा",
+  "report.missing.browser": "ब्राउझर आणि त्याची सिस्टम",
+  "report.missing.policy": "संस्थेचे नियम"
+}

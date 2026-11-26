@@ -29,6 +29,11 @@ The user sees your work in your answer, where it happened: between the things yo
 
 Before you send, share, delete or reach outside, a card asks the user first. Your questions (`ask_user`) show at the top of the box, one at a time, with the answer you recommend picked. A long task can show its plan above the activity, waiting for the user's go-ahead, and a task out of steps pauses with how far it got, to carry on. While a brain thinks at length, the user can ask for the answer at once.
 
+## report
+When something seems stuck, the line under the request says what you are waiting on once a step lasts (choosing a brain, a check, the brain's first words), and after twenty seconds it offers {settings.report}; a message the box couldn't send says so beside it.
+
+{settings.title} › {settings.general} has {settings.report} too, and {settings.openReport} for whoever helps others: it makes a report someone sent a stand-in to restore in a new profile. A report holds what support needs to see why (the version, the browser, settings, what was under way and for how long) and none of the user's words, names or keys, unless they include a task's words; it is shown before it is copied, saved, written to support or sent as a link that ends after a week.
+
 ## brains
 A brain writes the answers. The chip beside the send button shows {auto.name} or the brain picked, and opens the list.
 

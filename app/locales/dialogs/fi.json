@@ -157,6 +157,8 @@
   "settings.listen": "Kuuntele",
   "settings.version": "{name} {version}, päivätty {date}",
   "settings.checkVersion": "Etsi uutta versiota",
+  "settings.report": "Ilmoita ongelmasta",
+  "settings.openReport": "Avaa raportti",
   "settings.checking": "Etsitään uutta versiota…",
   "settings.newest": "Tämä on uusin versio.",
   "settings.sample": "Hei! Tältä vastauksesi kuulostavat, kun ne luetaan ääneen.",

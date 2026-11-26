@@ -1,0 +1,80 @@
+{
+  "report.title": "Ripoti tatizo",
+  "report.intro": "Timu ya usaidizi inapata kilichokuwa kikiendelea na muda ambao kila hatua ilichukua, toleo, kivinjari chako na mipangilio yako. Hakuna maneno, faili, majina wala funguo zako zinazoambatana nayo.",
+  "report.row.version": "Toleo",
+  "report.row.browser": "Kivinjari",
+  "report.row.where": "Kinachoendelea",
+  "report.row.brains": "Akili",
+  "report.row.context": "Vilivyowashwa",
+  "report.row.task": "Kazi hii",
+  "report.row.log": "Maonyo na hitilafu",
+  "report.count.capabilities": {
+    "one": "uwezo {count}",
+    "other": "uwezo {count}"
+  },
+  "report.count.connections": {
+    "one": "muunganisho {count}",
+    "other": "miunganisho {count}"
+  },
+  "report.count.extensions": {
+    "one": "kiendelezi {count}",
+    "other": "viendelezi {count}"
+  },
+  "report.count.skills": {
+    "one": "ujuzi {count}",
+    "other": "ujuzi {count}"
+  },
+  "report.count.records": {
+    "one": "hatua {count} iliyohifadhiwa",
+    "other": "hatua {count} zilizohifadhiwa"
+  },
+  "report.count.lines": {
+    "one": "mstari {count}",
+    "other": "mistari {count}"
+  },
+  "report.none": "Hakuna",
+  "report.idle": "Hakuna kinachoendelea",
+  "report.words": "Jumuisha maneno ya kazi hii",
+  "report.wordsHint": "Tu ikiwa timu ya usaidizi inayahitaji ili kuona kilichoharibika.",
+  "report.json": "Yote, jinsi timu ya usaidizi inavyoisoma",
+  "report.save": "Hifadhi kama faili",
+  "report.write": "Andikia timu ya usaidizi",
+  "report.link": "Tengeneza kiungo kwa timu ya usaidizi",
+  "report.saved": "Imehifadhiwa.",
+  "report.written": "Ripoti imenakiliwa: ibandike kwenye ujumbe wako.",
+  "report.linked": "Kiungo kimenakiliwa. Kitaacha kufanya kazi baada ya wiki moja, na unaweza kukisimamisha mapema kati ya viungo vyako.",
+  "report.refused": "Sheria za shirika lako zinaiweka ripoti hii kwenye kifaa hiki.",
+  "report.failed": "Hilo halikufanikiwa. Jaribu tena, au uihifadhi kama faili.",
+  "report.fileName": "ripoti-{date}",
+  "report.subject": "{name} {version}: tatizo",
+  "report.mailBody": "Ripoti iko kwenye ubao wako wa kunakili: ibandike hapa.",
+  "report.slow": "Inachukua muda mrefu?",
+  "report.stage.choose": "Inachagua ubongo",
+  "report.stage.prepare": "Inaandaa ombi lako",
+  "report.stage.read": "Inasoma faili ulizoshiriki",
+  "report.stage.key": "Inasoma ufunguo wako wa {brain}",
+  "report.stage.ask": "Inasubiri {brain}",
+  "report.stage.hook": "Inasubiri {name}",
+  "report.stage.check": "Inasubiri ukaguzi",
+  "report.stage.receipt": "Inakagua kikomo cha mwezi huu",
+  "report.stage.compact": "Inafupisha kazi hadi sasa",
+  "report.unsent.held": "Haukutumwa: ombi lako la mwisho bado linaendelea.",
+  "report.unsent.unreached": "Haukutumwa: ombi lako halikufika.",
+  "report.unsent.loading": "Haukutumwa: kinachoutuma bado kinapakia.",
+  "report.unsent.unloaded": "Haukutumwa: kinachoutuma hakikupakia.",
+  "report.take": "Fungua ripoti",
+  "report.takeIntro": "Ripoti aliyokutumia mtu inakuwa nakala mbadala: mpangilio uleule, wenye maneno ya kujaza ya urefu uleule, ya kurejesha katika wasifu mpya.",
+  "report.paste": "Bandika ripoti, au ukurasa ambao kiungo chake kinaonyesha",
+  "report.pick": "Chagua faili",
+  "report.notReport": "Hii si ripoti.",
+  "report.standIn": "Hifadhi nakala mbadala",
+  "report.standInName": "nakala-mbadala-{date}",
+  "report.standInSaved": "Imehifadhiwa. Irejeshe katika wasifu mpya, kutoka Data yako. Visivyomo: {missing}.",
+  "report.missing.keys": "funguo na akaunti",
+  "report.missing.files": "faili na folda zilizoshirikiwa",
+  "report.missing.routines": "viendelezi, ratiba na ujuzi ulio tayari",
+  "report.missing.own": "huduma na anwani za mtumaji mwenyewe",
+  "report.missing.device": "machaguo ya kifaa hiki chenyewe, kama kikomo cha mwezi",
+  "report.missing.browser": "kivinjari na mfumo wake",
+  "report.missing.policy": "sheria za shirika"
+}

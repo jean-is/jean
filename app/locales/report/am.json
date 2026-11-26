@@ -1,0 +1,80 @@
+{
+  "report.title": "ችግር ሪፖርት ያድርጉ",
+  "report.intro": "የድጋፍ ቡድኑ በሂደት ላይ የነበረውንና እያንዳንዱ ደረጃ የወሰደውን ጊዜ፣ ስሪቱን፣ አሳሽዎንና ቅንብሮችዎን ይቀበላል። ቃላትዎ፣ ፋይሎችዎ፣ ስሞች ወይም ቁልፎችዎ አብረው አይላኩም።",
+  "report.row.version": "ስሪት",
+  "report.row.browser": "አሳሽ",
+  "report.row.where": "በሂደት ላይ",
+  "report.row.brains": "አንጎሎች",
+  "report.row.context": "የበሩ",
+  "report.row.task": "ይህ ተግባር",
+  "report.row.log": "ማስጠንቀቂያዎችና ስህተቶች",
+  "report.count.capabilities": {
+    "one": "{count} ችሎታ",
+    "other": "{count} ችሎታዎች"
+  },
+  "report.count.connections": {
+    "one": "{count} ግንኙነት",
+    "other": "{count} ግንኙነቶች"
+  },
+  "report.count.extensions": {
+    "one": "{count} ቅጥያ",
+    "other": "{count} ቅጥያዎች"
+  },
+  "report.count.skills": {
+    "one": "{count} ክህሎት",
+    "other": "{count} ክህሎቶች"
+  },
+  "report.count.records": {
+    "one": "{count} የተቀመጠ ደረጃ",
+    "other": "{count} የተቀመጡ ደረጃዎች"
+  },
+  "report.count.lines": {
+    "one": "{count} መስመር",
+    "other": "{count} መስመሮች"
+  },
+  "report.none": "የለም",
+  "report.idle": "በሂደት ላይ ያለ ነገር የለም",
+  "report.words": "የዚህን ተግባር ቃላት ያካትቱ",
+  "report.wordsHint": "የድጋፍ ቡድኑ ምን እንደተበላሸ ለማየት ከፈለጋቸው ብቻ።",
+  "report.json": "ሁሉም፣ የድጋፍ ቡድኑ እንደሚያነበው",
+  "report.save": "እንደ ፋይል ያስቀምጡ",
+  "report.write": "ለድጋፍ ቡድኑ ይጻፉ",
+  "report.link": "ለድጋፍ ቡድኑ አገናኝ ይፍጠሩ",
+  "report.saved": "ተቀምጧል።",
+  "report.written": "ሪፖርቱ ተቀድቷል፦ በመልዕክትዎ ውስጥ ይለጥፉት።",
+  "report.linked": "አገናኙ ተቀድቷል። ከአንድ ሳምንት በኋላ መሥራት ያቆማል፤ ከዚያ በፊትም ከአገናኞችዎ መካከል ሊያቆሙት ይችላሉ።",
+  "report.refused": "የድርጅትዎ ደንቦች ይህን ሪፖርት በዚህ መሣሪያ ላይ ያቆዩታል።",
+  "report.failed": "አልተሳካም። እንደገና ይሞክሩ፣ ወይም እንደ ፋይል ያስቀምጡት።",
+  "report.fileName": "report-{date}",
+  "report.subject": "{name} {version}፦ ችግር",
+  "report.mailBody": "ሪፖርቱ በቅንጥብ ሰሌዳዎ ላይ ነው፦ እዚህ ይለጥፉት።",
+  "report.slow": "ረጅም ጊዜ እየወሰደ ነው?",
+  "report.stage.choose": "አንጎል በመምረጥ ላይ",
+  "report.stage.prepare": "ጥያቄዎን በማዘጋጀት ላይ",
+  "report.stage.read": "ያጋሯቸውን ፋይሎች በማንበብ ላይ",
+  "report.stage.key": "ቁልፍዎን በማንበብ ላይ፦ {brain}",
+  "report.stage.ask": "በመጠበቅ ላይ፦ {brain}",
+  "report.stage.hook": "በመጠበቅ ላይ፦ {name}",
+  "report.stage.check": "ፍተሻን በመጠበቅ ላይ",
+  "report.stage.receipt": "የዚህን ወር ገደብ በመፈተሽ ላይ",
+  "report.stage.compact": "እስካሁን ያለውን ተግባር በማጠቃለል ላይ",
+  "report.unsent.held": "አልተላከም፦ የመጨረሻው ጥያቄዎ አሁንም በሂደት ላይ ነው።",
+  "report.unsent.unreached": "አልተላከም፦ ጥያቄዎ አልደረሰም።",
+  "report.unsent.loading": "አልተላከም፦ የሚልከው ክፍል አሁንም በመጫን ላይ ነው።",
+  "report.unsent.unloaded": "አልተላከም፦ የሚልከው ክፍል አልተጫነም።",
+  "report.take": "ሪፖርት ይክፈቱ",
+  "report.takeIntro": "አንድ ሰው የላከልዎ ሪፖርት ተተኪ ቅጂ ይሆናል፦ ያው ማዋቀር፣ ተመሳሳይ ርዝመት ባላቸው ምትክ ቃላት፣ በአዲስ መገለጫ ውስጥ ለመመለስ።",
+  "report.paste": "ሪፖርቱን፣ ወይም አገናኙ የሚያሳየውን ገጽ ይለጥፉ",
+  "report.pick": "ፋይል ይምረጡ",
+  "report.notReport": "ይህ ሪፖርት አይደለም።",
+  "report.standIn": "ተተኪ ቅጂውን ያስቀምጡ",
+  "report.standInName": "stand-in-{date}",
+  "report.standInSaved": "ተቀምጧል። ከመረጃዎ በአዲስ መገለጫ ውስጥ ይመልሱት። በውስጡ የሌሉ፦ {missing}።",
+  "report.missing.keys": "ቁልፎችና መለያዎች",
+  "report.missing.files": "የተጋሩ ፋይሎችና አቃፊዎች",
+  "report.missing.routines": "ቅጥያዎች፣ መደበኛ ተግባራትና ዝግጁ ክህሎቶች",
+  "report.missing.own": "የላኪው የራሱ አገልግሎቶችና አድራሻዎች",
+  "report.missing.device": "የዚህ መሣሪያ የራሱ ምርጫዎች፣ ለምሳሌ ወርሃዊ ገደቡ",
+  "report.missing.browser": "አሳሹና ሥርዓቱ",
+  "report.missing.policy": "የድርጅቱ ደንቦች"
+}

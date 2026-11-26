@@ -157,6 +157,8 @@
   "settings.listen": "Ακρόαση",
   "settings.version": "{name} {version}, με ημερομηνία {date}",
   "settings.checkVersion": "Έλεγχος για νέα έκδοση",
+  "settings.report": "Αναφορά προβλήματος",
+  "settings.openReport": "Άνοιγμα αναφοράς",
   "settings.checking": "Αναζήτηση νέας έκδοσης…",
   "settings.newest": "Αυτή είναι η πιο πρόσφατη έκδοση.",
   "settings.sample": "Γεια σας! Έτσι θα ακούγονται οι απαντήσεις σας όταν διαβάζονται φωναχτά.",

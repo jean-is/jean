@@ -18,6 +18,7 @@ import { t, useStrings, locale, languageName } from '../core/i18n.js'
 import { fileText, documentPart, splitPages, pagesThatFit, preselect, estimateTokens, estimateMessages, sourceNumber, nextSource } from '../core/files.js'
 import { getSecret } from './secrets.js'
 import { unlock, contributions, slots, FIRST_REQUEST } from './caps.js'
+import { begin, moveTo, mark, end, watched, deciding } from './trail.js'
 import {
   app, effective, activeBrain, brainsHere, brainLabel, assistantName, cloudAllowed, currentFiles, conversationOf, readBody, loadModels,
   notify, setPresence, setRule, showError, updateSettings, refreshConversations, sidebarOpen, openConversation, turnPage, beginRun, endRun, stop, CITED, keepRecords, newTasks, showRun, stirred,
@@ -130,8 +131,10 @@ let decisionId = 0
  */
 function queue(decision) {
   return new Promise((resolve) => {
+    const back = deciding(decision.conversation, { kind: 'toolCall' in decision ? String(decision.toolCall?.kind ?? 'other') : 'question' })
     // A card answered from the keyboard hands its focus on: to the next card waiting, else to the box.
     const item = /** @type {Decision} */ ({ ...decision, id: ++decisionId, resolve: (/** @type {PermissionOption | Answer[] | null} */ answer) => {
+      back()
       const held = document.activeElement?.closest('.approval'); app.decisions.value = app.decisions.value.filter((other) => other !== item)
       resolve(answer); if (held) requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector('.approval button, #prompt'))?.focus())
     } })
@@ -289,9 +292,10 @@ async function pickBrain(text, records, boost = 0, chosen, pictured = false) {
  */
 async function request(text, { boost = 0, notes = [], call, files = app.attachments.value, brain: chosen, look = false } = {}) {
   if ((!text.trim() && !files.some((item) => item.status === 'ready')) || app.busy.value) return
+  const trail = (asking = begin(app.current.peek()?.path ?? ''))
   if (boost) void askedAgain()
-  if (files.some((item) => item.status === 'reading')) return notify(t('files.stillReading'))
-  if (!brainsHere.value.length) return (app.draft.value = text), import('./picker.js').then((module) => module.openPicker())
+  if (files.some((item) => item.status === 'reading')) return end(trail, 'reading'), notify(t('files.stillReading'))
+  if (!brainsHere.value.length) return end(trail, 'brainless'), (app.draft.value = text), import('./picker.js').then((module) => module.openPicker())
   let current = app.current.value
   const from = current?.path
   // Unless the user went elsewhere meanwhile, another task or a new one, which has no path either: then it is
@@ -302,20 +306,23 @@ async function request(text, { boost = 0, notes = [], call, files = app.attachme
   if (!look) setPresence('thinking')
   // What the box's modes share with it, taken now: the camera's picture of this moment (D645). A look brings its own.
   const shared = look ? files : [...files, ...(await Promise.all(slots('modes').map((mode) => mode.files?.() ?? []))).flat()]
+  mark(trail, 'choose')
   const picked = await pickBrain(text.trim(), current?.records ?? [], boost, chosen, shared.length > files.length || look)
   if (!picked || (look && !current)) {
+    end(trail, 'refused')
     showRun()
     if (look) return false
     notify(t('auto.noPrivate'), { alert: true })
     return void import('./picker.js').then((module) => module.openPicker())
   }
   const { brain, meta, signals } = picked
+  mark(trail, 'prepare')
   // What the box's modes ask of it (Visual answers, D300), and what the reflexes read in it (a danger, D228), told just before it too;
   // given the message and its brain, which reads a child's danger itself where the reflexes aren't on (D661).
   const modes = slots('modes').flatMap((mode) => mode.notes?.(current?.records ?? [], signals, { text: text.trim(), brain }) ?? [])
   const added = await prepare(text.trim(), brain, current, [...notes, ...await mentioned(text), ...modes], shared)
   // A look leaves the box as the user has it, and is written with its answer, if it has one (runAgent).
-  if (look && current) return runAgent({ ...current, records: [...current.records, ...added] }, brain, meta, undefined, undefined, added)
+  if (look && current) return runAgent({ ...current, records: [...current.records, ...added] }, brain, meta, undefined, undefined, added, trail)
   // Only the words sent leave the box: what was typed meanwhile stays, and so do words that aren't the request's.
   const box = plain.of(app.draft.peek()).trimStart(), own = box.startsWith(text.trim())
   if (own) app.draft.value = box.slice(text.trim().length).trimStart()
@@ -323,11 +330,12 @@ async function request(text, { boost = 0, notes = [], call, files = app.attachme
   if (!current) {
     const created = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
     current = { id: created.id, path: created.path, records: [] }
+    moveTo(trail, created.path)
     // What it keeps from the start, like the folder it starts on (D149).
-    await fire(contributions().hooks, 'task.start', { task: created.path, id: created.id }, () => {})
+    await fire(watched(contributions().hooks, trail), 'task.start', { task: created.path, id: created.id }, () => {})
   }
   // In a task worked on together, one answer at a time: the request waits its turn before it is written (caps/together, D734).
-  await fire(contributions().hooks, 'task.turn', { task: current.path }, () => {})
+  await fire(watched(contributions().hooks, trail), 'task.turn', { task: current.path }, () => {})
   await keepRecords(current.path, added)
   // Listed at once, to come back to; the room's first as the page turns below, the drawer it opens with it (D369).
   const first = !current.records.length && !app.conversations.value.length
@@ -353,11 +361,14 @@ async function request(text, { boost = 0, notes = [], call, files = app.attachme
   } else if (first) refreshConversations()
   // The title is written alongside the answer.
   if (!titleOf(next.records)) import('./title.js').then(({ nameConversation }) => nameConversation(next.path, next.records, brain))
-  await runAgent(next, brain, meta, call)
+  await runAgent(next, brain, meta, call, undefined, undefined, trail)
 }
 
+/** The trail of the request on screen until its run takes it over, which a failure before then ends (ui/trail.js). @type {import('./trail.js').Trail | null} */
+let asking = null
+
 /** Sends a message, once a page being turned is (state.js's send waits for it); failing before its run, it gives the box back. @param {string} text @param {Parameters<typeof request>[1]} [options] */
-export const send = (text, options) => request(text, options).catch((error) => { showRun(); throw error })
+export const send = (text, options) => request(text, options).catch((error) => { if (asking) end(asking, 'threw'); showRun(); throw error })
 
 /** What / and @ named in a message, told just before it (D199). @param {string} text @returns {Promise<Envelope[]>} */
 const mentioned = async (text) => (/(?:^|\s)[/@]\S/u.test(text) ? import('./complete.js').then((module) => module.pointed(text)).catch((error) => (console.warn(error), [])) : [])
@@ -525,14 +536,27 @@ async function hurried() {
 }
 
 /**
+ * What the loop says moves the trail on: a request to a brain, its first event, a wait before asking again, a call.
+ * @param {import('./trail.js').Trail} trail @param {import('../core/types.js').AcpUpdate} update @param {BrainConfig} brain
+ */
+function staged(trail, update, brain) {
+  const at = trail.stages.at(-1)?.id
+  if (update.sessionUpdate === 'tool_call' && update.status === 'in_progress') mark(trail, update.name ? 'call' : 'ask', update.name ? { kind: update.kind } : { brain: brain.provider })
+  else if (update.sessionUpdate === 'tool_call_update' && typeof update._meta?.retrying === 'boolean') mark(trail, update._meta.retrying ? 'retry' : 'ask', { brain: brain.provider })
+  else if (/^agent_(message|thought)_chunk$/.test(update.sessionUpdate) && (at === 'ask' || at === 'retry' || at === 'hook')) mark(trail, 'write', { brain: brain.provider })
+}
+
+/**
  * Answers a conversation up to its last user message, on screen or not (D147). @param {{ id: string, path: string, records: Envelope[] }} conversation
  * @param {BrainConfig} brain @param {Why} [meta] why Auto chose it @param {{ name: string, args: Record<string, unknown> }} [call] the one call the turn is (D218)
  * @param {number} [after] the step it goes on after, with a block of steps more (Keep going, D364)
  * @param {Envelope[]} [held] a look's records, which the conversation has once its answer says something, a letter or a figure, or
  *   calls a tool (D645): a look that says nothing is never written nor shown, and the next request reads what it would have read without it
+ * @param {import('./trail.js').Trail} [trail] where the request is, from when it was sent (ui/trail.js)
  * @returns {Promise<boolean | void>} false for such a look
  */
-async function runAgent(conversation, brain, meta, call, after, held) {
+async function runAgent(conversation, brain, meta, call, after, held, trail = begin(conversation.path)) {
+  if (asking === trail) asking = null
   /** @type {Run} */
   const run = { ...conversation, brain, turn: { user: null, notes: [], steps: [], at: new Date().toISOString() }, settled: [], controller: new AbortController(), ...(held && { held }) }
   const { path, records: sent } = run
@@ -574,6 +598,7 @@ async function runAgent(conversation, brain, meta, call, after, held) {
     // What the brain reads of a task worked on together: others' words quoted, their activity left out (caps/together, D734).
     const viewed = slots('view').reduce((records, part) => part.records(records, path), sent)
     const resume = one ? { step: 0, calls: [one] } : after === undefined ? unanswered(viewed) : { step: after, calls: [] }
+    if (linkedFiles(sent).length) mark(trail, 'read')
     const messages = toChatMessages(viewed, await documents(sent, brain), resume)
     // The device's brain answers its steps itself, through its turn.step hook.
     if (brain.api === 'device') await unlock('brain-local')
@@ -587,11 +612,13 @@ async function runAgent(conversation, brain, meta, call, after, held) {
     // So does a task holding pictures, which it sums up past as many as providers take in a request (D645).
     const grown = (/** @type {number} */ now) => ((size = now) > (SERVERS.includes(brain.provider) ? 4096 : window) / 2 || linkedFiles(sent).some(isPicture)) && unlock('compact')
     await grown(Math.max(estimateMessages([frozen?.system, messages]), counted(usage)))
+    mark(trail, 'key', { brain: brain.provider })
+    const apiKey = (await getSecret(app.fs, brain.id)) ?? undefined
     asked.set(path, Date.now())
     const { settings } = effective.value
     const ended = await runTurn({
       brain,
-      apiKey: (await getSecret(app.fs, brain.id)) ?? undefined,
+      apiKey,
       system: frozen?.system ?? '',
       history: resume ? messages : messages.slice(0, messages.findLastIndex((message) => message.role === 'user') + 1),
       resume,
@@ -609,11 +636,12 @@ async function runAgent(conversation, brain, meta, call, after, held) {
       signal: run.controller.signal,
       // The organisation's guards and the person's (D295), then the capabilities' hooks, with the task and the kinds of
       // note its turn came with (a brief of what's new since last time only reads).
-      hooks: () => [...guardHooks(app.policy.guards ?? [], 'policy', yes), ...guardHooks(app.settings.value.guards ?? [], 'user', yes), careful, ...contributions().hooks],
+      hooks: () => watched([...guardHooks(app.policy.guards ?? [], 'policy', yes), ...guardHooks(app.settings.value.guards ?? [], 'user', yes), careful, ...contributions().hooks], trail),
       about: { task: path, notes: foldTurns(sent).at(-1)?.notes.map((note) => note.data.kind) ?? [] },
       rule: (kind, reserved) => resolveRule(kind, { user: settings.rules, policy: app.policy.rules, reserved }),
       askPermission: (request) => approve(request.toolCall, path),
       onUpdate: (update, step) => {
+        staged(trail, update, brain)
         if (run.held && update.sessionUpdate === 'agent_message_chunk') told += update.content.text
         if (run.held && ((update.sessionUpdate === 'tool_call' && update.name) || /[\p{L}\p{N}]/u.test(splitSuggestions(told).text))) said()
         if (update.sessionUpdate === 'agent_message_chunk' && shown() && !run.held) setPresence('answering')
@@ -665,6 +693,7 @@ async function runAgent(conversation, brain, meta, call, after, held) {
       else notify(t('activity.unfinished'), { quiet: true })
     }
   } finally {
+    end(trail, failed ? 'failed' : run.controller.signal.aborted ? 'stopped' : stopped ? 'paused' : 'answered')
     cancelAnimationFrame(frame)
     working.delete(path)
     hurries.delete(path)

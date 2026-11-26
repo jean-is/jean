@@ -163,6 +163,8 @@
   "settings.listen": "Selaou",
   "settings.version": "{name} {version} ({date})",
   "settings.checkVersion": "Klask ur stumm nevez",
+  "settings.report": "Disklêriañ ur gudenn",
+  "settings.openReport": "Digeriñ un danevell",
   "settings.checking": "O klask ur stumm nevez…",
   "settings.newest": "Hemañ eo ar stumm nevesañ.",
   "settings.sample": "Demat ! Setu penaos e vo klevet ho respontoù pa vint lennet a vouezh uhel.",

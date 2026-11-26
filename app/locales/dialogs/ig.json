@@ -155,6 +155,8 @@
   "settings.listen": "Gee ntị",
   "settings.version": "{name} {version}, nke {date}",
   "settings.checkVersion": "Lelee mbipụta ọhụrụ",
+  "settings.report": "Kọọ nsogbu",
+  "settings.openReport": "Mepee akụkọ",
   "settings.checking": "Na-achọ mbipụta ọhụrụ…",
   "settings.newest": "Nke a bụ mbipụta kacha ọhụrụ.",
   "settings.sample": "Ndewo! Otu a ka azịza gị ga-ada mgbe a na-agụpụta ha n’olu.",

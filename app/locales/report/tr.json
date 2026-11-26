@@ -1,0 +1,80 @@
+{
+  "report.title": "Sorun bildir",
+  "report.intro": "Destek ekibi neyin devam ettiğini ve her adımın ne kadar sürdüğünü, sürümü, tarayıcını ve ayarlarını alır. Sözlerin, dosyaların, adların ya da anahtarların gönderilmez.",
+  "report.row.version": "Sürüm",
+  "report.row.browser": "Tarayıcı",
+  "report.row.where": "Devam eden",
+  "report.row.brains": "Beyinler",
+  "report.row.context": "Açık",
+  "report.row.task": "Bu görev",
+  "report.row.log": "Uyarılar ve hatalar",
+  "report.count.capabilities": {
+    "one": "{count} yetenek",
+    "other": "{count} yetenek"
+  },
+  "report.count.connections": {
+    "one": "{count} bağlantı",
+    "other": "{count} bağlantı"
+  },
+  "report.count.extensions": {
+    "one": "{count} uzantı",
+    "other": "{count} uzantı"
+  },
+  "report.count.skills": {
+    "one": "{count} beceri",
+    "other": "{count} beceri"
+  },
+  "report.count.records": {
+    "one": "{count} saklanan adım",
+    "other": "{count} saklanan adım"
+  },
+  "report.count.lines": {
+    "one": "{count} satır",
+    "other": "{count} satır"
+  },
+  "report.none": "Yok",
+  "report.idle": "Devam eden bir şey yok",
+  "report.words": "Bu görevin metnini de ekle",
+  "report.wordsHint": "Yalnızca destek ekibinin neyin yanlış gittiğini görmek için buna ihtiyacı varsa.",
+  "report.json": "Tamamı, destek ekibinin okuduğu hâliyle",
+  "report.save": "Dosya olarak kaydet",
+  "report.write": "Destek ekibine yaz",
+  "report.link": "Destek ekibi için bağlantı oluştur",
+  "report.saved": "Kaydedildi.",
+  "report.written": "Rapor kopyalandı: mesajına yapıştır.",
+  "report.linked": "Bağlantı kopyalandı. Bir hafta sonra çalışmayı bırakır; daha önce bağlantıların arasından durdurabilirsin.",
+  "report.refused": "Kuruluşunun kuralları bu raporu bu cihazda tutuyor.",
+  "report.failed": "Olmadı. Yeniden dene ya da dosya olarak kaydet.",
+  "report.fileName": "rapor-{date}",
+  "report.subject": "{name} {version}: bir sorun",
+  "report.mailBody": "Rapor panonda: buraya yapıştır.",
+  "report.slow": "Uzun mu sürüyor?",
+  "report.stage.choose": "Beyin seçiliyor",
+  "report.stage.prepare": "İsteğin hazırlanıyor",
+  "report.stage.read": "Paylaştığın dosyalar okunuyor",
+  "report.stage.key": "{brain} için anahtarın okunuyor",
+  "report.stage.ask": "{brain} bekleniyor",
+  "report.stage.hook": "Bekleniyor: {name}",
+  "report.stage.check": "Bir denetim bekleniyor",
+  "report.stage.receipt": "Bu ayın sınırı denetleniyor",
+  "report.stage.compact": "Şimdiye kadarki iş özetleniyor",
+  "report.unsent.held": "Gönderilmedi: son isteğin hâlâ sürüyor.",
+  "report.unsent.unreached": "Gönderilmedi: isteğin ulaşmadı.",
+  "report.unsent.loading": "Gönderilmedi: mesajları gönderen kısım hâlâ yükleniyor.",
+  "report.unsent.unloaded": "Gönderilmedi: mesajları gönderen kısım yüklenmedi.",
+  "report.take": "Rapor aç",
+  "report.takeIntro": "Birinin sana gönderdiği rapor temsili bir kopyaya dönüşür: aynı kurulum, aynı uzunlukta dolgu sözcükleriyle, yeni bir profilde geri yüklenmek üzere.",
+  "report.paste": "Raporu ya da bağlantısının gösterdiği sayfayı yapıştır",
+  "report.pick": "Dosya seç",
+  "report.notReport": "Bu bir rapor değil.",
+  "report.standIn": "Temsili kopyayı kaydet",
+  "report.standInName": "temsili-kopya-{date}",
+  "report.standInSaved": "Kaydedildi. “Verilerin” bölümünden yeni bir profilde geri yükle. İçinde olmayanlar: {missing}.",
+  "report.missing.keys": "anahtarlar ve hesaplar",
+  "report.missing.files": "paylaşılan dosyalar ve klasörler",
+  "report.missing.routines": "uzantılar, rutinler ve hazır beceriler",
+  "report.missing.own": "gönderenin kendi hizmetleri ve adresleri",
+  "report.missing.device": "bu cihazın kendi seçimleri, örneğin aylık sınır",
+  "report.missing.browser": "tarayıcı ve sistemi",
+  "report.missing.policy": "kuruluşun kuralları"
+}

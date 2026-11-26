@@ -1,0 +1,80 @@
+{
+  "report.title": "Ba da rahoton matsala",
+  "report.intro": "Masu tallafi za su sami abin da ake yi da tsawon lokacin da kowane mataki ya ɗauka, sigar, burauzarka da saitunanka. Babu ɗaya daga cikin kalmominka, fayilolinka, sunaye ko makullanka da ke tafiya tare da shi.",
+  "report.row.version": "Siga",
+  "report.row.browser": "Burauza",
+  "report.row.where": "Ana yi",
+  "report.row.brains": "Ƙwaƙwalwa",
+  "report.row.context": "A kunne",
+  "report.row.task": "Wannan ɗawainiya",
+  "report.row.log": "Gargaɗi da kurakurai",
+  "report.count.capabilities": {
+    "one": "iyawa {count}",
+    "other": "iyawa {count}"
+  },
+  "report.count.connections": {
+    "one": "haɗi {count}",
+    "other": "haɗe-haɗe {count}"
+  },
+  "report.count.extensions": {
+    "one": "ƙari {count}",
+    "other": "ƙare-ƙare {count}"
+  },
+  "report.count.skills": {
+    "one": "ƙwarewa {count}",
+    "other": "ƙwarewa {count}"
+  },
+  "report.count.records": {
+    "one": "mataki {count} da aka ajiye",
+    "other": "matakai {count} da aka ajiye"
+  },
+  "report.count.lines": {
+    "one": "layi {count}",
+    "other": "layuka {count}"
+  },
+  "report.none": "Babu",
+  "report.idle": "Babu abin da ake yi",
+  "report.words": "Saka kalmomin wannan ɗawainiya",
+  "report.wordsHint": "Sai idan masu tallafi suna buƙatar su don ganin abin da ya lalace.",
+  "report.json": "Duka, yadda masu tallafi ke karanta shi",
+  "report.save": "Ajiye a matsayin fayil",
+  "report.write": "Rubuta wa masu tallafi",
+  "report.link": "Ƙirƙiri hanyar haɗi don masu tallafi",
+  "report.saved": "An ajiye.",
+  "report.written": "An kwafi rahoton: liƙa shi a cikin saƙonka.",
+  "report.linked": "An kwafi hanyar haɗin. Za ta daina aiki bayan mako guda, kuma za ka iya dakatar da ita kafin hakan daga cikin hanyoyin haɗinka.",
+  "report.refused": "Dokokin ƙungiyarka sun ajiye wannan rahoton a wannan na'urar.",
+  "report.failed": "Hakan bai yi aiki ba. Sake gwadawa, ko ajiye shi a matsayin fayil.",
+  "report.fileName": "rahoto-{date}",
+  "report.subject": "{name} {version}: matsala",
+  "report.mailBody": "Rahoton yana kan allon kwafinka: liƙa shi a nan.",
+  "report.slow": "Yana ɗaukar lokaci?",
+  "report.stage.choose": "Ana zaɓar ƙwaƙwalwa",
+  "report.stage.prepare": "Ana shirya buƙatarka",
+  "report.stage.read": "Ana karanta fayilolin da ka raba",
+  "report.stage.key": "Ana karanta makullinka na {brain}",
+  "report.stage.ask": "Ana jiran {brain}",
+  "report.stage.hook": "Ana jiran {name}",
+  "report.stage.check": "Ana jiran bincike",
+  "report.stage.receipt": "Ana duba iyakar wannan wata",
+  "report.stage.compact": "Ana taƙaita ɗawainiyar zuwa yanzu",
+  "report.unsent.held": "Ba a aika ba: buƙatarka ta ƙarshe har yanzu ana kanta.",
+  "report.unsent.unreached": "Ba a aika ba: buƙatarka ba ta isa ba.",
+  "report.unsent.loading": "Ba a aika ba: abin da ke aika shi har yanzu yana lodawa.",
+  "report.unsent.unloaded": "Ba a aika ba: abin da ke aika shi bai loda ba.",
+  "report.take": "Buɗe rahoto",
+  "report.takeIntro": "Rahoton da wani ya aiko maka zai zama kwafin maye: tsari iri ɗaya, da kalmomin cike gurbi masu tsawo iri ɗaya, don maidowa a cikin sabon bayanin martaba.",
+  "report.paste": "Liƙa rahoton, ko shafin da hanyar haɗinsa ke nunawa",
+  "report.pick": "Zaɓi fayil",
+  "report.notReport": "Wannan ba rahoto ba ne.",
+  "report.standIn": "Ajiye kwafin maye",
+  "report.standInName": "kwafin-maye-{date}",
+  "report.standInSaved": "An ajiye. Maido da shi a cikin sabon bayanin martaba, daga Bayananka. Babu a ciki: {missing}.",
+  "report.missing.keys": "makullai da asusu",
+  "report.missing.files": "fayiloli da manyan fayiloli da aka raba",
+  "report.missing.routines": "ƙare-ƙare, ayyukan lokaci-lokaci da ƙwarewar da ke a shirye",
+  "report.missing.own": "ayyuka da adiresoshin mai aikawa na kansa",
+  "report.missing.device": "zaɓuɓɓukan wannan na'urar na kanta, kamar iyakar wata",
+  "report.missing.browser": "burauzar da tsarinta",
+  "report.missing.policy": "dokokin ƙungiyar"
+}

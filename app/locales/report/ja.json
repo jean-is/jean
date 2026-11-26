@@ -1,0 +1,74 @@
+{
+  "report.title": "問題を報告",
+  "report.intro": "サポートに届くのは、進行中だった処理と各ステップにかかった時間、バージョン、ブラウザー、設定です。あなたの文章、ファイル、名前、キーは一切含まれません。",
+  "report.row.version": "バージョン",
+  "report.row.browser": "ブラウザー",
+  "report.row.where": "進行中",
+  "report.row.brains": "頭脳",
+  "report.row.context": "オンにしているもの",
+  "report.row.task": "このタスク",
+  "report.row.log": "警告とエラー",
+  "report.count.capabilities": {
+    "other": "機能 {count} 個"
+  },
+  "report.count.connections": {
+    "other": "接続 {count} 件"
+  },
+  "report.count.extensions": {
+    "other": "拡張機能 {count} 個"
+  },
+  "report.count.skills": {
+    "other": "スキル {count} 個"
+  },
+  "report.count.records": {
+    "other": "保存済みのステップ {count} 件"
+  },
+  "report.count.lines": {
+    "other": "{count} 行"
+  },
+  "report.none": "なし",
+  "report.idle": "進行中の処理はありません",
+  "report.words": "このタスクの文章を含める",
+  "report.wordsHint": "何がうまくいかなかったのかを見るためにサポートが必要とする場合だけにしてください。",
+  "report.json": "サポートが読む形式の全内容",
+  "report.save": "ファイルとして保存",
+  "report.write": "サポートに連絡",
+  "report.link": "サポート用のリンクを作成",
+  "report.saved": "保存しました。",
+  "report.written": "レポートをコピーしました。メッセージに貼り付けてください。",
+  "report.linked": "リンクをコピーしました。1 週間で使えなくなります。リンクの一覧から、それより早く止めることもできます。",
+  "report.refused": "組織のルールにより、このレポートはこの端末から出せません。",
+  "report.failed": "うまくいきませんでした。もう一度試すか、ファイルとして保存してください。",
+  "report.fileName": "report-{date}",
+  "report.subject": "{name} {version}：問題の報告",
+  "report.mailBody": "レポートはクリップボードにあります。ここに貼り付けてください。",
+  "report.slow": "時間がかかっていますか？",
+  "report.stage.choose": "頭脳を選んでいます",
+  "report.stage.prepare": "依頼を準備しています",
+  "report.stage.read": "共有されたファイルを読んでいます",
+  "report.stage.key": "{brain} のキーを読み込んでいます",
+  "report.stage.ask": "{brain} の応答を待っています",
+  "report.stage.hook": "{name} を待っています",
+  "report.stage.check": "確認を待っています",
+  "report.stage.receipt": "今月の上限を確認しています",
+  "report.stage.compact": "ここまでのタスクを要約しています",
+  "report.unsent.held": "未送信：前の依頼がまだ進行中です。",
+  "report.unsent.unreached": "未送信：依頼が届きませんでした。",
+  "report.unsent.loading": "未送信：送信する仕組みをまだ読み込んでいます。",
+  "report.unsent.unloaded": "未送信：送信する仕組みを読み込めませんでした。",
+  "report.take": "レポートを開く",
+  "report.takeIntro": "受け取ったレポートから再現用コピーを作ります。設定は同じで、言葉だけを同じ長さのダミーに置き換えたものです。新しいプロフィールに復元して使います。",
+  "report.paste": "レポート、またはそのリンクで開くページを貼り付けてください",
+  "report.pick": "ファイルを選ぶ",
+  "report.notReport": "これはレポートではありません。",
+  "report.standIn": "再現用コピーを保存",
+  "report.standInName": "stand-in-{date}",
+  "report.standInSaved": "保存しました。「あなたのデータ」から新しいプロフィールに復元してください。含まれないもの：{missing}。",
+  "report.missing.keys": "キーとアカウント",
+  "report.missing.files": "共有されたファイルとフォルダー",
+  "report.missing.routines": "拡張機能、ルーティン、すぐ使えるスキル",
+  "report.missing.own": "送信者独自のサービスとアドレス",
+  "report.missing.device": "この端末だけの設定（月の上限など）",
+  "report.missing.browser": "ブラウザーとそのシステム",
+  "report.missing.policy": "組織のルール"
+}

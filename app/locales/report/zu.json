@@ -1,0 +1,80 @@
+{
+  "report.title": "Bika inkinga",
+  "report.intro": "Abasekeli bathola okwakuqhubeka nesikhathi isinyathelo ngasinye esasithatha, inguqulo, isiphequluli sakho nezilungiselelo zakho. Akuhambi nalutho lwamazwi akho, amafayela akho, amagama noma okhiye bakho.",
+  "report.row.version": "Inguqulo",
+  "report.row.browser": "Isiphequluli",
+  "report.row.where": "Okuqhubekayo",
+  "report.row.brains": "Izingqondo",
+  "report.row.context": "Okuvuliwe",
+  "report.row.task": "Lo msebenzi",
+  "report.row.log": "Izexwayiso namaphutha",
+  "report.count.capabilities": {
+    "one": "amandla {count}",
+    "other": "amandla {count}"
+  },
+  "report.count.connections": {
+    "one": "isixhumano {count}",
+    "other": "izixhumano {count}"
+  },
+  "report.count.extensions": {
+    "one": "isengezo {count}",
+    "other": "izengezo {count}"
+  },
+  "report.count.skills": {
+    "one": "ikhono {count}",
+    "other": "amakhono {count}"
+  },
+  "report.count.records": {
+    "one": "isinyathelo {count} esigciniwe",
+    "other": "izinyathelo {count} ezigciniwe"
+  },
+  "report.count.lines": {
+    "one": "umugqa {count}",
+    "other": "imigqa {count}"
+  },
+  "report.none": "Lutho",
+  "report.idle": "Akukho okuqhubekayo",
+  "report.words": "Faka amazwi alo msebenzi",
+  "report.wordsHint": "Kuphela uma abasekeli bewadinga ukuze babone ukuthi yini engahambanga kahle.",
+  "report.json": "Konke, njengoba abasekeli bekufunda",
+  "report.save": "Londoloza njengefayela",
+  "report.write": "Bhalela abasekeli",
+  "report.link": "Yenza isixhumanisi sabasekeli",
+  "report.saved": "Kulondoloziwe.",
+  "report.written": "Umbiko ukopishiwe: wunamathisele emlayezweni wakho.",
+  "report.linked": "Isixhumanisi sikopishiwe. Siyayeka ukusebenza ngemva kwesonto, futhi ungasimisa ngaphambi kwalokho phakathi kwezixhumanisi zakho.",
+  "report.refused": "Imithetho yenhlangano yakho igcina lo mbiko kule divayisi.",
+  "report.failed": "Lokho akusebenzanga. Zama futhi, noma uwulondoloze njengefayela.",
+  "report.fileName": "umbiko-{date}",
+  "report.subject": "{name} {version}: inkinga",
+  "report.mailBody": "Umbiko usebhodini lokunamathisela: wunamathisele lapha.",
+  "report.slow": "Kuthatha isikhathi eside?",
+  "report.stage.choose": "Kukhethwa ingqondo",
+  "report.stage.prepare": "Kulungiswa isicelo sakho",
+  "report.stage.read": "Kufundwa amafayela owabelane ngawo",
+  "report.stage.key": "Kufundwa ukhiye wakho wengqondo: {brain}",
+  "report.stage.ask": "Kulindwe ingqondo: {brain}",
+  "report.stage.hook": "Kulindwe: {name}",
+  "report.stage.check": "Kulindwe ukuhlola",
+  "report.stage.receipt": "Kuhlolwa umkhawulo wale nyanga",
+  "report.stage.compact": "Kufingqwa umsebenzi kuze kube manje",
+  "report.unsent.held": "Akuthunyelwanga: isicelo sakho sokugcina sisaqhubeka.",
+  "report.unsent.unreached": "Akuthunyelwanga: isicelo sakho asifikanga.",
+  "report.unsent.loading": "Akuthunyelwanga: okuthumelayo kusalayisha.",
+  "report.unsent.unloaded": "Akuthunyelwanga: okuthumelayo akulayishanga.",
+  "report.take": "Vula umbiko",
+  "report.takeIntro": "Umbiko othunyelwe kuwe ngomunye umuntu uba yisimeli: ukusetha okufanayo, namagama okugcwalisa anobude obufanayo, okubuyiselwa kuphrofayela entsha.",
+  "report.paste": "Namathisela umbiko, noma ikhasi elikhonjiswa yisixhumanisi sawo",
+  "report.pick": "Khetha ifayela",
+  "report.notReport": "Lokhu akuwona umbiko.",
+  "report.standIn": "Londoloza isimeli",
+  "report.standInName": "isimeli-{date}",
+  "report.standInSaved": "Kulondoloziwe. Sibuyisele kuphrofayela entsha, kokuthi Idatha yakho. Akukho kuso: {missing}.",
+  "report.missing.keys": "okhiye nama-akhawunti",
+  "report.missing.files": "amafayela namafolda okwabelwana ngawo",
+  "report.missing.routines": "izengezo, izimiso namakhono alungile",
+  "report.missing.own": "amasevisi namakheli omthumeli uqobo",
+  "report.missing.device": "ukukhetha kwale divayisi uqobo, njengomkhawulo wenyanga",
+  "report.missing.browser": "isiphequluli nesistimu yaso",
+  "report.missing.policy": "imithetho yenhlangano"
+}

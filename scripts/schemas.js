@@ -17,6 +17,7 @@ const ADDRESS = '^(https|wss)://|^(http|ws)://(localhost|127\\.0\\.0\\.1|\\[::1\
 const DEFS = {
   address: { type: 'string', pattern: ADDRESS, description: 'An address: HTTPS, or HTTP on this computer' },
   link: { type: 'string', pattern: `^$|^(?![A-Za-z][A-Za-z\\d+.-]*:)|${ADDRESS}`, description: 'An address, a path beside index.html, or "" for none' },
+  contact: { type: 'string', pattern: `^$|^mailto:[^@\\s/?]+@[\\w.-]+\\.[A-Za-z]{2,}$|^(?![A-Za-z][A-Za-z\\d+.-]*:)|${ADDRESS}`, description: 'Where reports go to support: a mail address as mailto:…, an address, a path beside index.html, or "" for none' },
   capability: { type: 'string', description: 'A capability, as capabilities.json beside index.html lists them' },
   locale: { enum: LOCALES },
   colour: { type: 'string', pattern: '^#[0-9A-Fa-f]{6}$' },

@@ -157,6 +157,8 @@
   "settings.listen": "Meghallgatás",
   "settings.version": "{name} {version} ({date})",
   "settings.checkVersion": "Új verzió keresése",
+  "settings.report": "Probléma bejelentése",
+  "settings.openReport": "Jelentés megnyitása",
   "settings.checking": "Keresés…",
   "settings.newest": "Ez a legújabb verzió.",
   "settings.sample": "Szia! Így fognak szólni a válaszaid felolvasva.",

@@ -1,0 +1,80 @@
+{
+  "report.title": "Rapportera ett problem",
+  "report.intro": "Supporten får det som pågick och hur lång tid varje steg tog, versionen, din webbläsare och dina inställningar. Inga av dina ord, filer, namn eller nycklar följer med.",
+  "report.row.version": "Version",
+  "report.row.browser": "Webbläsare",
+  "report.row.where": "Pågår",
+  "report.row.brains": "Hjärnor",
+  "report.row.context": "Påslaget",
+  "report.row.task": "Den här uppgiften",
+  "report.row.log": "Varningar och fel",
+  "report.count.capabilities": {
+    "one": "{count} förmåga",
+    "other": "{count} förmågor"
+  },
+  "report.count.connections": {
+    "one": "{count} anslutning",
+    "other": "{count} anslutningar"
+  },
+  "report.count.extensions": {
+    "one": "{count} tillägg",
+    "other": "{count} tillägg"
+  },
+  "report.count.skills": {
+    "one": "{count} färdighet",
+    "other": "{count} färdigheter"
+  },
+  "report.count.records": {
+    "one": "{count} steg sparat",
+    "other": "{count} steg sparade"
+  },
+  "report.count.lines": {
+    "one": "{count} rad",
+    "other": "{count} rader"
+  },
+  "report.none": "Ingen",
+  "report.idle": "Inget pågår",
+  "report.words": "Ta med den här uppgiftens ord",
+  "report.wordsHint": "Bara om supporten behöver dem för att se vad som gick fel.",
+  "report.json": "Allt, som supporten läser det",
+  "report.save": "Spara som fil",
+  "report.write": "Skriv till supporten",
+  "report.link": "Skapa en länk till supporten",
+  "report.saved": "Sparat.",
+  "report.written": "Rapporten är kopierad: klistra in den i ditt meddelande.",
+  "report.linked": "Länken är kopierad. Den slutar fungera efter en vecka, och du kan stoppa den tidigare bland dina länkar.",
+  "report.refused": "Din organisations regler håller kvar den här rapporten på den här enheten.",
+  "report.failed": "Det fungerade inte. Försök igen, eller spara den som fil.",
+  "report.fileName": "rapport-{date}",
+  "report.subject": "{name} {version}: ett problem",
+  "report.mailBody": "Rapporten finns i urklippet: klistra in den här.",
+  "report.slow": "Tar det lång tid?",
+  "report.stage.choose": "Väljer en hjärna",
+  "report.stage.prepare": "Gör i ordning din förfrågan",
+  "report.stage.read": "Läser filerna du delade",
+  "report.stage.key": "Läser din nyckel för {brain}",
+  "report.stage.ask": "Väntar på {brain}",
+  "report.stage.hook": "Väntar på {name}",
+  "report.stage.check": "Väntar på en kontroll",
+  "report.stage.receipt": "Kontrollerar den här månadens gräns",
+  "report.stage.compact": "Sammanfattar uppgiften hittills",
+  "report.unsent.held": "Inte skickat: din förra förfrågan pågår fortfarande.",
+  "report.unsent.unreached": "Inte skickat: din förfrågan kom inte fram.",
+  "report.unsent.loading": "Inte skickat: det som skickar det laddas fortfarande.",
+  "report.unsent.unloaded": "Inte skickat: det som skickar det laddades inte.",
+  "report.take": "Öppna en rapport",
+  "report.takeIntro": "En rapport som någon har skickat dig blir en attrapp: samma inställningar, med utfyllnadsord av samma längd, att återställa i en ny profil.",
+  "report.paste": "Klistra in rapporten, eller sidan som dess länk visar",
+  "report.pick": "Välj en fil",
+  "report.notReport": "Det här är ingen rapport.",
+  "report.standIn": "Spara attrappen",
+  "report.standInName": "attrapp-{date}",
+  "report.standInSaved": "Sparad. Återställ den i en ny profil, från Dina data. Ingår inte: {missing}.",
+  "report.missing.keys": "nycklar och konton",
+  "report.missing.files": "delade filer och mappar",
+  "report.missing.routines": "tillägg, rutiner och färdiga färdigheter",
+  "report.missing.own": "avsändarens egna tjänster och adresser",
+  "report.missing.device": "den här enhetens egna val, som månadsgränsen",
+  "report.missing.browser": "webbläsaren och dess system",
+  "report.missing.policy": "organisationens regler"
+}

@@ -1,0 +1,74 @@
+{
+  "report.title": "Laporkan masalah",
+  "report.intro": "Pasukan sokongan menerima apa yang sedang berjalan dan tempoh setiap langkah, versi, pelayar dan tetapan anda. Tiada perkataan, fail, nama atau kunci anda yang ikut sama.",
+  "report.row.version": "Versi",
+  "report.row.browser": "Pelayar",
+  "report.row.where": "Sedang berjalan",
+  "report.row.brains": "Otak",
+  "report.row.context": "Dihidupkan",
+  "report.row.task": "Tugasan ini",
+  "report.row.log": "Amaran dan ralat",
+  "report.count.capabilities": {
+    "other": "{count} keupayaan"
+  },
+  "report.count.connections": {
+    "other": "{count} sambungan"
+  },
+  "report.count.extensions": {
+    "other": "{count} pemalam"
+  },
+  "report.count.skills": {
+    "other": "{count} kemahiran"
+  },
+  "report.count.records": {
+    "other": "{count} langkah disimpan"
+  },
+  "report.count.lines": {
+    "other": "{count} baris"
+  },
+  "report.none": "Tiada",
+  "report.idle": "Tiada apa yang sedang berjalan",
+  "report.words": "Sertakan perkataan tugasan ini",
+  "report.wordsHint": "Hanya jika pasukan sokongan memerlukannya untuk melihat apa yang tidak kena.",
+  "report.json": "Semuanya, seperti yang dibaca oleh pasukan sokongan",
+  "report.save": "Simpan sebagai fail",
+  "report.write": "Tulis kepada pasukan sokongan",
+  "report.link": "Buat pautan untuk pasukan sokongan",
+  "report.saved": "Disimpan.",
+  "report.written": "Laporan telah disalin: tampalkannya dalam mesej anda.",
+  "report.linked": "Pautan disalin. Pautan ini berhenti berfungsi selepas seminggu, dan anda boleh menghentikannya lebih awal dalam senarai pautan anda.",
+  "report.refused": "Peraturan organisasi anda mengekalkan laporan ini pada peranti ini.",
+  "report.failed": "Itu tidak berjaya. Cuba lagi, atau simpan sebagai fail.",
+  "report.fileName": "laporan-{date}",
+  "report.subject": "{name} {version}: ada masalah",
+  "report.mailBody": "Laporan ada dalam papan keratan anda: tampalkannya di sini.",
+  "report.slow": "Terlalu lama?",
+  "report.stage.choose": "Memilih otak",
+  "report.stage.prepare": "Menyediakan permintaan anda",
+  "report.stage.read": "Membaca fail yang anda kongsi",
+  "report.stage.key": "Membaca kunci anda untuk {brain}",
+  "report.stage.ask": "Menunggu {brain}",
+  "report.stage.hook": "Menunggu {name}",
+  "report.stage.check": "Menunggu semakan",
+  "report.stage.receipt": "Menyemak had bulan ini",
+  "report.stage.compact": "Meringkaskan tugasan setakat ini",
+  "report.unsent.held": "Tidak dihantar: permintaan terakhir anda masih berjalan.",
+  "report.unsent.unreached": "Tidak dihantar: permintaan anda tidak sampai.",
+  "report.unsent.loading": "Tidak dihantar: bahagian yang menghantarnya masih dimuatkan.",
+  "report.unsent.unloaded": "Tidak dihantar: bahagian yang menghantarnya gagal dimuatkan.",
+  "report.take": "Buka laporan",
+  "report.takeIntro": "Laporan yang dihantar seseorang kepada anda menjadi salinan pengganti: persediaan yang sama, dengan perkataan pengisi yang sama panjang, untuk dipulihkan dalam profil baharu.",
+  "report.paste": "Tampal laporan, atau halaman yang ditunjukkan oleh pautannya",
+  "report.pick": "Pilih fail",
+  "report.notReport": "Ini bukan laporan.",
+  "report.standIn": "Simpan salinan pengganti",
+  "report.standInName": "salinan-pengganti-{date}",
+  "report.standInSaved": "Disimpan. Pulihkannya dalam profil baharu, daripada Data anda. Tiada di dalamnya: {missing}.",
+  "report.missing.keys": "kunci dan akaun",
+  "report.missing.files": "fail dan folder yang dikongsi",
+  "report.missing.routines": "pemalam, rutin dan kemahiran sedia ada",
+  "report.missing.own": "perkhidmatan dan alamat pengirim sendiri",
+  "report.missing.device": "pilihan khusus peranti ini, seperti had bulanan",
+  "report.missing.browser": "pelayar dan sistemnya",
+  "report.missing.policy": "peraturan organisasi"
+}

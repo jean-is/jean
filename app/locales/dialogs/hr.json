@@ -159,6 +159,8 @@
   "settings.listen": "Poslušaj",
   "settings.version": "{name} {version} od {date}",
   "settings.checkVersion": "Potraži novu verziju",
+  "settings.report": "Prijavi problem",
+  "settings.openReport": "Otvori izvješće",
   "settings.checking": "Traženje nove verzije…",
   "settings.newest": "Ovo je najnovija verzija.",
   "settings.sample": "Pozdrav! Ovako će zvučati vaši odgovori kad se čitaju naglas.",

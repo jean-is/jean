@@ -155,6 +155,8 @@
   "settings.listen": "Nghe thử",
   "settings.version": "{name} {version} ({date})",
   "settings.checkVersion": "Kiểm tra phiên bản mới",
+  "settings.report": "Báo cáo sự cố",
+  "settings.openReport": "Mở báo cáo",
   "settings.checking": "Đang tìm phiên bản mới…",
   "settings.newest": "Đây là phiên bản mới nhất.",
   "settings.sample": "Xin chào! Câu trả lời của bạn sẽ nghe như thế này khi được đọc thành tiếng.",

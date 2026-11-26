@@ -159,6 +159,8 @@
   "settings.listen": "Ouvir",
   "settings.version": "{name} {version}, de {date}",
   "settings.checkVersion": "Procurar uma nova versão",
+  "settings.report": "Comunicar um problema",
+  "settings.openReport": "Abrir um relatório",
   "settings.checking": "A procurar uma nova versão…",
   "settings.newest": "Esta é a versão mais recente.",
   "settings.sample": "Olá! É assim que as tuas respostas vão soar quando forem lidas em voz alta.",

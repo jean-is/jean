@@ -165,6 +165,8 @@
   "settings.listen": "استمع",
   "settings.version": "{name} {version}، بتاريخ {date}",
   "settings.checkVersion": "البحث عن إصدار جديد",
+  "settings.report": "الإبلاغ عن مشكلة",
+  "settings.openReport": "فتح تقرير",
   "settings.checking": "جارٍ البحث عن إصدار جديد…",
   "settings.newest": "هذا هو أحدث إصدار.",
   "settings.sample": "مرحبًا! هكذا ستبدو إجاباتك عندما تُقرأ بصوت عالٍ.",

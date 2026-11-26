@@ -1,0 +1,80 @@
+{
+  "report.title": "مسئلے کی اطلاع دیں",
+  "report.intro": "سپورٹ ٹیم کو یہ ملتا ہے کہ کیا جاری تھا اور ہر مرحلے میں کتنا وقت لگا، ورژن، آپ کا براؤزر اور آپ کی ترتیبات۔ آپ کے الفاظ، فائلیں، نام یا کلیدیں اس کے ساتھ نہیں جاتیں۔",
+  "report.row.version": "ورژن",
+  "report.row.browser": "براؤزر",
+  "report.row.where": "جاری",
+  "report.row.brains": "دماغ",
+  "report.row.context": "آن کیے گئے",
+  "report.row.task": "یہ کام",
+  "report.row.log": "انتباہات اور خرابیاں",
+  "report.count.capabilities": {
+    "one": "{count} صلاحیت",
+    "other": "{count} صلاحیتیں"
+  },
+  "report.count.connections": {
+    "one": "{count} کنکشن",
+    "other": "{count} کنکشنز"
+  },
+  "report.count.extensions": {
+    "one": "{count} توسیع",
+    "other": "{count} توسیعات"
+  },
+  "report.count.skills": {
+    "one": "{count} مہارت",
+    "other": "{count} مہارتیں"
+  },
+  "report.count.records": {
+    "one": "{count} محفوظ مرحلہ",
+    "other": "{count} محفوظ مراحل"
+  },
+  "report.count.lines": {
+    "one": "{count} لائن",
+    "other": "{count} لائنیں"
+  },
+  "report.none": "کوئی نہیں",
+  "report.idle": "کچھ جاری نہیں",
+  "report.words": "اس کام کے الفاظ شامل کریں",
+  "report.wordsHint": "صرف اس صورت میں جب سپورٹ ٹیم کو یہ دیکھنے کے لیے ان کی ضرورت ہو کہ کیا غلط ہوا۔",
+  "report.json": "سب کچھ، جیسے سپورٹ ٹیم اسے پڑھتی ہے",
+  "report.save": "فائل کے طور پر محفوظ کریں",
+  "report.write": "سپورٹ ٹیم کو لکھیں",
+  "report.link": "سپورٹ ٹیم کے لیے لنک بنائیں",
+  "report.saved": "محفوظ ہو گیا۔",
+  "report.written": "رپورٹ کاپی ہو گئی: اسے اپنے پیغام میں پیسٹ کریں۔",
+  "report.linked": "لنک کاپی ہو گیا۔ یہ ایک ہفتے بعد کام کرنا بند کر دیتا ہے، اور آپ اسے اپنے لنکس میں سے پہلے بھی بند کر سکتے ہیں۔",
+  "report.refused": "آپ کے ادارے کے اصول اس رپورٹ کو اسی آلے پر رکھتے ہیں۔",
+  "report.failed": "یہ نہیں ہو سکا۔ دوبارہ کوشش کریں، یا اسے فائل کے طور پر محفوظ کریں۔",
+  "report.fileName": "report-{date}",
+  "report.subject": "{name} {version}: ایک مسئلہ",
+  "report.mailBody": "رپورٹ آپ کے کلپ بورڈ پر ہے: اسے یہاں پیسٹ کریں۔",
+  "report.slow": "دیر لگ رہی ہے؟",
+  "report.stage.choose": "دماغ چنا جا رہا ہے",
+  "report.stage.prepare": "آپ کی درخواست تیار کی جا رہی ہے",
+  "report.stage.read": "آپ کی شیئر کی گئی فائلیں پڑھی جا رہی ہیں",
+  "report.stage.key": "{brain} کے لیے آپ کی کلید پڑھی جا رہی ہے",
+  "report.stage.ask": "{brain} کا انتظار ہے",
+  "report.stage.hook": "{name} کا انتظار ہے",
+  "report.stage.check": "ایک جانچ کا انتظار ہے",
+  "report.stage.receipt": "اس مہینے کی حد جانچی جا رہی ہے",
+  "report.stage.compact": "اب تک کے کام کا خلاصہ بنایا جا رہا ہے",
+  "report.unsent.held": "نہیں بھیجا گیا: آپ کی پچھلی درخواست ابھی جاری ہے۔",
+  "report.unsent.unreached": "نہیں بھیجا گیا: آپ کی درخواست نہیں پہنچی۔",
+  "report.unsent.loading": "نہیں بھیجا گیا: بھیجنے والا حصہ ابھی لوڈ ہو رہا ہے۔",
+  "report.unsent.unloaded": "نہیں بھیجا گیا: بھیجنے والا حصہ لوڈ نہیں ہوا۔",
+  "report.take": "رپورٹ کھولیں",
+  "report.takeIntro": "کسی کی بھیجی ہوئی رپورٹ ایک متبادل نقل بن جاتی ہے: وہی سیٹ اپ، اسی لمبائی کے فرضی الفاظ کے ساتھ، کسی نئے پروفائل میں بحال کرنے کے لیے۔",
+  "report.paste": "رپورٹ پیسٹ کریں، یا وہ صفحہ جو اس کا لنک دکھاتا ہے",
+  "report.pick": "فائل منتخب کریں",
+  "report.notReport": "یہ رپورٹ نہیں ہے۔",
+  "report.standIn": "متبادل نقل محفوظ کریں",
+  "report.standInName": "stand-in-{date}",
+  "report.standInSaved": "محفوظ ہو گئی۔ اسے کسی نئے پروفائل میں آپ کا ڈیٹا سے بحال کریں۔ اس میں شامل نہیں: {missing}۔",
+  "report.missing.keys": "کلیدیں اور اکاؤنٹس",
+  "report.missing.files": "شیئر کی گئی فائلیں اور فولڈر",
+  "report.missing.routines": "توسیعات، معمولات اور تیار مہارتیں",
+  "report.missing.own": "بھیجنے والے کی اپنی سروسز اور پتے",
+  "report.missing.device": "اس آلے کے اپنے انتخاب، جیسے ماہانہ حد",
+  "report.missing.browser": "براؤزر اور اس کا سسٹم",
+  "report.missing.policy": "ادارے کے اصول"
+}

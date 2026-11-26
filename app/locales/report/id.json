@@ -1,0 +1,74 @@
+{
+  "report.title": "Laporkan masalah",
+  "report.intro": "Tim dukungan menerima apa yang sedang berjalan dan berapa lama setiap langkah, versi, browser, dan pengaturan Anda. Tidak ada kata-kata, file, nama, atau kunci Anda yang ikut terkirim.",
+  "report.row.version": "Versi",
+  "report.row.browser": "Browser",
+  "report.row.where": "Sedang berjalan",
+  "report.row.brains": "Otak",
+  "report.row.context": "Aktif",
+  "report.row.task": "Tugas ini",
+  "report.row.log": "Peringatan dan kesalahan",
+  "report.count.capabilities": {
+    "other": "{count} kemampuan"
+  },
+  "report.count.connections": {
+    "other": "{count} koneksi"
+  },
+  "report.count.extensions": {
+    "other": "{count} ekstensi"
+  },
+  "report.count.skills": {
+    "other": "{count} keterampilan"
+  },
+  "report.count.records": {
+    "other": "{count} langkah tersimpan"
+  },
+  "report.count.lines": {
+    "other": "{count} baris"
+  },
+  "report.none": "Tidak ada",
+  "report.idle": "Tidak ada yang sedang berjalan",
+  "report.words": "Sertakan kata-kata tugas ini",
+  "report.wordsHint": "Hanya jika tim dukungan membutuhkannya untuk melihat apa yang salah.",
+  "report.json": "Semuanya, seperti yang dibaca tim dukungan",
+  "report.save": "Simpan sebagai file",
+  "report.write": "Tulis ke tim dukungan",
+  "report.link": "Buat tautan untuk tim dukungan",
+  "report.saved": "Tersimpan.",
+  "report.written": "Laporan disalin: tempelkan ke pesan Anda.",
+  "report.linked": "Tautan disalin. Tautan ini berhenti berfungsi setelah seminggu, dan Anda bisa menghentikannya lebih awal di daftar tautan Anda.",
+  "report.refused": "Aturan organisasi Anda menahan laporan ini di perangkat ini.",
+  "report.failed": "Itu tidak berhasil. Coba lagi, atau simpan sebagai file.",
+  "report.fileName": "laporan-{date}",
+  "report.subject": "{name} {version}: ada masalah",
+  "report.mailBody": "Laporan ada di papan klip Anda: tempelkan di sini.",
+  "report.slow": "Terlalu lama?",
+  "report.stage.choose": "Memilih otak",
+  "report.stage.prepare": "Menyiapkan permintaan Anda",
+  "report.stage.read": "Membaca file yang Anda bagikan",
+  "report.stage.key": "Membaca kunci Anda untuk {brain}",
+  "report.stage.ask": "Menunggu {brain}",
+  "report.stage.hook": "Menunggu {name}",
+  "report.stage.check": "Menunggu pemeriksaan",
+  "report.stage.receipt": "Memeriksa batas bulan ini",
+  "report.stage.compact": "Merangkum tugas sejauh ini",
+  "report.unsent.held": "Tidak terkirim: permintaan terakhir Anda masih berjalan.",
+  "report.unsent.unreached": "Tidak terkirim: permintaan Anda tidak sampai.",
+  "report.unsent.loading": "Tidak terkirim: bagian yang mengirimnya masih dimuat.",
+  "report.unsent.unloaded": "Tidak terkirim: bagian yang mengirimnya gagal dimuat.",
+  "report.take": "Buka laporan",
+  "report.takeIntro": "Laporan yang dikirim seseorang kepada Anda menjadi salinan pengganti: pengaturan yang sama, dengan kata pengisi yang sama panjang, untuk dipulihkan di profil baru.",
+  "report.paste": "Tempel laporan, atau halaman yang ditampilkan tautannya",
+  "report.pick": "Pilih file",
+  "report.notReport": "Ini bukan laporan.",
+  "report.standIn": "Simpan salinan pengganti",
+  "report.standInName": "salinan-pengganti-{date}",
+  "report.standInSaved": "Tersimpan. Pulihkan di profil baru, dari Data Anda. Tidak termasuk: {missing}.",
+  "report.missing.keys": "kunci dan akun",
+  "report.missing.files": "file dan folder yang dibagikan",
+  "report.missing.routines": "ekstensi, rutinitas, dan keterampilan siap pakai",
+  "report.missing.own": "layanan dan alamat milik pengirim sendiri",
+  "report.missing.device": "pilihan khusus perangkat ini, seperti batas bulanan",
+  "report.missing.browser": "browser dan sistemnya",
+  "report.missing.policy": "aturan organisasi"
+}

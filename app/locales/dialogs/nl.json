@@ -157,6 +157,8 @@
   "settings.listen": "Beluisteren",
   "settings.version": "{name} {version} van {date}",
   "settings.checkVersion": "Zoeken naar een nieuwe versie",
+  "settings.report": "Een probleem melden",
+  "settings.openReport": "Een rapport openen",
   "settings.checking": "Zoeken naar een nieuwe versie…",
   "settings.newest": "Dit is de nieuwste versie.",
   "settings.sample": "Hallo! Zo klinken je antwoorden als ze worden voorgelezen.",

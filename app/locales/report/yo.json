@@ -1,0 +1,74 @@
+{
+  "report.title": "Jábọ̀ ìṣòro kan",
+  "report.intro": "Àwọn olùrànlọ́wọ́ yóò rí ohun tí ń lọ lọ́wọ́ àti bí ìgbésẹ̀ kọ̀ọ̀kan ṣe pẹ́ tó, ẹ̀yà, aṣàwákiri yín àti ètò yín. Kò sí ọ̀rọ̀, fáìlì, orúkọ tàbí kọ́kọ́rọ́ yín kankan tí ó ń bá a lọ.",
+  "report.row.version": "Ẹ̀yà",
+  "report.row.browser": "Aṣàwákiri",
+  "report.row.where": "Ń lọ lọ́wọ́",
+  "report.row.brains": "Ọpọlọ",
+  "report.row.context": "Àwọn tí a tàn",
+  "report.row.task": "Iṣẹ́ yìí",
+  "report.row.log": "Ìkìlọ̀ àti àṣìṣe",
+  "report.count.capabilities": {
+    "other": "agbára {count}"
+  },
+  "report.count.connections": {
+    "other": "ìsopọ̀ {count}"
+  },
+  "report.count.extensions": {
+    "other": "àfikún {count}"
+  },
+  "report.count.skills": {
+    "other": "ọgbọ́n {count}"
+  },
+  "report.count.records": {
+    "other": "ìgbésẹ̀ {count} tí a pa mọ́"
+  },
+  "report.count.lines": {
+    "other": "ìlà {count}"
+  },
+  "report.none": "Kò sí",
+  "report.idle": "Kò sí ohun tí ń lọ lọ́wọ́",
+  "report.words": "Fi ọ̀rọ̀ iṣẹ́ yìí kún un",
+  "report.wordsHint": "Kìkì bí àwọn olùrànlọ́wọ́ bá nílò wọn láti rí ohun tí kò lọ dáadáa.",
+  "report.json": "Gbogbo rẹ̀, bí àwọn olùrànlọ́wọ́ ṣe ń kà á",
+  "report.save": "Fi pamọ́ bí fáìlì",
+  "report.write": "Kọ̀wé sí àwọn olùrànlọ́wọ́",
+  "report.link": "Ṣe ìjápọ̀ fún àwọn olùrànlọ́wọ́",
+  "report.saved": "A ti fi pamọ́.",
+  "report.written": "A ti ṣe ẹ̀dà ìjábọ̀ náà: ẹ lẹ̀ ẹ́ sínú ìfiránṣẹ́ yín.",
+  "report.linked": "A ti ṣe ẹ̀dà ìjápọ̀ náà. Yóò dẹ́kun iṣẹ́ lẹ́yìn ọ̀sẹ̀ kan, ẹ sì lè dá a dúró ṣáájú ìgbà náà láàárín àwọn ìjápọ̀ yín.",
+  "report.refused": "Àwọn òfin àjọ yín ń pa ìjábọ̀ yìí mọ́ sórí ẹ̀rọ yìí.",
+  "report.failed": "Kò ṣiṣẹ́. Ẹ gbìyànjú lẹ́ẹ̀kan sí i, tàbí kí ẹ fi pamọ́ bí fáìlì.",
+  "report.fileName": "ijabo-{date}",
+  "report.subject": "{name} {version}: ìṣòro kan",
+  "report.mailBody": "Ìjábọ̀ náà wà lórí pátákó ẹ̀dà yín: ẹ lẹ̀ ẹ́ síbí.",
+  "report.slow": "Ó ń pẹ́ jù?",
+  "report.stage.choose": "Ó ń yan ọpọlọ",
+  "report.stage.prepare": "Ó ń pèsè ìbéèrè yín sílẹ̀",
+  "report.stage.read": "Ó ń ka àwọn fáìlì tí ẹ pín",
+  "report.stage.key": "Ó ń ka kọ́kọ́rọ́ yín fún {brain}",
+  "report.stage.ask": "Ó ń dúró de {brain}",
+  "report.stage.hook": "Ó ń dúró de {name}",
+  "report.stage.check": "Ó ń dúró de àyẹ̀wò kan",
+  "report.stage.receipt": "Ó ń ṣàyẹ̀wò ààlà oṣù yìí",
+  "report.stage.compact": "Ó ń ṣe àkópọ̀ iṣẹ́ náà títí di ìsinsìnyí",
+  "report.unsent.held": "A kò fi ránṣẹ́: ìbéèrè yín tó kẹ́yìn ṣì ń lọ lọ́wọ́.",
+  "report.unsent.unreached": "A kò fi ránṣẹ́: ìbéèrè yín kò kọjá.",
+  "report.unsent.loading": "A kò fi ránṣẹ́: ohun tí ń fi í ránṣẹ́ kò tíì wọlé tán.",
+  "report.unsent.unloaded": "A kò fi ránṣẹ́: ohun tí ń fi í ránṣẹ́ kò wọlé.",
+  "report.take": "Ṣí ìjábọ̀ kan",
+  "report.takeIntro": "Ìjábọ̀ tí ẹnìkan fi ránṣẹ́ sí yín yóò di àrọ́pò: ètò kan náà, pẹ̀lú àwọn ọ̀rọ̀ àfidípò tí gígùn wọn dọ́gba, láti dá padà sínú profaili tuntun.",
+  "report.paste": "Ẹ lẹ ìjábọ̀ náà, tàbí ojú-ìwé tí ìjápọ̀ rẹ̀ ń fi hàn",
+  "report.pick": "Yan fáìlì kan",
+  "report.notReport": "Èyí kì í ṣe ìjábọ̀.",
+  "report.standIn": "Fi àrọ́pò náà pamọ́",
+  "report.standInName": "aropo-{date}",
+  "report.standInSaved": "A ti fi pamọ́. Ẹ dá a padà sínú profaili tuntun, láti Dátà yín. Ohun tí kò sí nínú rẹ̀: {missing}.",
+  "report.missing.keys": "àwọn kọ́kọ́rọ́ àti àkáǹtì",
+  "report.missing.files": "àwọn fáìlì àti fódà tí a pín",
+  "report.missing.routines": "àwọn àfikún, iṣẹ́ déédéé àti ọgbọ́n tí ó ti ṣetán",
+  "report.missing.own": "àwọn iṣẹ́ àti àdírẹ́sì ti ẹni tí ó fi ránṣẹ́ fúnra rẹ̀",
+  "report.missing.device": "àwọn yíyàn ti ẹ̀rọ yìí fúnra rẹ̀, bí ààlà oṣù",
+  "report.missing.browser": "aṣàwákiri náà àti sístẹ́mù rẹ̀",
+  "report.missing.policy": "àwọn òfin àjọ náà"
+}

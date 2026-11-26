@@ -435,6 +435,9 @@
         "releases": {
           "$ref": "#/$defs/link"
         },
+        "support": {
+          "$ref": "#/$defs/contact"
+        },
         "siteIcon": {
           "$ref": "#/$defs/link"
         },
@@ -2090,6 +2093,16 @@
                     "anyOf": [
                       {
                         "$ref": "#/$defs/link"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "support": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/contact"
                       },
                       {
                         "type": "null"
@@ -3866,6 +3879,11 @@
       "type": "string",
       "pattern": "^$|^(?![A-Za-z][A-Za-z\\d+.-]*:)|^(https|wss)://|^(http|ws)://(localhost|127\\.0\\.0\\.1|\\[::1\\])(:\\d+)?([/?#]|$)",
       "description": "An address, a path beside index.html, or \"\" for none"
+    },
+    "contact": {
+      "type": "string",
+      "pattern": "^$|^mailto:[^@\\s/?]+@[\\w.-]+\\.[A-Za-z]{2,}$|^(?![A-Za-z][A-Za-z\\d+.-]*:)|^(https|wss)://|^(http|ws)://(localhost|127\\.0\\.0\\.1|\\[::1\\])(:\\d+)?([/?#]|$)",
+      "description": "Where reports go to support: a mail address as mailto:…, an address, a path beside index.html, or \"\" for none"
     },
     "capability": {
       "type": "string",

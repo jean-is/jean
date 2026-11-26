@@ -157,6 +157,8 @@
   "settings.listen": "સાંભળો",
   "settings.version": "{name} {version}, {date} નું",
   "settings.checkVersion": "નવું વર્ઝન તપાસો",
+  "settings.report": "સમસ્યાની જાણ કરો",
+  "settings.openReport": "રિપોર્ટ ખોલો",
   "settings.checking": "નવું વર્ઝન શોધાય છે…",
   "settings.newest": "આ સૌથી નવું વર્ઝન છે.",
   "settings.sample": "નમસ્તે! તમારા જવાબો મોટેથી વંચાશે ત્યારે આવા સંભળાશે.",

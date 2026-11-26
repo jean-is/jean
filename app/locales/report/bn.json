@@ -1,0 +1,80 @@
+{
+  "report.title": "সমস্যা জানান",
+  "report.intro": "সহায়তা দল পাবে: কী চলছিল আর প্রতিটি ধাপে কত সময় লেগেছে, সংস্করণ, আপনার ব্রাউজার আর আপনার সেটিংস। আপনার কোনো লেখা, ফাইল, নাম বা কী এর সঙ্গে যায় না।",
+  "report.row.version": "সংস্করণ",
+  "report.row.browser": "ব্রাউজার",
+  "report.row.where": "চলছে",
+  "report.row.brains": "মস্তিষ্ক",
+  "report.row.context": "চালু আছে",
+  "report.row.task": "এই কাজ",
+  "report.row.log": "সতর্কবার্তা ও ত্রুটি",
+  "report.count.capabilities": {
+    "one": "{count}টি সক্ষমতা",
+    "other": "{count}টি সক্ষমতা"
+  },
+  "report.count.connections": {
+    "one": "{count}টি সংযোগ",
+    "other": "{count}টি সংযোগ"
+  },
+  "report.count.extensions": {
+    "one": "{count}টি এক্সটেনশন",
+    "other": "{count}টি এক্সটেনশন"
+  },
+  "report.count.skills": {
+    "one": "{count}টি দক্ষতা",
+    "other": "{count}টি দক্ষতা"
+  },
+  "report.count.records": {
+    "one": "{count}টি ধাপ রাখা আছে",
+    "other": "{count}টি ধাপ রাখা আছে"
+  },
+  "report.count.lines": {
+    "one": "{count}টি লাইন",
+    "other": "{count}টি লাইন"
+  },
+  "report.none": "নেই",
+  "report.idle": "কিছুই চলছে না",
+  "report.words": "এই কাজের লেখা যোগ করুন",
+  "report.wordsHint": "কেবল যদি কী ভুল হয়েছে দেখতে সহায়তা দলের এগুলো দরকার হয়।",
+  "report.json": "সবকিছু, সহায়তা দল যেভাবে পড়ে",
+  "report.save": "ফাইল হিসেবে সংরক্ষণ করুন",
+  "report.write": "সহায়তা দলকে লিখুন",
+  "report.link": "সহায়তা দলের জন্য লিংক তৈরি করুন",
+  "report.saved": "সংরক্ষিত হয়েছে।",
+  "report.written": "রিপোর্টটি কপি হয়েছে: আপনার বার্তায় পেস্ট করুন।",
+  "report.linked": "লিংক কপি হয়েছে। এক সপ্তাহ পরে এটি আর কাজ করবে না, আর আপনার লিংকগুলোর মধ্য থেকে এর আগেও বন্ধ করতে পারেন।",
+  "report.refused": "আপনার প্রতিষ্ঠানের নিয়ম অনুযায়ী এই রিপোর্ট এই ডিভাইসেই থাকবে।",
+  "report.failed": "হলো না। আবার চেষ্টা করুন, বা ফাইল হিসেবে সংরক্ষণ করুন।",
+  "report.fileName": "report-{date}",
+  "report.subject": "{name} {version}: একটি সমস্যা",
+  "report.mailBody": "রিপোর্টটি আপনার ক্লিপবোর্ডে আছে: এখানে পেস্ট করুন।",
+  "report.slow": "অনেক সময় লাগছে?",
+  "report.stage.choose": "মস্তিষ্ক বেছে নেওয়া হচ্ছে",
+  "report.stage.prepare": "আপনার অনুরোধ তৈরি করা হচ্ছে",
+  "report.stage.read": "আপনার শেয়ার করা ফাইল পড়া হচ্ছে",
+  "report.stage.key": "{brain}-এর জন্য আপনার কী পড়া হচ্ছে",
+  "report.stage.ask": "{brain}-এর জন্য অপেক্ষা করা হচ্ছে",
+  "report.stage.hook": "{name}-এর জন্য অপেক্ষা করা হচ্ছে",
+  "report.stage.check": "একটি যাচাইয়ের জন্য অপেক্ষা করা হচ্ছে",
+  "report.stage.receipt": "এই মাসের সীমা দেখা হচ্ছে",
+  "report.stage.compact": "এ পর্যন্ত কাজের সারসংক্ষেপ করা হচ্ছে",
+  "report.unsent.held": "পাঠানো হয়নি: আপনার আগের অনুরোধ এখনও চলছে।",
+  "report.unsent.unreached": "পাঠানো হয়নি: আপনার অনুরোধ পৌঁছায়নি।",
+  "report.unsent.loading": "পাঠানো হয়নি: যা পাঠায় তা এখনও লোড হচ্ছে।",
+  "report.unsent.unloaded": "পাঠানো হয়নি: যা পাঠায় তা লোড হয়নি।",
+  "report.take": "রিপোর্ট খুলুন",
+  "report.takeIntro": "কেউ আপনাকে যে রিপোর্ট পাঠিয়েছেন তা একটি প্রতিরূপ হয়ে যায়: একই সেটআপ, একই দৈর্ঘ্যের ডামি শব্দসহ, নতুন প্রোফাইলে পুনরুদ্ধার করার জন্য।",
+  "report.paste": "রিপোর্টটি পেস্ট করুন, বা এর লিংক যে পৃষ্ঠা দেখায় সেটি",
+  "report.pick": "ফাইল বেছে নিন",
+  "report.notReport": "এটি রিপোর্ট নয়।",
+  "report.standIn": "প্রতিরূপ সংরক্ষণ করুন",
+  "report.standInName": "stand-in-{date}",
+  "report.standInSaved": "সংরক্ষিত হয়েছে। “আপনার ডেটা” থেকে এটি নতুন প্রোফাইলে পুনরুদ্ধার করুন। এতে নেই: {missing}।",
+  "report.missing.keys": "কী ও অ্যাকাউন্ট",
+  "report.missing.files": "শেয়ার করা ফাইল ও ফোল্ডার",
+  "report.missing.routines": "এক্সটেনশন, রুটিন ও তৈরি দক্ষতা",
+  "report.missing.own": "প্রেরকের নিজস্ব সেবা ও ঠিকানা",
+  "report.missing.device": "এই ডিভাইসের নিজস্ব পছন্দ, যেমন মাসিক সীমা",
+  "report.missing.browser": "ব্রাউজার ও তার সিস্টেম",
+  "report.missing.policy": "প্রতিষ্ঠানের নিয়ম"
+}

@@ -1,0 +1,80 @@
+{
+  "report.title": "સમસ્યાની જાણ કરો",
+  "report.intro": "સપોર્ટ ટીમને મળે છે: શું ચાલુ હતું અને દરેક પગલામાં કેટલો સમય લાગ્યો, વર્ઝન, તમારું બ્રાઉઝર અને તમારા સેટિંગ. તમારા શબ્દો, ફાઇલો, નામો કે કીમાંથી કંઈ પણ સાથે જતું નથી.",
+  "report.row.version": "વર્ઝન",
+  "report.row.browser": "બ્રાઉઝર",
+  "report.row.where": "ચાલુ છે",
+  "report.row.brains": "મગજ",
+  "report.row.context": "ચાલુ કરેલું",
+  "report.row.task": "આ કાર્ય",
+  "report.row.log": "ચેતવણીઓ અને ભૂલો",
+  "report.count.capabilities": {
+    "one": "{count} ક્ષમતા",
+    "other": "{count} ક્ષમતાઓ"
+  },
+  "report.count.connections": {
+    "one": "{count} કનેક્શન",
+    "other": "{count} કનેક્શન"
+  },
+  "report.count.extensions": {
+    "one": "{count} એક્સટેન્શન",
+    "other": "{count} એક્સટેન્શન"
+  },
+  "report.count.skills": {
+    "one": "{count} કૌશલ્ય",
+    "other": "{count} કૌશલ્યો"
+  },
+  "report.count.records": {
+    "one": "{count} પગલું સાચવેલું",
+    "other": "{count} પગલાં સાચવેલાં"
+  },
+  "report.count.lines": {
+    "one": "{count} લીટી",
+    "other": "{count} લીટીઓ"
+  },
+  "report.none": "કંઈ નહીં",
+  "report.idle": "કંઈ ચાલુ નથી",
+  "report.words": "આ કાર્યના શબ્દો સામેલ કરો",
+  "report.wordsHint": "માત્ર ત્યારે જ, જ્યારે શું ખોટું થયું તે જોવા સપોર્ટ ટીમને તેની જરૂર હોય.",
+  "report.json": "બધું, જેમ સપોર્ટ ટીમ વાંચે છે",
+  "report.save": "ફાઇલ તરીકે સાચવો",
+  "report.write": "સપોર્ટ ટીમને લખો",
+  "report.link": "સપોર્ટ ટીમ માટે લિંક બનાવો",
+  "report.saved": "સાચવ્યું.",
+  "report.written": "રિપોર્ટ કૉપિ થયો: તેને તમારા સંદેશમાં પેસ્ટ કરો.",
+  "report.linked": "લિંક કૉપિ થઈ. તે એક અઠવાડિયા પછી કામ કરતી બંધ થશે, અને તમે તમારી લિંકમાંથી તેને વહેલી પણ બંધ કરી શકો છો.",
+  "report.refused": "તમારી સંસ્થાના નિયમો આ રિપોર્ટને આ ડિવાઇસ પર જ રાખે છે.",
+  "report.failed": "એ થયું નહીં. ફરી પ્રયાસ કરો, અથવા ફાઇલ તરીકે સાચવો.",
+  "report.fileName": "report-{date}",
+  "report.subject": "{name} {version}: એક સમસ્યા",
+  "report.mailBody": "રિપોર્ટ તમારા ક્લિપબોર્ડ પર છે: તેને અહીં પેસ્ટ કરો.",
+  "report.slow": "બહુ વાર લાગે છે?",
+  "report.stage.choose": "મગજ પસંદ થાય છે",
+  "report.stage.prepare": "તમારી વિનંતી તૈયાર થાય છે",
+  "report.stage.read": "તમે શેર કરેલી ફાઇલો વંચાય છે",
+  "report.stage.key": "{brain} માટે તમારી કી વંચાય છે",
+  "report.stage.ask": "{brain} તરફથી જવાબની રાહ જોવાય છે",
+  "report.stage.hook": "{name} ની રાહ જોવાય છે",
+  "report.stage.check": "એક તપાસની રાહ જોવાય છે",
+  "report.stage.receipt": "આ મહિનાની મર્યાદા તપાસાય છે",
+  "report.stage.compact": "અત્યાર સુધીના કાર્યનો સાર બનાવાય છે",
+  "report.unsent.held": "મોકલ્યું નથી: તમારી છેલ્લી વિનંતી હજી ચાલુ છે.",
+  "report.unsent.unreached": "મોકલ્યું નથી: તમારી વિનંતી પહોંચી નહીં.",
+  "report.unsent.loading": "મોકલ્યું નથી: મોકલનારો ભાગ હજી લોડ થાય છે.",
+  "report.unsent.unloaded": "મોકલ્યું નથી: મોકલનારો ભાગ લોડ થયો નહીં.",
+  "report.take": "રિપોર્ટ ખોલો",
+  "report.takeIntro": "કોઈએ તમને મોકલેલો રિપોર્ટ એક પ્રતિકૃતિ બને છે: એ જ સેટઅપ, એટલી જ લંબાઈના ડમી શબ્દો સાથે, નવી પ્રોફાઇલમાં પાછી લાવવા માટે.",
+  "report.paste": "રિપોર્ટ પેસ્ટ કરો, અથવા તેની લિંક જે પેજ બતાવે તે",
+  "report.pick": "ફાઇલ પસંદ કરો",
+  "report.notReport": "આ રિપોર્ટ નથી.",
+  "report.standIn": "પ્રતિકૃતિ સાચવો",
+  "report.standInName": "stand-in-{date}",
+  "report.standInSaved": "સાચવ્યું. “તમારો ડેટા” માંથી તેને નવી પ્રોફાઇલમાં પાછી લાવો. તેમાં નથી: {missing}.",
+  "report.missing.keys": "કી અને એકાઉન્ટ",
+  "report.missing.files": "શેર કરેલી ફાઇલો અને ફોલ્ડર",
+  "report.missing.routines": "એક્સટેન્શન, રૂટિન અને તૈયાર કૌશલ્યો",
+  "report.missing.own": "મોકલનારની પોતાની સેવાઓ અને સરનામાં",
+  "report.missing.device": "આ ડિવાઇસની પોતાની પસંદગીઓ, જેમ કે માસિક મર્યાદા",
+  "report.missing.browser": "બ્રાઉઝર અને તેની સિસ્ટમ",
+  "report.missing.policy": "સંસ્થાના નિયમો"
+}

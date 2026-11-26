@@ -1,0 +1,80 @@
+{
+  "report.title": "Rakkoo gabaasi",
+  "report.intro": "Gareen deeggarsaa waan hojii irra ture fi tarkaanfiin hundi yeroo hammamii akka fudhate, veershinii, biraawuzara kee fi qindaa'ina kee argata. Jechoonni, faayiloonni, maqaawwan ykn furtuuwwan kee tokkollee isa waliin hin deeman.",
+  "report.row.version": "Veershinii",
+  "report.row.browser": "Biraawuzara",
+  "report.row.where": "Hojii irra",
+  "report.row.brains": "Sammuuwwan",
+  "report.row.context": "Kan ka'an",
+  "report.row.task": "Hojii kana",
+  "report.row.log": "Akeekkachiisota fi dogoggoroota",
+  "report.count.capabilities": {
+    "one": "danda'insa {count}",
+    "other": "danda'insa {count}"
+  },
+  "report.count.connections": {
+    "one": "walqunnamtii {count}",
+    "other": "walqunnamtii {count}"
+  },
+  "report.count.extensions": {
+    "one": "dabalata {count}",
+    "other": "dabalata {count}"
+  },
+  "report.count.skills": {
+    "one": "dandeettii {count}",
+    "other": "dandeettii {count}"
+  },
+  "report.count.records": {
+    "one": "tarkaanfii {count} kan olkaa'ame",
+    "other": "tarkaanfii {count} kan olkaa'ame"
+  },
+  "report.count.lines": {
+    "one": "sarara {count}",
+    "other": "sarara {count}"
+  },
+  "report.none": "Homaa",
+  "report.idle": "Wanti hojii irra jiru hin jiru",
+  "report.words": "Jechoota hojii kanaa dabali",
+  "report.wordsHint": "Gareen deeggarsaa waan dogoggore arguuf yoo isaan barbaade qofa.",
+  "report.json": "Hunda isaa, akka gareen deeggarsaa dubbisutti",
+  "report.save": "Akka faayiliitti olkaa'i",
+  "report.write": "Garee deeggarsaatiif barreessi",
+  "report.link": "Garee deeggarsaatiif liinkii uumi",
+  "report.saved": "Olkaa'ameera.",
+  "report.written": "Gabaasni garagalfameera: ergaa kee keessatti maxxansi.",
+  "report.linked": "Liinkiin garagalfameera. Torban tokko booda hojjechuu dhaaba, liinkiiwwan kee keessaa dursitee dhaabuu dandeessa.",
+  "report.refused": "Seeronni dhaabbata keetii gabaasa kana meeshaa kana irra tursiisu.",
+  "report.failed": "Hin milkoofne. Irra deebi'ii yaali, ykn akka faayiliitti olkaa'i.",
+  "report.fileName": "gabaasa-{date}",
+  "report.subject": "{name} {version}: rakkoo",
+  "report.mailBody": "Gabaasni kilippiboordii kee irra jira: as maxxansi.",
+  "report.slow": "Yeroo dheeraa fudhateeraa?",
+  "report.stage.choose": "Sammuu filachaa jira",
+  "report.stage.prepare": "Gaaffii kee qopheessaa jira",
+  "report.stage.read": "Faayiloota ati qoodde dubbisaa jira",
+  "report.stage.key": "Furtuu kee dubbisaa jira: {brain}",
+  "report.stage.ask": "{brain} eegaa jira",
+  "report.stage.hook": "{name} eegaa jira",
+  "report.stage.check": "Sakatta'iinsa eegaa jira",
+  "report.stage.receipt": "Daangaa ji'a kanaa ilaalaa jira",
+  "report.stage.compact": "Hojii hanga ammaatti jiru cuunfaa jira",
+  "report.unsent.held": "Hin ergamne: gaaffiin kee inni dhumaa ammallee hojii irra jira.",
+  "report.unsent.unreached": "Hin ergamne: gaaffiin kee hin geenye.",
+  "report.unsent.loading": "Hin ergamne: kutaan ergu ammallee fe'amaa jira.",
+  "report.unsent.unloaded": "Hin ergamne: kutaan ergu hin fe'amne.",
+  "report.take": "Gabaasa bani",
+  "report.takeIntro": "Gabaasni namni siif erge garagalcha bakka bu'aa ta'a: qindaa'ina wal fakkaatu, jechoota guuttuu dheerina walfakkaataa qaban waliin, piroofaayilii haaraa keessatti deebisuuf.",
+  "report.paste": "Gabaasa, ykn fuula liinkiin isaa agarsiisu maxxansi",
+  "report.pick": "Faayilii filadhu",
+  "report.notReport": "Kun gabaasa miti.",
+  "report.standIn": "Garagalcha bakka bu'aa olkaa'i",
+  "report.standInName": "garagalcha-{date}",
+  "report.standInSaved": "Olkaa'ameera. Piroofaayilii haaraa keessatti, Daataa kee irraa deebisi. Keessa hin jiru: {missing}.",
+  "report.missing.keys": "furtuuwwan fi herregoota",
+  "report.missing.files": "faayiloota fi foldaroota qoodaman",
+  "report.missing.routines": "dabalatoota, hojiiwwan idilee fi dandeettiiwwan qophaa'an",
+  "report.missing.own": "tajaajiloota fi teessoowwan nama erge sanaa",
+  "report.missing.device": "filannoowwan meeshaa kanaa, kan akka daangaa ji'aa",
+  "report.missing.browser": "biraawuzara fi sirna isaa",
+  "report.missing.policy": "seerota dhaabbataa"
+}

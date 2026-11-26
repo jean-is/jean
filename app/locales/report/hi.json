@@ -1,0 +1,80 @@
+{
+  "report.title": "समस्या की रिपोर्ट करें",
+  "report.intro": "सहायता टीम को मिलता है: क्या चल रहा था और हर चरण में कितना समय लगा, संस्करण, आपका ब्राउज़र और आपकी सेटिंग्स। आपके शब्द, फ़ाइलें, नाम या कुंजियाँ इसके साथ बिल्कुल नहीं जातीं।",
+  "report.row.version": "संस्करण",
+  "report.row.browser": "ब्राउज़र",
+  "report.row.where": "चल रहा है",
+  "report.row.brains": "दिमाग़",
+  "report.row.context": "चालू",
+  "report.row.task": "यह कार्य",
+  "report.row.log": "चेतावनियाँ और त्रुटियाँ",
+  "report.count.capabilities": {
+    "one": "{count} क्षमता",
+    "other": "{count} क्षमताएँ"
+  },
+  "report.count.connections": {
+    "one": "{count} कनेक्शन",
+    "other": "{count} कनेक्शन"
+  },
+  "report.count.extensions": {
+    "one": "{count} एक्सटेंशन",
+    "other": "{count} एक्सटेंशन"
+  },
+  "report.count.skills": {
+    "one": "{count} कौशल",
+    "other": "{count} कौशल"
+  },
+  "report.count.records": {
+    "one": "{count} चरण सहेजा गया",
+    "other": "{count} चरण सहेजे गए"
+  },
+  "report.count.lines": {
+    "one": "{count} पंक्ति",
+    "other": "{count} पंक्तियाँ"
+  },
+  "report.none": "कोई नहीं",
+  "report.idle": "कुछ नहीं चल रहा",
+  "report.words": "इस कार्य के शब्द शामिल करें",
+  "report.wordsHint": "सिर्फ़ तब, जब सहायता टीम को यह देखने के लिए उनकी ज़रूरत हो कि क्या गड़बड़ हुई।",
+  "report.json": "पूरी जानकारी, जैसे सहायता टीम उसे पढ़ती है",
+  "report.save": "फ़ाइल के रूप में सहेजें",
+  "report.write": "सहायता टीम को लिखें",
+  "report.link": "सहायता टीम के लिए लिंक बनाएँ",
+  "report.saved": "सहेजा गया।",
+  "report.written": "रिपोर्ट कॉपी हो गई: इसे अपने संदेश में चिपकाएँ।",
+  "report.linked": "लिंक कॉपी हो गया। यह एक हफ़्ते बाद काम करना बंद कर देगा, और आप इसे अपने लिंक में जाकर पहले भी बंद कर सकते हैं।",
+  "report.refused": "आपके संगठन के नियम इस रिपोर्ट को इसी डिवाइस पर रखते हैं।",
+  "report.failed": "यह नहीं हो सका। फिर से कोशिश करें, या इसे फ़ाइल के रूप में सहेजें।",
+  "report.fileName": "report-{date}",
+  "report.subject": "{name} {version}: एक समस्या",
+  "report.mailBody": "रिपोर्ट आपके क्लिपबोर्ड पर है: इसे यहाँ चिपकाएँ।",
+  "report.slow": "ज़्यादा समय लग रहा है?",
+  "report.stage.choose": "दिमाग़ चुना जा रहा है",
+  "report.stage.prepare": "आपका अनुरोध तैयार हो रहा है",
+  "report.stage.read": "आपकी साझा की गई फ़ाइलें पढ़ी जा रही हैं",
+  "report.stage.key": "{brain} के लिए आपकी कुंजी पढ़ी जा रही है",
+  "report.stage.ask": "{brain} का इंतज़ार है",
+  "report.stage.hook": "{name} का इंतज़ार है",
+  "report.stage.check": "एक जाँच का इंतज़ार है",
+  "report.stage.receipt": "इस महीने की सीमा जाँची जा रही है",
+  "report.stage.compact": "अब तक के कार्य का सार बनाया जा रहा है",
+  "report.unsent.held": "नहीं भेजा गया: आपका पिछला अनुरोध अभी चल रहा है।",
+  "report.unsent.unreached": "नहीं भेजा गया: आपका अनुरोध पहुँचा नहीं।",
+  "report.unsent.loading": "नहीं भेजा गया: भेजने वाला हिस्सा अभी लोड हो रहा है।",
+  "report.unsent.unloaded": "नहीं भेजा गया: भेजने वाला हिस्सा लोड नहीं हुआ।",
+  "report.take": "रिपोर्ट खोलें",
+  "report.takeIntro": "किसी की भेजी रिपोर्ट एक प्रतिरूप बन जाती है: वही सेटअप, उतने ही लंबे डमी शब्दों के साथ, जिसे किसी नई प्रोफ़ाइल में बहाल किया जाता है।",
+  "report.paste": "रिपोर्ट चिपकाएँ, या वह पेज जो उसका लिंक दिखाता है",
+  "report.pick": "फ़ाइल चुनें",
+  "report.notReport": "यह रिपोर्ट नहीं है।",
+  "report.standIn": "प्रतिरूप सहेजें",
+  "report.standInName": "stand-in-{date}",
+  "report.standInSaved": "सहेजा गया। इसे “आपका डेटा” से किसी नई प्रोफ़ाइल में बहाल करें। इसमें शामिल नहीं: {missing}।",
+  "report.missing.keys": "कुंजियाँ और खाते",
+  "report.missing.files": "साझा की गई फ़ाइलें और फ़ोल्डर",
+  "report.missing.routines": "एक्सटेंशन, रूटीन और तैयार कौशल",
+  "report.missing.own": "भेजने वाले की अपनी सेवाएँ और पते",
+  "report.missing.device": "इस डिवाइस के अपने विकल्प, जैसे मासिक सीमा",
+  "report.missing.browser": "ब्राउज़र और उसका सिस्टम",
+  "report.missing.policy": "संगठन के नियम"
+}

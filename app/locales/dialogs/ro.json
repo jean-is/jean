@@ -159,6 +159,8 @@
   "settings.listen": "Ascultați",
   "settings.version": "{name} {version} din {date}",
   "settings.checkVersion": "Căutați o versiune nouă",
+  "settings.report": "Raportați o problemă",
+  "settings.openReport": "Deschideți un raport",
   "settings.checking": "Se caută o versiune nouă…",
   "settings.newest": "Aceasta este cea mai nouă versiune.",
   "settings.sample": "Bună ziua! Așa vor suna răspunsurile dvs. când sunt citite cu voce tare.",

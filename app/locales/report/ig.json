@@ -1,0 +1,74 @@
+{
+  "report.title": "Kọọ nsogbu",
+  "report.intro": "Ndị nkwado na-enweta ihe na-aga n’ihu na ogologo oge nzọụkwụ ọ bụla were, mbipụta, ihe nchọgharị gị na ntọala gị. Okwu gị, faịlụ gị, aha ma ọ bụ igodo gị anaghị eso ya.",
+  "report.row.version": "Mbipụta",
+  "report.row.browser": "Ihe nchọgharị",
+  "report.row.where": "Na-aga",
+  "report.row.brains": "Ụbụrụ",
+  "report.row.context": "Ndị agbanyere",
+  "report.row.task": "Ọrụ a",
+  "report.row.log": "Ịdọ aka na ntị na njehie",
+  "report.count.capabilities": {
+    "other": "ikike {count}"
+  },
+  "report.count.connections": {
+    "other": "njikọ {count}"
+  },
+  "report.count.extensions": {
+    "other": "mgbakwunye {count}"
+  },
+  "report.count.skills": {
+    "other": "nka {count}"
+  },
+  "report.count.records": {
+    "other": "nzọụkwụ {count} echekwara"
+  },
+  "report.count.lines": {
+    "other": "ahịrị {count}"
+  },
+  "report.none": "Ọ dịghị",
+  "report.idle": "Ọ dịghị ihe na-aga",
+  "report.words": "Tinye okwu nke ọrụ a",
+  "report.wordsHint": "Naanị ma ndị nkwado chọrọ ha iji hụ ihe mehiere.",
+  "report.json": "Ya niile, dịka ndị nkwado si agụ ya",
+  "report.save": "Chekwaa ya dịka faịlụ",
+  "report.write": "Dee ndị nkwado",
+  "report.link": "Mepụta njikọ maka ndị nkwado",
+  "report.saved": "Echekwala ya.",
+  "report.written": "E detuola akụkọ ahụ: mado ya n’ozi gị.",
+  "report.linked": "E detuola njikọ ahụ. Ọ ga-akwụsị ịrụ ọrụ mgbe otu izu gachara, ị nwekwara ike ịkwụsị ya tupu mgbe ahụ n’etiti njikọ gị.",
+  "report.refused": "Iwu nzukọ gị na-edebe akụkọ a na ngwaọrụ a.",
+  "report.failed": "Nke ahụ arụghị ọrụ. Nwaa ọzọ, ma ọ bụ chekwaa ya dịka faịlụ.",
+  "report.fileName": "akuko-{date}",
+  "report.subject": "{name} {version}: nsogbu",
+  "report.mailBody": "Akụkọ ahụ dị na klipbọọdụ gị: mado ya ebe a.",
+  "report.slow": "Ọ na-ewe ogologo oge?",
+  "report.stage.choose": "Na-ahọrọ ụbụrụ",
+  "report.stage.prepare": "Na-akwado arịrịọ gị",
+  "report.stage.read": "Na-agụ faịlụ ị kesara",
+  "report.stage.key": "Na-agụ igodo gị maka {brain}",
+  "report.stage.ask": "Na-eche {brain}",
+  "report.stage.hook": "Na-eche {name}",
+  "report.stage.check": "Na-eche nlele",
+  "report.stage.receipt": "Na-elele oke ọnwa a",
+  "report.stage.compact": "Na-achịkọta ọrụ ahụ ruo ugbu a",
+  "report.unsent.held": "Ezighị ya: arịrịọ gị ikpeazụ ka na-aga.",
+  "report.unsent.unreached": "Ezighị ya: arịrịọ gị erughị.",
+  "report.unsent.loading": "Ezighị ya: ihe na-eziga ya ka na-ebu.",
+  "report.unsent.unloaded": "Ezighị ya: ihe na-eziga ya ebughị.",
+  "report.take": "Mepee akụkọ",
+  "report.takeIntro": "Akụkọ mmadụ zitere gị na-aghọ nnọchi: otu ntọala ahụ, nwere okwu nnọchi ogologo ha hà, iji weghachi ya na profaịlụ ọhụrụ.",
+  "report.paste": "Mado akụkọ ahụ, ma ọ bụ ibe njikọ ya na-egosi",
+  "report.pick": "Họrọ faịlụ",
+  "report.notReport": "Nke a abụghị akụkọ.",
+  "report.standIn": "Chekwaa nnọchi ahụ",
+  "report.standInName": "nnochi-{date}",
+  "report.standInSaved": "Echekwala ya. Weghachi ya na profaịlụ ọhụrụ, site na Data gị. Ihe na-adịghị n’ime ya: {missing}.",
+  "report.missing.keys": "igodo na akaụntụ",
+  "report.missing.files": "faịlụ na folda e kesara",
+  "report.missing.routines": "mgbakwunye, ọrụ nhazi oge na nka emeelarị",
+  "report.missing.own": "ọrụ na adreesị nke onye zitere ya n’onwe ya",
+  "report.missing.device": "nhọrọ nke ngwaọrụ a n’onwe ya, dịka oke kwa ọnwa",
+  "report.missing.browser": "ihe nchọgharị na sistemụ ya",
+  "report.missing.policy": "iwu nzukọ ahụ"
+}

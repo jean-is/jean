@@ -1,0 +1,80 @@
+{
+  "report.title": "د ستونزې راپور ورکول",
+  "report.intro": "ملاتړ ټیم ته دا رسېږي چې څه روان وو او هر ګام څومره وخت ونیو، نسخه، ستاسو براوزر او ستاسو امستنې. ستاسو هېڅ کلمې، فایلونه، نومونه یا کیلي ورسره نه ځي.",
+  "report.row.version": "نسخه",
+  "report.row.browser": "براوزر",
+  "report.row.where": "روان",
+  "report.row.brains": "مغزونه",
+  "report.row.context": "چالان شوي",
+  "report.row.task": "دا دنده",
+  "report.row.log": "خبرداري او تېروتنې",
+  "report.count.capabilities": {
+    "one": "{count} وړتیا",
+    "other": "{count} وړتیاوې"
+  },
+  "report.count.connections": {
+    "one": "{count} اړیکه",
+    "other": "{count} اړیکې"
+  },
+  "report.count.extensions": {
+    "one": "{count} اضافه",
+    "other": "{count} اضافې"
+  },
+  "report.count.skills": {
+    "one": "{count} مهارت",
+    "other": "{count} مهارتونه"
+  },
+  "report.count.records": {
+    "one": "{count} ساتل شوی ګام",
+    "other": "{count} ساتل شوي ګامونه"
+  },
+  "report.count.lines": {
+    "one": "{count} کرښه",
+    "other": "{count} کرښې"
+  },
+  "report.none": "هېڅ",
+  "report.idle": "هېڅ شی روان نه دی",
+  "report.words": "د دې دندې کلمې پکې شاملې کړئ",
+  "report.wordsHint": "یوازې که ملاتړ ټیم ورته اړتیا ولري چې وګوري څه خراب شول.",
+  "report.json": "ټول، لکه څنګه چې ملاتړ ټیم یې لولي",
+  "report.save": "د فایل په توګه ساتل",
+  "report.write": "ملاتړ ټیم ته لیکل",
+  "report.link": "د ملاتړ ټیم لپاره لینک جوړول",
+  "report.saved": "خوندي شو.",
+  "report.written": "راپور کاپي شو: په خپل پیغام کې یې ولګوئ.",
+  "report.linked": "لینک کاپي شو. له یوې اونۍ وروسته کار پرېږدي، او تاسو یې له خپلو لینکونو څخه مخکې هم درولی شئ.",
+  "report.refused": "ستاسو د ادارې قواعد دا راپور په همدې وسیله کې ساتي.",
+  "report.failed": "ونه شو. بیا هڅه وکړئ، یا یې د فایل په توګه وساتئ.",
+  "report.fileName": "report-{date}",
+  "report.subject": "{name} {version}: یوه ستونزه",
+  "report.mailBody": "راپور ستاسو په کلیپ بورډ کې دی: دلته یې ولګوئ.",
+  "report.slow": "ډېر وخت نیسي؟",
+  "report.stage.choose": "مغز ټاکل کېږي",
+  "report.stage.prepare": "ستاسو غوښتنه چمتو کېږي",
+  "report.stage.read": "هغه فایلونه لوستل کېږي چې تاسو شریک کړي",
+  "report.stage.key": "د {brain} لپاره ستاسو کیلي لوستل کېږي",
+  "report.stage.ask": "د {brain} انتظار",
+  "report.stage.hook": "د {name} انتظار",
+  "report.stage.check": "د یوې کتنې انتظار",
+  "report.stage.receipt": "د دې میاشتې حد کتل کېږي",
+  "report.stage.compact": "تر اوسه د دندې لنډیز جوړېږي",
+  "report.unsent.held": "ونه لېږل شو: ستاسو وروستۍ غوښتنه لا روانه ده.",
+  "report.unsent.unreached": "ونه لېږل شو: ستاسو غوښتنه ونه رسېده.",
+  "report.unsent.loading": "ونه لېږل شو: د لېږلو برخه لا پورته کېږي.",
+  "report.unsent.unloaded": "ونه لېږل شو: د لېږلو برخه پورته نه شوه.",
+  "report.take": "راپور پرانیستل",
+  "report.takeIntro": "هغه راپور چې چا درته لېږلی، په یوه بدیله کاپي بدلېږي: همغه جوړښت، د همغه اوږدوالي ډکوونکو کلمو سره، چې په یوه نوي پروفایل کې بېرته راوستل شي.",
+  "report.paste": "راپور، یا هغه پاڼه چې لینک یې ښيي، ولګوئ",
+  "report.pick": "فایل ټاکل",
+  "report.notReport": "دا راپور نه دی.",
+  "report.standIn": "بدیله کاپي ساتل",
+  "report.standInName": "stand-in-{date}",
+  "report.standInSaved": "خوندي شوه. په یوه نوي پروفایل کې یې له «ستاسو معلومات» څخه بېرته راولئ. پکې نشته: {missing}.",
+  "report.missing.keys": "کیلي او حسابونه",
+  "report.missing.files": "شریک شوي فایلونه او فولډرونه",
+  "report.missing.routines": "اضافې، منظم کارونه او چمتو مهارتونه",
+  "report.missing.own": "د لېږونکي خپل خدمتونه او پتې",
+  "report.missing.device": "د دې وسیلې خپل انتخابونه، لکه میاشتنی حد",
+  "report.missing.browser": "براوزر او د هغه سیسټم",
+  "report.missing.policy": "د ادارې قواعد"
+}

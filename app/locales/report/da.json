@@ -1,0 +1,80 @@
+{
+  "report.title": "Rapportér et problem",
+  "report.intro": "Support får det, der var i gang, og hvor lang tid hvert trin tog, versionen, din browser og dine indstillinger. Ingen af dine ord, filer, navne eller nøgler kommer med.",
+  "report.row.version": "Version",
+  "report.row.browser": "Browser",
+  "report.row.where": "I gang",
+  "report.row.brains": "Hjerner",
+  "report.row.context": "Slået til",
+  "report.row.task": "Denne opgave",
+  "report.row.log": "Advarsler og fejl",
+  "report.count.capabilities": {
+    "one": "{count} evne",
+    "other": "{count} evner"
+  },
+  "report.count.connections": {
+    "one": "{count} forbindelse",
+    "other": "{count} forbindelser"
+  },
+  "report.count.extensions": {
+    "one": "{count} udvidelse",
+    "other": "{count} udvidelser"
+  },
+  "report.count.skills": {
+    "one": "{count} færdighed",
+    "other": "{count} færdigheder"
+  },
+  "report.count.records": {
+    "one": "{count} trin gemt",
+    "other": "{count} trin gemt"
+  },
+  "report.count.lines": {
+    "one": "{count} linje",
+    "other": "{count} linjer"
+  },
+  "report.none": "Ingen",
+  "report.idle": "Intet i gang",
+  "report.words": "Medtag ordene fra denne opgave",
+  "report.wordsHint": "Kun hvis support har brug for dem for at se, hvad der gik galt.",
+  "report.json": "Det hele, som support læser det",
+  "report.save": "Gem som fil",
+  "report.write": "Skriv til support",
+  "report.link": "Lav et link til support",
+  "report.saved": "Gemt.",
+  "report.written": "Rapporten er kopieret: indsæt den i din besked.",
+  "report.linked": "Link kopieret. Det holder op med at virke efter en uge, og du kan stoppe det før blandt dine links.",
+  "report.refused": "Din organisations regler holder denne rapport på denne enhed.",
+  "report.failed": "Det virkede ikke. Prøv igen, eller gem den som fil.",
+  "report.fileName": "rapport-{date}",
+  "report.subject": "{name} {version}: et problem",
+  "report.mailBody": "Rapporten ligger i din udklipsholder: indsæt den her.",
+  "report.slow": "Tager det lang tid?",
+  "report.stage.choose": "Vælger en hjerne",
+  "report.stage.prepare": "Gør din forespørgsel klar",
+  "report.stage.read": "Læser de filer, du delte",
+  "report.stage.key": "Læser din nøgle til {brain}",
+  "report.stage.ask": "Venter på {brain}",
+  "report.stage.hook": "Venter på {name}",
+  "report.stage.check": "Venter på en kontrol",
+  "report.stage.receipt": "Tjekker denne måneds grænse",
+  "report.stage.compact": "Opsummerer opgaven indtil nu",
+  "report.unsent.held": "Ikke sendt: din sidste forespørgsel er stadig i gang.",
+  "report.unsent.unreached": "Ikke sendt: din forespørgsel nåede ikke frem.",
+  "report.unsent.loading": "Ikke sendt: det, der sender den, indlæses stadig.",
+  "report.unsent.unloaded": "Ikke sendt: det, der sender den, blev ikke indlæst.",
+  "report.take": "Åbn en rapport",
+  "report.takeIntro": "En rapport, som nogen har sendt dig, bliver til en attrap: samme opsætning, med fyldord af samme længde, til at gendanne i en ny profil.",
+  "report.paste": "Indsæt rapporten eller den side, dens link viser",
+  "report.pick": "Vælg en fil",
+  "report.notReport": "Det her er ikke en rapport.",
+  "report.standIn": "Gem attrappen",
+  "report.standInName": "attrap-{date}",
+  "report.standInSaved": "Gemt. Gendan den i en ny profil fra Dine data. Ikke med: {missing}.",
+  "report.missing.keys": "nøgler og konti",
+  "report.missing.files": "delte filer og mapper",
+  "report.missing.routines": "udvidelser, rutiner og færdige færdigheder",
+  "report.missing.own": "afsenderens egne tjenester og adresser",
+  "report.missing.device": "denne enheds egne valg, som den månedlige grænse",
+  "report.missing.browser": "browseren og dens system",
+  "report.missing.policy": "organisationens regler"
+}

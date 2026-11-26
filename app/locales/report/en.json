@@ -1,0 +1,80 @@
+{
+  "report.title": "Report a problem",
+  "report.intro": "Support gets what was under way and how long each step took, the version, your browser and your settings. None of your words, files, names or keys go with it.",
+  "report.row.version": "Version",
+  "report.row.browser": "Browser",
+  "report.row.where": "Under way",
+  "report.row.brains": "Brains",
+  "report.row.context": "Turned on",
+  "report.row.task": "This task",
+  "report.row.log": "Warnings and errors",
+  "report.count.capabilities": {
+    "one": "{count} capability",
+    "other": "{count} capabilities"
+  },
+  "report.count.connections": {
+    "one": "{count} connection",
+    "other": "{count} connections"
+  },
+  "report.count.extensions": {
+    "one": "{count} extension",
+    "other": "{count} extensions"
+  },
+  "report.count.skills": {
+    "one": "{count} skill",
+    "other": "{count} skills"
+  },
+  "report.count.records": {
+    "one": "{count} step kept",
+    "other": "{count} steps kept"
+  },
+  "report.count.lines": {
+    "one": "{count} line",
+    "other": "{count} lines"
+  },
+  "report.none": "None",
+  "report.idle": "Nothing under way",
+  "report.words": "Include this task's words",
+  "report.wordsHint": "Only if support needs them to see what went wrong.",
+  "report.json": "All of it, as support reads it",
+  "report.save": "Save as a file",
+  "report.write": "Write to support",
+  "report.link": "Make a link for support",
+  "report.saved": "Saved.",
+  "report.written": "The report is copied: paste it into your message.",
+  "report.linked": "Link copied. It stops working after a week, and you can stop it sooner among your links.",
+  "report.refused": "Your organisation's rules keep this report on this device.",
+  "report.failed": "That didn't work. Try again, or save it as a file.",
+  "report.fileName": "report-{date}",
+  "report.subject": "{name} {version}: a problem",
+  "report.mailBody": "The report is on your clipboard: paste it here.",
+  "report.slow": "Taking long?",
+  "report.stage.choose": "Choosing a brain",
+  "report.stage.prepare": "Getting your request ready",
+  "report.stage.read": "Reading the files you shared",
+  "report.stage.key": "Reading your key for {brain}",
+  "report.stage.ask": "Waiting for {brain}",
+  "report.stage.hook": "Waiting on {name}",
+  "report.stage.check": "Waiting on a check",
+  "report.stage.receipt": "Checking this month's limit",
+  "report.stage.compact": "Summing up the task so far",
+  "report.unsent.held": "Not sent: your last request is still under way.",
+  "report.unsent.unreached": "Not sent: your request didn't get through.",
+  "report.unsent.loading": "Not sent: what sends it is still loading.",
+  "report.unsent.unloaded": "Not sent: what sends it didn't load.",
+  "report.take": "Open a report",
+  "report.takeIntro": "A report someone sent you becomes a stand-in: the same setup, with filler words of the same length, to restore in a new profile.",
+  "report.paste": "Paste the report, or the page its link shows",
+  "report.pick": "Choose a file",
+  "report.notReport": "This isn't a report.",
+  "report.standIn": "Save the stand-in",
+  "report.standInName": "stand-in-{date}",
+  "report.standInSaved": "Saved. Restore it in a new profile, from Your data. Not in it: {missing}.",
+  "report.missing.keys": "keys and accounts",
+  "report.missing.files": "shared files and folders",
+  "report.missing.routines": "extensions, routines and ready-made skills",
+  "report.missing.own": "the sender's own services and addresses",
+  "report.missing.device": "this device's own choices, such as the monthly limit",
+  "report.missing.browser": "the browser and its system",
+  "report.missing.policy": "the organisation's rules"
+}

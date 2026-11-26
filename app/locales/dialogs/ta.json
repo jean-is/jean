@@ -157,6 +157,8 @@
   "settings.listen": "கேள்",
   "settings.version": "{name} {version} ({date})",
   "settings.checkVersion": "புதிய பதிப்பைத் தேடு",
+  "settings.report": "சிக்கலைப் புகாரளி",
+  "settings.openReport": "அறிக்கையைத் திற",
   "settings.checking": "புதிய பதிப்பைத் தேடுகிறது…",
   "settings.newest": "இதுவே சமீபத்திய பதிப்பு.",
   "settings.sample": "வணக்கம்! உங்கள் பதில்கள் உரக்கப் படிக்கப்படும்போது இப்படித்தான் ஒலிக்கும்.",

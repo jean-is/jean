@@ -157,6 +157,8 @@
   "settings.listen": "Dhaggeeffadhu",
   "settings.version": "{name} {version}, guyyaa {date}",
   "settings.checkVersion": "Veershinii haaraa ilaali",
+  "settings.report": "Rakkoo gabaasi",
+  "settings.openReport": "Gabaasa bani",
   "settings.checking": "Veershinii haaraa barbaadaa jira…",
   "settings.newest": "Kun veershinii isa haaraa dha.",
   "settings.sample": "Akkam! Deebiiwwan kee yeroo sagaleen dubbifaman akkana dhagahamu.",

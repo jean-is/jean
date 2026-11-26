@@ -161,6 +161,8 @@
   "settings.listen": "Прослушать",
   "settings.version": "{name} {version} от {date}",
   "settings.checkVersion": "Проверить наличие новой версии",
+  "settings.report": "Сообщить о проблеме",
+  "settings.openReport": "Открыть отчёт",
   "settings.checking": "Поиск новой версии…",
   "settings.newest": "Это самая новая версия.",
   "settings.sample": "Здравствуйте! Так будут звучать ваши ответы, когда их читают вслух.",

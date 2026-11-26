@@ -1,0 +1,74 @@
+{
+  "report.title": "报告问题",
+  "report.intro": "技术支持会收到当时正在进行的事项和每一步所用的时间、版本、你的浏览器和你的设置。你写的内容、文件、名字和密钥都不会包含在内。",
+  "report.row.version": "版本",
+  "report.row.browser": "浏览器",
+  "report.row.where": "正在进行",
+  "report.row.brains": "大脑",
+  "report.row.context": "已开启",
+  "report.row.task": "此任务",
+  "report.row.log": "警告和错误",
+  "report.count.capabilities": {
+    "other": "{count} 项能力"
+  },
+  "report.count.connections": {
+    "other": "{count} 个连接"
+  },
+  "report.count.extensions": {
+    "other": "{count} 个扩展程序"
+  },
+  "report.count.skills": {
+    "other": "{count} 个技能"
+  },
+  "report.count.records": {
+    "other": "已保存 {count} 个步骤"
+  },
+  "report.count.lines": {
+    "other": "{count} 行"
+  },
+  "report.none": "无",
+  "report.idle": "没有正在进行的事项",
+  "report.words": "附上此任务的文字内容",
+  "report.wordsHint": "仅在技术支持需要用它们查明问题时附上。",
+  "report.json": "全部内容（技术支持看到的格式）",
+  "report.save": "保存为文件",
+  "report.write": "联系技术支持",
+  "report.link": "为技术支持生成链接",
+  "report.saved": "已保存。",
+  "report.written": "报告已复制：请粘贴到你的消息中。",
+  "report.linked": "链接已复制。它会在一周后失效，你也可以在你的链接中提前停止它。",
+  "report.refused": "根据你组织的规则，此报告只能留在这台设备上。",
+  "report.failed": "没有成功。请重试，或将它保存为文件。",
+  "report.fileName": "report-{date}",
+  "report.subject": "{name} {version}：遇到问题",
+  "report.mailBody": "报告已在你的剪贴板中：请粘贴到这里。",
+  "report.slow": "等太久了？",
+  "report.stage.choose": "正在选择大脑",
+  "report.stage.prepare": "正在准备你的请求",
+  "report.stage.read": "正在读取你分享的文件",
+  "report.stage.key": "正在读取你的 {brain} 密钥",
+  "report.stage.ask": "正在等待 {brain}",
+  "report.stage.hook": "正在等待 {name}",
+  "report.stage.check": "正在等待检查",
+  "report.stage.receipt": "正在核对本月上限",
+  "report.stage.compact": "正在总结到目前为止的任务",
+  "report.unsent.held": "未发送：你的上一个请求仍在进行中。",
+  "report.unsent.unreached": "未发送：你的请求没有送达。",
+  "report.unsent.loading": "未发送：负责发送的部分仍在加载。",
+  "report.unsent.unloaded": "未发送：负责发送的部分没有加载成功。",
+  "report.take": "打开报告",
+  "report.takeIntro": "别人发给你的报告会变成一份复现用副本：设置相同，文字换成长度相同的占位文字，用于在新的个人资料中恢复。",
+  "report.paste": "粘贴报告，或其链接打开的页面",
+  "report.pick": "选择文件",
+  "report.notReport": "这不是报告。",
+  "report.standIn": "保存复现用副本",
+  "report.standInName": "stand-in-{date}",
+  "report.standInSaved": "已保存。请在“你的数据”中将它恢复到新的个人资料。其中不包含：{missing}。",
+  "report.missing.keys": "密钥和账户",
+  "report.missing.files": "分享的文件和文件夹",
+  "report.missing.routines": "扩展程序、例行任务和现成的技能",
+  "report.missing.own": "发送者自己的服务和地址",
+  "report.missing.device": "每月上限等这台设备自己的选择",
+  "report.missing.browser": "浏览器及其系统",
+  "report.missing.policy": "组织的规则"
+}

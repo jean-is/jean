@@ -155,6 +155,8 @@
   "settings.listen": "Dengarkan",
   "settings.version": "{name} {version}, tanggal {date}",
   "settings.checkVersion": "Periksa versi baru",
+  "settings.report": "Laporkan masalah",
+  "settings.openReport": "Buka laporan",
   "settings.checking": "Mencari versi baru…",
   "settings.newest": "Ini versi terbaru.",
   "settings.sample": "Halo! Beginilah jawaban Anda akan terdengar saat dibacakan.",

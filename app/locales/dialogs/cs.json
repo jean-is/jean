@@ -161,6 +161,8 @@
   "settings.listen": "Poslechnout",
   "settings.version": "{name} {version} ze dne {date}",
   "settings.checkVersion": "Vyhledat novou verzi",
+  "settings.report": "Nahlásit problém",
+  "settings.openReport": "Otevřít hlášení",
   "settings.checking": "Hledání nové verze…",
   "settings.newest": "Toto je nejnovější verze.",
   "settings.sample": "Dobrý den! Takhle budou znít vaše odpovědi, když se budou číst nahlas.",

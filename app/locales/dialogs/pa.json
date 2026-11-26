@@ -157,6 +157,8 @@
   "settings.listen": "ਸੁਣੋ",
   "settings.version": "{name} {version}, {date} ਦਾ",
   "settings.checkVersion": "ਨਵਾਂ ਸੰਸਕਰਣ ਦੇਖੋ",
+  "settings.report": "ਸਮੱਸਿਆ ਦੀ ਰਿਪੋਰਟ ਕਰੋ",
+  "settings.openReport": "ਰਿਪੋਰਟ ਖੋਲ੍ਹੋ",
   "settings.checking": "ਨਵਾਂ ਸੰਸਕਰਣ ਲੱਭ ਰਹੇ ਹਾਂ…",
   "settings.newest": "ਇਹ ਸਭ ਤੋਂ ਨਵਾਂ ਸੰਸਕਰਣ ਹੈ।",
   "settings.sample": "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ! ਜਵਾਬ ਪੜ੍ਹ ਕੇ ਸੁਣਾਏ ਜਾਣ ’ਤੇ ਇਸ ਤਰ੍ਹਾਂ ਸੁਣਾਈ ਦੇਣਗੇ।",

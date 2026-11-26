@@ -159,6 +159,8 @@
   "settings.listen": "Ausculta",
   "settings.version": "{name} {version}, datum {date}",
   "settings.checkVersion": "Quaere versionem novam",
+  "settings.report": "Difficultatem nuntia",
+  "settings.openReport": "Relationem aperi",
   "settings.checking": "Versio nova quaeritur…",
   "settings.newest": "Haec est versio novissima.",
   "settings.sample": "Salve! Sic responsa tua sonabunt cum recitabuntur.",

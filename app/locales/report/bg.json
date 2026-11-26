@@ -1,0 +1,80 @@
+{
+  "report.title": "Съобщи за проблем",
+  "report.intro": "Поддръжката получава какво е било в ход и колко време е отнела всяка стъпка, версията, браузъра и настройките ви. Думите, файловете, имената и ключовете ви не се изпращат с доклада.",
+  "report.row.version": "Версия",
+  "report.row.browser": "Браузър",
+  "report.row.where": "В ход",
+  "report.row.brains": "Мозъци",
+  "report.row.context": "Включени",
+  "report.row.task": "Тази задача",
+  "report.row.log": "Предупреждения и грешки",
+  "report.count.capabilities": {
+    "one": "{count} възможност",
+    "other": "{count} възможности"
+  },
+  "report.count.connections": {
+    "one": "{count} връзка",
+    "other": "{count} връзки"
+  },
+  "report.count.extensions": {
+    "one": "{count} разширение",
+    "other": "{count} разширения"
+  },
+  "report.count.skills": {
+    "one": "{count} умение",
+    "other": "{count} умения"
+  },
+  "report.count.records": {
+    "one": "{count} запазена стъпка",
+    "other": "{count} запазени стъпки"
+  },
+  "report.count.lines": {
+    "one": "{count} ред",
+    "other": "{count} реда"
+  },
+  "report.none": "Няма",
+  "report.idle": "Нищо не е в ход",
+  "report.words": "Включи думите на тази задача",
+  "report.wordsHint": "Само ако поддръжката има нужда от тях, за да види какво се е объркало.",
+  "report.json": "Целият доклад, както го чете поддръжката",
+  "report.save": "Запази като файл",
+  "report.write": "Пиши на поддръжката",
+  "report.link": "Направи връзка за поддръжката",
+  "report.saved": "Запазено.",
+  "report.written": "Докладът е копиран: поставете го в съобщението си.",
+  "report.linked": "Връзката е копирана. Спира да работи след седмица, а можете да я спрете и по-рано от публикуваните си връзки.",
+  "report.refused": "Правилата на организацията ви задържат този доклад на това устройство.",
+  "report.failed": "Не се получи. Опитайте отново или го запазете като файл.",
+  "report.fileName": "report-{date}",
+  "report.subject": "{name} {version}: проблем",
+  "report.mailBody": "Докладът е в клипборда ви: поставете го тук.",
+  "report.slow": "Бави ли се?",
+  "report.stage.choose": "Избиране на мозък",
+  "report.stage.prepare": "Подготвяне на заявката ви",
+  "report.stage.read": "Четене на споделените от вас файлове",
+  "report.stage.key": "Четене на ключа ви за {brain}",
+  "report.stage.ask": "Изчакване на отговор от {brain}",
+  "report.stage.hook": "Изчакване: {name}",
+  "report.stage.check": "Изчакване на проверка",
+  "report.stage.receipt": "Проверка на лимита за този месец",
+  "report.stage.compact": "Обобщаване на работата досега",
+  "report.unsent.held": "Не е изпратено: последната ви заявка още е в ход.",
+  "report.unsent.unreached": "Не е изпратено: заявката ви не стигна до целта.",
+  "report.unsent.loading": "Не е изпратено: това, което изпраща съобщенията, още се зарежда.",
+  "report.unsent.unloaded": "Не е изпратено: това, което изпраща съобщенията, не се зареди.",
+  "report.take": "Отвори доклад",
+  "report.takeIntro": "Доклад, който някой ви е изпратил, става двойник: същите настройки, със заместващи думи със същата дължина, за възстановяване в нов профил.",
+  "report.paste": "Поставете доклада или страницата, която показва връзката му",
+  "report.pick": "Избери файл",
+  "report.notReport": "Това не е доклад.",
+  "report.standIn": "Запази двойника",
+  "report.standInName": "stand-in-{date}",
+  "report.standInSaved": "Запазено. Възстановете го в нов профил от „Вашите данни“. Не е включено: {missing}.",
+  "report.missing.keys": "ключове и акаунти",
+  "report.missing.files": "споделени файлове и папки",
+  "report.missing.routines": "разширения, рутини и готови умения",
+  "report.missing.own": "собствените услуги и адреси на изпращача",
+  "report.missing.device": "настройките само на това устройство, като месечния лимит",
+  "report.missing.browser": "браузърът и системата му",
+  "report.missing.policy": "правилата на организацията"
+}

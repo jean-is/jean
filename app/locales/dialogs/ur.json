@@ -157,6 +157,8 @@
   "settings.listen": "سنیں",
   "settings.version": "{name} {version} ({date})",
   "settings.checkVersion": "نیا ورژن تلاش کریں",
+  "settings.report": "مسئلے کی اطلاع دیں",
+  "settings.openReport": "رپورٹ کھولیں",
   "settings.checking": "نیا ورژن تلاش کیا جا رہا ہے…",
   "settings.newest": "یہ سب سے نیا ورژن ہے۔",
   "settings.sample": "ہیلو! بلند آواز سے پڑھے جانے پر آپ کے جواب ایسے سنائی دیں گے۔",

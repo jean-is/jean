@@ -159,6 +159,8 @@
   "settings.listen": "Ascultà",
   "settings.version": "{name} {version} ({date})",
   "settings.checkVersion": "Circà una versione nova",
+  "settings.report": "Signalà un prublema",
+  "settings.openReport": "Apre un signalamentu",
   "settings.checking": "Ricerca di una versione nova…",
   "settings.newest": "Questa hè a versione più recente.",
   "settings.sample": "Bonghjornu ! Eccu cumu sunaranu e vostre risposte quandu sò lette à voce alta.",

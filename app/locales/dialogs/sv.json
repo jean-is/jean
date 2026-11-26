@@ -157,6 +157,8 @@
   "settings.listen": "Lyssna",
   "settings.version": "{name} {version} från {date}",
   "settings.checkVersion": "Sök efter en ny version",
+  "settings.report": "Rapportera ett problem",
+  "settings.openReport": "Öppna en rapport",
   "settings.checking": "Söker efter en ny version…",
   "settings.newest": "Det här är den senaste versionen.",
   "settings.sample": "Hej! Så här låter dina svar när de läses upp.",

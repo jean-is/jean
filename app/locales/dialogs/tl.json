@@ -157,6 +157,8 @@
   "settings.listen": "Pakinggan",
   "settings.version": "{name} {version} ({date})",
   "settings.checkVersion": "Tingnan kung may bagong bersyon",
+  "settings.report": "Mag-ulat ng problema",
+  "settings.openReport": "Magbukas ng ulat",
   "settings.checking": "Hinahanap ang bagong bersyon…",
   "settings.newest": "Ito na ang pinakabagong bersyon.",
   "settings.sample": "Kumusta! Ganito ang tunog ng mga sagot mo kapag binasa nang malakas.",

@@ -155,6 +155,8 @@
   "settings.listen": "聞く",
   "settings.version": "{name} {version}（{date}）",
   "settings.checkVersion": "新しいバージョンを確認",
+  "settings.report": "問題を報告",
+  "settings.openReport": "レポートを開く",
   "settings.checking": "新しいバージョンを確認しています…",
   "settings.newest": "最新のバージョンです。",
   "settings.sample": "こんにちは。回答を読み上げると、このように聞こえます。",

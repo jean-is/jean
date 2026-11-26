@@ -157,6 +157,8 @@
   "settings.listen": "ያዳምጡ",
   "settings.version": "{name} {version} ({date})",
   "settings.checkVersion": "አዲስ ስሪት ፈልግ",
+  "settings.report": "ችግር ሪፖርት ያድርጉ",
+  "settings.openReport": "ሪፖርት ይክፈቱ",
   "settings.checking": "አዲስ ስሪት በመፈለግ ላይ…",
   "settings.newest": "ይህ የቅርብ ጊዜው ስሪት ነው።",
   "settings.sample": "ሰላም! መልሶችዎ ጮክ ብለው ሲነበቡ እንዲህ ይሰማሉ።",

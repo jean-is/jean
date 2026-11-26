@@ -5,9 +5,9 @@
 import { html, svg, nothing } from 'lit-html'
 import { repeat } from 'lit-html/directives/repeat.js'
 import { signal } from '@preact/signals-core'
-import { app, effective } from './state.js'
-import { slots, loaded } from './caps.js'
-import { t, tParts, intlLocales, formatDuration } from '../core/i18n.js'
+import { app, effective, assistantName } from './state.js'
+import { slots, loaded, SIZES } from './caps.js'
+import { t, tParts, intlLocales, formatDuration, formatBytes } from '../core/i18n.js'
 import { markdown } from './markdown.js'
 import { styleSheet } from './sheet.js'
 import { icon, icons } from './menu-icons.js'
@@ -234,4 +234,19 @@ function shown(value) {
     const text = typeof item === 'string' ? item : JSON.stringify(item, null, 2) ?? ''
     return text.includes('\n') ? `${key}:\n${text.replace(/^/gm, '  ')}` : `${key}: ${text}`
   }).join('\n')
+}
+
+/** Offers whose sentence above the box says what set them off: in an answer, they say what they do (D322). */
+const IN_ANSWER = new Set(['skills', 'routines', 'flows'])
+
+/** The brain's offer, in the answer it is part of, which only an answer being written has (ui/chat.js). @param {NonNullable<typeof app.offering.value>} offering */
+export function offerCard({ id, resolve }) {
+  return html`<div class="approval" role="group" aria-label=${t('offer.title')}>
+    <p><strong>${t(`cap.${id}.name`)}</strong></p>
+    <p>${t(IN_ANSWER.has(id) ? `cap.${id}.inAnswer` : `cap.${id}.offer`, { name: assistantName(), size: formatBytes(SIZES[id] ?? 0) })}</p>
+    <div class="approval-actions">
+      <button class="button primary" @click=${() => resolve(true)}>${t('offer.yes')}</button>
+      <button class="button subtle" @click=${() => resolve(false)}>${t('offer.no')}</button>
+    </div>
+  </div>`
 }

@@ -157,6 +157,8 @@
   "settings.listen": "Dinle",
   "settings.version": "{name} {version} ({date})",
   "settings.checkVersion": "Yeni sürüm ara",
+  "settings.report": "Sorun bildir",
+  "settings.openReport": "Rapor aç",
   "settings.checking": "Yeni sürüm aranıyor…",
   "settings.newest": "Bu en yeni sürüm.",
   "settings.sample": "Merhaba! Yanıtların sesli okunduğunda böyle duyulacak.",

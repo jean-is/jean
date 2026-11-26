@@ -116,6 +116,7 @@ npm run tenant -- add <host> --policy <file>  # a copy Warehouse SAS hosts at an
 npm run render  # build, then the package that draws a task saved as a web page, and a share’s viewer, in dist/render/, for npm publish ./dist/render (D305)
 npm run reel -- <name>  # build, then one of Jean's reels as the README's silent animation, frame by frame: dist/reels/<name>.<lang>.webp (D687); --lang, --theme light|dark, --width 880, --fps 12; needs img2webp (brew install webp)
 npm run host    # build, then the share host in dist/host/, its viewer from the render package of this version (D361)
+npm run reproduce -- <report.json | page.md | link>  # a report for support stood up in Chromium: this tree, or the reported release with --release (a worktree of its tag in dist/reproduce/), the reporter's language, time zone and window, the stand-in restored with its settings whole, its policy served; REPRODUCE_KEYS='{"<provider>":"…"}' or --brain fake for answers (D771)
 npm run sounds -- <MuseScore's share/sound>  # the instruments scores play, MS Basic's, as a package in dist/sounds/, for npm publish ./dist/sounds (D338)
 npm run build:desktop  # build, then the desktop apps for macOS, Windows and Linux in dist/desktop/, with Neutralino (D155)
 npm run build:dmg      # the same, then the macOS disk image, on a Mac

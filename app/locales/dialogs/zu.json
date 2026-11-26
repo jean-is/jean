@@ -157,6 +157,8 @@
   "settings.listen": "Lalela",
   "settings.version": "{name} {version} · {date}",
   "settings.checkVersion": "Hlola inguqulo entsha",
+  "settings.report": "Bika inkinga",
+  "settings.openReport": "Vula umbiko",
   "settings.checking": "Kufunwa inguqulo entsha…",
   "settings.newest": "Lena yinguqulo entsha kunazo zonke.",
   "settings.sample": "Sawubona! Yile ndlela izimpendulo zakho ezizozwakala ngayo uma zifundwa ngokuzwakalayo.",

@@ -157,6 +157,8 @@
   "settings.listen": "اورېدل",
   "settings.version": "{name} {version}، د {date}",
   "settings.checkVersion": "نوې نسخه کتل",
+  "settings.report": "د ستونزې راپور ورکول",
+  "settings.openReport": "راپور پرانیستل",
   "settings.checking": "نوې نسخه لټول کېږي…",
   "settings.newest": "دا تر ټولو نوې نسخه ده.",
   "settings.sample": "سلام! کله چې ستاسو ځوابونه په غږ ولوستل شي، داسې به اورېدل کېږي.",

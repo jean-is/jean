@@ -1,0 +1,74 @@
+{
+  "report.title": "รายงานปัญหา",
+  "report.intro": "ฝ่ายสนับสนุนจะได้รับสิ่งที่กำลังดำเนินอยู่และเวลาที่แต่ละขั้นตอนใช้ รุ่น เบราว์เซอร์ และการตั้งค่าของคุณ โดยไม่มีข้อความ ไฟล์ ชื่อ หรือคีย์ใดๆ ของคุณติดไปด้วย",
+  "report.row.version": "รุ่น",
+  "report.row.browser": "เบราว์เซอร์",
+  "report.row.where": "กำลังดำเนินอยู่",
+  "report.row.brains": "สมอง",
+  "report.row.context": "ที่เปิดอยู่",
+  "report.row.task": "งานนี้",
+  "report.row.log": "คำเตือนและข้อผิดพลาด",
+  "report.count.capabilities": {
+    "other": "ความสามารถ {count} รายการ"
+  },
+  "report.count.connections": {
+    "other": "การเชื่อมต่อ {count} รายการ"
+  },
+  "report.count.extensions": {
+    "other": "ส่วนขยาย {count} รายการ"
+  },
+  "report.count.skills": {
+    "other": "ทักษะ {count} รายการ"
+  },
+  "report.count.records": {
+    "other": "เก็บไว้ {count} ขั้นตอน"
+  },
+  "report.count.lines": {
+    "other": "{count} บรรทัด"
+  },
+  "report.none": "ไม่มี",
+  "report.idle": "ไม่มีอะไรกำลังดำเนินอยู่",
+  "report.words": "รวมข้อความของงานนี้ด้วย",
+  "report.wordsHint": "เฉพาะเมื่อฝ่ายสนับสนุนต้องใช้เพื่อดูว่าเกิดอะไรผิดพลาด",
+  "report.json": "ทั้งหมดในรูปแบบที่ฝ่ายสนับสนุนอ่าน",
+  "report.save": "บันทึกเป็นไฟล์",
+  "report.write": "เขียนถึงฝ่ายสนับสนุน",
+  "report.link": "สร้างลิงก์ให้ฝ่ายสนับสนุน",
+  "report.saved": "บันทึกแล้ว",
+  "report.written": "คัดลอกรายงานแล้ว วางลงในข้อความของคุณได้เลย",
+  "report.linked": "คัดลอกลิงก์แล้ว ลิงก์จะใช้ไม่ได้หลังจากหนึ่งสัปดาห์ และคุณหยุดก่อนหน้านั้นได้ในรายการลิงก์ของคุณ",
+  "report.refused": "กฎขององค์กรของคุณกำหนดให้รายงานนี้อยู่บนอุปกรณ์นี้เท่านั้น",
+  "report.failed": "ไม่สำเร็จ ลองอีกครั้ง หรือบันทึกเป็นไฟล์",
+  "report.fileName": "report-{date}",
+  "report.subject": "{name} {version}: พบปัญหา",
+  "report.mailBody": "รายงานอยู่ในคลิปบอร์ดของคุณแล้ว วางที่นี่ได้เลย",
+  "report.slow": "ใช้เวลานานเกินไปไหม",
+  "report.stage.choose": "กำลังเลือกสมอง",
+  "report.stage.prepare": "กำลังเตรียมคำขอของคุณ",
+  "report.stage.read": "กำลังอ่านไฟล์ที่คุณแชร์",
+  "report.stage.key": "กำลังอ่านคีย์ของคุณสำหรับ {brain}",
+  "report.stage.ask": "กำลังรอ {brain}",
+  "report.stage.hook": "กำลังรอ {name}",
+  "report.stage.check": "กำลังรอการตรวจสอบ",
+  "report.stage.receipt": "กำลังตรวจวงเงินของเดือนนี้",
+  "report.stage.compact": "กำลังสรุปงานจนถึงตอนนี้",
+  "report.unsent.held": "ยังไม่ได้ส่ง: คำขอล่าสุดของคุณยังดำเนินอยู่",
+  "report.unsent.unreached": "ยังไม่ได้ส่ง: คำขอของคุณส่งไปไม่ถึง",
+  "report.unsent.loading": "ยังไม่ได้ส่ง: ส่วนที่ใช้ส่งยังโหลดอยู่",
+  "report.unsent.unloaded": "ยังไม่ได้ส่ง: ส่วนที่ใช้ส่งโหลดไม่สำเร็จ",
+  "report.take": "เปิดรายงาน",
+  "report.takeIntro": "รายงานที่มีคนส่งมาให้คุณจะกลายเป็นสำเนาจำลอง คือการตั้งค่าเดียวกัน แต่ใช้คำสมมติที่ยาวเท่ากันแทนข้อความ เพื่อนำไปกู้คืนในโปรไฟล์ใหม่",
+  "report.paste": "วางรายงาน หรือหน้าที่ลิงก์ของรายงานแสดง",
+  "report.pick": "เลือกไฟล์",
+  "report.notReport": "นี่ไม่ใช่รายงาน",
+  "report.standIn": "บันทึกสำเนาจำลอง",
+  "report.standInName": "stand-in-{date}",
+  "report.standInSaved": "บันทึกแล้ว กู้คืนในโปรไฟล์ใหม่ได้จาก “ข้อมูลของคุณ” สิ่งที่ไม่รวมอยู่: {missing}",
+  "report.missing.keys": "คีย์และบัญชี",
+  "report.missing.files": "ไฟล์และโฟลเดอร์ที่แชร์",
+  "report.missing.routines": "ส่วนขยาย กิจวัตร และทักษะสำเร็จรูป",
+  "report.missing.own": "บริการและที่อยู่ของผู้ส่งเอง",
+  "report.missing.device": "ตัวเลือกเฉพาะของอุปกรณ์นี้ เช่น วงเงินต่อเดือน",
+  "report.missing.browser": "เบราว์เซอร์และระบบที่ใช้",
+  "report.missing.policy": "กฎขององค์กร"
+}

@@ -89,6 +89,7 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   together: () => import('../caps/together/together.js'),
   'natural-voice': () => import('../caps/natural-voice/natural-voice.js'),
   split: () => import('../caps/split/split.js'),
+  report: () => import('../caps/report/report.js'),
 })
 
 /** Widgets (D196), loaded when an answer holds one, never at the start. */

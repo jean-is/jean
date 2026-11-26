@@ -1,0 +1,80 @@
+{
+  "report.title": "సమస్యను రిపోర్ట్ చేయి",
+  "report.intro": "ఏ పని జరుగుతూ ఉంది, ప్రతి దశకు ఎంత సమయం పట్టింది, వెర్షన్, మీ బ్రౌజర్, మీ సెట్టింగ్‌లు సపోర్ట్ బృందానికి అందుతాయి. మీ పదాలు, ఫైళ్లు, పేర్లు, కీలు ఏవీ దానితో వెళ్లవు.",
+  "report.row.version": "వెర్షన్",
+  "report.row.browser": "బ్రౌజర్",
+  "report.row.where": "జరుగుతున్నది",
+  "report.row.brains": "మెదళ్లు",
+  "report.row.context": "ఆన్‌లో ఉన్నవి",
+  "report.row.task": "ఈ పని",
+  "report.row.log": "హెచ్చరికలు, లోపాలు",
+  "report.count.capabilities": {
+    "one": "{count} సామర్థ్యం",
+    "other": "{count} సామర్థ్యాలు"
+  },
+  "report.count.connections": {
+    "one": "{count} అనుసంధానం",
+    "other": "{count} అనుసంధానాలు"
+  },
+  "report.count.extensions": {
+    "one": "{count} ఎక్స్‌టెన్షన్",
+    "other": "{count} ఎక్స్‌టెన్షన్‌లు"
+  },
+  "report.count.skills": {
+    "one": "{count} నైపుణ్యం",
+    "other": "{count} నైపుణ్యాలు"
+  },
+  "report.count.records": {
+    "one": "{count} భద్రపరిచిన దశ",
+    "other": "{count} భద్రపరిచిన దశలు"
+  },
+  "report.count.lines": {
+    "one": "{count} లైన్",
+    "other": "{count} లైన్లు"
+  },
+  "report.none": "ఏవీ లేవు",
+  "report.idle": "ఏదీ జరగడం లేదు",
+  "report.words": "ఈ పని పదాలను కూడా జోడించు",
+  "report.wordsHint": "ఏమి తప్పు జరిగిందో చూడటానికి సపోర్ట్ బృందానికి అవి అవసరమైతేనే.",
+  "report.json": "మొత్తం రిపోర్ట్, సపోర్ట్ బృందం చదివే విధంగా",
+  "report.save": "ఫైల్‌గా సేవ్ చేయి",
+  "report.write": "సపోర్ట్ బృందానికి రాయి",
+  "report.link": "సపోర్ట్ బృందం కోసం లింక్ తయారుచేయి",
+  "report.saved": "సేవ్ అయింది.",
+  "report.written": "రిపోర్ట్ కాపీ అయింది: దాన్ని మీ సందేశంలో పేస్ట్ చేయండి.",
+  "report.linked": "లింక్ కాపీ అయింది. ఒక వారం తర్వాత అది పని చేయడం ఆగిపోతుంది, అంతకంటే ముందే మీ లింక్‌లలో దాన్ని ఆపవచ్చు.",
+  "report.refused": "మీ సంస్థ నియమాలు ఈ రిపోర్ట్‌ను ఈ పరికరంలోనే ఉంచుతాయి.",
+  "report.failed": "అది పని చేయలేదు. మళ్లీ ప్రయత్నించండి, లేదా ఫైల్‌గా సేవ్ చేయండి.",
+  "report.fileName": "report-{date}",
+  "report.subject": "{name} {version}: ఒక సమస్య",
+  "report.mailBody": "రిపోర్ట్ మీ క్లిప్‌బోర్డ్‌లో ఉంది: దాన్ని ఇక్కడ పేస్ట్ చేయండి.",
+  "report.slow": "చాలా సమయం పడుతోందా?",
+  "report.stage.choose": "మెదడును ఎంచుకుంటోంది",
+  "report.stage.prepare": "మీ అభ్యర్థనను సిద్ధం చేస్తోంది",
+  "report.stage.read": "మీరు షేర్ చేసిన ఫైళ్లను చదువుతోంది",
+  "report.stage.key": "{brain} కోసం మీ కీని చదువుతోంది",
+  "report.stage.ask": "{brain} జవాబు కోసం ఎదురుచూస్తోంది",
+  "report.stage.hook": "ఎదురుచూస్తోంది: {name}",
+  "report.stage.check": "ఒక తనిఖీ కోసం ఎదురుచూస్తోంది",
+  "report.stage.receipt": "ఈ నెల పరిమితిని తనిఖీ చేస్తోంది",
+  "report.stage.compact": "ఇప్పటివరకు చేసిన పనిని సంక్షిప్తం చేస్తోంది",
+  "report.unsent.held": "పంపలేదు: మీ మునుపటి అభ్యర్థన ఇంకా జరుగుతోంది.",
+  "report.unsent.unreached": "పంపలేదు: మీ అభ్యర్థన చేరలేదు.",
+  "report.unsent.loading": "పంపలేదు: పంపే భాగం ఇంకా లోడ్ అవుతోంది.",
+  "report.unsent.unloaded": "పంపలేదు: పంపే భాగం లోడ్ కాలేదు.",
+  "report.take": "రిపోర్ట్‌ను తెరువు",
+  "report.takeIntro": "ఎవరైనా మీకు పంపిన రిపోర్ట్ ఒక ప్రత్యామ్నాయ కాపీగా మారుతుంది: అదే సెటప్, అదే పొడవున్న పూరక పదాలతో, కొత్త ప్రొఫైల్‌లో పునరుద్ధరించడానికి.",
+  "report.paste": "రిపోర్ట్‌ను, లేదా దాని లింక్ చూపే పేజీని పేస్ట్ చేయండి",
+  "report.pick": "ఫైల్ ఎంచుకో",
+  "report.notReport": "ఇది రిపోర్ట్ కాదు.",
+  "report.standIn": "ప్రత్యామ్నాయ కాపీని సేవ్ చేయి",
+  "report.standInName": "stand-in-{date}",
+  "report.standInSaved": "సేవ్ అయింది. కొత్త ప్రొఫైల్‌లో, ‘మీ డేటా’ నుండి దీన్ని పునరుద్ధరించండి. ఇందులో లేనివి: {missing}.",
+  "report.missing.keys": "కీలు, ఖాతాలు",
+  "report.missing.files": "షేర్ చేసిన ఫైళ్లు, ఫోల్డర్లు",
+  "report.missing.routines": "ఎక్స్‌టెన్షన్‌లు, రొటీన్లు, సిద్ధంగా ఉన్న నైపుణ్యాలు",
+  "report.missing.own": "పంపినవారి సొంత సేవలు, చిరునామాలు",
+  "report.missing.device": "ఈ పరికరం సొంత ఎంపికలు, ఉదాహరణకు నెలవారీ పరిమితి",
+  "report.missing.browser": "బ్రౌజర్, దాని సిస్టమ్",
+  "report.missing.policy": "సంస్థ నియమాలు"
+}

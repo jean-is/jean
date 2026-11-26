@@ -9,7 +9,7 @@ import {
   app, effective, setLocale, updateSettings, loadModels,
   offeredLocales, SHORTCUTS,
 } from './state.js'
-import { unlock, loaded, slots } from './caps.js'
+import { unlock, loaded, slots, isDenied } from './caps.js'
 import { BRAND } from '../brand.js'
 import { site } from './csp.js'
 import { t, tParts, locale, dir, intlLocales, useStrings, languageName, preferredLocales } from '../core/i18n.js'
@@ -209,8 +209,13 @@ function general() {
     ${group('away', drawn('away'))}
     ${version && date ? html`<p class="muted small version">${tParts('settings.version', { name: BRAND.name, version, date: html`<time datetime=${date}>${madeOn(date)}</time>` })}</p>` : nothing}
     ${'serviceWorker' in navigator ? html`<p class="small version-check"><span role="status">${ready ? t('update.ready', { name: BRAND.name }) : looked.value && t(looked.value)}</span> ${ready
-      ? html`<button class="button primary" @click=${() => import('./update.js').then((update) => update.apply(ready))}>${t('update.reload')}</button>` : html`<button class="button" @click=${lookNow}>${t('settings.checkVersion')}</button>`}</p>` : nothing}`
+      ? html`<button class="button primary" @click=${() => import('./update.js').then((update) => update.apply(ready))}>${t('update.reload')}</button>` : html`<button class="button" @click=${lookNow}>${t('settings.checkVersion')}</button>`}</p>` : nothing}
+    ${isDenied('report') ? nothing : html`<p class="small report-ways"><button class="button" @click=${() => reporting('open')}>${t('settings.report')}</button>
+      <button class="button subtle" @click=${() => reporting('take')}>${t('settings.openReport')}</button></p>`}`
 }
+
+/** Report a problem (D771), or open a report someone sent, once its capability is here. @param {'open' | 'take'} what */
+const reporting = async (what) => { if (await unlock('report')) (await import('../caps/report/report.js'))[what]() }
 
 /** ⌘/, beside ⌘,: Settings on its keyboard shortcuts (D257). */
 const KEYBOARD_KEYS = SHORTCUTS.settings.replace(',', '/')

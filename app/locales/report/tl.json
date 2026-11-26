@@ -1,0 +1,80 @@
+{
+  "report.title": "Mag-ulat ng problema",
+  "report.intro": "Matatanggap ng suporta kung ano ang ginagawa at gaano katagal ang bawat hakbang, ang bersyon, ang browser mo at ang mga setting mo. Hindi kasama ang alinman sa mga salita, file, pangalan o susi mo.",
+  "report.row.version": "Bersyon",
+  "report.row.browser": "Browser",
+  "report.row.where": "Ginagawa",
+  "report.row.brains": "Mga utak",
+  "report.row.context": "Naka-on",
+  "report.row.task": "Ang gawaing ito",
+  "report.row.log": "Mga babala at error",
+  "report.count.capabilities": {
+    "one": "{count} kakayahan",
+    "other": "{count} kakayahan"
+  },
+  "report.count.connections": {
+    "one": "{count} koneksyon",
+    "other": "{count} koneksyon"
+  },
+  "report.count.extensions": {
+    "one": "{count} extension",
+    "other": "{count} extension"
+  },
+  "report.count.skills": {
+    "one": "{count} kasanayan",
+    "other": "{count} kasanayan"
+  },
+  "report.count.records": {
+    "one": "{count} hakbang na naka-save",
+    "other": "{count} hakbang na naka-save"
+  },
+  "report.count.lines": {
+    "one": "{count} linya",
+    "other": "{count} linya"
+  },
+  "report.none": "Wala",
+  "report.idle": "Walang ginagawa",
+  "report.words": "Isama ang mga salita ng gawaing ito",
+  "report.wordsHint": "Kung kailangan lang ng suporta para makita kung ano ang nagkamali.",
+  "report.json": "Lahat ng ito, gaya ng pagbasa ng suporta",
+  "report.save": "I-save bilang file",
+  "report.write": "Sumulat sa suporta",
+  "report.link": "Gumawa ng link para sa suporta",
+  "report.saved": "Na-save.",
+  "report.written": "Nakopya ang ulat: i-paste ito sa mensahe mo.",
+  "report.linked": "Nakopya ang link. Hihinto itong gumana pagkalipas ng isang linggo, at puwede mo itong ihinto nang mas maaga sa mga link mo.",
+  "report.refused": "Pinapanatili ng mga patakaran ng organisasyon mo ang ulat na ito sa device na ito.",
+  "report.failed": "Hindi iyon gumana. Subukang muli, o i-save ito bilang file.",
+  "report.fileName": "ulat-{date}",
+  "report.subject": "{name} {version}: isang problema",
+  "report.mailBody": "Nasa clipboard mo ang ulat: i-paste ito rito.",
+  "report.slow": "Matagal ba?",
+  "report.stage.choose": "Pumipili ng utak",
+  "report.stage.prepare": "Inihahanda ang hiling mo",
+  "report.stage.read": "Binabasa ang mga file na ibinahagi mo",
+  "report.stage.key": "Binabasa ang susi mo para sa {brain}",
+  "report.stage.ask": "Hinihintay ang {brain}",
+  "report.stage.hook": "Hinihintay ang {name}",
+  "report.stage.check": "Hinihintay ang isang pagsusuri",
+  "report.stage.receipt": "Tinitingnan ang limitasyon ngayong buwan",
+  "report.stage.compact": "Binubuod ang gawain hanggang ngayon",
+  "report.unsent.held": "Hindi naipadala: ginagawa pa ang huling hiling mo.",
+  "report.unsent.unreached": "Hindi naipadala: hindi nakarating ang hiling mo.",
+  "report.unsent.loading": "Hindi naipadala: naglo-load pa ang nagpapadala nito.",
+  "report.unsent.unloaded": "Hindi naipadala: hindi nag-load ang nagpapadala nito.",
+  "report.take": "Magbukas ng ulat",
+  "report.takeIntro": "Ang ulat na ipinadala sa iyo ng isang tao ay nagiging pamalit: ang parehong setup, na may mga pamunong salita na pareho ang haba, para i-restore sa isang bagong profile.",
+  "report.paste": "I-paste ang ulat, o ang page na ipinapakita ng link nito",
+  "report.pick": "Pumili ng file",
+  "report.notReport": "Hindi ito ulat.",
+  "report.standIn": "I-save ang pamalit",
+  "report.standInName": "pamalit-{date}",
+  "report.standInSaved": "Na-save. I-restore ito sa isang bagong profile, mula sa Ang data mo. Wala rito: {missing}.",
+  "report.missing.keys": "mga susi at account",
+  "report.missing.files": "mga ibinahaging file at folder",
+  "report.missing.routines": "mga extension, rutina at handang kasanayan",
+  "report.missing.own": "ang sariling mga serbisyo at address ng nagpadala",
+  "report.missing.device": "ang sariling mga pinili ng device na ito, gaya ng buwanang limitasyon",
+  "report.missing.browser": "ang browser at ang system nito",
+  "report.missing.policy": "ang mga patakaran ng organisasyon"
+}

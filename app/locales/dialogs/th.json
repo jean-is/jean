@@ -155,6 +155,8 @@
   "settings.listen": "ฟัง",
   "settings.version": "{name} {version} วันที่ {date}",
   "settings.checkVersion": "ตรวจหารุ่นใหม่",
+  "settings.report": "รายงานปัญหา",
+  "settings.openReport": "เปิดรายงาน",
   "settings.checking": "กำลังตรวจหารุ่นใหม่…",
   "settings.newest": "นี่คือรุ่นล่าสุด",
   "settings.sample": "สวัสดี! คำตอบของคุณจะฟังดูแบบนี้เมื่ออ่านออกเสียง",

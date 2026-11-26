@@ -1,0 +1,80 @@
+{
+  "report.title": "Een probleem melden",
+  "report.intro": "De helpdesk krijgt wat er bezig was en hoe lang elke stap duurde, de versie, je browser en je instellingen. Niets van je woorden, bestanden, namen of sleutels gaat mee.",
+  "report.row.version": "Versie",
+  "report.row.browser": "Browser",
+  "report.row.where": "Bezig",
+  "report.row.brains": "Breinen",
+  "report.row.context": "Ingeschakeld",
+  "report.row.task": "Deze taak",
+  "report.row.log": "Waarschuwingen en fouten",
+  "report.count.capabilities": {
+    "one": "{count} mogelijkheid",
+    "other": "{count} mogelijkheden"
+  },
+  "report.count.connections": {
+    "one": "{count} verbinding",
+    "other": "{count} verbindingen"
+  },
+  "report.count.extensions": {
+    "one": "{count} extensie",
+    "other": "{count} extensies"
+  },
+  "report.count.skills": {
+    "one": "{count} vaardigheid",
+    "other": "{count} vaardigheden"
+  },
+  "report.count.records": {
+    "one": "{count} stap bewaard",
+    "other": "{count} stappen bewaard"
+  },
+  "report.count.lines": {
+    "one": "{count} regel",
+    "other": "{count} regels"
+  },
+  "report.none": "Geen",
+  "report.idle": "Niets bezig",
+  "report.words": "De woorden van deze taak meesturen",
+  "report.wordsHint": "Alleen als de helpdesk ze nodig heeft om te zien wat er misging.",
+  "report.json": "Alles, zoals de helpdesk het leest",
+  "report.save": "Opslaan als bestand",
+  "report.write": "Naar de helpdesk schrijven",
+  "report.link": "Een link maken voor de helpdesk",
+  "report.saved": "Opgeslagen.",
+  "report.written": "Het rapport is gekopieerd: plak het in je bericht.",
+  "report.linked": "Link gekopieerd. Na een week werkt hij niet meer, en je kunt hem eerder stoppen bij je links.",
+  "report.refused": "De regels van je organisatie houden dit rapport op dit apparaat.",
+  "report.failed": "Dat lukte niet. Probeer het opnieuw, of sla het op als bestand.",
+  "report.fileName": "rapport-{date}",
+  "report.subject": "{name} {version}: een probleem",
+  "report.mailBody": "Het rapport staat op je klembord: plak het hier.",
+  "report.slow": "Duurt het lang?",
+  "report.stage.choose": "Een brein kiezen",
+  "report.stage.prepare": "Je verzoek klaarmaken",
+  "report.stage.read": "De bestanden lezen die je deelde",
+  "report.stage.key": "Je sleutel voor {brain} lezen",
+  "report.stage.ask": "Wachten op {brain}",
+  "report.stage.hook": "Wachten op {name}",
+  "report.stage.check": "Wachten op een controle",
+  "report.stage.receipt": "De limiet van deze maand controleren",
+  "report.stage.compact": "De taak tot nu toe samenvatten",
+  "report.unsent.held": "Niet verstuurd: je vorige verzoek is nog bezig.",
+  "report.unsent.unreached": "Niet verstuurd: je verzoek kwam niet aan.",
+  "report.unsent.loading": "Niet verstuurd: wat het verstuurt, laadt nog.",
+  "report.unsent.unloaded": "Niet verstuurd: wat het verstuurt, is niet geladen.",
+  "report.take": "Een rapport openen",
+  "report.takeIntro": "Een rapport dat iemand je stuurde, wordt een stand-in: dezelfde opzet, met opvulwoorden van dezelfde lengte, om in een nieuw profiel terug te zetten.",
+  "report.paste": "Plak het rapport, of de pagina die de link ervan toont",
+  "report.pick": "Kies een bestand",
+  "report.notReport": "Dit is geen rapport.",
+  "report.standIn": "De stand-in opslaan",
+  "report.standInName": "stand-in-{date}",
+  "report.standInSaved": "Opgeslagen. Zet hem terug in een nieuw profiel, via Je gegevens. Niet inbegrepen: {missing}.",
+  "report.missing.keys": "sleutels en accounts",
+  "report.missing.files": "gedeelde bestanden en mappen",
+  "report.missing.routines": "extensies, routines en kant-en-klare vaardigheden",
+  "report.missing.own": "de eigen diensten en adressen van de afzender",
+  "report.missing.device": "de eigen keuzes van dit apparaat, zoals de maandlimiet",
+  "report.missing.browser": "de browser en zijn systeem",
+  "report.missing.policy": "de regels van de organisatie"
+}
