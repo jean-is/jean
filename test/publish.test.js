@@ -409,6 +409,33 @@ test('a site published with its forms’ replies takes them sealed from any page
   assert.deepEqual(await on.store.replies('lyon-bakery'), [])
 })
 
+test('replies that come in the same millisecond keep their order, and one that came after the last Jean read is never dropped unread', async (t) => {
+  const now = Date.parse('2026-11-14T10:00:00.000Z')
+  t.mock.timers.enable({ apis: ['Date'], now })
+  const on = hostOn(), mine = token(), { files, list } = await siteOf(PAGES)
+  const post = () => on.ask('/v1/sites/lyon-bakery', { method: 'POST', token: mine, body: JSON.stringify({ files: list, replies: true }) })
+  for (const path of (await (await post()).json()).need ?? []) await on.ask(`/v1/sites/lyon-bakery/${path}`, { method: 'PUT', token: mine, body: /** @type {BodyInit} */ (files.get(path)) })
+  assert.ok((await post()).ok)
+  const send = async (/** @type {string} */ letter) => assert.equal((await on.ask('/v1/sites/lyon-bakery/replies', { method: 'POST', origin: 'null', body: letter.repeat(130) })).status, 202)
+  /** @returns {Promise<{ id: string, sealed: string }[]>} */
+  const waiting = async () => (await (await on.ask('/v1/sites/lyon-bakery/replies', { token: mine })).json()).replies
+  const drop = async (/** @type {string} */ through) => assert.equal((await on.ask(`/v1/sites/lyon-bakery/replies?through=${through}`, { method: 'DELETE', token: mine })).status, 200)
+  for (const letter of 'abcde') await send(letter)
+  const read = await waiting()
+  assert.deepEqual(read.map((one) => one.sealed[0]), [...'abcde'])
+  // One more after Jean read them, before it drops them: it stays.
+  await send('f')
+  await drop(/** @type {string} */ (read.at(-1)?.id))
+  const [f] = await waiting()
+  assert.deepEqual([f.sealed[0], f.id > /** @type {string} */ (read.at(-1)?.id)], ['f', true])
+  // All collected, the next one still comes after the last id Jean keeps, and says when it came to within the burst.
+  await drop(f.id)
+  await send('g')
+  const [g] = await waiting()
+  assert.ok(g.id > f.id)
+  assert.ok(cameAt(g.id) - now < 10)
+})
+
 test('a folder keeps a site’s replies, each under its id, until they are dropped', async () => {
   const store = folder(await mkdtemp(join(tmpdir(), 'jean-replies-')), null)
   assert.deepEqual(await store.replies('lyon-bakery'), [])
