@@ -2,13 +2,16 @@
 // The render package, @jean-is/render (D305): Jean's own files, as they are in app/ and at
 // the same paths, that draw a task saved as a web page as Jean draws it, its files as Jean's preview
 // shows them, and the viewer of a share's host (D361). `renderPlan` says what it holds, which `npm run manifest` lists in capabilities.json;
-// `npm run render` puts it in dist/render/, ready for `npm publish ./dist/render`.
-// Usage: npm run render
+// `npm run render` puts it in dist/render/, ready for `npm publish ./dist/render`; with --publish, it publishes it too when
+// npm lacks that version, as CI does while the browser tests run (D321), under the npm login here otherwise.
+// Usage: npm run render [-- --publish]
+import { execFile, spawn } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { cp, mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises'
+import { cp, mkdir, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { promisify } from 'node:util'
 import { extractStaticImports, parseImportMap, resolveSpecifier } from './graph.js'
 import { versionOf } from './version.js'
 
@@ -28,8 +31,11 @@ export const VIEWER = 'caps/share/view.js'
 export const VIEWS = Object.freeze(['caps/files/pdf.js', 'caps/files/office.js', 'caps/files/midi.js', 'caps/made/formats.js', 'caps/games/page.js', 'vendor/pdfjs/pdf.min.mjs', 'vendor/pdfjs/pdf.worker.min.mjs'])
 /** Modules the copy loads in place of the room's: what draws answers reads the page, not Jean's storage. */
 export const STAND_INS = Object.freeze({ 'ui/state.js': 'ui/reader-state.js' })
-/** What its modules read as files rather than import (style sheets, words, fonts, the pages' relay, the libraries lent to pages, pdf.js's worker and data, Office's viewers, a game's shell and engines), whole folders included. */
-export const ASSETS = Object.freeze(['preview.html', 'ui/style.css', 'ui/view.css', 'ui/looks', 'fonts', 'locales', 'caps/layouts', 'caps/math', 'caps/charts',
+/**
+ * What its modules read as files rather than import (style sheets, fonts, the pages' relay, the libraries lent to pages, pdf.js's worker and data,
+ * Office's viewers, a game's shell and engines), whole folders included; their words are renderStrings()'.
+ */
+export const ASSETS = Object.freeze(['preview.html', 'ui/style.css', 'ui/view.css', 'ui/looks', 'fonts', 'caps/layouts', 'caps/math', 'caps/charts',
   'caps/scores', 'caps/slides', 'caps/interactive', 'vendor/temml', 'vendor/abcjs', 'vendor/echarts', 'vendor/deck', 'vendor/pele', 'vendor/maplibre', 'vendor/pdfjs', 'vendor/ooxml', 'caps/games/shell.js', 'caps/games/frame.css',
   'vendor/phaser', 'vendor/babylon', 'vendor/zzfx', 'vendor/LICENSES'])
 
@@ -78,9 +84,31 @@ async function under(root, path) {
   return entries.filter((entry) => entry.isFile() && entry.name !== '.DS_Store').map((entry) => join(entry.parentPath, entry.name).slice(root.length + 1)).sort()
 }
 
+/** A part of the catalog a file loads (core/i18n.js), by its name as written. */
+const PART = /\buseStrings\(\s*(?:'([\w-]+)'\s*\)|(?!part\)\s*\{))/g
+
+/**
+ * The words its files show: the room's catalog in every language, and the parts of it that they load by name
+ * (`useStrings('charts')`), never the other capabilities' and the dialogs', which no saved copy opens: they were three
+ * in four of its files. A part named otherwise than as written can't be told, and stops the build.
+ * @param {string} root app/ @param {string[]} files  the package's others
+ */
+export async function renderStrings(root, files) {
+  const parts = new Set()
+  for (const path of files.filter((file) => /\.(js|html)$/.test(file) && !file.startsWith('vendor/'))) {
+    for (const [, part] of (await readFile(join(root, path), 'utf8')).matchAll(PART)) {
+      if (!part) throw new Error(`render: ${path} loads a part of the catalog not named as written, useStrings('…'), so the package can't tell which`)
+      parts.add(part)
+    }
+  }
+  const catalogs = (await readdir(join(root, 'locales'))).filter((name) => name.endsWith('.json')).map((name) => `locales/${name}`).sort()
+  return [...catalogs, ...(await Promise.all([...parts].sort().map((part) => under(root, `locales/${part}`)))).flat()]
+}
+
 /** The package's files, its modules first. @param {string} root app/ @param {string[]} modules */
 export async function renderFiles(root, modules) {
-  return [...new Set([...modules, ...(await Promise.all(ASSETS.map((path) => under(root, path)))).flat()])]
+  const files = [...new Set([...modules, ...(await Promise.all(ASSETS.map((path) => under(root, path)))).flat()])]
+  return [...files, ...(await renderStrings(root, files))]
 }
 
 /**
@@ -95,11 +123,49 @@ export async function renderListing(root, read) {
   return { version: `${versionOf({ root: join(root, '..') }) ?? '0.0.0'}-r${hash.digest('hex').slice(0, 12)}`, entry: ENTRY, viewer: VIEWER, files, map: STAND_INS }
 }
 
+/**
+ * The package's versions on npm, none before its first; asked without holding up what runs beside it.
+ * @param {string} [cwd] @returns {Promise<string[]>}
+ */
+export async function publishedVersions(cwd = ROOT) {
+  try {
+    const { stdout } = await promisify(execFile)('npm', ['view', NAME, 'versions', '--json'], { cwd, encoding: 'utf8' })
+    return [JSON.parse(stdout)].flat()
+  } catch (error) {
+    if (/\bE404\b/.test(String(/** @type {{ stdout?: unknown }} */ (error).stdout))) return []
+    throw error
+  }
+}
+
+/**
+ * Whether npm refused a publish because it has that version already: held while it makes it public, as when the deploy
+ * publishes what CI's render job did minutes before, or public since it was last asked.
+ * @param {string} errors
+ */
+export const held = (errors) => /previously (?:staged|published) version/i.test(errors)
+
+/**
+ * dist/render/ published when npm lacks its version, without waiting for npm to make it public.
+ * @param {string} out @param {string} version
+ */
+async function publish(out, version) {
+  if ((await publishedVersions()).includes(version)) return console.log(`render: npm has ${NAME}@${version} already`)
+  const errors = await new Promise((resolve, reject) => {
+    const child = spawn('npm', ['publish', out], { cwd: ROOT, stdio: ['inherit', 'inherit', 'pipe'] })
+    let written = ''
+    child.stderr.on('data', (chunk) => { process.stderr.write(chunk); written += chunk })
+    child.on('error', reject).on('close', (code) => (code === 0 || held(written) ? resolve(written) : reject(new Error(`render: npm publish ./dist/render failed (exit ${code})`))))
+  })
+  console.log(held(errors) ? `render: npm holds ${NAME}@${version} already` : `render: published ${NAME}@${version}, which npm makes public within minutes`)
+}
+
 async function main() {
   const listing = JSON.parse(await readFile(join(APP, 'capabilities.json'), 'utf8')).render
   if (!listing) throw new Error('render: capabilities.json lists no render package; run npm run build first')
   const out = join(ROOT, 'dist', 'render')
   const files = await renderFiles(APP, listing.files)
+  // Nothing left from an earlier build, which npm would publish with it.
+  await rm(out, { recursive: true, force: true })
   for (const path of files) {
     await mkdir(dirname(join(out, path)), { recursive: true })
     await cp(join(APP, path), join(out, path))
@@ -111,7 +177,15 @@ async function main() {
     license: 'MIT', type: 'module', ...(repository && { repository }), publishConfig: { access: 'public', tag: 'latest' },
   }, null, 2)}\n`)
   await writeFile(join(out, 'README.md'), `# ${NAME}\n\nThe files with which a task Jean saved as a web page draws itself, as Jean draws it: Jean's own, as they are in its app/ folder, at the same paths, and the libraries they use, whose licences are in vendor/LICENSES. A saved page names the version it was made with.\n`)
-  console.log(`render: ${NAME}@${listing.version}, ${files.length} files in dist/render; publish with npm publish ./dist/render`)
+  console.log(`render: ${NAME}@${listing.version}, ${files.length} files in dist/render${process.argv.includes('--publish') ? '' : '; publish with npm publish ./dist/render'}`)
+  if (process.argv.includes('--publish')) await publish(out, listing.version)
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url) && existsSync(APP)) await main()
+if (process.argv[1] === fileURLToPath(import.meta.url) && existsSync(APP)) {
+  await main().catch((error) => {
+    // What the package says of itself, in a line; anything else with where it came from.
+    if (!String(error?.message).startsWith('render: ')) throw error
+    console.error(error.message)
+    process.exit(1)
+  })
+}

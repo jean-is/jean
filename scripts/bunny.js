@@ -2,7 +2,7 @@
 // Puts a build of Jean on Bunny CDN, as jean.is is served: dist/web/'s files in a storage zone, each release in a
 // folder of its own, releases/<name>/, then the pull zone pointed at it by one edge rule, as Bunny's own CLI publishes
 // a site, so no visitor gets two versions' files; the cache is purged, and the oldest releases go, keeping the last
-// five. Bunny compresses as it serves, so the build's .br and .gz copies stay behind. A storage zone has no
+// five. The upload and the switch are two steps, so that a deploy uploads while npm makes the render package public. Bunny compresses as it serves, so the build's .br and .gz copies stay behind. A storage zone has no
 // `try_files`: the pull zone's script (deploy/bunny/pages.js) asks for <path>.html when an address has no ending, so a
 // file without one, LICENSE, is stored as LICENSE.html, with its own type. Every deploy also sets what the zone
 // must keep to: logging off, cookies stripped, the header set (deploy/README.md), and files kept at the edge until the next deploy.
@@ -17,8 +17,12 @@ import { HEADERS, TYPES } from '../app/caps/policy/checks.js'
 
 /** Bunny's account API, which the pull zone's rules and purges go through. */
 const API = 'https://api.bunny.net'
-/** How many uploads run at once. */
-const AT_ONCE = 12
+/**
+ * How many uploads run at once: each file waits on a round trip to the zone's region and Bunny's write, not on bandwidth,
+ * so twelve took five minutes for a release's 5,800 files; under the lowest limit Bunny's pages give, 50 at once in a
+ * zone, past which it answers 429.
+ */
+export const AT_ONCE = 32
 /** How long a rule takes to reach every edge before the second purge (Bunny's CLI waits at least 7.5 s). */
 const SETTLE = 15_000
 /** How long the edge keeps a file, purged at each deploy: 30 days, as Bunny's CLI sets it. */
@@ -113,22 +117,25 @@ async function filesUnder (root) {
 
 /**
  * A call to one of Bunny's APIs that throws, saying what Bunny answered, unless it succeeds; tried again twice when
- * the network or Bunny fails. The Storage API answers some of its own failures to write a file with a 400, "Unable to
- * upload file", which the same bytes then pass, so a PUT, which is only ever the same bytes again, is tried again
- * after one too. @param {string} url @param {RequestInit} init @returns {Promise<Response>}
+ * the network or Bunny fails, or Bunny has too many at once (429), after the time it asks for. The Storage API answers
+ * some of its own failures to write a file with a 400, "Unable to upload file", which the same bytes then pass, so a
+ * PUT, which is only ever the same bytes again, is tried again after one too.
+ * @param {string} url @param {RequestInit} init @returns {Promise<Response>}
  */
 async function call (url, init) {
   for (let attempt = 1; ; attempt++) {
     const response = await fetch(url, init).catch((error) => (attempt < 3 ? null : Promise.reject(error)))
     if (response?.ok) return response
-    const again = response && (response.status >= 500 || (init.method === 'PUT' && response.status === 400))
+    const again = response && (response.status >= 500 || response.status === 429 || (init.method === 'PUT' && response.status === 400))
     if (response && (!again || attempt >= 3)) throw new Error(`${init.method ?? 'GET'} ${new URL(url).pathname}: Bunny answered ${response.status} ${(await response.text()).slice(0, 300)}`)
-    await new Promise((resolve) => setTimeout(resolve, 1000 * attempt))
+    const asked = Number(response?.headers.get('retry-after'))
+    await new Promise((resolve) => setTimeout(resolve, asked > 0 ? Math.min(asked, 30) * 1000 : 1000 * attempt))
   }
 }
 
 /**
- * Puts dist/web/ on Bunny as a release and serves it.
+ * dist/web/ as a release on Bunny, in two steps a deploy can wait between: `upload` puts its files in a folder no address
+ * reaches, `serve` points the pull zone at it; `discard` removes the folder of a release that won't be served.
  * @param {object} options
  * @param {string} options.dist  dist/web/
  * @param {string} options.zone  the storage zone's name
@@ -137,57 +144,78 @@ async function call (url, init) {
  * @param {NodeJS.ProcessEnv} [options.env]
  * @param {(line: string) => void} [options.say]
  * @param {number} [options.settle]  how long to wait between the purges, in milliseconds
+ * @returns {{ upload: (signal?: AbortSignal) => Promise<void>, serve: () => Promise<void>, discard: () => Promise<void> }}
  */
-export async function deployToBunny ({ dist, zone, release, keep, env = process.env, say = console.log, settle = SETTLE }) {
+export function bunnyRelease ({ dist, zone, release, keep, env = process.env, say = console.log, settle = SETTLE }) {
   const { BUNNY_STORAGE_KEY: storageKey, BUNNY_API_KEY: apiKey, BUNNY_PULL_ZONE: pullZone, BUNNY_STORAGE_HOST: host = 'storage.bunnycdn.com' } = env
   if (!storageKey || !apiKey || !/^\d+$/.test(pullZone ?? '')) throw new Error('a deploy to Bunny needs BUNNY_STORAGE_KEY (the storage zone\'s password), BUNNY_API_KEY (the account\'s) and BUNNY_PULL_ZONE (the pull zone\'s id)')
   const api = (/** @type {string} */ path, /** @type {RequestInit} */ init = {}) => call(`${API}${path}`, { ...init, headers: { AccessKey: apiKey, accept: 'application/json', ...(init.body && { 'content-type': 'application/json' }), ...init.headers } })
   const storage = (/** @type {string} */ path, /** @type {RequestInit} */ init = {}) => call(`https://${host}/${zone}/${path}`, { ...init, headers: { AccessKey: storageKey, ...init.headers } })
+  /** @type {{ StorageZoneId?: number, MiddlewareScriptId?: number, EdgeRules?: Array<{ Guid?: string, Description?: string }> }} */
+  let pulled = {}
+  let stored = { Id: 0 }
+  let uploading = false
 
-  // The pull zone must serve this storage zone and run the script that finds pages without .html.
-  const pulled = await (await api(`/pullzone/${pullZone}`)).json()
-  const stored = pulled.StorageZoneId > 0 ? await (await api(`/storagezone/${pulled.StorageZoneId}`)).json() : null
-  if (stored?.Name !== zone) throw new Error(`pull zone ${pullZone} doesn't serve the storage zone ${zone}`)
-  if (!pulled.MiddlewareScriptId) throw new Error(`pull zone ${pullZone} has no script: link deploy/bunny/pages.js to it, or pages without .html won't open`)
+  return {
+    /** Every file of the release, each with its type and checksum; stops taking more once `signal` is aborted. */
+    async upload (signal) {
+      // The pull zone must serve this storage zone and run the script that finds pages without .html.
+      pulled = await (await api(`/pullzone/${pullZone}`)).json()
+      const found = (pulled.StorageZoneId ?? 0) > 0 ? await (await api(`/storagezone/${pulled.StorageZoneId}`)).json() : null
+      if (found?.Name !== zone) throw new Error(`pull zone ${pullZone} doesn't serve the storage zone ${zone}`)
+      if (!pulled.MiddlewareScriptId) throw new Error(`pull zone ${pullZone} has no script: link deploy/bunny/pages.js to it, or pages without .html won't open`)
+      stored = found
 
-  const files = await filesUnder(dist)
-  const built = new Set(files)
-  const objects = files.flatMap((path) => {
-    const object = objectOf(path, built)
-    return object ? [{ path, ...object }] : []
-  })
-  say(`deploy: uploading ${objects.length} files to ${zone}/${RELEASES}/${release}/`)
-  let next = 0
-  await Promise.all(Array.from({ length: AT_ONCE }, async () => {
-    while (next < objects.length) {
-      const { path, key, type } = objects[next++]
-      const body = await readFile(join(dist, path))
-      // The Storage API keeps a file's type only from Override-Content-Type; it drops Content-Type, and the edge then
-      // guesses from the ending, without a charset (application/octet-stream for a .webmanifest).
-      await storage(`${RELEASES}/${release}/${key}`, { method: 'PUT', body, headers: { 'override-content-type': type, checksum: createHash('sha256').update(body).digest('hex').toUpperCase() } })
-    }
-  }))
+      const files = await filesUnder(dist)
+      const built = new Set(files)
+      const objects = files.flatMap((path) => {
+        const object = objectOf(path, built)
+        return object ? [{ path, ...object }] : []
+      })
+      say(`deploy: uploading ${objects.length} files to ${zone}/${RELEASES}/${release}/`)
+      uploading = true
+      let next = 0
+      await Promise.all(Array.from({ length: AT_ONCE }, async () => {
+        while (next < objects.length && !signal?.aborted) {
+          const { path, key, type } = objects[next++]
+          const body = await readFile(join(dist, path))
+          // The Storage API keeps a file's type only from Override-Content-Type; it drops Content-Type, and the edge then
+          // guesses from the ending, without a charset (application/octet-stream for a .webmanifest).
+          await storage(`${RELEASES}/${release}/${key}`, { method: 'PUT', body, headers: { 'override-content-type': type, checksum: createHash('sha256').update(body).digest('hex').toUpperCase() } })
+        }
+      }))
+      signal?.throwIfAborted()
+    },
 
-  // What the zone keeps to (ZONE), files kept at the edge until the next deploy purges them and checked again by browsers
-  // before each use; read back, so a setting Bunny didn't take stops the deploy before anything is served.
-  await api(`/pullzone/${pullZone}`, { method: 'POST', body: JSON.stringify({ ...ZONE, CacheControlMaxAgeOverride: EDGE, CacheControlPublicMaxAgeOverride: BROWSER }) })
-  const taken = await (await api(`/pullzone/${pullZone}`)).json()
-  const refused = Object.keys(ZONE).filter((name) => (taken[name] ?? 0) !== ZONE[/** @type {keyof typeof ZONE} */ (name)])
-  if (refused.length) throw new Error(`pull zone ${pullZone} didn't take ${refused.join(', ')}: it must keep no logs and no cookies (D725)`)
+    /** The zone set, the release served, the cache purged and the oldest releases removed. */
+    async serve () {
+      // What the zone keeps to (ZONE), files kept at the edge until the next deploy purges them and checked again by browsers
+      // before each use; read back, so a setting Bunny didn't take stops the deploy before anything is served.
+      await api(`/pullzone/${pullZone}`, { method: 'POST', body: JSON.stringify({ ...ZONE, CacheControlMaxAgeOverride: EDGE, CacheControlPublicMaxAgeOverride: BROWSER }) })
+      const taken = await (await api(`/pullzone/${pullZone}`)).json()
+      const refused = Object.keys(ZONE).filter((name) => (taken[name] ?? 0) !== ZONE[/** @type {keyof typeof ZONE} */ (name)])
+      if (refused.length) throw new Error(`pull zone ${pullZone} didn't take ${refused.join(', ')}: it must keep no logs and no cookies (D725)`)
 
-  const existing = /** @type {Array<{ Guid?: string, Description?: string }>} */ (pulled.EdgeRules ?? [])
-  for (const rule of rulesFor({ id: stored.Id, name: zone }, release, env.CSP)) {
-    const guid = existing.find((other) => other.Description === rule.Description)?.Guid
-    await api(`/pullzone/${pullZone}/edgerules/addOrUpdate`, { method: 'POST', body: JSON.stringify({ ...rule, ...(guid && { Guid: guid }) }) })
-  }
-  // The rule reaches the edges in a few seconds: purge, wait for it, then purge again, so no edge keeps a file of the
-  // release before (as Bunny's CLI does).
-  await api(`/pullzone/${pullZone}/purgeCache`, { method: 'POST', body: '{}' })
-  await new Promise((resolve) => setTimeout(resolve, settle))
-  await api(`/pullzone/${pullZone}/purgeCache`, { method: 'POST', body: '{}' })
+      const existing = pulled.EdgeRules ?? []
+      for (const rule of rulesFor({ id: stored.Id, name: zone }, release, env.CSP)) {
+        const guid = existing.find((other) => other.Description === rule.Description)?.Guid
+        await api(`/pullzone/${pullZone}/edgerules/addOrUpdate`, { method: 'POST', body: JSON.stringify({ ...rule, ...(guid && { Guid: guid }) }) })
+      }
+      // The rule reaches the edges in a few seconds: purge, wait for it, then purge again, so no edge keeps a file of the
+      // release before (as Bunny's CLI does).
+      await api(`/pullzone/${pullZone}/purgeCache`, { method: 'POST', body: '{}' })
+      await new Promise((resolve) => setTimeout(resolve, settle))
+      await api(`/pullzone/${pullZone}/purgeCache`, { method: 'POST', body: '{}' })
 
-  const listed = /** @type {Array<{ ObjectName: string, IsDirectory: boolean }>} */ (await (await storage(`${RELEASES}/`)).json())
-  for (const old of oldReleases(listed.filter((entry) => entry.IsDirectory).map((entry) => entry.ObjectName), keep)) {
-    if (old !== release) await storage(`${RELEASES}/${old}/`, { method: 'DELETE' })
+      const listed = /** @type {Array<{ ObjectName: string, IsDirectory: boolean }>} */ (await (await storage(`${RELEASES}/`)).json())
+      for (const old of oldReleases(listed.filter((entry) => entry.IsDirectory).map((entry) => entry.ObjectName), keep)) {
+        if (old !== release) await storage(`${RELEASES}/${old}/`, { method: 'DELETE' })
+      }
+    },
+
+    /** The release's folder removed, once a file went up. */
+    async discard () {
+      if (uploading) await storage(`${RELEASES}/${release}/`, { method: 'DELETE' })
+    },
   }
 }

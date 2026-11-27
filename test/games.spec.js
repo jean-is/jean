@@ -5,8 +5,9 @@
 // its words in Arabic and Japanese. Saved, it is a page of its own that plays from a file, offline, and a task saved as a page plays
 // it where its file opens.
 import { readFile } from 'node:fs/promises'
-import { pathToFileURL } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import { test, expect, start, connectFakeBrain, ask, answered, openTasks } from './helpers.js'
+import { renderFiles } from '../scripts/render.js'
 
 test.setTimeout(120_000)
 
@@ -215,9 +216,12 @@ test('a task saved as a page plays its game where its file opens, its engine fro
   const reading = await browser.newContext({ serviceWorkers: 'allow' })
   const PACKAGE = /^https:\/\/cdn\.jsdelivr\.net\/npm\/@jean-is\/render@[^/]+\/(.+)$/
   const TYPES = /** @type {Record<string, string>} */ ({ js: 'text/javascript', mjs: 'text/javascript', css: 'text/css', json: 'application/json', woff2: 'font/woff2', html: 'text/plain' })
+  // Only what the package holds, as npm would serve it.
+  const app = fileURLToPath(new URL('../app', import.meta.url))
+  const held = new Set(await renderFiles(app, JSON.parse(await readFile(`${app}/capabilities.json`, 'utf8')).render.files))
   await reading.route(PACKAGE, async (route) => {
     const path = /** @type {string} */ (PACKAGE.exec(route.request().url())?.[1])
-    const body = await readFile(new URL(`../app/${path}`, import.meta.url)).catch(() => null)
+    const body = held.has(path) ? await readFile(new URL(`../app/${path}`, import.meta.url)).catch(() => null) : null
     await route.fulfill(body ? { body, headers: { 'content-type': TYPES[path.split('.').at(-1) ?? ''] ?? 'application/octet-stream', 'access-control-allow-origin': '*' } } : { status: 404 })
   })
   const copy = await reading.newPage()

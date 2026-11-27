@@ -58,6 +58,7 @@ const FIRST = ['e2e', 'containers', 'check', 'analyze']
 export const OUTWARD = [
   [/\bgit push\b/, '', 'pushes to GitHub'],
   [/\bnpm run deploy\b/, 'npm run build:web', 'npm run deploy publishes the render package and uploads the site: here, the build it starts with'],
+  [/\bnpm run render -- --publish\b/, 'npm run render', 'publishes the render package: here, the package it makes'],
   [/\b(?:npm|pnpm|yarn) publish\b/, '', 'publishes to npm'],
   [/\bhelm (?:push|registry login)\b/, '', 'pushes to a registry'],
   [/\bcosign (?:sign|attest|login)\b/, '', 'signs in Sigstore’s public log'],

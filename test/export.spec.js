@@ -6,12 +6,18 @@
 // lines step aside. Where the package can't be reached, those lines stay,
 // and the picture with them.
 import { readFile } from 'node:fs/promises'
-import { pathToFileURL } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import { test, expect, start, openTasks, servedInstruments } from './helpers.js'
+import { renderFiles } from '../scripts/render.js'
 
 test.use({ viewport: { width: 1280, height: 800 } })
 
 const PACKAGE = /^https:\/\/cdn\.jsdelivr\.net\/npm\/@jean-is\/render@[^/]+\/(.+)$/
+/** The paths the render package holds, as capabilities.json lists it. */
+const packaged = async () => {
+  const app = fileURLToPath(new URL('../app', import.meta.url))
+  return new Set(await renderFiles(app, JSON.parse(await readFile(`${app}/capabilities.json`, 'utf8')).render.files))
+}
 const TYPES = /** @type {Record<string, string>} */ ({ js: 'text/javascript', mjs: 'text/javascript', css: 'text/css', json: 'application/json', woff2: 'font/woff2', html: 'text/plain' })
 
 const ANSWER = `Here is **the plan**, and $x^2 + 1$.
@@ -82,10 +88,12 @@ test('a saved copy draws itself as Jean does, from the render package', async ({
   // Opened as anyone would, without the tests' block on service workers, whose own script fails on a file.
   const reading = await browser.newContext({ serviceWorkers: 'allow' })
   const asked = /** @type {string[]} */ ([])
+  // Only what the package holds, as npm would serve it.
+  const held = await packaged()
   await reading.route(PACKAGE, async (route) => {
     const path = /** @type {string} */ (PACKAGE.exec(route.request().url())?.[1])
     asked.push(path)
-    const body = await readFile(new URL(`../app/${path}`, import.meta.url)).catch(() => null)
+    const body = held.has(path) ? await readFile(new URL(`../app/${path}`, import.meta.url)).catch(() => null) : null
     await route.fulfill(body ? { body, headers: { 'content-type': TYPES[path.split('.').at(-1) ?? ''] ?? 'application/octet-stream', 'access-control-allow-origin': '*' } } : { status: 404 })
   })
   const instruments = await servedInstruments(reading)

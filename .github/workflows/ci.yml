@@ -302,9 +302,36 @@ jobs:
           OWNER: ${{ github.repository_owner }}
           RELEASE: ${{ needs.release.outputs.release }}
 
-  # The commit pushed to main, live (D320 · D659): jean.is on Bunny with npm run deploy, which first
-  # publishes the render package it names, through npm's trusted publishing (no token: npm checks this
-  # workflow and environment, and records it as the version's provenance); then the gateway, the key
+  # The render package of a push to main, on npm while the browser tests run (D321): npm takes five to fifteen
+  # minutes to make a publish public, and the deploy, which may name it only once npm lists it, would wait that
+  # long after them. Its version is the one the release job will tag, from the same history (fetch-depth: 0);
+  # the deploy finds it held or listed, and publishes its own only where an earlier push's run tagged a version
+  # in between.
+  # A push whose browser tests then fail leaves its version on npm, named by nothing. The environment and the
+  # identity are the deploy's, which npm's trusted publisher names.
+  render:
+    needs: [check]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    environment: jean.is
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+      # npm 11.5.1 or later publishes with the workflow's identity; Jean's own Node brings it.
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+      - run: npm ci --no-audit --no-fund
+      - run: npm run render -- --publish
+
+  # The commit pushed to main, live (D320 · D659): jean.is on Bunny with npm run deploy, which publishes
+  # the render package it names through npm's trusted publishing (no token: npm checks this workflow and
+  # environment, and records it as the version's provenance), uploads while npm makes it public, and
+  # serves the release once npm lists it; then the gateway, the key
   # service, the share host and the relay on Jean's server at the same commit, sent as a tar through a key that
   # may run nothing but the server's update script (deploy/server/update.sh). Everything that names a
   # place or opens one comes from the environment jean.is, which only main can use: its variables

@@ -100,13 +100,16 @@ describe('the jobs, as replayed here', () => {
         for (const line of (step.script ?? '').split('\n')) {
           if (/^\s*(?::|#)/.test(line)) continue
           for (const [pattern, instead] of OUTWARD) if (!instead) assert.doesNotMatch(line, pattern, `${run.key}: ${line}`)
-          assert.doesNotMatch(line, /\bnpm run deploy\b|\$\{\{\s*(?:secrets|vars)\.|\$\{?(?:SERVER|SERVER_KEY|SERVER_HOST_KEYS|TOKEN|BUNNY_\w+)\b/, `${run.key}: ${line}`)
+          assert.doesNotMatch(line, /\bnpm run deploy\b|--publish\b|\$\{\{\s*(?:secrets|vars)\.|\$\{?(?:SERVER|SERVER_KEY|SERVER_HOST_KEYS|TOKEN|BUNNY_\w+)\b/, `${run.key}: ${line}`)
         }
       }
     }
     const deploy = /** @type {import('../scripts/ci.js').Run} */ (runs.find((run) => run.job === 'deploy'))
     assert.equal(deploy.when, 'push')
     assert.ok(deploy.steps.some((step) => step.script === 'npm run build:web'))
+    const render = /** @type {import('../scripts/ci.js').Run} */ (runs.find((run) => run.job === 'render'))
+    assert.equal(render.when, 'push')
+    assert.ok(render.steps.some((step) => step.script === 'npm run render'), 'the package made, never published')
     assert.ok(deploy.steps.every((step) => !('BUNNY_API_KEY' in step.env)), 'a secret is unset here, not empty')
     assert.equal(runs.find((run) => run.job === 'chart')?.when, 'push')
     assert.ok(runs.filter((run) => run.job === 'images').every((run) => run.steps.some((step) => step.action === 'docker/login-action' && step.skipped.length)))

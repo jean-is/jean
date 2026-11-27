@@ -2,7 +2,7 @@
 // The share host's package (D361, host/): its files and how its viewer loads, from this Jean's
 // render package as capabilities.json lists it, in dist/host/, for whoever runs a host: copy the
 // folder, then HOST_CONFIG='{…}' node dist/host/serve.js. The render package of that version has to be
-// on npm (npm run render, then npm publish ./dist/render), as a saved copy's does.
+// on npm (npm run render -- --publish), as a saved copy's does.
 // With --serve, it runs a host here instead, as the e2e tests do.
 // Usage: npm run host [-- --serve]
 import { cp, mkdir, readFile, writeFile } from 'node:fs/promises'

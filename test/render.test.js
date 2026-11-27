@@ -4,8 +4,12 @@
 // listed with its hash, by a version of its own.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { readFile } from 'node:fs/promises'
-import { renderModules, STAND_INS, ENTRY, VIEWS, ASSETS } from '../scripts/render.js'
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { renderModules, renderFiles, renderStrings, STAND_INS, ENTRY, VIEWS, ASSETS } from '../scripts/render.js'
+import { LOCALES } from '../app/core/i18n.js'
 import { plan } from '../scripts/manifest.js'
 
 const app = new URL('../app/', import.meta.url)
@@ -21,6 +25,27 @@ test('its files open as Jean’s preview shows them, with what draws each kind, 
   const files = await renderModules(read)
   for (const path of ['ui/view.js', ...VIEWS]) assert.ok(files.includes(path), path)
   for (const path of ['ui/view.css', 'vendor/pdfjs', 'vendor/ooxml']) assert.ok(ASSETS.includes(path), path)
+})
+
+test('its words are the room’s catalog and the parts its files load, in every language, never another capability’s', async () => {
+  const root = fileURLToPath(new URL('../app', import.meta.url))
+  const files = await renderFiles(root, await renderModules(read))
+  const parts = new Set(files.filter((path) => /^locales\/[^/]+\//.test(path)).map((path) => path.split('/')[1]))
+  assert.deepEqual([...parts].sort(), ['charts', 'games', 'interactive', 'layouts', 'made', 'scores', 'share', 'slides'])
+  for (const lang of LOCALES) {
+    assert.ok(files.includes(`locales/${lang}.json`), lang)
+    for (const part of parts) assert.ok(files.includes(`locales/${part}/${lang}.json`), `${part}/${lang}`)
+  }
+  for (const part of ['dialogs', 'tour', 'whiteboards']) assert.ok(!parts.has(part), part)
+  // A part it can't name stops the build rather than leave its words out.
+  const dir = await mkdtemp(join(tmpdir(), 'jean-render-'))
+  try {
+    await mkdir(join(dir, 'locales'))
+    await writeFile(join(dir, 'view.js'), "const part = 'charts'\nawait useStrings(part)\n")
+    await assert.rejects(renderStrings(dir, ['view.js']), /view\.js loads a part of the catalog not named as written/)
+  } finally {
+    await rm(dir, { recursive: true, force: true })
+  }
 })
 
 test('the stand-in has every name the copy’s modules take from the room’s state', async () => {
