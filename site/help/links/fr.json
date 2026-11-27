@@ -8,7 +8,7 @@
   "answer": "Des diapos, un document ou un site qui affichent une collection y sont liés : modifiez la collection, et ce qui l’affiche change aussi. Pour voir ce qu’une modification touche avant de la faire, appuyez sur {links} en haut du volet d’une création. {drawn} le dessine en carte, et {creations} dessine tout le projet.",
   "steps.title": "Voir à quoi une création est liée",
   "steps": [
-    "Ouvrez une collection, des diapos, un document ou un site à côté de la tâche. En haut de son volet, appuyez sur {links}. Sous {usedIn}, ce qui l’affiche ; sous {uses}, ce qu’elle affiche, chacun avec la version qu’il lit ; et sous {further}, ce à quoi ils mènent : par exemple un site qui affiche un document qui affiche cette collection.",
+    "Ouvrez une collection, des diapos, un document ou un site à côté de la tâche. En haut de son volet, appuyez sur {links}. Sous {usedIn}, ce qui l’affiche, chacun une fois, les cinq premiers, puis tous quand vous le demandez, avec un champ pour en trouver un par son nom ; sous {uses}, ce qu’elle affiche, chacun avec la version qu’il lit.",
     "En dessous, appuyez sur {drawn} : la carte de cette création remplit la page. Ce qu’elle utilise vient d’abord, puis la création elle-même, puis ce qui l’utilise, et ce à quoi ils mènent une colonne plus loin, dans le sens où vous lisez.",
     "Pointez une création sur la carte, ou atteignez-la avec la touche Tab : ce qu’elle utilise et ce qui l’utilise s’allument, aussi loin que ça va, et le reste s’estompe. Les flèches du clavier suivent les liens. Appuyez sur une création pour l’ouvrir à côté de la tâche.",
     "Pour tout le projet, ouvrez {creations} dans le tiroir, appuyez sur le bouton qui dit comment les créations sont triées, {changed} au début, et choisissez {map}. C’est proposé dès que trois créations sont liées. La carte s’affiche à la place des créations, et les types et les mots que vous cherchez gardent allumées les créations qu’ils trouvent.",
@@ -16,15 +16,42 @@
   ],
   "terms.title": "Ce que la carte dit sous chaque création",
   "terms": [
-    ["{live}", "Elle affiche la collection telle qu’elle est maintenant : chaque modification s’affiche aussitôt."],
-    ["{published}", "Elle affiche la dernière version publiée de la collection, et passe à chaque nouvelle."],
-    ["Version 2", "Elle reste sur cette version, telle qu’elle a été publiée, quoi qu’il change ensuite."],
-    ["La version 3 est sortie", "Une version plus récente a été publiée que celle sur laquelle elle reste. Pour l’afficher, choisissez-la dans {which}, dans les {links} de la création."],
-    ["{auto}, {hourly} ou {every5}", "À quelle fréquence une instruction s’exécute d’elle-même sur les lignes qu’elle lit, comme un résumé qu’écrit un cerveau. La ligne en dessous nomme ce cerveau."],
-    ["{missing}", "Elle n’affiche rien, car ce qu’elle lisait n’est plus dans ce projet. Un document disparu est signalé de la même façon. Cette ligne est en rouge."],
-    ["{loop}", "Elle n’affiche rien, car deux créations s’afficheraient l’une l’autre. Cette ligne est en rouge."],
-    ["{unused}", "Ni diapos, ni document, ni site, ni tâche n’affiche cette collection."],
-    ["{answer}", "Une tâche dont la réponse affiche la collection telle qu’elle était quand la réponse a été écrite, sans jamais changer d’elle-même."]
+    [
+      "{live}",
+      "Elle affiche la collection telle qu’elle est maintenant : chaque modification s’affiche aussitôt."
+    ],
+    [
+      "{published}",
+      "Elle affiche la dernière version publiée de la collection, et passe à chaque nouvelle."
+    ],
+    [
+      "Version 2",
+      "Elle reste sur cette version, telle qu’elle a été publiée, quoi qu’il change ensuite."
+    ],
+    [
+      "La version 3 est sortie",
+      "Une version plus récente a été publiée que celle sur laquelle elle reste. Pour l’afficher, choisissez-la dans {which}, dans les {links} de la création."
+    ],
+    [
+      "{auto}, {hourly} ou {every5}",
+      "À quelle fréquence une instruction s’exécute d’elle-même sur les lignes qu’elle lit, comme un résumé qu’écrit un cerveau. La ligne en dessous nomme ce cerveau."
+    ],
+    [
+      "{missing}",
+      "Elle n’affiche rien, car ce qu’elle lisait n’est plus dans ce projet. Un document disparu est signalé de la même façon. Cette ligne est en rouge."
+    ],
+    [
+      "{loop}",
+      "Elle n’affiche rien, car deux créations s’afficheraient l’une l’autre. Cette ligne est en rouge."
+    ],
+    [
+      "{unused}",
+      "Ni diapos, ni document, ni site, ni tâche n’affiche cette collection."
+    ],
+    [
+      "{answer}",
+      "Une tâche dont la réponse affiche la collection telle qu’elle était quand la réponse a été écrite, sans jamais changer d’elle-même."
+    ]
   ],
   "good": [
     "Un trait plein va d’une création à ce qui l’affiche. Un trait pointillé relie une collection à une autre par une colonne, ou le formulaire d’un site à la collection où il envoie des lignes.",

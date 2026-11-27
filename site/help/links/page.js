@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
-// How a project's creations link (D763, D764): in a creation's pane, Links with other creations lists what shows it, what
-// it shows at the version it reads and what is further along; See them drawn draws that as a map, and Creations' Sort ›
+// How a project's creations link (D763, D764): in a creation's pane, Linked creations lists what shows it, five at first, and what
+// it shows at the version it reads; See them drawn draws that as a map, and Creations' Sort ›
 // Links the whole project's, once three creations are linked; each creation's line says the version it reads, a later
 // one out, how often an instruction runs by itself and on which brain, that it shows nothing and why, or that nothing
 // uses it. Its pane replays a request asking Jean how the project's creations link: it reads them with creation_links,
@@ -14,7 +14,7 @@ export default helpArticle({
   moment: 'make',
   minutes: 3,
   names: {
-    links: 'compose.links', usedIn: 'compose.usedIn', uses: 'compose.uses', further: 'compose.further', drawn: 'compose.drawn', which: 'compose.which',
+    links: 'compose.links', usedIn: 'compose.usedIn', uses: 'compose.uses', drawn: 'compose.drawn', which: 'compose.which',
     creations: 'creations.title', changed: 'creations.changed', map: 'compose.map', all: 'creations.all', find: 'creations.find',
     live: 'compose.live', published: 'compose.published', auto: 'compose.auto', hourly: 'compose.hourly', every5: 'compose.every5',
     missing: 'compose.missing', loop: 'compose.loop', unused: 'compose.unused', answer: 'compose.answer',

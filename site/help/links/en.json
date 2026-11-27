@@ -8,7 +8,7 @@
   "answer": "Slides, a document or a site that show a collection are linked to it: change the collection, and what shows it changes too. To see what a change touches before you make it, press {links} at the top of a creation’s pane. {drawn} draws it as a map, and {creations} draws the whole project.",
   "steps.title": "See what a creation is linked to",
   "steps": [
-    "Open a collection, slides, a document or a site beside the task. At the top of its pane, press {links}. Under {usedIn} is what shows it, under {uses} what it shows, each with the version it reads, and under {further} what those lead to: a site that shows a document that shows this collection, say.",
+    "Open a collection, slides, a document or a site beside the task. At the top of its pane, press {links}. Under {usedIn} is what shows it, each once, the first five, then all of them when you ask, with a field to find one by its name; under {uses} is what it shows, each with the version it reads.",
     "Below them, press {drawn}: the map of this creation fills the page. What it uses comes first, then the creation itself, then what uses it, and what those lead to a column further, in the direction you read.",
     "Point at a creation on the map, or reach it with the Tab key: what it uses and what uses it light up, as far as they go, and the rest fades. The arrow keys follow the links. Press a creation to open it beside the task.",
     "For the whole project, open {creations} in the drawer, press the button that says how the creations are sorted, {changed} at first, and choose {map}. It is offered once three creations are linked. The map takes the cards’ place, and the kinds and the words you look for keep the creations they find lit.",
@@ -16,15 +16,42 @@
   ],
   "terms.title": "What the map says under each creation",
   "terms": [
-    ["{live}", "It shows the collection as it is now: each change shows at once."],
-    ["{published}", "It shows the collection’s latest published version, and moves on to each new one."],
-    ["Version 2", "It stays on that version, as it was published, whatever changes after."],
-    ["Version 3 is out", "A later version was published than the one it stays on. To show it, choose it in {which}, in the creation’s {links}."],
-    ["{auto}, {hourly} or {every5}", "How often an instruction runs by itself on the rows it reads, such as a summary a brain writes. The line under it names that brain."],
-    ["{missing}", "It shows nothing, as what it read is no longer in this project. A document that is gone is said the same way. This line is in red."],
-    ["{loop}", "It shows nothing, as two creations would each show the other. This line is in red."],
-    ["{unused}", "No slides, document, site or task shows this collection."],
-    ["{answer}", "A task whose answer shows the collection as it was when the answer was written, never changing by itself."]
+    [
+      "{live}",
+      "It shows the collection as it is now: each change shows at once."
+    ],
+    [
+      "{published}",
+      "It shows the collection’s latest published version, and moves on to each new one."
+    ],
+    [
+      "Version 2",
+      "It stays on that version, as it was published, whatever changes after."
+    ],
+    [
+      "Version 3 is out",
+      "A later version was published than the one it stays on. To show it, choose it in {which}, in the creation’s {links}."
+    ],
+    [
+      "{auto}, {hourly} or {every5}",
+      "How often an instruction runs by itself on the rows it reads, such as a summary a brain writes. The line under it names that brain."
+    ],
+    [
+      "{missing}",
+      "It shows nothing, as what it read is no longer in this project. A document that is gone is said the same way. This line is in red."
+    ],
+    [
+      "{loop}",
+      "It shows nothing, as two creations would each show the other. This line is in red."
+    ],
+    [
+      "{unused}",
+      "No slides, document, site or task shows this collection."
+    ],
+    [
+      "{answer}",
+      "A task whose answer shows the collection as it was when the answer was written, never changing by itself."
+    ]
   ],
   "good": [
     "A solid line goes from a creation to what shows it. A dashed one is a collection related to another by a column, or a site’s form that sends rows into a collection.",
