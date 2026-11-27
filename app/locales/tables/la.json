@@ -136,6 +136,13 @@
   "tables.choices": "Electiones",
   "tables.addChoice": "Adde electionem",
   "tables.colour": "Color",
+  "tables.removeChoice": "Remove «{name}»",
+  "tables.choiceRemoved": "«{name}» ex optionibus remotum est.",
+  "tables.choiceCleared": {
+    "one": "«{name}» ex optionibus et ex {count} ordine remotum est.",
+    "many": "«{name}» ex optionibus et ex {count} ordinibus remotum est.",
+    "other": "«{name}» ex optionibus et ex {count} ordinibus remotum est."
+  },
   "tables.hue0": "Viridis",
   "tables.hue1": "Thalassinus",
   "tables.hue2": "Caeruleus",

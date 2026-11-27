@@ -130,6 +130,11 @@
   "tables.choices": "Àwọn àṣàyàn",
   "tables.addChoice": "Ṣàfikún àṣàyàn",
   "tables.colour": "Àwọ̀",
+  "tables.removeChoice": "Yọ “{name}” kúrò",
+  "tables.choiceRemoved": "A ti yọ “{name}” kúrò nínú àwọn àṣàyàn.",
+  "tables.choiceCleared": {
+    "other": "A ti yọ “{name}” kúrò nínú àwọn àṣàyàn àti nínú ìlà {count}."
+  },
   "tables.hue0": "Àwọ̀ ewé",
   "tables.hue1": "Àwọ̀ ewé-búlúù",
   "tables.hue2": "Búlúù",

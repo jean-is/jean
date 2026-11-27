@@ -133,6 +133,12 @@
   "tables.choices": "Seçenekler",
   "tables.addChoice": "Seçenek ekle",
   "tables.colour": "Renk",
+  "tables.removeChoice": "“{name}” seçeneğini kaldır",
+  "tables.choiceRemoved": "“{name}” seçeneklerden kaldırıldı.",
+  "tables.choiceCleared": {
+    "one": "“{name}” seçeneklerden ve {count} satırdan kaldırıldı.",
+    "other": "“{name}” seçeneklerden ve {count} satırdan kaldırıldı."
+  },
   "tables.hue0": "Yeşil",
   "tables.hue1": "Turkuaz",
   "tables.hue2": "Mavi",

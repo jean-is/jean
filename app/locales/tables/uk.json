@@ -139,6 +139,14 @@
   "tables.choices": "Варіанти",
   "tables.addChoice": "Додати варіант",
   "tables.colour": "Колір",
+  "tables.removeChoice": "Вилучити «{name}»",
+  "tables.choiceRemoved": "«{name}» вилучено з варіантів.",
+  "tables.choiceCleared": {
+    "one": "«{name}» вилучено з варіантів; очищено {count} рядок.",
+    "few": "«{name}» вилучено з варіантів; очищено {count} рядки.",
+    "many": "«{name}» вилучено з варіантів; очищено {count} рядків.",
+    "other": "«{name}» вилучено з варіантів; очищено {count} рядка."
+  },
   "tables.hue0": "Зелений",
   "tables.hue1": "Бірюзовий",
   "tables.hue2": "Синій",

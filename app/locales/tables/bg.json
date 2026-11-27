@@ -133,6 +133,12 @@
   "tables.choices": "Опции",
   "tables.addChoice": "Добави опция",
   "tables.colour": "Цвят",
+  "tables.removeChoice": "Премахване на „{name}“",
+  "tables.choiceRemoved": "„{name}“ е премахнат от изборите.",
+  "tables.choiceCleared": {
+    "one": "„{name}“ е премахнат от изборите; {count} ред е изпразнен.",
+    "other": "„{name}“ е премахнат от изборите; {count} реда са изпразнени."
+  },
   "tables.hue0": "Зелено",
   "tables.hue1": "Синьозелено",
   "tables.hue2": "Синьо",

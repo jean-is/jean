@@ -133,6 +133,12 @@
   "tables.choices": "Επιλογές",
   "tables.addChoice": "Προσθήκη επιλογής",
   "tables.colour": "Χρώμα",
+  "tables.removeChoice": "Αφαίρεση «{name}»",
+  "tables.choiceRemoved": "Το «{name}» αφαιρέθηκε από τις επιλογές.",
+  "tables.choiceCleared": {
+    "one": "Το «{name}» αφαιρέθηκε από τις επιλογές και από {count} γραμμή.",
+    "other": "Το «{name}» αφαιρέθηκε από τις επιλογές και από {count} γραμμές."
+  },
   "tables.hue0": "Πράσινο",
   "tables.hue1": "Γαλαζοπράσινο",
   "tables.hue2": "Μπλε",

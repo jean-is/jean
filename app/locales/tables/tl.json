@@ -133,6 +133,12 @@
   "tables.choices": "Mga pagpipilian",
   "tables.addChoice": "Magdagdag ng pagpipilian",
   "tables.colour": "Kulay",
+  "tables.removeChoice": "Alisin ang “{name}”",
+  "tables.choiceRemoved": "Inalis ang “{name}” sa mga pagpipilian.",
+  "tables.choiceCleared": {
+    "one": "Inalis ang “{name}” sa mga pagpipilian at sa {count} row.",
+    "other": "Inalis ang “{name}” sa mga pagpipilian at sa {count} row."
+  },
   "tables.hue0": "Berde",
   "tables.hue1": "Teal",
   "tables.hue2": "Asul",

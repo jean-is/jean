@@ -133,6 +133,12 @@
   "tables.choices": "اختیارات",
   "tables.addChoice": "اختیار شامل کریں",
   "tables.colour": "رنگ",
+  "tables.removeChoice": "“{name}” ہٹائیں",
+  "tables.choiceRemoved": "“{name}” انتخابات سے ہٹا دیا گیا۔",
+  "tables.choiceCleared": {
+    "one": "“{name}” انتخابات سے اور {count} قطار سے ہٹا دیا گیا۔",
+    "other": "“{name}” انتخابات سے اور {count} قطاروں سے ہٹا دیا گیا۔"
+  },
   "tables.hue0": "سبز",
   "tables.hue1": "فیروزی",
   "tables.hue2": "نیلا",

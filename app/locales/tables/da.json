@@ -133,6 +133,12 @@
   "tables.choices": "Valgmuligheder",
   "tables.addChoice": "Tilføj en valgmulighed",
   "tables.colour": "Farve",
+  "tables.removeChoice": "Fjern “{name}”",
+  "tables.choiceRemoved": "“{name}” er fjernet fra valgmulighederne.",
+  "tables.choiceCleared": {
+    "one": "“{name}” er fjernet fra valgmulighederne og fra {count} række.",
+    "other": "“{name}” er fjernet fra valgmulighederne og fra {count} rækker."
+  },
   "tables.hue0": "Grøn",
   "tables.hue1": "Blågrøn",
   "tables.hue2": "Blå",

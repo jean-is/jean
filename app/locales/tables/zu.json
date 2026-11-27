@@ -133,6 +133,12 @@
   "tables.choices": "Okukhethwayo",
   "tables.addChoice": "Engeza okukhethwayo",
   "tables.colour": "Umbala",
+  "tables.removeChoice": "Susa “{name}”",
+  "tables.choiceRemoved": "“{name}” isusiwe ezinketheni.",
+  "tables.choiceCleared": {
+    "one": "“{name}” isusiwe ezinketheni nasemigqeni: {count}.",
+    "other": "“{name}” isusiwe ezinketheni nasemigqeni: {count}."
+  },
   "tables.hue0": "Okuluhlaza",
   "tables.hue1": "Okuluhlaza okwesibhakabhaka",
   "tables.hue2": "Okwesibhakabhaka",

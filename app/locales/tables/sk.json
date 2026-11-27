@@ -139,6 +139,14 @@
   "tables.choices": "Možnosti",
   "tables.addChoice": "Pridať možnosť",
   "tables.colour": "Farba",
+  "tables.removeChoice": "Odstrániť „{name}“",
+  "tables.choiceRemoved": "„{name}“ odstránené z možností.",
+  "tables.choiceCleared": {
+    "one": "„{name}“ odstránené z možností; vyprázdnený {count} riadok.",
+    "few": "„{name}“ odstránené z možností; vyprázdnené {count} riadky.",
+    "many": "„{name}“ odstránené z možností; vyprázdnené {count} riadka.",
+    "other": "„{name}“ odstránené z možností; vyprázdnených {count} riadkov."
+  },
   "tables.hue0": "Zelená",
   "tables.hue1": "Modrozelená",
   "tables.hue2": "Modrá",

@@ -136,6 +136,13 @@
   "tables.choices": "Opțiuni",
   "tables.addChoice": "Adăugați o opțiune",
   "tables.colour": "Culoare",
+  "tables.removeChoice": "Elimină „{name}”",
+  "tables.choiceRemoved": "„{name}” a fost eliminat din opțiuni.",
+  "tables.choiceCleared": {
+    "one": "„{name}” a fost eliminat din opțiuni și din {count} rând.",
+    "few": "„{name}” a fost eliminat din opțiuni și din {count} rânduri.",
+    "other": "„{name}” a fost eliminat din opțiuni și din {count} de rânduri."
+  },
   "tables.hue0": "Verde",
   "tables.hue1": "Turcoaz",
   "tables.hue2": "Albastru",

@@ -130,6 +130,11 @@
   "tables.choices": "选项",
   "tables.addChoice": "添加选项",
   "tables.colour": "颜色",
+  "tables.removeChoice": "移除“{name}”",
+  "tables.choiceRemoved": "已从选项中移除“{name}”。",
+  "tables.choiceCleared": {
+    "other": "已从选项和 {count} 行中移除“{name}”。"
+  },
   "tables.hue0": "绿",
   "tables.hue1": "青绿",
   "tables.hue2": "蓝",

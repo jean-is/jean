@@ -41,7 +41,7 @@ const ALIASES = /** @type {Record<string, PropertyType>} */ ({
 /** A choice; hue: the colour the person picked for it, one of HUES by its place. @typedef {{ name: string, group?: typeof GROUPS[number], hue?: number }} Option */
 /**
  * A column; collection: a relation's, by its place; formula: a Formula's; format: a number's, money (in `currency`, its ISO 4217 code) or a share of a
- * hundred (D752); time: a date's, with a time of day; deleted: when it was removed. @typedef {{ id: string, name: string, type: PropertyType, options?: Option[], collection?: string, formula?: string, format?: 'money' | 'percent', currency?: string, time?: true, deleted?: string }} Property
+ * hundred (D752); time: a date's, with a time of day; gone: the choices taken away, which no merge brings back until one is given again; deleted: when it was removed. @typedef {{ id: string, name: string, type: PropertyType, options?: Option[], collection?: string, formula?: string, format?: 'money' | 'percent', currency?: string, time?: true, gone?: string[], deleted?: string }} Property
  */
 /** @typedef {{ property: string, direction?: 'ascending' | 'descending' }} Sort */
 /** A rule of a view's filter. @typedef {{ property: string, op: import('./query.js').Op, value?: unknown }} Rule */
@@ -311,7 +311,7 @@ export function grown(table, values, at) {
     const added = values.flatMap((set) => [set[property.id]].flat()).filter((value) => typeof value === 'string' && value.trim() && !names.has(value) && names.add(value))
     if (!added.length) return property
     more = true
-    return { ...property, options: [...property.options ?? [], ...added.map((name) => ({ name: String(name) }))] }
+    return { ...property, options: [...property.options ?? [], ...added.map((name) => ({ name: String(name) }))], ...(property.gone && { gone: property.gone.filter((name) => !added.includes(name)) }) }
   })
   return more ? { ...table, properties, changed: at } : null
 }
@@ -319,12 +319,12 @@ export function grown(table, values, at) {
 /**
  * The table renamed, or a column added (at the end or `at` a place among them all), renamed, made another kind, moved before or after another, taken away or brought back, or its
  * rows put in an order, as the user changes it in its view, or what its table view filters, hides and works out, given or made from it, or a Formula's
- * formula, or a choice's colour, or a date's time of day, or what its calendar is by, or a view (`of`, else the collection's own) arranged, kept under a name with what it
+ * formula, or a choice's colour, or a column's choices as given, those taken away kept as gone, or a date's time of day, or what its calendar is by, or a view (`of`, else the collection's own) arranged, kept under a name with what it
  * shows (the collection's own then whole again, its feet staying), renamed or taken away, each formula naming a column renamed written with its new name: a name
  * another column has gets a number, an empty one changes nothing, the last column stays, a board goes with its column's choices, and a
  * select or a status added or made groups one when there is none.
  * @param {Table} table
- * @param {{ name?: string, add?: { name: string, type: string, at?: number, collection?: string, options?: string[] }, rename?: { id: string, name: string }, retype?: { id: string, type: string, collection?: string, options?: string[] }, move?: { id: string, to: string, after: boolean }, remove?: string, restore?: string, order?: string[], formula?: { id: string, text: string }, hue?: { id: string, name: string, hue?: number }, time?: { id: string, on: boolean }, calendar?: { date?: string, until?: string }, number?: { id: string, format?: 'money' | 'percent', currency?: string }, view?: Partial<View> | ((view: View) => Partial<View>), of?: string, keep?: Partial<View> & { name: string, from?: string }, named?: { id: string, name: string }, drop?: string }} edit
+ * @param {{ name?: string, add?: { name: string, type: string, at?: number, collection?: string, options?: string[] }, rename?: { id: string, name: string }, retype?: { id: string, type: string, collection?: string, options?: string[] }, move?: { id: string, to: string, after: boolean }, remove?: string, restore?: string, order?: string[], formula?: { id: string, text: string }, choices?: { id: string, options: Option[] }, hue?: { id: string, name: string, hue?: number }, time?: { id: string, on: boolean }, calendar?: { date?: string, until?: string }, number?: { id: string, format?: 'money' | 'percent', currency?: string }, view?: Partial<View> | ((view: View) => Partial<View>), of?: string, keep?: Partial<View> & { name: string, from?: string }, named?: { id: string, name: string }, drop?: string }} edit
  * @param {string} at @returns {Table}
  */
 export function reshape(table, edit, at) {
@@ -351,6 +351,7 @@ export function reshape(table, edit, at) {
     properties = properties.map((property) => (property.id === id ? { ...property, name } : property.formula ? { ...property, formula: rewritten(property.formula, live, id, name) } : property))
   }
   if (edit.formula) properties = properties.map((property) => (property.id === edit.formula?.id ? { ...property, formula: edit.formula.text } : property))
+  if (edit.choices) properties = properties.map(({ gone = [], ...property }) => (property.id === edit.choices?.id ? ((options, left) => ({ ...property, options, ...(left.length && { gone: left }) }))(edit.choices.options, [...new Set([...gone, ...(property.options ?? []).map((option) => option.name)])].filter((name) => !edit.choices?.options.some((option) => option.name === name))) : { ...property, ...(gone.length && { gone }) }))
   // A date with a time of day, or without one again.
   if (edit.time) properties = properties.map((property) => (property.id === edit.time?.id && property.type === 'date' ? (({ time, ...plain }) => ({ ...plain, ...(edit.time?.on && { time: /** @type {const} */ (true) }) }))(property) : property))
   // A choice's colour picked, or none again, its place's then.
@@ -444,7 +445,7 @@ function isDate(value) {
 export function mergeTables(a, b) {
   const [newer, older] = a.changed > b.changed || (a.changed === b.changed && canonical(a) >= canonical(b)) ? [a, b] : [b, a]
   const properties = union(newer.properties, older.properties, (mine, theirs) => (mine.options && theirs.options
-    ? { ...mine, options: [...mine.options, ...theirs.options.filter((option) => !mine.options?.some((kept) => kept.name === option.name))] }
+    ? { ...mine, options: [...mine.options, ...theirs.options.filter((option) => !mine.options?.some((kept) => kept.name === option.name) && !mine.gone?.includes(option.name))] }
     : mine))
   const kept = [newer.kept, older.kept].filter(Boolean).sort().at(-1)
   return { ...newer, properties, views: union(newer.views, older.views, (mine, theirs) => (theirs.deleted && !mine.deleted ? theirs : mine)), ...(kept && { kept }) }

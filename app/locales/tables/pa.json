@@ -133,6 +133,12 @@
   "tables.choices": "ਚੋਣਾਂ",
   "tables.addChoice": "ਚੋਣ ਜੋੜੋ",
   "tables.colour": "ਰੰਗ",
+  "tables.removeChoice": "“{name}” ਹਟਾਓ",
+  "tables.choiceRemoved": "“{name}” ਚੋਣਾਂ ਵਿੱਚੋਂ ਹਟਾਇਆ ਗਿਆ।",
+  "tables.choiceCleared": {
+    "one": "“{name}” ਚੋਣਾਂ ਵਿੱਚੋਂ ਅਤੇ {count} ਕਤਾਰ ਵਿੱਚੋਂ ਹਟਾਇਆ ਗਿਆ।",
+    "other": "“{name}” ਚੋਣਾਂ ਵਿੱਚੋਂ ਅਤੇ {count} ਕਤਾਰਾਂ ਵਿੱਚੋਂ ਹਟਾਇਆ ਗਿਆ।"
+  },
   "tables.hue0": "ਹਰਾ",
   "tables.hue1": "ਫਿਰੋਜ਼ੀ",
   "tables.hue2": "ਨੀਲਾ",

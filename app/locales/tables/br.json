@@ -142,6 +142,15 @@
   "tables.choices": "Dibaboù",
   "tables.addChoice": "Ouzhpennañ un dibab",
   "tables.colour": "Liv",
+  "tables.removeChoice": "Dilemel « {name} »",
+  "tables.choiceRemoved": "« {name} » lamet eus an dibaboù.",
+  "tables.choiceCleared": {
+    "one": "« {name} » lamet eus an dibaboù : {count} linenn goullonderet.",
+    "two": "« {name} » lamet eus an dibaboù : {count} linenn goullonderet.",
+    "few": "« {name} » lamet eus an dibaboù : {count} linenn goullonderet.",
+    "many": "« {name} » lamet eus an dibaboù : {count} a linennoù goullonderet.",
+    "other": "« {name} » lamet eus an dibaboù : {count} linenn goullonderet."
+  },
   "tables.hue0": "Gwer",
   "tables.hue1": "Glaswer",
   "tables.hue2": "Glas",

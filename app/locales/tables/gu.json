@@ -133,6 +133,12 @@
   "tables.choices": "પસંદગીઓ",
   "tables.addChoice": "પસંદગી ઉમેરો",
   "tables.colour": "રંગ",
+  "tables.removeChoice": "“{name}” દૂર કરો",
+  "tables.choiceRemoved": "“{name}” પસંદગીઓમાંથી દૂર કર્યું.",
+  "tables.choiceCleared": {
+    "one": "“{name}” પસંદગીઓમાંથી દૂર કર્યું; {count} હરોળ ખાલી કરી.",
+    "other": "“{name}” પસંદગીઓમાંથી દૂર કર્યું; {count} હરોળ ખાલી કરી."
+  },
   "tables.hue0": "લીલો",
   "tables.hue1": "મોરપીંછ",
   "tables.hue2": "વાદળી",

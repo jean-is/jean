@@ -130,6 +130,11 @@
   "tables.choices": "Pilihan",
   "tables.addChoice": "Tambah pilihan",
   "tables.colour": "Warna",
+  "tables.removeChoice": "Hapus “{name}”",
+  "tables.choiceRemoved": "“{name}” dihapus dari pilihan.",
+  "tables.choiceCleared": {
+    "other": "“{name}” dihapus dari pilihan dan dari {count} baris."
+  },
   "tables.hue0": "Hijau",
   "tables.hue1": "Toska",
   "tables.hue2": "Biru",

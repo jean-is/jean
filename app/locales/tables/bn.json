@@ -133,6 +133,12 @@
   "tables.choices": "বিকল্পগুলি",
   "tables.addChoice": "বিকল্প যোগ করুন",
   "tables.colour": "রং",
+  "tables.removeChoice": "“{name}” সরান",
+  "tables.choiceRemoved": "“{name}” পছন্দগুলো থেকে সরানো হয়েছে।",
+  "tables.choiceCleared": {
+    "one": "“{name}” পছন্দগুলো থেকে সরানো হয়েছে; {count}টি সারি খালি হয়েছে।",
+    "other": "“{name}” পছন্দগুলো থেকে সরানো হয়েছে; {count}টি সারি খালি হয়েছে।"
+  },
   "tables.hue0": "সবুজ",
   "tables.hue1": "ফিরোজা",
   "tables.hue2": "নীল",

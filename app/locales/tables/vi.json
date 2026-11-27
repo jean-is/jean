@@ -130,6 +130,11 @@
   "tables.choices": "Các lựa chọn",
   "tables.addChoice": "Thêm lựa chọn",
   "tables.colour": "Màu",
+  "tables.removeChoice": "Xóa “{name}”",
+  "tables.choiceRemoved": "Đã xóa “{name}” khỏi các lựa chọn.",
+  "tables.choiceCleared": {
+    "other": "Đã xóa “{name}” khỏi các lựa chọn và khỏi {count} hàng."
+  },
   "tables.hue0": "Xanh lá",
   "tables.hue1": "Xanh mòng két",
   "tables.hue2": "Xanh dương",

@@ -130,6 +130,11 @@
   "tables.choices": "Nhọrọ",
   "tables.addChoice": "Tinye nhọrọ",
   "tables.colour": "Agba",
+  "tables.removeChoice": "Wepụ “{name}”",
+  "tables.choiceRemoved": "E wepụla “{name}” na nhọrọ.",
+  "tables.choiceCleared": {
+    "other": "E wepụla “{name}” na nhọrọ na n’ahịrị {count}."
+  },
   "tables.hue0": "Akwụkwọ ndụ",
   "tables.hue1": "Anụnụ ndụ",
   "tables.hue2": "Anụnụ",

@@ -133,6 +133,12 @@
   "tables.choices": "Zaɓuɓɓuka",
   "tables.addChoice": "Ƙara zaɓi",
   "tables.colour": "Launi",
+  "tables.removeChoice": "Cire “{name}”",
+  "tables.choiceRemoved": "An cire “{name}” daga zaɓuɓɓuka.",
+  "tables.choiceCleared": {
+    "one": "An cire “{name}” daga zaɓuɓɓuka; an share layi {count}.",
+    "other": "An cire “{name}” daga zaɓuɓɓuka; an share layuka {count}."
+  },
   "tables.hue0": "Kore",
   "tables.hue1": "Shuɗi-kore",
   "tables.hue2": "Shuɗi",

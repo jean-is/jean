@@ -133,6 +133,12 @@
   "tables.choices": "Keuzes",
   "tables.addChoice": "Keuze toevoegen",
   "tables.colour": "Kleur",
+  "tables.removeChoice": "‘{name}’ verwijderen",
+  "tables.choiceRemoved": "‘{name}’ verwijderd uit de keuzes.",
+  "tables.choiceCleared": {
+    "one": "‘{name}’ verwijderd uit de keuzes en uit {count} rij.",
+    "other": "‘{name}’ verwijderd uit de keuzes en uit {count} rijen."
+  },
   "tables.hue0": "Groen",
   "tables.hue1": "Turquoise",
   "tables.hue2": "Blauw",

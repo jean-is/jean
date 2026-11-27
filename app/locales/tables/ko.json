@@ -130,6 +130,11 @@
   "tables.choices": "선택 항목",
   "tables.addChoice": "선택 항목 추가",
   "tables.colour": "색",
+  "tables.removeChoice": "‘{name}’ 삭제",
+  "tables.choiceRemoved": "‘{name}’을(를) 선택지에서 삭제했어요.",
+  "tables.choiceCleared": {
+    "other": "‘{name}’을(를) 선택지와 행 {count}개에서 삭제했어요."
+  },
   "tables.hue0": "초록",
   "tables.hue1": "청록",
   "tables.hue2": "파랑",

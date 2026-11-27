@@ -133,6 +133,12 @@
   "tables.choices": "Valinnat",
   "tables.addChoice": "Lisää valinta",
   "tables.colour": "Väri",
+  "tables.removeChoice": "Poista ”{name}”",
+  "tables.choiceRemoved": "”{name}” poistettu vaihtoehdoista.",
+  "tables.choiceCleared": {
+    "one": "”{name}” poistettu vaihtoehdoista, ja {count} rivi tyhjennetty.",
+    "other": "”{name}” poistettu vaihtoehdoista, ja {count} riviä tyhjennetty."
+  },
   "tables.hue0": "Vihreä",
   "tables.hue1": "Sinivihreä",
   "tables.hue2": "Sininen",

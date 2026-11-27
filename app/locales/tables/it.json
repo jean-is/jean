@@ -136,6 +136,13 @@
   "tables.choices": "Scelte",
   "tables.addChoice": "Aggiungi una scelta",
   "tables.colour": "Colore",
+  "tables.removeChoice": "Rimuovi «{name}»",
+  "tables.choiceRemoved": "«{name}» rimosso dalle scelte.",
+  "tables.choiceCleared": {
+    "one": "«{name}» rimosso dalle scelte e da {count} riga.",
+    "many": "«{name}» rimosso dalle scelte e da {count} di righe.",
+    "other": "«{name}» rimosso dalle scelte e da {count} righe."
+  },
   "tables.hue0": "Verde",
   "tables.hue1": "Turchese",
   "tables.hue2": "Blu",

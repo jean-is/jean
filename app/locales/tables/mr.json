@@ -133,6 +133,12 @@
   "tables.choices": "पर्याय",
   "tables.addChoice": "पर्याय जोडा",
   "tables.colour": "रंग",
+  "tables.removeChoice": "“{name}” काढा",
+  "tables.choiceRemoved": "“{name}” पर्यायांमधून काढले.",
+  "tables.choiceCleared": {
+    "one": "“{name}” पर्यायांमधून आणि {count} ओळीतून काढले.",
+    "other": "“{name}” पर्यायांमधून आणि {count} ओळींतून काढले."
+  },
   "tables.hue0": "हिरवा",
   "tables.hue1": "नीलहरित",
   "tables.hue2": "निळा",

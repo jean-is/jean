@@ -145,6 +145,16 @@
   "tables.choices": "الاختيارات",
   "tables.addChoice": "إضافة اختيار",
   "tables.colour": "اللون",
+  "tables.removeChoice": "إزالة «{name}»",
+  "tables.choiceRemoved": "أُزيل «{name}» من الخيارات.",
+  "tables.choiceCleared": {
+    "zero": "أُزيل «{name}» من الخيارات.",
+    "one": "أُزيل «{name}» من الخيارات وأُفرغ صف واحد.",
+    "two": "أُزيل «{name}» من الخيارات وأُفرغ صفّان.",
+    "few": "أُزيل «{name}» من الخيارات وأُفرغت {count} صفوف.",
+    "many": "أُزيل «{name}» من الخيارات وأُفرغ {count} صفًا.",
+    "other": "أُزيل «{name}» من الخيارات وأُفرغ {count} صف."
+  },
   "tables.hue0": "أخضر",
   "tables.hue1": "فيروزي",
   "tables.hue2": "أزرق",

@@ -133,6 +133,12 @@
   "tables.choices": "انتخابونه",
   "tables.addChoice": "انتخاب ورزیاتول",
   "tables.colour": "رنګ",
+  "tables.removeChoice": "«{name}» لرې کړئ",
+  "tables.choiceRemoved": "«{name}» له انتخابونو لرې شو.",
+  "tables.choiceCleared": {
+    "one": "«{name}» له انتخابونو او له {count} قطار لرې شو.",
+    "other": "«{name}» له انتخابونو او له {count} قطارونو لرې شو."
+  },
   "tables.hue0": "شین",
   "tables.hue1": "شنه آبي",
   "tables.hue2": "آبي",

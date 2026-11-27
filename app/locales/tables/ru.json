@@ -139,6 +139,14 @@
   "tables.choices": "Варианты",
   "tables.addChoice": "Добавить вариант",
   "tables.colour": "Цвет",
+  "tables.removeChoice": "Удалить «{name}»",
+  "tables.choiceRemoved": "«{name}» удалён из вариантов.",
+  "tables.choiceCleared": {
+    "one": "«{name}» удалён из вариантов; очищена {count} строка.",
+    "few": "«{name}» удалён из вариантов; очищены {count} строки.",
+    "many": "«{name}» удалён из вариантов; очищено {count} строк.",
+    "other": "«{name}» удалён из вариантов; очищено {count} строки."
+  },
   "tables.hue0": "Зелёный",
   "tables.hue1": "Бирюзовый",
   "tables.hue2": "Синий",

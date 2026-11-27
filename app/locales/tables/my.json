@@ -130,6 +130,11 @@
   "tables.choices": "ရွေးချယ်မှုများ",
   "tables.addChoice": "ရွေးချယ်မှု ထည့်",
   "tables.colour": "အရောင်",
+  "tables.removeChoice": "“{name}” ကို ဖယ်ရန်",
+  "tables.choiceRemoved": "“{name}” ကို ရွေးချယ်စရာများမှ ဖယ်လိုက်ပြီ။",
+  "tables.choiceCleared": {
+    "other": "“{name}” ကို ရွေးချယ်စရာများနှင့် အတန်း {count} ခုမှ ဖယ်လိုက်ပြီ။"
+  },
   "tables.hue0": "အစိမ်း",
   "tables.hue1": "စိမ်းပြာ",
   "tables.hue2": "အပြာ",

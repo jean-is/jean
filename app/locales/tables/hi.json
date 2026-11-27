@@ -133,6 +133,12 @@
   "tables.choices": "विकल्प",
   "tables.addChoice": "विकल्प जोड़ें",
   "tables.colour": "रंग",
+  "tables.removeChoice": "“{name}” हटाएँ",
+  "tables.choiceRemoved": "“{name}” विकल्पों से हटाया गया।",
+  "tables.choiceCleared": {
+    "one": "“{name}” विकल्पों से और {count} पंक्ति से हटाया गया।",
+    "other": "“{name}” विकल्पों से और {count} पंक्तियों से हटाया गया।"
+  },
   "tables.hue0": "हरा",
   "tables.hue1": "फ़िरोज़ी",
   "tables.hue2": "नीला",

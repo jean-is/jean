@@ -133,6 +133,12 @@
   "tables.choices": "Choices",
   "tables.addChoice": "Add a choice",
   "tables.colour": "Colour",
+  "tables.removeChoice": "Remove “{name}”",
+  "tables.choiceRemoved": "“{name}” removed from the choices.",
+  "tables.choiceCleared": {
+    "one": "“{name}” removed from the choices and from {count} row.",
+    "other": "“{name}” removed from the choices and from {count} rows."
+  },
   "tables.hue0": "Green",
   "tables.hue1": "Teal",
   "tables.hue2": "Blue",

@@ -130,6 +130,11 @@
   "tables.choices": "選択肢",
   "tables.addChoice": "選択肢を追加",
   "tables.colour": "色",
+  "tables.removeChoice": "「{name}」を削除",
+  "tables.choiceRemoved": "「{name}」を選択肢から削除しました。",
+  "tables.choiceCleared": {
+    "other": "「{name}」を選択肢と {count} 行から削除しました。"
+  },
   "tables.hue0": "緑",
   "tables.hue1": "青緑",
   "tables.hue2": "青",

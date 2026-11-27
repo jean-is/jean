@@ -139,6 +139,14 @@
   "tables.choices": "Opcje",
   "tables.addChoice": "Dodaj opcję",
   "tables.colour": "Kolor",
+  "tables.removeChoice": "Usuń „{name}”",
+  "tables.choiceRemoved": "Usunięto „{name}” z opcji.",
+  "tables.choiceCleared": {
+    "one": "Usunięto „{name}” z opcji; opróżniono {count} wiersz.",
+    "few": "Usunięto „{name}” z opcji; opróżniono {count} wiersze.",
+    "many": "Usunięto „{name}” z opcji; opróżniono {count} wierszy.",
+    "other": "Usunięto „{name}” z opcji; opróżniono {count} wiersza."
+  },
   "tables.hue0": "Zielony",
   "tables.hue1": "Turkusowy",
   "tables.hue2": "Niebieski",

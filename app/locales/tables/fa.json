@@ -133,6 +133,12 @@
   "tables.choices": "گزینه‌ها",
   "tables.addChoice": "افزودن گزینه",
   "tables.colour": "رنگ",
+  "tables.removeChoice": "حذف «{name}»",
+  "tables.choiceRemoved": "«{name}» از گزینه‌ها حذف شد.",
+  "tables.choiceCleared": {
+    "one": "«{name}» از گزینه‌ها و از {count} ردیف حذف شد.",
+    "other": "«{name}» از گزینه‌ها و از {count} ردیف حذف شد."
+  },
   "tables.hue0": "سبز",
   "tables.hue1": "فیروزه‌ای",
   "tables.hue2": "آبی",

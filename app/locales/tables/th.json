@@ -130,6 +130,11 @@
   "tables.choices": "ตัวเลือก",
   "tables.addChoice": "เพิ่มตัวเลือก",
   "tables.colour": "สี",
+  "tables.removeChoice": "ลบ “{name}”",
+  "tables.choiceRemoved": "ลบ “{name}” ออกจากตัวเลือกแล้ว",
+  "tables.choiceCleared": {
+    "other": "ลบ “{name}” ออกจากตัวเลือกและจาก {count} แถวแล้ว"
+  },
   "tables.hue0": "เขียว",
   "tables.hue1": "เขียวน้ำทะเล",
   "tables.hue2": "น้ำเงิน",

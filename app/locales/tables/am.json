@@ -133,6 +133,12 @@
   "tables.choices": "ምርጫዎች",
   "tables.addChoice": "ምርጫ ያክሉ",
   "tables.colour": "ቀለም",
+  "tables.removeChoice": "“{name}”ን አስወግድ",
+  "tables.choiceRemoved": "“{name}” ከምርጫዎቹ ተወግዷል።",
+  "tables.choiceCleared": {
+    "one": "“{name}” ከምርጫዎቹ ተወግዷል፤ {count} ረድፍ ባዶ ሆኗል።",
+    "other": "“{name}” ከምርጫዎቹ ተወግዷል፤ {count} ረድፎች ባዶ ሆነዋል።"
+  },
   "tables.hue0": "አረንጓዴ",
   "tables.hue1": "ሰማያዊ አረንጓዴ",
   "tables.hue2": "ሰማያዊ",

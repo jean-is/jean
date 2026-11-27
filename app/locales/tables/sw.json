@@ -133,6 +133,12 @@
   "tables.choices": "Machaguo",
   "tables.addChoice": "Ongeza chaguo",
   "tables.colour": "Rangi",
+  "tables.removeChoice": "Ondoa “{name}”",
+  "tables.choiceRemoved": "“{name}” imeondolewa kwenye machaguo.",
+  "tables.choiceCleared": {
+    "one": "“{name}” imeondolewa kwenye machaguo; safu {count} imeachwa wazi.",
+    "other": "“{name}” imeondolewa kwenye machaguo; safu {count} zimeachwa wazi."
+  },
   "tables.hue0": "Kijani",
   "tables.hue1": "Kijani-buluu",
   "tables.hue2": "Buluu",

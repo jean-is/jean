@@ -136,6 +136,13 @@
   "tables.choices": "Choix",
   "tables.addChoice": "Ajouter un choix",
   "tables.colour": "Couleur",
+  "tables.removeChoice": "Retirer « {name} »",
+  "tables.choiceRemoved": "« {name} » retiré des choix.",
+  "tables.choiceCleared": {
+    "one": "« {name} » retiré des choix et de {count} ligne.",
+    "many": "« {name} » retiré des choix et de {count} de lignes.",
+    "other": "« {name} » retiré des choix et de {count} lignes."
+  },
   "tables.hue0": "Vert",
   "tables.hue1": "Turquoise",
   "tables.hue2": "Bleu",

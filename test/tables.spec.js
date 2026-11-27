@@ -1704,15 +1704,24 @@ test('a choice reads as its pill, in a colour picked from its column’s menu; s
 
   // Its colour is picked from its column's menu, and kept with the choice; pressed again, it is its place's again.
   await page.locator('.table-head', { hasText: 'Room' }).click()
-  await menu.getByRole('button', { name: 'Colour' }).click()
+  await menu.getByRole('button', { name: 'Choices' }).click()
   const rose = menu.getByRole('group', { name: 'Kitchen' }).getByRole('button', { name: 'Rose' })
   await rose.click()
   await expect(rose).toHaveAttribute('aria-pressed', 'true')
   await expect(rows.nth(1).locator('.table-pill').first()).toHaveAttribute('data-hue', '5')
   await rose.click()
   await expect(rows.nth(1).locator('.table-pill').first()).toHaveAttribute('data-hue', '1')
+  // A choice is taken away there too, and from each cell holding it, said with an Undo that brings both back as they were.
+  await menu.getByRole('button', { name: 'Remove “Kitchen”' }).click()
+  await expect(menu.getByRole('group', { name: 'Kitchen' })).toHaveCount(0)
+  await expect(rows.nth(1).locator('.table-pill')).toHaveCount(0)
+  await expect(page.locator('app-toasts')).toContainText('“Kitchen” removed from the choices and from 1 row.')
+  await expect(menu.getByRole('button', { name: 'Choices' })).toBeFocused()
   await page.keyboard.press('Escape')
   await expect(menu).toHaveCount(0)
+  await page.locator('app-toasts').getByRole('button', { name: 'Undo' }).click()
+  await expect(rows.nth(1).locator('.table-pill').first()).toHaveText('Kitchen')
+  await expect(rows.nth(1).locator('.table-pill').first()).toHaveAttribute('data-hue', '1')
 
   // Several choices are ticked in their menu, which a button at the cell's end opens, and one more is added there.
   const tags = rows.nth(1).getByTitle('Tags')
@@ -1763,8 +1772,8 @@ test('a choice reads as its pill, in a colour picked from its column’s menu; s
   await expect(lane.locator('.table-card h4')).toHaveText(['Villa Aurore', 'Les Tilleuls'])
 })
 
-for (const [lang, open, colour, green, choices, place, fill, asked, list] of [['ar', 'فتح', 'اللون', 'أخضر', 'الاختيارات', '1 من 2', 'اطلب من {name} تعبئته', 'في «Visits»، املأ العمود «Tags» حيثما كان فارغًا.', 'قائمة'],
-  ['ja', '開く', '色', '緑', '選択肢', '1 / 2', '{name} に入力を頼む', '「Visits」で、列「Tags」の空いているところを入力してください。', 'リスト']]) {
+for (const [lang, open, green, choices, place, fill, asked, list] of [['ar', 'فتح', 'أخضر', 'الاختيارات', '1 من 2', 'اطلب من {name} تعبئته', 'في «Visits»، املأ العمود «Tags» حيثما كان فارغًا.', 'قائمة'],
+  ['ja', '開く', '緑', '選択肢', '1 / 2', '{name} に入力を頼む', '「Visits」で、列「Tags」の空いているところを入力してください。', 'リスト']]) {
   test(`a row's sheet, a choice's colours, what asks Jean and the list in ${lang}: their words the language's`, async ({ page }) => {
     await start(page, lang)
     await visits(page)
@@ -1779,7 +1788,7 @@ for (const [lang, open, colour, green, choices, place, fill, asked, list] of [['
     await page.keyboard.press('Escape')
     await expect(sheet).toHaveCount(0)
     await page.locator('.table-head', { hasText: 'Room' }).click()
-    await menu.getByRole('button', { name: colour, exact: true }).click()
+    await menu.getByRole('button', { name: choices, exact: true }).click()
     await expect(menu.getByRole('group', { name: 'Living room' }).getByRole('button', { name: green, exact: true })).toHaveAttribute('aria-pressed', 'true')
     // A column with an empty cell asks Jean to fill it from its menu, and the request it writes in the box is the language's too; where the view is narrow, the list, by its name.
     await page.keyboard.press('Escape')

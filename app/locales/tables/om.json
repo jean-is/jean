@@ -133,6 +133,12 @@
   "tables.choices": "Filannoowwan",
   "tables.addChoice": "Filannoo dabali",
   "tables.colour": "Halluu",
+  "tables.removeChoice": "“{name}” haqi",
+  "tables.choiceRemoved": "“{name}” filannoowwan keessaa haqameera.",
+  "tables.choiceCleared": {
+    "one": "“{name}” filannoowwan keessaa haqameera; tooraan {count} duwwaa ta’eera.",
+    "other": "“{name}” filannoowwan keessaa haqameera; tooraaleen {count} duwwaa ta’aniiru."
+  },
   "tables.hue0": "Magariisa",
   "tables.hue1": "Magariisa-cuquliisa",
   "tables.hue2": "Cuquliisa",

@@ -133,6 +133,12 @@
   "tables.choices": "ఎంపికలు",
   "tables.addChoice": "ఎంపికను జోడించు",
   "tables.colour": "రంగు",
+  "tables.removeChoice": "“{name}” తీసివేయి",
+  "tables.choiceRemoved": "“{name}” ఎంపికల నుండి తీసివేయబడింది.",
+  "tables.choiceCleared": {
+    "one": "“{name}” ఎంపికల నుండి, {count} వరుస నుండి తీసివేయబడింది.",
+    "other": "“{name}” ఎంపికల నుండి, {count} వరుసల నుండి తీసివేయబడింది."
+  },
   "tables.hue0": "ఆకుపచ్చ",
   "tables.hue1": "నీలిపచ్చ",
   "tables.hue2": "నీలం",

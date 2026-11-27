@@ -130,6 +130,11 @@
   "tables.choices": "Pilihan",
   "tables.addChoice": "Tambah pilihan",
   "tables.colour": "Warna",
+  "tables.removeChoice": "Alih keluar “{name}”",
+  "tables.choiceRemoved": "“{name}” dialih keluar daripada pilihan.",
+  "tables.choiceCleared": {
+    "other": "“{name}” dialih keluar daripada pilihan dan daripada {count} baris."
+  },
   "tables.hue0": "Hijau",
   "tables.hue1": "Biru kehijauan",
   "tables.hue2": "Biru",

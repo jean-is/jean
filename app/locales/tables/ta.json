@@ -133,6 +133,12 @@
   "tables.choices": "தேர்வுகள்",
   "tables.addChoice": "தேர்வைச் சேர்",
   "tables.colour": "நிறம்",
+  "tables.removeChoice": "“{name}” ஐ நீக்கு",
+  "tables.choiceRemoved": "“{name}” தேர்வுகளிலிருந்து நீக்கப்பட்டது.",
+  "tables.choiceCleared": {
+    "one": "“{name}” தேர்வுகளிலிருந்தும் {count} வரிசையிலிருந்தும் நீக்கப்பட்டது.",
+    "other": "“{name}” தேர்வுகளிலிருந்தும் {count} வரிசைகளிலிருந்தும் நீக்கப்பட்டது."
+  },
   "tables.hue0": "பச்சை",
   "tables.hue1": "டீல்",
   "tables.hue2": "நீலம்",

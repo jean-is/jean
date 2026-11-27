@@ -388,19 +388,11 @@ const decide = (one, row) => html`<button type="button" class="icon-button" aria
  */
 function grid(one, columns, shown, rows, calculate, fresh, state, words, top) {
   const { box, naming, kinds, relating, list, by } = state, title = /** @type {Property} */ (titleOf(one.table)), most = Math.min(shown.length, 5), frozen = Math.min(state.frozen ?? 0, most)
-  // The columns kept in view as the others scroll sideways, five at most, from the start: the divider after them, dragged to a column's end edge (the nearest),
+  // The columns kept in view as the others scroll sideways, five at most, from the start: the divider after them, dragged to a column's end edge (the nearest, ../freeze/),
   // or moved by the arrows, Home and End, as WAI-ARIA's window splitter is; a head's menu freezes up to it too (WCAG 2.5.7).
   const freeze = (/** @type {number} */ to) => to !== frozen && (state.frozen = to, state.arrange?.(() => ({ frozen: to || undefined })))
-  /** @param {PointerEvent} e */
-  const drag = (e) => {
-    const handle = /** @type {HTMLElement} */ (e.currentTarget), table = /** @type {HTMLTableElement} */ (handle.closest('table')), rtl = getComputedStyle(table).direction === 'rtl'
-    const ends = [...table.tHead?.rows[0].cells ?? []].slice(0, most + 1).map((cell) => ((rect) => (rtl ? rect.left : rect.right))(cell.getBoundingClientRect())), start = ends[0] - (table.tHead?.rows[0].cells[0].getBoundingClientRect().width ?? 0) * (rtl ? -1 : 1)
-    let to = frozen
-    handle.setPointerCapture(e.pointerId)
-    handle.classList.add('is-dragging')
-    handle.onpointermove = (move) => { to = ends.reduce((best, end, k) => (Math.abs(end - move.clientX) < Math.abs(ends[best] - move.clientX) ? k : best), 0); table.style.setProperty('--frozen-end', `${Math.abs(ends[to] - start)}px`) }
-    handle.onpointerup = handle.onpointercancel = () => { handle.onpointermove = handle.onpointerup = handle.onpointercancel = null; handle.classList.remove('is-dragging'); freeze(to) || state.edge?.() }
-  }
+  /** Dragged, by caps/freeze, fetched as it is first pressed. @param {PointerEvent} e */
+  const drag = (e) => ((handle) => import('../freeze/freeze.js').then(({ default: move }) => move(e, handle, most, (to) => (to >= 0 && freeze(to)) || state.edge?.())))(/** @type {HTMLElement} */ (e.currentTarget))
   // As many decimals in each column of plain numbers as its longest has (D752).
   state.digits = new Map(shown.flatMap((property) => (property.type === 'number' && !property.format ? [[property.id, digitsOf(one.rows, property)]] : [])))
   // This collection first, then the others a relation can be to.
@@ -502,6 +494,19 @@ function grid(one, columns, shown, rows, calculate, fresh, state, words, top) {
 
   /** A column's menu showing its choices, each with the seven colours to pick its own from, or its actions again; the keyboard on the page's first row. @param {string} id @param {string} [column] */
   const choose = (id, column = '') => { state.choosing.value = column; focus(`#${id} button`) }
+  /** A choice taken away from its column and from each cell holding it, said with an Undo that brings both back as they were. @param {Property} property @param {string} name @param {string} id its menu's */
+  const unchoose = async (property, name, id) => {
+    const before = property.options ?? [], holding = one.rows.filter((row) => [row.cells[property.id]].flat().includes(name))
+    const cells = (/** @type {boolean} */ back) => holding.map((row) => ((value) => ({ row: row.id, set: { [property.id]: back || !Array.isArray(value) ? (back ? value : null) : value.filter((other) => other !== name) } }))(row.cells[property.id]))
+    if (holding.length) await change(one, cells(false), 'user')
+    await shape(one, { choices: { id: property.id, options: before.filter((option) => option.name !== name) } })
+    focus(`#${id} button`)
+    notify(holding.length ? t('tables.choiceCleared', { name, count: holding.length }) : t('tables.choiceRemoved', { name }), { label: t('memory.undo'), run: async () => {
+      await shape(one, { choices: { id: property.id, options: before } })
+      const now = holding.length && await load(one.folder, one.dir)
+      if (now) await change(now, cells(true), 'user')
+    } })
+  }
   /** A column's head, its menu under it, opened by a click or a right click, which Escape closes, leaving the pane; its name, which a long one cuts short on screen, whole in its tip. @param {Property} property @param {number} i */
   const heading = (property, i) => {
     const menu = `${state.id}-${i}`, place = one.table.properties.indexOf(property)
@@ -537,9 +542,10 @@ function grid(one, columns, shown, rows, calculate, fresh, state, words, top) {
         : html`<button type="button" class="table-head" popovertarget=${menu} title=${property.name} draggable="true" @dragstart=${(/** @type {DragEvent} */ e) => e.dataTransfer?.setData('text/x-column', property.id)} @contextmenu=${(/** @type {MouseEvent} */ e) => { e.preventDefault(); /** @type {HTMLElement} */ (e.currentTarget).click() }}>${GLYPHS[property.type]}<span dir="auto">${property.name}</span></button>`}
       <div id=${menu} class="menu table-menu" popover @focusout=${leaving}
         @toggle=${(/** @type {ToggleEvent} */ e) => { if (e.newState === 'closed' && kinds.peek() === property.id) kinds.value = ''; if (e.newState === 'closed' && state.choosing.peek() === property.id) state.choosing.value = '' }}>${state.choosing.value === property.id
-        ? listed([html`<button type="button" class="back" @click=${() => choose(menu)}>${icons.back}${t('tables.colour')}</button>`], (property.options ?? []).map((option) => html`<div class="table-line table-hues" role="group" aria-label=${option.name}>${pill(property, option.name)}
+        ? listed([html`<button type="button" class="back" @click=${() => choose(menu)}>${icons.back}${t('tables.choices')}</button>`], (property.options ?? []).map((option) => html`<div class="table-line table-hues" role="group" aria-label=${option.name}>${pill(property, option.name)}
           ${Array.from({ length: HUES }, (_, hue) => html`<button type="button" class="icon-button" aria-label=${t(`tables.hue${hue}`)} aria-pressed=${String(hueOf(property, option.name) === hue)}
-            @click=${() => shape(one, { hue: { id: property.id, name: option.name, hue: option.hue === hue ? undefined : hue } })}><i class="table-dot" data-hue=${hue}></i></button>`)}</div>`))
+            @click=${() => shape(one, { hue: { id: property.id, name: option.name, hue: option.hue === hue ? undefined : hue } })}><i class="table-dot" data-hue=${hue}></i></button>`)}${/^(multi-)?select$/.test(property.type)
+          ? html`<button type="button" class="icon-button" aria-label=${t('tables.removeChoice', { name: option.name })} @click=${() => unchoose(property, option.name, menu)}>${icons.trash}</button>` : nothing}</div>`))
         : kinds.value === property.id && relating.value
         ? listed([html`<button type="button" class="back" @click=${() => turn(menu, property.id)}>${icons.back}${t('tables.kind.relation')}</button>`], targets.map(target))
         : kinds.value === property.id
@@ -549,7 +555,7 @@ function grid(one, columns, shown, rows, calculate, fresh, state, words, top) {
             && (targets.find((other) => other.folder === to)?.name ?? one.related?.get(to)?.table.name)}</span>${icons.chevron}</button>`], WORKED.map(kind))
         : listed([row(icons.compose, t('action.rename'), () => rename(property.id)),
           html`<button type="button" class="submenu" @click=${() => turn(menu, property.id)}>${GLYPHS[property.type]}${t('tables.type')} <span class="menu-value">${t(`tables.kind.${property.type}`)}</span>${icons.chevron}</button>`,
-          ...(property.options?.length ? [html`<button type="button" class="submenu" @click=${() => choose(menu, property.id)}>${icons.palette}${t('tables.colour')}${icons.chevron}</button>`] : [])],
+          ...(property.options?.length ? [html`<button type="button" class="submenu" @click=${() => choose(menu, property.id)}>${icons.palette}${t('tables.choices')}${icons.chevron}</button>`] : [])],
           ...((empty) => (!empty || [...WORKED, 'formula'].includes(property.type) ? [] : [[row(icons.brain, html`${t('tables.askFill', { name: assistantName() })}<span class="menu-value">${empty}</span>`, () => ask(one, t('tables.asked.fill', { table: one.table.name, column: property.name })))]]))(rows.length - Number(total(rows, property, 'count'))),
           [row(ascending, t('tables.ascending'), () => sort(state, property, 'ascending')), row(descending, t('tables.descending'), () => sort(state, property, 'descending'))],
           [row(icons.back, t('tables.insertStart'), () => added('text', place)), row(icons.arrow, t('tables.insertEnd'), () => added('text', place + 1))],

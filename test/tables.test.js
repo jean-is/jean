@@ -211,6 +211,15 @@ test('a choice has a colour, one of seven: its place among its column\'s choices
   // Made several choices, its choices keep their colours; so does the newer copy's in a merge.
   assert.deepEqual(propertyOf(reshape(picked, { retype: { id: 'room', type: 'multi-select' } }, T(3)), 'Room')?.options?.[1], { name: 'Kitchen', hue: 5 })
   assert.deepEqual(propertyOf(mergeTables(table, picked), 'Room')?.options?.[1], { name: 'Kitchen', hue: 5 })
+  // Taken away, a choice is gone from its column, and no merge with an older copy brings it back until it is given again; given back as they were, the choices are whole again.
+  const roomOf = (/** @type {any} */ one) => /** @type {any} */ (propertyOf(one, 'Room')), removed = reshape(picked, { choices: { id: 'room', options: (kitchen.options ?? []).filter((option) => option.name !== 'Kitchen') } }, T(4))
+  assert.deepEqual([roomOf(removed).options.some((/** @type {any} */ option) => option.name === 'Kitchen'), roomOf(removed).gone], [false, ['Kitchen']])
+  assert.deepEqual(tableProblems(removed), [])
+  for (const merged of [mergeTables(removed, picked), mergeTables(picked, removed)]) assert.equal(roomOf(merged).options.some((/** @type {any} */ option) => option.name === 'Kitchen'), false)
+  const again = /** @type {any} */ (grown(removed, [{ room: 'Kitchen' }], T(5)))
+  assert.deepEqual([roomOf(again).options.at(-1), roomOf(again).gone], [{ name: 'Kitchen' }, []])
+  const whole = reshape(removed, { choices: { id: 'room', options: kitchen.options ?? [] } }, T(6))
+  assert.deepEqual([roomOf(whole).options, roomOf(whole).gone], [kitchen.options, undefined])
   // A person's face is one of the seven too, the same for a name wherever it is read.
   assert.equal(hueFor('Léa Martin'), hueFor('Léa Martin'))
   for (const name of ['Léa Martin', '田中', 'محمد', '']) assert.ok(Number.isInteger(hueFor(name)) && hueFor(name) >= 0 && hueFor(name) < HUES)

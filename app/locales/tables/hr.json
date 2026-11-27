@@ -136,6 +136,13 @@
   "tables.choices": "Opcije",
   "tables.addChoice": "Dodaj opciju",
   "tables.colour": "Boja",
+  "tables.removeChoice": "Ukloni „{name}”",
+  "tables.choiceRemoved": "„{name}” uklonjen iz izbora.",
+  "tables.choiceCleared": {
+    "one": "„{name}” uklonjen iz izbora; ispražnjen {count} redak.",
+    "few": "„{name}” uklonjen iz izbora; ispražnjena {count} retka.",
+    "other": "„{name}” uklonjen iz izbora; ispražnjeno {count} redaka."
+  },
   "tables.hue0": "Zelena",
   "tables.hue1": "Tirkizna",
   "tables.hue2": "Plava",

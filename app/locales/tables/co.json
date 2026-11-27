@@ -136,6 +136,13 @@
   "tables.choices": "Scelte",
   "tables.addChoice": "Aghjunghje una scelta",
   "tables.colour": "Culore",
+  "tables.removeChoice": "Caccià « {name} »",
+  "tables.choiceRemoved": "« {name} » cacciatu da e scelte.",
+  "tables.choiceCleared": {
+    "one": "« {name} » cacciatu da e scelte : {count} linea viotata.",
+    "many": "« {name} » cacciatu da e scelte : {count} di linee viotate.",
+    "other": "« {name} » cacciatu da e scelte : {count} linee viotate."
+  },
   "tables.hue0": "Verde",
   "tables.hue1": "Verde turchinu",
   "tables.hue2": "Turchinu",

@@ -136,6 +136,13 @@
   "tables.choices": "אפשרויות",
   "tables.addChoice": "הוספת אפשרות",
   "tables.colour": "צבע",
+  "tables.removeChoice": "הסרת “{name}”",
+  "tables.choiceRemoved": "“{name}” הוסר מהאפשרויות.",
+  "tables.choiceCleared": {
+    "one": "“{name}” הוסר מהאפשרויות ומשורה אחת.",
+    "two": "“{name}” הוסר מהאפשרויות ומ־{count} שורות.",
+    "other": "“{name}” הוסר מהאפשרויות ומ־{count} שורות."
+  },
   "tables.hue0": "ירוק",
   "tables.hue1": "טורקיז",
   "tables.hue2": "כחול",

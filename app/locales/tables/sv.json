@@ -133,6 +133,12 @@
   "tables.choices": "Alternativ",
   "tables.addChoice": "Lägg till ett alternativ",
   "tables.colour": "Färg",
+  "tables.removeChoice": "Ta bort ”{name}”",
+  "tables.choiceRemoved": "”{name}” togs bort från valen.",
+  "tables.choiceCleared": {
+    "one": "”{name}” togs bort från valen och från {count} rad.",
+    "other": "”{name}” togs bort från valen och från {count} rader."
+  },
   "tables.hue0": "Grön",
   "tables.hue1": "Blågrön",
   "tables.hue2": "Blå",

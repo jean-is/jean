@@ -133,6 +133,12 @@
   "tables.choices": "Lehetőségek",
   "tables.addChoice": "Lehetőség hozzáadása",
   "tables.colour": "Szín",
+  "tables.removeChoice": "„{name}” eltávolítása",
+  "tables.choiceRemoved": "„{name}” eltávolítva a választások közül.",
+  "tables.choiceCleared": {
+    "one": "„{name}” eltávolítva a választások közül; {count} sor kiürítve.",
+    "other": "„{name}” eltávolítva a választások közül; {count} sor kiürítve."
+  },
   "tables.hue0": "Zöld",
   "tables.hue1": "Kékeszöld",
   "tables.hue2": "Kék",
