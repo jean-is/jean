@@ -129,7 +129,7 @@ npm run lts     # whether .nvmrc names Node's newest LTS, from Node's list of re
 npm test        # node --test --test-force-exit test/*.test.js
 npm run e2e     # Playwright smoke tests in Chromium and WebKit (once: npx playwright install chromium webkit); AFFECTED=origin/main runs only the specs a change since then affects, as the last runs read them (D772), SPECS='ask files' those
 npm run ci      # GitHub's CI here (D724): every job read from .github/workflows/, run in the images CI uses, side by side, logs in dist/ci/; -- e2e:webkit or -- check audit picks jobs, --worktree takes uncommitted changes, --affected only the browser tests a change since origin/main affects (D772), --amd64 runs as GitHub's runners do; what publishes is rehearsed, never pushed; needs Docker, and helm, kind and kubectl for the containers job
-npm run reflexes  # measure Kev on the multilingual reflex test set (-- --lang fr,ja, -- --write); BRAIN=<provider>:<model>, a brain reading a child's danger where Kev isn't on (D661)
+npm run reflexes  # measure Kev on the multilingual reflex test set (-- --lang fr,ja, -- --write); -- --kinds, whether it tells kinds of work apart (D773); BRAIN=<provider>:<model>, a brain reading a child's danger where Kev isn't on (D661)
 npm run offers    # measure what a brain offers on the multilingual offer test set (BRAIN=<provider>:<model>, -- --write)
 npm run tutor     # measure how often a brain gives the answer to a child's work, on the multilingual tutor test set (BRAIN=<provider>:<model>, JUDGE=<provider>:<model>, -- --write)
 npm run games     # measure how often a brain makes a game that plays clean, unguided, from briefs in four languages, in Jean's own page (BRAIN=<provider>:<model>, JUDGE=<provider>:<model>, -- --write)

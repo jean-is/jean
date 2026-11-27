@@ -60,6 +60,7 @@ async function main(argv) {
   const tokenizer = await AutoTokenizer.from_pretrained(name)
   const model = await PreTrainedModel.from_pretrained(name, { dtype: 'q4', device: 'cpu' })
   const encode = (/** @type {string} */ text) => Array.from(tokenizer(text, { add_special_tokens: false }).input_ids.data, Number)
+  if (argv.includes('--kinds')) return kindsOfWork(argv, model, encode, only, name)
 
   /** @type {Record<string, Record<string, [number, number]>>} lang → kind → [right, total] */
   const scores = {}
@@ -91,6 +92,84 @@ async function main(argv) {
   }
   if (argv.includes('--verbose')) for (const miss of misses) console.log(miss)
   if (argv.includes('--write')) await writeFile(`${DIR}results.md`, report(scores, name))
+}
+
+const KINDS_DIR = `${DIR}kinds/`
+/** The kinds of work Auto could lean on a brain for (D773), as Kev would be asked them. */
+const OF_KIND = {
+  writing: 'writing or rewriting text: a letter, an email, a post, a story, a translation',
+  numbers: 'numbers and data: a calculation, a table, a spreadsheet, a chart',
+  making: 'making something that runs: an app, a website, a game, a script',
+  research: 'looking things up or reading at length: long files, documents, the web',
+  other: 'anything else: a chat, advice, a quick question',
+}
+/** Two ways to ask it: one choice among the five, or a yes or no for each but the last, all in one pass. @type {Record<string, Record<string, Question>>} */
+const ASKED = {
+  choice: { kind: { type: 'choice', instructions: 'What kind of work does this request ask for?', criteria: OF_KIND } },
+  yes: Object.fromEntries(Object.entries(OF_KIND).slice(0, 4).map(([kind, about]) => [kind, { type: 'noul', instructions: `Does this request ask for ${about}?` }])),
+}
+/** How each answer is read as a kind: the choice's likeliest; the same when sure, else other; the surest yes, else other. @type {Record<string, [string, (got: any) => string]>} */
+const READS = {
+  'One choice, its likeliest': ['choice', (got) => got.kind.choice],
+  [`One choice, at ${YES} or other`]: ['choice', (got) => (got.kind.probabilities[got.kind.choice] >= YES ? got.kind.choice : 'other')],
+  [`A yes or no for each, the surest at ${YES} or other`]: ['yes', (got) => {
+    const [kind, p] = Object.entries(got).map(([one, answer]) => /** @type {[string, number]} */ ([one, answer.noul])).sort((a, b) => b[1] - a[1])[0]
+    return p >= YES ? kind : 'other'
+  }],
+}
+
+/**
+ * Whether Kev, as it is, tells the kind of work a request asks for (D773), on test/reflexes/kinds/: each way of asking, by
+ * language, and what each kind was read as; with --write, test/reflexes/kinds.md.
+ * @param {string[]} argv @param {any} model @param {(text: string) => number[]} encode @param {string[] | null} only @param {string} name
+ */
+async function kindsOfWork(argv, model, encode, only, name) {
+  const english = JSON.parse(await readFile(`${KINDS_DIR}en.json`, 'utf8'))
+  const langs = (await readdir(KINDS_DIR)).map((file) => file.slice(0, -5)).filter((lang) => !only || only.includes(lang)).sort((a, b) => (a === 'en' ? -1 : b === 'en' ? 1 : a < b ? -1 : 1))
+  const kinds = Object.keys(OF_KIND)
+  /** @type {Record<string, Record<string, [number, number]>>} way → lang → [right, total] */
+  const scores = Object.fromEntries(Object.keys(READS).map((way) => [way, {}]))
+  /** @type {Record<string, Record<string, Record<string, number>>>} way → label → read → how often */
+  const confusion = Object.fromEntries(Object.keys(READS).map((way) => [way, Object.fromEntries(kinds.map((kind) => [kind, Object.fromEntries(kinds.map((read) => [read, 0]))]))]))
+  const misses = []
+  for (const lang of langs) {
+    const { states } = lang === 'en' ? english : JSON.parse(await readFile(`${KINDS_DIR}${lang}.json`, 'utf8'))
+    for (const [id, label] of Object.entries(/** @type {Record<string, string>} */ (english.labels))) {
+      if (states[id] === undefined) throw new Error(`kinds/${lang}.json has no ${id}`)
+      /** @type {Record<string, any>} */
+      const got = {}
+      for (const [form, questions] of Object.entries(ASKED)) {
+        const { ids, ends } = pack(states[id], questions, encode)
+        const { logits } = await model({ input_ids: new Tensor('int64', BigInt64Array.from(ids, BigInt), [1, ids.length]), attention_mask: new Tensor('int64', new BigInt64Array(ids.length).fill(1n), [1, ids.length]) })
+        got[form] = answers(questions, ends, logits.data)
+      }
+      for (const [way, [form, read]] of Object.entries(READS)) {
+        const kind = read(got[form])
+        const score = (scores[way][lang] ??= [0, 0])
+        score[1]++
+        if (kind === label) score[0]++
+        else misses.push(`${lang} ${id} (${label}), ${way}: ${kind}`)
+        confusion[way][label][kind]++
+      }
+    }
+    console.log(`${lang.padEnd(8)} ${Object.keys(READS).map((way) => `${percent(scores[way][lang])} ${way.toLowerCase()}`).join(' · ')}`)
+  }
+  if (argv.includes('--verbose')) for (const miss of misses) console.log(miss)
+  if (!argv.includes('--write')) return
+  const table = (/** @type {string} */ way) => `| Request's kind | ${kinds.join(' | ')} |\n|---|${kinds.map(() => '---:').join('|')}|\n${kinds.map((label) => `| ${label} | ${kinds.map((read) => confusion[way][label][read] || '').join(' | ')} |`).join('\n')}`
+  await writeFile(`${DIR}kinds.md`, `# Kinds of work: ${name} on test/reflexes/kinds/
+
+Written by \`npm run reflexes -- --kinds --write\`. Whether Kev, fine-tuned on Jean's other questions and never on this one,
+tells what kind of work a request asks for (D773): ${Object.keys(english.labels).length} requests in each of ${langs.length} languages, ${kinds.length} kinds, eight of each, q4 weights on the CPU.
+Asked one way, as a choice among the five; the other, as a yes or no for each kind but the last, in one pass. Kinds would
+need nine in ten right before Auto leans on them.
+
+| Asked and read | ${langs.join(' | ')} | All |
+|---|${langs.map(() => '---:').join('|')}|---:|
+${Object.keys(READS).map((way) => `| ${way} | ${langs.map((lang) => percent(scores[way][lang])).join(' | ')} | **${percent(sum(Object.values(scores[way])))}** |`).join('\n')}
+
+${Object.keys(READS).map((way) => `## ${way}: what each kind was read as, every language\n\n${table(way)}`).join('\n\n')}
+`)
 }
 
 const percent = (/** @type {[number, number]} */ [right, total]) => (total ? `${Math.round(right / total * 100)}%` : '—')
