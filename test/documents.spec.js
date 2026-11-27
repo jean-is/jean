@@ -1319,6 +1319,22 @@ test.describe('the slash menu', () => {
     expect(await markdownOf(page)).toBe(arabic)
   })
 
+  test('a fence and its language alone on a new line, then Enter, make a code block, as a space after them does', async ({ page }) => {
+    await start(page, { markdown: 'First.\n' })
+    await caretAt(page, 'First.', 6)
+    await page.keyboard.press('Enter')
+    await page.keyboard.type('```js')
+    await page.keyboard.press('Enter')
+    await page.keyboard.type('let a = 1')
+    await expect(page.locator('.ProseMirror pre[data-lang="js"]')).toHaveText('let a = 1')
+    // Anything else on the line stays a line, which Enter splits.
+    await page.keyboard.press('Shift+Enter')
+    await page.keyboard.type('Then ```')
+    await page.keyboard.press('Enter')
+    await page.keyboard.type('More.')
+    expect(await markdownOf(page)).toBe('First.\n\n```js\nlet a = 1\n```\n\nThen \\`\\`\\`\n\nMore.\n')
+  })
+
   test('a to-do list that goes on with Enter, a table chosen with a click, a divider', async ({ page }) => {
     await start(page, { markdown: 'First.\n' })
     const menu = page.getByRole('listbox')

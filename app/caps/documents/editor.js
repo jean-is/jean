@@ -187,13 +187,16 @@ const lineBreak = (state, dispatch) => (state.selection.$from.parent.type !== N.
  */
 const edge = (dir) => ({ selection: { $from, empty } }) => empty && $from.depth > 2 && $from.node(1).type === N.columns && (dir < 0 ? !$from.parentOffset : $from.parentOffset === $from.parent.content.size)
 
+/** A paragraph that holds a fence of three backquotes and a language alone, the caret at its end, made a code block of that language. @type {Command} */
+const fence = ({ selection: { $from, empty }, tr }, dispatch) => ((lang) => lang !== undefined && empty && $from.parent.type === N.paragraph && $from.parentOffset === $from.parent.content.size
+  && (dispatch?.(tr.delete($from.start(), $from.end()).setBlockType($from.start(), $from.start(), N.code_block, { lang }).scrollIntoView()), true))(/^```([\w-]*)$/.exec($from.parent.textContent)?.[1])
 /** @type {Record<string, Command>} */
 const KEYS = {
   'Mod-z': undo, 'Shift-Mod-z': redo, 'Mod-y': redo,
   'Mod-b': format(M.strong), 'Mod-i': format(M.em), 'Mod-e': format(M.code), 'Mod-Shift-x': format(M.del),
   'Mod-Alt-1': setBlockType(N.heading, { level: 1 }), 'Mod-Alt-2': setBlockType(N.heading, { level: 2 }), 'Mod-Alt-3': setBlockType(N.heading, { level: 3 }), 'Mod-Alt-0': setBlockType(N.paragraph),
-  // In a task, Enter makes the next line a task too.
-  Enter: (state, dispatch) => followSelected(state) || (Boolean(itemDepth(state.selection)) && splitListItem(N.list_item, state.selection.$from.node(itemDepth(state.selection)).attrs.checked === null ? undefined : { checked: false })(state, dispatch)),
+  // A fence and a language alone on a line make it a code block, as a space after them does; in a task, Enter makes the next line a task too.
+  Enter: (state, dispatch) => followSelected(state) || fence(state, dispatch) || (Boolean(itemDepth(state.selection)) && splitListItem(N.list_item, state.selection.$from.node(itemDepth(state.selection)).attrs.checked === null ? undefined : { checked: false })(state, dispatch)),
   'Shift-Enter': chainCommands(exitCode, lineBreak), 'Mod-Enter': chainCommands(exitCode, lineBreak),
   Tab: tab(1), 'Shift-Tab': tab(-1), Backspace: undoInputRule,
 }
