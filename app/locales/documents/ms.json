@@ -85,6 +85,7 @@
   "documents.date": "Tarikh",
   "documents.doIt": "Minta {name} melakukannya",
   "documents.asked": "Dalam “{document}”, lakukan ini, kemudian tandakannya jika ia tugasan: {task}",
+  "documents.you": "{name} (anda)",
   "documents.columnGrip": "Lajur {n}",
   "documents.rowGrip": "Baris {n}",
   "documents.insertAbove": "Sisip di atas",

@@ -85,6 +85,7 @@
   "documents.date": "日付",
   "documents.doIt": "{name} に頼む",
   "documents.asked": "「{document}」で、次のことをして、タスクならチェックを付けてください：{task}",
+  "documents.you": "{name}（あなた）",
   "documents.columnGrip": "{n} 列目",
   "documents.rowGrip": "{n} 行目",
   "documents.insertAbove": "上に挿入",

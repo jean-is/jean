@@ -16,8 +16,8 @@ import { BRAND } from '../../brand.js'
 import { t, useStrings, locale, dir } from '../../core/i18n.js'
 
 await useStrings('notifications')
-// What is coming up in the project's collections is told too (caps/soon), once Tables is found.
-effect(() => { if (loaded.value.has('tables')) import('../soon/tell.js').catch(console.warn) })
+// What is coming up in the project's collections, and its documents' tasks for the person, is told too (caps/soon), once Tables or Documents is found.
+effect(() => { if (loaded.value.has('tables') || loaded.value.has('documents')) import('../soon/tell.js').catch(console.warn) })
 
 /** What the browser allows this site, drawn again once the user answers it. */
 const allowed = signal(Notification.permission)

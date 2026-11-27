@@ -87,6 +87,7 @@
   "documents.date": "Petsa",
   "documents.doIt": "Ipagawa kay {name}",
   "documents.asked": "Sa “{document}”, gawin ito, saka lagyan ng tsek kung gawain ito: {task}",
+  "documents.you": "{name} (ikaw)",
   "documents.columnGrip": "Column {n}",
   "documents.rowGrip": "Row {n}",
   "documents.insertAbove": "Isingit sa itaas",

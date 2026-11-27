@@ -85,6 +85,7 @@
   "documents.date": "Ụbọchị",
   "documents.doIt": "Rịọ {name} ka o mee ya",
   "documents.asked": "N’ime “{document}”, mee nke a, wee kaa ya akara ma ọ bụrụ ọrụ: {task}",
+  "documents.you": "{name} (gị)",
   "documents.columnGrip": "Kọlụm {n}",
   "documents.rowGrip": "Ahịrị {n}",
   "documents.insertAbove": "Tinye n’elu",

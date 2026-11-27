@@ -89,6 +89,7 @@
   "documents.date": "Date",
   "documents.doIt": "Demander à {name} de le faire",
   "documents.asked": "Dans « {document} », fais ceci, puis coche-le si c’est une tâche : {task}",
+  "documents.you": "{name} (vous)",
   "documents.columnGrip": "Colonne {n}",
   "documents.rowGrip": "Ligne {n}",
   "documents.insertAbove": "Insérer au-dessus",

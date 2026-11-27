@@ -85,6 +85,7 @@
   "documents.date": "Ọjọ́",
   "documents.doIt": "Ní kí {name} ṣe é",
   "documents.asked": "Nínú “{document}”, ṣe èyí, lẹ́yìn náà sàmì sí i tí ó bá jẹ́ iṣẹ́: {task}",
+  "documents.you": "{name} (ẹ̀yin)",
   "documents.columnGrip": "Ọ̀wọ̀n {n}",
   "documents.rowGrip": "Ìlà {n}",
   "documents.insertAbove": "Fi sí òkè",

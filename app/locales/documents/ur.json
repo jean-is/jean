@@ -87,6 +87,7 @@
   "documents.date": "تاریخ",
   "documents.doIt": "{name} سے یہ کرنے کو کہیں",
   "documents.asked": "“{document}” میں یہ کریں، پھر اگر یہ کام ہے تو نشان لگائیں: {task}",
+  "documents.you": "{name} (آپ)",
   "documents.columnGrip": "کالم {n}",
   "documents.rowGrip": "قطار {n}",
   "documents.insertAbove": "اوپر شامل کریں",

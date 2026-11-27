@@ -87,6 +87,7 @@
   "documents.date": "तारीख",
   "documents.doIt": "{name} ला हे करायला सांगा",
   "documents.asked": "“{document}” मध्ये हे करा, मग ते काम असल्यास त्यावर खूण करा: {task}",
+  "documents.you": "{name} (तुम्ही)",
   "documents.columnGrip": "स्तंभ {n}",
   "documents.rowGrip": "ओळ {n}",
   "documents.insertAbove": "वर घाला",

@@ -87,6 +87,7 @@
   "documents.date": "Datum",
   "documents.doIt": "{name} bitten, es zu erledigen",
   "documents.asked": "Erledige in „{document}“ Folgendes und hake es ab, wenn es eine Aufgabe ist: {task}",
+  "documents.you": "{name} (du)",
   "documents.columnGrip": "Spalte {n}",
   "documents.rowGrip": "Zeile {n}",
   "documents.insertAbove": "Darüber einfügen",

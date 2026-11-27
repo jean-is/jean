@@ -87,6 +87,7 @@
   "documents.date": "Guyyaa",
   "documents.doIt": "{name} akka hojjetu gaafadhu",
   "documents.asked": "“{document}” keessatti kana hojjedhu, hojii yoo ta’e mallattoo godhi: {task}",
+  "documents.you": "{name} (ati)",
   "documents.columnGrip": "Tarree {n}",
   "documents.rowGrip": "Toora {n}",
   "documents.insertAbove": "Gubbaa galchi",

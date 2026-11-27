@@ -85,6 +85,7 @@
   "documents.date": "Ngày",
   "documents.doIt": "Nhờ {name} làm",
   "documents.asked": "Trong “{document}”, hãy làm việc này, rồi đánh dấu nếu đó là việc cần làm: {task}",
+  "documents.you": "{name} (bạn)",
   "documents.columnGrip": "Cột {n}",
   "documents.rowGrip": "Hàng {n}",
   "documents.insertAbove": "Chèn phía trên",

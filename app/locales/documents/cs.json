@@ -91,6 +91,7 @@
   "documents.date": "Datum",
   "documents.doIt": "Požádat: {name}, ať to udělá",
   "documents.asked": "V „{document}“ udělej tohle a pak to odškrtni, pokud je to úkol: {task}",
+  "documents.you": "{name} (vy)",
   "documents.columnGrip": "Sloupec {n}",
   "documents.rowGrip": "Řádek {n}",
   "documents.insertAbove": "Vložit nad",

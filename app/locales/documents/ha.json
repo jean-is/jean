@@ -87,6 +87,7 @@
   "documents.date": "Kwanan wata",
   "documents.doIt": "Nemi {name} ya yi",
   "documents.asked": "A cikin “{document}”, yi wannan, sannan ka yi masa alama idan aiki ne: {task}",
+  "documents.you": "{name} (kai)",
   "documents.columnGrip": "Ginshiƙi {n}",
   "documents.rowGrip": "Layi {n}",
   "documents.insertAbove": "Saka a sama",

@@ -89,6 +89,7 @@
   "documents.date": "Dată",
   "documents.doIt": "Cere-i lui {name} să facă asta",
   "documents.asked": "În „{document}”, fă asta, apoi bifează dacă e o sarcină: {task}",
+  "documents.you": "{name} (dvs.)",
   "documents.columnGrip": "Coloana {n}",
   "documents.rowGrip": "Rândul {n}",
   "documents.insertAbove": "Inserează deasupra",

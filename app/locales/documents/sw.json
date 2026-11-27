@@ -87,6 +87,7 @@
   "documents.date": "Tarehe",
   "documents.doIt": "Mwombe {name} afanye hivi",
   "documents.asked": "Katika “{document}”, fanya hivi, kisha kiweke alama kama ni kazi: {task}",
+  "documents.you": "{name} (wewe)",
   "documents.columnGrip": "Safu wima {n}",
   "documents.rowGrip": "Safu mlalo {n}",
   "documents.insertAbove": "Weka juu",

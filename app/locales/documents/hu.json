@@ -87,6 +87,7 @@
   "documents.date": "Dátum",
   "documents.doIt": "Kérje meg ezt: {name}",
   "documents.asked": "A(z) „{document}” dokumentumban végezze el ezt, majd jelölje be, ha feladat: {task}",
+  "documents.you": "{name} (te)",
   "documents.columnGrip": "{n}. oszlop",
   "documents.rowGrip": "{n}. sor",
   "documents.insertAbove": "Beszúrás fölé",

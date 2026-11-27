@@ -3,8 +3,10 @@
 // `names` slot: People's people met, Together's members of the document's circle), each put in as `@[their name]`, then today, tomorrow and a day to pick, put
 // in as YYYY-MM-DD (./markdown.js reads both back). A day is drawn as the language writes it; a press on it, or Enter on it selected, opens a field over it that
 // changes it as it changes, Enter, Escape or leaving it closing it. The assistant's name holds a button that asks it, in the box, to do what its line says and
-// tick it once done, so that a list of tasks gives some to the assistant and some to people.
+// tick it once done, so that a list of tasks gives some to the assistant and some to people. Where the document is worked on together, the person's own name
+// says it is them, so that a task naming them reads as theirs; a notice tells it on its day (caps/soon/tell.js), and ticking it stays their own change.
 import { PluginKey, NodeSelection, TextSelection } from '#prosemirror'
+import { effect } from '@preact/signals-core'
 import { intlLocales } from '../../core/i18n.js'
 import { app, assistantName, effective } from '../../ui/state.js'
 import { slots } from '../../ui/caps.js'
@@ -19,6 +21,20 @@ import { el, pop, float } from './ui.js'
 const { nodes: N } = schema
 /** A day from today on the device's calendar, as a date cell holds it. @param {number} ahead */
 const dayFrom = (ahead) => ((d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`)(((now) => new Date(now.getFullYear(), now.getMonth(), now.getDate() + ahead))(new Date()))
+const same = (/** @type {string} */ a, /** @type {string} */ b) => a.trim().normalize().toLocaleLowerCase() === b.trim().normalize().toLocaleLowerCase()
+
+/** The caret at the end of the `nth` open task holding `day`, in sight, as caps/soon/due.js counts them. @param {EditorView} view @param {string} day @param {number} nth */
+export function toTask(view, day, nth) {
+  let at = -1
+  view.state.doc.descendants((node, pos) => {
+    let holds = false
+    if (node.type === N.list_item && node.attrs.checked === false) node.firstChild?.forEach((one) => { holds ||= one.type === N.day && one.attrs.value === day })
+    if (holds && !nth--) at = pos + /** @type {import('#prosemirror').Node} */ (node.firstChild).nodeSize
+    return at < 0
+  })
+  view.focus()
+  if (at >= 0) view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, at)).scrollIntoView())
+}
 
 /**
  * "@"'s menu and how its nodes are drawn, for the document at `path` named `name()`.
@@ -73,15 +89,23 @@ export function mentions({ label, announce, path = '', name }) {
       return { dom, update: (next) => next.type === N.day && (show(next.attrs.value), true), ignoreMutation: () => true }
     },
     mention: (node, view, getPos) => {
-      const mine = node.attrs.name === assistantName(), dom = el('span', { class: mine ? 'mention is-assistant' : 'mention', dir: 'auto' }, `@${node.attrs.name}`)
+      const mine = node.attrs.name === assistantName(), words = el('span', {}, `@${node.attrs.name}`), dom = el('span', { class: mine ? 'mention is-assistant' : 'mention', dir: 'auto' }, words)
       const ask = mine ? el('button', { type: 'button', class: 'mention-ask', 'aria-label': label('doIt') }, '▸') : null
+      // The person's own name, where Together knows it, as the circle has come or gone: said to be them in words as well as in colour.
+      const you = el('span', { class: 'visually-hidden' }, label('you', { name: node.attrs.name }))
+      const stop = effect(() => {
+        const me = ((them) => !mine && Boolean(them) && same(node.attrs.name, them))(slots('names').map((part) => part.me?.(path)).find(Boolean))
+        dom.classList.toggle('is-me', me)
+        words.setAttribute('aria-hidden', String(me))
+        if (me) words.after(you); else you.remove()
+      })
       ask?.addEventListener('click', () => {
         const at = getPos(), line = at === undefined ? '' : view.state.doc.resolve(at).parent.textContent.replace(`@${node.attrs.name}`, '').replace(/\s+/g, ' ').trim()
         app.draft.value = label('asked', { document: name(), task: line })
         requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.getElementById('prompt'))?.focus())
       })
       if (ask) dom.append(ask)
-      return { dom, stopEvent: (event) => event.target === ask, ignoreMutation: () => true }
+      return { dom, stopEvent: (event) => event.target === ask, ignoreMutation: () => true, destroy: stop }
     },
   }
   return { plugin, views, change }

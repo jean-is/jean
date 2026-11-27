@@ -87,6 +87,7 @@
   "documents.date": "Date",
   "documents.doIt": "Ask {name} to do it",
   "documents.asked": "In “{document}”, do this, then tick it if it is a task: {task}",
+  "documents.you": "{name} (you)",
   "documents.columnGrip": "Column {n}",
   "documents.rowGrip": "Row {n}",
   "documents.insertAbove": "Insert above",
