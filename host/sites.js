@@ -191,8 +191,8 @@ export function bunny({ storage, api }, { storageKey, apiKey }, address) {
   }
 }
 
-/** A reply's id: when it came, in base 36, so that ids sort by it, then a part of its own. @param {number} now */
-const replyId = (now) => `${now.toString(36).padStart(9, '0')}-${base64url(crypto.getRandomValues(new Uint8Array(6)))}`
+/** A reply's id: when it came, in base 36, so that ids sort by it, then a part of its own. @param {number} at */
+const replyId = (at) => `${at.toString(36).padStart(9, '0')}-${base64url(crypto.getRandomValues(new Uint8Array(6)))}`
 /** When a reply came, from its id. @param {string} id */
 export const cameAt = (id) => parseInt(id.split('-')[0], 36)
 /** Every reply waiting for a site, gone with it. @param {Names} names @param {string} name */
@@ -258,6 +258,9 @@ export function publishing(config, names, files) {
   const limits = { ...SITE, ...config.limits }
   /** New names each network claimed today. @type {Map<string, { from: number, count: number }>} */
   const claims = new Map()
+  // When the last reply came, as its id says: the next one's says a later millisecond, even when both came in the same, so that ids grow as replies
+  // come, and neither Jean's `through` nor the host's drops one Jean hasn't read.
+  let came = 0
   return async (request, url, { ours, now, network, spend, inTurn, answer, client }) => {
     const [, name = '', rest = ''] = /^\/v1\/sites\/([^/]+)(?:\/(.+))?$/.exec(url.pathname) ?? []
     const why = refused(name, config.names)
@@ -289,8 +292,10 @@ export function publishing(config, names, files) {
       return inTurn(`replies:${name}`, async () => {
         const held = why ? null : live(await names.held(name))
         if (held?.state !== 'live' || !held.replies) return answer(404, { error: 'This site takes no replies.' })
-        if ((await names.replies(name)).length >= limits.replies) return answer(429, { error: 'This site has too many replies waiting.', why: 'full' })
-        await names.keepReply(name, replyId(now), sealed)
+        const waiting = await names.replies(name)
+        if (waiting.length >= limits.replies) return answer(429, { error: 'This site has too many replies waiting.', why: 'full' })
+        came = Math.max(now, came + 1, waiting.length ? cameAt(waiting[waiting.length - 1].id) + 1 : 0)
+        await names.keepReply(name, replyId(came), sealed)
         return answer(202, {})
       })
     }
