@@ -89,6 +89,7 @@
   "documents.date": "תאריך",
   "documents.doIt": "לבקש מ־{name} לעשות את זה",
   "documents.asked": "במסמך “{document}”, יש לעשות את זה ולסמן אם זו משימה: {task}",
+  "documents.you": "{name} (אני)",
   "documents.columnGrip": "עמודה {n}",
   "documents.rowGrip": "שורה {n}",
   "documents.insertAbove": "הוספה מעל",

@@ -85,6 +85,7 @@
   "documents.date": "Tanggal",
   "documents.doIt": "Minta {name} mengerjakannya",
   "documents.asked": "Di “{document}”, kerjakan ini, lalu centang jika ini tugas: {task}",
+  "documents.you": "{name} (Anda)",
   "documents.columnGrip": "Kolom {n}",
   "documents.rowGrip": "Baris {n}",
   "documents.insertAbove": "Sisipkan di atas",

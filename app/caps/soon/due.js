@@ -29,6 +29,30 @@ export function coming(table, rows, { today, column, within = 14 }) {
   }).sort((a, b) => (a.day < b.day ? -1 : a.day > b.day ? 1 : 0))
 }
 
+/** Who a line is for, and a real day, as a document writes them (caps/documents/markdown.js, D774). */
+const NAMED = /(?<![\p{L}\p{N}])@\[([^[\]\n]{1,80})\](?!\()/gu, DAY = /(?<![\d-])\d{4}-(?:0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])(?![\dT-])/g
+const same = (/** @type {string} */ a, /** @type {string} */ b) => a.trim().normalize().toLocaleLowerCase() === b.trim().normalize().toLocaleLowerCase()
+/**
+ * A document's open tasks with a day from today within `within` days, those that name `me` or no one: each by its words, the person's own name and the day left
+ * out, its day, how far, and which of the document's open tasks with that day it is, which opens it there. Never one in code. @param {string} markdown
+ * @param {{ today: string, me?: string, within?: number }} how @returns {(Due & { nth: number })[]}
+ */
+export function todos(markdown, { today, me = '', within = 14 }) {
+  let fence = ''
+  const counts = /** @type {Record<string, number>} */ ({})
+  return markdown.split('\n').flatMap((line) => {
+    const mark = /^ {0,3}(`{3,}|~{3,})/.exec(line)?.[1], task = !fence && /^\s*(?:>\s*)*(?:[-*+]|\d{1,9}[.)])\s+\[ \]\s+(.*)$/.exec(line)
+    if (mark && (!fence || (mark[0] === fence[0] && mark.length >= fence.length))) fence = fence ? '' : mark
+    const text = task ? task[1].replace(/`[^`]*`|\]\([^)]*\)|\w+:\/\/\S+/g, (code) => (code[0] === ']' ? ']' : ' ')) : ''
+    const day = [...text.replace(NAMED, ' ').matchAll(DAY)].find((one) => new Date(`${one[0]}T00:00`).getDate() === Number(one[1]))?.[0], names = [...text.matchAll(NAMED)].map((one) => one[1])
+    if (!day) return []
+    const nth = (counts[day] = (counts[day] ?? -1) + 1), away = apart(today, day)
+    if (away < 0 || away > within || (names.length && !(me && names.some((one) => same(one, me))))) return []
+    const name = text.replace(NAMED, (_, one) => (me && same(one, me) ? '' : `@${one.trim()}`)).replace(DAY, '').replace(/\[([^\]]*)\]/g, '$1').replace(/\*\*|__|~~/g, '').replace(/\s+/g, ' ').trim()
+    return [{ id: name, name, day, away, nth }]
+  })
+}
+
 /** What a notice says a row by: its id and its day, so that a day changed is told again. @param {Due} due */
 export const keyOf = (due) => `${due.id} ${due.day}`
 /** Those a notice is owed for: due in `before` days or fewer, not gone by, and not told yet. @param {Due[]} dues @param {number} before @param {Set<string>} told */

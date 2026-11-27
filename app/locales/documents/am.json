@@ -87,6 +87,7 @@
   "documents.date": "ቀን",
   "documents.doIt": "{name} እንዲያደርገው ጠይቅ",
   "documents.asked": "በ“{document}” ውስጥ ይህን አድርግ፣ ተግባር ከሆነም ምልክት አድርግበት፦ {task}",
+  "documents.you": "{name} (እርስዎ)",
   "documents.columnGrip": "ዓምድ {n}",
   "documents.rowGrip": "ረድፍ {n}",
   "documents.insertAbove": "ከላይ አስገባ",

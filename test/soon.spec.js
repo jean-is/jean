@@ -2,8 +2,31 @@
 // Coming up (caps/soon): over the rows of a collection with a date, those due within two weeks and those late, none done; a row opens its sheet;
 // a late one is said late and Chase it writes the start of a request in the box; its head folds it; its foot says when a notice comes, kept with
 // the collection; and a notice, where the browser allows them, says the collection's name, the row's and how far its day is, once for its day.
-// In Arabic and Japanese, the band is in the language.
+// A document's open task with today's day that names the person, or no one, is told once too, and opens the document at it; where the document is
+// worked on together, the person's own name says it is them. In Arabic and Japanese, the band, the notice and the name are in the language.
 import { test, expect, start } from './helpers.js'
+
+/** The browser's notices, allowed, kept for the test to read and click. @param {import('@playwright/test').Page} page */
+const notices = (page) => page.addInitScript(() => { Object.assign(window, { notices: [], shown: [], Notification: class { static permission = 'granted'; static requestPermission = async () => 'granted'; constructor(/** @type {string} */ title, /** @type {{ body: string }} */ options) { /** @type {any} */ (window).notices.push([title, options.body]); /** @type {any} */ (window).shown.push(this) } close() {} } }) })
+const check = (/** @type {import('@playwright/test').Page} */ page) => page.evaluate(async () => { await (await import('/caps/soon/tell.js')).check(); await new Promise((done) => setTimeout(done, 200)); return /** @type {any} */ (window).notices })
+
+/** A document of the project with tasks for today: Marc's, Léa's, one done; the person goes by Léa. @param {import('@playwright/test').Page} page */
+const week = (page) => page.evaluate(async () => {
+  const [{ app, updateSettings }, { unlock }, { stringifyFrontMatter }] = await Promise.all([import('/ui/state.js'), import('/ui/caps.js'), import('/core/settings.js')])
+  await Promise.all([unlock('documents'), updateSettings({ name: 'Léa' })])
+  const d = new Date(), today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  await app.fs.write(`${app.projectDir}/documents/01JD0000000000000000000000-week.md`, stringifyFrontMatter({ format: 1, author: 'user' }, `# Week\n\n- [ ] Book the room @[Marc] ${today}\n- [ ] Call the bank @[Léa] ${today}\n- [x] Pay the rent @[Léa] ${today}\n`))
+})
+
+/** The last notice clicked, then the document it opened worked on together, as Together's names say, Léa being the person. @param {import('@playwright/test').Page} page */
+const opened = async (page) => {
+  await page.evaluate(() => /** @type {any} */ (window).shown.at(-1).onclick())
+  const editor = page.locator('app-preview .ProseMirror')
+  await expect(editor).toBeFocused()
+  await expect.poll(() => page.evaluate(() => getSelection()?.anchorNode?.parentElement?.closest('li')?.textContent)).toContain('Call the bank')
+  await page.evaluate(async () => (await import('/ui/caps.js')).register({ id: 'circle', slots: { names: { at: 0, draw: () => null, me: () => 'Léa', of: () => ['Léa', 'Marc'] } } }))
+  return editor.locator('.mention')
+}
 
 /** A collection of invoices beside the task: one late, one due in four days, one paid and due in two, one far. @param {import('@playwright/test').Page} page */
 const invoices = (page) => page.evaluate(async () => {
@@ -18,8 +41,7 @@ const invoices = (page) => page.evaluate(async () => {
 })
 
 test('what is coming up shows over the rows; a row opens, a late one is chased, the band folds, and a notice comes once for a row\'s day', async ({ page }) => {
-  // The browser's notices, allowed, kept for the test to read.
-  await page.addInitScript(() => { Object.assign(window, { notices: [], Notification: class { static permission = 'granted'; static requestPermission = async () => 'granted'; constructor(/** @type {string} */ title, /** @type {{ body: string }} */ options) { /** @type {any} */ (window).notices.push([title, options.body]) } close() {} } }) })
+  await notices(page)
   await start(page)
   const folder = await invoices(page), band = page.locator('app-preview .soon')
   // The late one first, then the one due; the paid one and the far one aren't coming up.
@@ -44,20 +66,33 @@ test('what is coming up shows over the rows; a row opens, a late one is chased, 
   await band.locator('h3 button').click()
   await expect(band.getByLabel('Tell me')).toHaveValue('1')
   // The day before, nothing is owed yet for a row four days away; a week before, it is told, once.
-  const check = () => page.evaluate(async () => { await (await import('/caps/soon/tell.js')).check(); await new Promise((done) => setTimeout(done, 200)); return /** @type {any} */ (window).notices })
-  expect(await check()).toEqual([])
+  expect(await check(page)).toEqual([])
   await band.getByLabel('Tell me').selectOption('7')
   await expect.poll(() => page.evaluate(async (place) => { const { app } = await import('/ui/state.js'); return JSON.parse((await app.fs.read(`${app.projectDir}/${place}/soon.json`).catch(() => null)) ?? 'null') }, folder)).toEqual({ format: 1, before: 7 })
-  await expect.poll(check).toEqual([['Invoices', '2026-029, in 4 days']])
-  expect(await check()).toEqual([['Invoices', '2026-029, in 4 days']])
+  await expect.poll(() => check(page)).toEqual([['Invoices', '2026-029, in 4 days']])
+  expect(await check(page)).toEqual([['Invoices', '2026-029, in 4 days']])
   // Never: none, even for a day not told yet.
   await band.getByLabel('Tell me').selectOption('-1')
   await page.evaluate(async () => { const { app } = await import('/ui/state.js'); await app.fs.write(`${app.projectDir}/.cache/soon.json`, '[]') })
-  expect(await check()).toEqual([['Invoices', '2026-029, in 4 days']])
+  expect(await check(page)).toEqual([['Invoices', '2026-029, in 4 days']])
+})
+
+test('a document\'s task for the person on its day is told once, never another\'s or one done, and opens the document at it, their own name said to be them', async ({ page }) => {
+  await notices(page)
+  await start(page)
+  await week(page)
+  await expect.poll(() => check(page)).toEqual([['Week', 'Call the bank, today']])
+  expect(await check(page)).toEqual([['Week', 'Call the bank, today']])
+  const names = await opened(page)
+  await expect(names).toHaveText(['@Marc', '@LéaLéa (you)', '@LéaLéa (you)'])
+  await expect(names.nth(1)).toHaveClass(/is-me/)
+  await expect(names.first()).not.toHaveClass(/is-me/)
+  await expect(names.nth(1).locator('.visually-hidden')).toHaveText('Léa (you)')
 })
 
 for (const lang of ['ar', 'ja']) {
-  test(`the band is in the language (${lang})`, async ({ page }) => {
+  test(`the band, a task's notice and the person's own name are in the language (${lang})`, async ({ page }) => {
+    await notices(page)
     await start(page, lang)
     const words = await page.evaluate(async (code) => (await fetch(`/locales/soon/${code}.json`)).json(), lang)
     await invoices(page)
@@ -66,5 +101,10 @@ for (const lang of ['ar', 'ja']) {
     await expect(band.locator('.soon-when strong')).toHaveText(words['soon.late'])
     await expect(band.locator('li').first().getByRole('button').last()).toHaveText(words['soon.chase'])
     await expect(band.locator('.soon-how label')).toHaveText(words['soon.tell'])
+    await week(page)
+    const today = new Intl.RelativeTimeFormat(lang, { numeric: 'auto' }).format(0, 'day')
+    await expect.poll(() => check(page)).toEqual([['Week', words['soon.notice'].replace('{name}', 'Call the bank').replace('{when}', today)]])
+    const you = await page.evaluate(async (code) => (await fetch(`/locales/documents/${code}.json`)).json(), lang)
+    await expect((await opened(page)).nth(1).locator('.visually-hidden')).toHaveText(you['documents.you'].replace('{name}', 'Léa'))
   })
 }

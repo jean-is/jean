@@ -87,6 +87,7 @@
   "documents.date": "نېټه",
   "documents.doIt": "له {name} وغواړئ چې دا وکړي",
   "documents.asked": "په «{document}» کې دا وکړه، بیا یې په نښه کړه که دنده وي: {task}",
+  "documents.you": "{name} (تاسو)",
   "documents.columnGrip": "ستن {n}",
   "documents.rowGrip": "قطار {n}",
   "documents.insertAbove": "پورته ورزیات کړئ",

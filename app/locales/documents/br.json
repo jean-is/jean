@@ -93,6 +93,7 @@
   "documents.date": "Deiziad",
   "documents.doIt": "Goulenn digant {name} ober se",
   "documents.asked": "E « {document} », gra an dra-se, ha merk anezhañ goude ma’z eo un dever : {task}",
+  "documents.you": "{name} (c’hwi)",
   "documents.columnGrip": "Bann {n}",
   "documents.rowGrip": "Linenn {n}",
   "documents.insertAbove": "Ensoc’hañ a-us",

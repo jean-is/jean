@@ -87,6 +87,7 @@
   "documents.date": "তারিখ",
   "documents.doIt": "{name}-কে এটি করতে বলুন",
   "documents.asked": "“{document}”-এ এটি করুন, তারপর এটি কাজ হলে টিক দিন: {task}",
+  "documents.you": "{name} (আপনি)",
   "documents.columnGrip": "কলাম {n}",
   "documents.rowGrip": "সারি {n}",
   "documents.insertAbove": "উপরে যোগ করুন",

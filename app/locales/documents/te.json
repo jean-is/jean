@@ -87,6 +87,7 @@
   "documents.date": "తేదీ",
   "documents.doIt": "ఇది చేయమని అడుగు: {name}",
   "documents.asked": "“{document}”లో ఇది చేయి, అది పని అయితే టిక్ పెట్టు: {task}",
+  "documents.you": "{name} (మీరు)",
   "documents.columnGrip": "నిలువు వరుస {n}",
   "documents.rowGrip": "అడ్డు వరుస {n}",
   "documents.insertAbove": "పైన చేర్చు",

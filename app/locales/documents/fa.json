@@ -87,6 +87,7 @@
   "documents.date": "تاریخ",
   "documents.doIt": "از {name} بخواهید انجامش دهد",
   "documents.asked": "در «{document}» این را انجام بده، و اگر کار است تیکش بزن: {task}",
+  "documents.you": "{name} (شما)",
   "documents.columnGrip": "ستون {n}",
   "documents.rowGrip": "ردیف {n}",
   "documents.insertAbove": "درج در بالا",

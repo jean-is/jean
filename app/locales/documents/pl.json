@@ -91,6 +91,7 @@
   "documents.date": "Data",
   "documents.doIt": "Poproś o zrobienie tego: {name}",
   "documents.asked": "W „{document}” zrób to, a potem odhacz, jeśli to zadanie: {task}",
+  "documents.you": "{name} (ty)",
   "documents.columnGrip": "Kolumna {n}",
   "documents.rowGrip": "Wiersz {n}",
   "documents.insertAbove": "Wstaw powyżej",

@@ -85,6 +85,7 @@
   "documents.date": "날짜",
   "documents.doIt": "{name}에게 맡기기",
   "documents.asked": "‘{document}’에서 이 일을 하고, 할 일이면 체크해 주세요: {task}",
+  "documents.you": "{name} (나)",
   "documents.columnGrip": "{n}열",
   "documents.rowGrip": "{n}행",
   "documents.insertAbove": "위에 삽입",

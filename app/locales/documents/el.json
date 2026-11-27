@@ -87,6 +87,7 @@
   "documents.date": "Ημερομηνία",
   "documents.doIt": "Ζήτησε από {name} να το κάνει",
   "documents.asked": "Στο «{document}», κάνε αυτό και μετά τσέκαρέ το αν είναι εργασία: {task}",
+  "documents.you": "{name} (εσείς)",
   "documents.columnGrip": "Στήλη {n}",
   "documents.rowGrip": "Γραμμή {n}",
   "documents.insertAbove": "Εισαγωγή από πάνω",

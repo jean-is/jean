@@ -87,6 +87,7 @@
   "documents.date": "Päivämäärä",
   "documents.doIt": "Pyydä tekemään tämä: {name}",
   "documents.asked": "Tee tämä tiedostossa ”{document}” ja merkitse se tehdyksi, jos se on tehtävä: {task}",
+  "documents.you": "{name} (sinä)",
   "documents.columnGrip": "Sarake {n}",
   "documents.rowGrip": "Rivi {n}",
   "documents.insertAbove": "Lisää yläpuolelle",

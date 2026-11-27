@@ -89,6 +89,7 @@
   "documents.date": "Data",
   "documents.doIt": "Pedir a {name} que o faça",
   "documents.asked": "Em «{document}», faz isto e depois marca-o se for uma tarefa: {task}",
+  "documents.you": "{name} (tu)",
   "documents.columnGrip": "Coluna {n}",
   "documents.rowGrip": "Linha {n}",
   "documents.insertAbove": "Inserir acima",

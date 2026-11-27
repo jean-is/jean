@@ -91,6 +91,7 @@
   "documents.date": "Дата",
   "documents.doIt": "Попросить: {name}",
   "documents.asked": "В «{document}» сделай это, а потом отметь, если это задача: {task}",
+  "documents.you": "{name} (вы)",
   "documents.columnGrip": "Столбец {n}",
   "documents.rowGrip": "Строка {n}",
   "documents.insertAbove": "Вставить выше",

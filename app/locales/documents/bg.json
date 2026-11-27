@@ -87,6 +87,7 @@
   "documents.date": "Дата",
   "documents.doIt": "Помолете {name} да го свърши",
   "documents.asked": "В „{document}“ свърши това, после го отметни, ако е задача: {task}",
+  "documents.you": "{name} (вие)",
   "documents.columnGrip": "Колона {n}",
   "documents.rowGrip": "Ред {n}",
   "documents.insertAbove": "Вмъкване отгоре",

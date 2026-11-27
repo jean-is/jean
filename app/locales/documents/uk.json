@@ -91,6 +91,7 @@
   "documents.date": "Дата",
   "documents.doIt": "Попросити: {name}",
   "documents.asked": "У «{document}» зроби це, а потім познач, якщо це завдання: {task}",
+  "documents.you": "{name} (ви)",
   "documents.columnGrip": "Стовпець {n}",
   "documents.rowGrip": "Рядок {n}",
   "documents.insertAbove": "Вставити вище",

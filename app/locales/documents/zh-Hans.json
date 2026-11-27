@@ -85,6 +85,7 @@
   "documents.date": "日期",
   "documents.doIt": "让 {name} 来做",
   "documents.asked": "在“{document}”中完成这件事，如果是待办事项就勾选它：{task}",
+  "documents.you": "{name}（你）",
   "documents.columnGrip": "第 {n} 列",
   "documents.rowGrip": "第 {n} 行",
   "documents.insertAbove": "在上方插入",

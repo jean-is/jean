@@ -89,6 +89,7 @@
   "documents.date": "Fecha",
   "documents.doIt": "Pedir a {name} que lo haga",
   "documents.asked": "En «{document}», haz esto y márcalo si es una tarea: {task}",
+  "documents.you": "{name} (tú)",
   "documents.columnGrip": "Columna {n}",
   "documents.rowGrip": "Fila {n}",
   "documents.insertAbove": "Insertar encima",

@@ -89,6 +89,7 @@
   "documents.date": "Datum",
   "documents.doIt": "Zamoli: {name}, neka to učini",
   "documents.asked": "U „{document}” učini ovo, a zatim to označi ako je zadatak: {task}",
+  "documents.you": "{name} (vi)",
   "documents.columnGrip": "Stupac {n}",
   "documents.rowGrip": "Redak {n}",
   "documents.insertAbove": "Umetni iznad",

@@ -89,6 +89,7 @@
   "documents.date": "Dies",
   "documents.doIt": "Roga {name} ut id faciat",
   "documents.asked": "In «{document}» hoc fac, deinde nota id, si munus est: {task}",
+  "documents.you": "{name} (tu)",
   "documents.columnGrip": "Columna {n}",
   "documents.rowGrip": "Ordo {n}",
   "documents.insertAbove": "Supra insere",

@@ -87,6 +87,7 @@
   "documents.date": "Usuku",
   "documents.doIt": "Cela u-{name} akwenze",
   "documents.asked": "Ku-“{document}”, yenza lokhu, bese uyamaka uma kungumsebenzi: {task}",
+  "documents.you": "{name} (wena)",
   "documents.columnGrip": "Ikholomu {n}",
   "documents.rowGrip": "Umugqa {n}",
   "documents.insertAbove": "Faka ngenhla",

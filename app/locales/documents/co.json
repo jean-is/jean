@@ -89,6 +89,7 @@
   "documents.date": "Data",
   "documents.doIt": "Dumandà à {name} di fallu",
   "documents.asked": "In « {document} », fà questu, po spuntalu s’ellu hè un impegnu : {task}",
+  "documents.you": "{name} (voi)",
   "documents.columnGrip": "Culonna {n}",
   "documents.rowGrip": "Linea {n}",
   "documents.insertAbove": "Inserisce sopra",

@@ -87,6 +87,7 @@
   "documents.date": "தேதி",
   "documents.doIt": "இதைச் செய்யுமாறு கேள்: {name}",
   "documents.asked": "“{document}” இல் இதைச் செய், அது பணி என்றால் குறியிடு: {task}",
+  "documents.you": "{name} (நீங்கள்)",
   "documents.columnGrip": "நெடுவரிசை {n}",
   "documents.rowGrip": "வரிசை {n}",
   "documents.insertAbove": "மேலே செருகு",

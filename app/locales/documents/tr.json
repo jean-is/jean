@@ -87,6 +87,7 @@
   "documents.date": "Tarih",
   "documents.doIt": "Yapması için iste: {name}",
   "documents.asked": "“{document}” içinde bunu yap, görevse işaretle: {task}",
+  "documents.you": "{name} (sen)",
   "documents.columnGrip": "Sütun {n}",
   "documents.rowGrip": "Satır {n}",
   "documents.insertAbove": "Üste ekle",

@@ -85,6 +85,7 @@
   "documents.date": "ရက်စွဲ",
   "documents.doIt": "{name} ကို လုပ်ခိုင်းရန်",
   "documents.asked": "“{document}” တွင် ဤအရာကို လုပ်ပါ၊ လုပ်ငန်းဖြစ်လျှင် အမှန်ခြစ်ပါ- {task}",
+  "documents.you": "{name} (သင်)",
   "documents.columnGrip": "ကော်လံ {n}",
   "documents.rowGrip": "အတန်း {n}",
   "documents.insertAbove": "အပေါ်တွင် ထည့်ရန်",

@@ -89,6 +89,7 @@
   "documents.date": "Data",
   "documents.doIt": "Chiedi a {name} di farlo",
   "documents.asked": "In «{document}», fai questo, poi spuntalo se è un’attività: {task}",
+  "documents.you": "{name} (tu)",
   "documents.columnGrip": "Colonna {n}",
   "documents.rowGrip": "Riga {n}",
   "documents.insertAbove": "Inserisci sopra",

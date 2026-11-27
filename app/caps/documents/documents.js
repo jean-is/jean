@@ -108,6 +108,9 @@ async function show(path) {
   return one
 }
 
+/** A document opened at the `nth` of its open tasks with a day, the caret at its end: a notice's (caps/soon/tell.js). @param {string} path @param {string} day @param {number} nth */
+export const openAt = async (path, day, nth) => (await import('./mentions.js')).toTask((await show(path)).editor.view, day, nth)
+
 /** What an address names: a document by its name, none when there is no such document. @param {string} path */
 export async function metaOf(path) {
   const text = /^documents\/[^/]+\.md$/.test(path) && await app.fs.read(`${app.projectDir}/${path}`)
