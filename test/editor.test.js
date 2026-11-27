@@ -67,6 +67,17 @@ test('the markers a file was written with are kept when a block is written again
   for (const source of cases) assert.equal(blockMarkdown(/** @type {any} */ (parseDoc(source).firstChild)), source)
 })
 
+test('who a line is for, @[their name], and a day, YYYY-MM-DD, are nodes of their own, written back as they were read', () => {
+  const source = '- [ ] Call the bank @[Léa Martin] 2026-12-04\n- [x] Draft the plan @[Jean]'
+  const nodes = (/** @type {string} */ text) => { const found = /** @type {string[]} */ ([]); parseDoc(text).descendants((node) => { if (/^(mention|day)$/.test(node.type.name)) found.push(`${node.type.name} ${node.attrs.name ?? node.attrs.value}`) }); return found }
+  assert.deepEqual(nodes(source), ['mention Léa Martin', 'day 2026-12-04', 'mention Jean'])
+  assert.equal(blockMarkdown(/** @type {any} */ (parseDoc(source).firstChild)), source)
+  // Never a day that isn't one, nor one inside a longer word of digits, nor a name glued to a word or followed by a link's address.
+  assert.deepEqual(nodes('v2026-11-27-final, 2026-02-30, 2026-11-27T10:00, mail a@[b], @[x](https://example.com), 1999-12-31.'), ['day 1999-12-31'])
+  const written = schema.node('paragraph', null, [schema.text('For '), schema.node('mention', { name: 'Ana [B]' }), schema.text(' on '), schema.node('day', { value: '2027-01-15' })])
+  assert.equal(blockMarkdown(written), 'For @[Ana B] on 2027-01-15')
+})
+
 test('text that would read as markup is escaped, and only that', () => {
   const p = (/** @type {string} */ text) => schema.node('paragraph', null, [schema.text(text)])
   const cases = [['2 * 3 * 4', '2 \\* 3 \\* 4'], ['[a](b) typed as text', '[a\\](b) typed as text'], ['# not a heading', '\\# not a heading'], ['1. not a list', '1\\. not a list'],

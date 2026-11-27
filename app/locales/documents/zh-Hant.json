@@ -78,5 +78,11 @@
   "documents.leave": "若要離開表格或清單，請按 Esc，再按 Tab。",
   "documents.blocksSelected": {
     "other": "已選取 {n} 個區塊"
-  }
+  },
+  "documents.mentions": "人員和日期",
+  "documents.today": "今天",
+  "documents.tomorrow": "明天",
+  "documents.date": "日期",
+  "documents.doIt": "讓 {name} 來做",
+  "documents.asked": "在「{document}」中完成這件事，如果是待辦事項就勾選它：{task}"
 }

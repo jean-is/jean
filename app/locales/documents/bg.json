@@ -80,5 +80,11 @@
   "documents.blocksSelected": {
     "one": "Избран блок",
     "other": "Избрани блокове: {n}"
-  }
+  },
+  "documents.mentions": "Хора и дати",
+  "documents.today": "Днес",
+  "documents.tomorrow": "Утре",
+  "documents.date": "Дата",
+  "documents.doIt": "Помолете {name} да го свърши",
+  "documents.asked": "В „{document}“ свърши това, после го отметни, ако е задача: {task}"
 }

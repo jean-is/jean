@@ -82,5 +82,11 @@
     "one": "נבחר בלוק",
     "two": "נבחרו שני בלוקים",
     "other": "נבחרו {n} בלוקים"
-  }
+  },
+  "documents.mentions": "אנשים ותאריכים",
+  "documents.today": "היום",
+  "documents.tomorrow": "מחר",
+  "documents.date": "תאריך",
+  "documents.doIt": "לבקש מ־{name} לעשות את זה",
+  "documents.asked": "במסמך “{document}”, יש לעשות את זה ולסמן אם זו משימה: {task}"
 }

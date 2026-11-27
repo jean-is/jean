@@ -88,5 +88,11 @@
     "few": "تم تحديد {n} كتل",
     "many": "تم تحديد {n} كتلة",
     "other": "تم تحديد {n} كتلة"
-  }
+  },
+  "documents.mentions": "الأشخاص والتواريخ",
+  "documents.today": "اليوم",
+  "documents.tomorrow": "غدًا",
+  "documents.date": "تاريخ",
+  "documents.doIt": "اطلب من {name} القيام بذلك",
+  "documents.asked": "في «{document}»، نفّذ هذا، ثم ضع عليه علامة إن كان مهمة: {task}"
 }

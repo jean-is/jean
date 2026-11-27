@@ -80,5 +80,11 @@
   "documents.blocksSelected": {
     "one": "Επιλέχθηκε μπλοκ",
     "other": "Επιλέχθηκαν {n} μπλοκ"
-  }
+  },
+  "documents.mentions": "Άτομα και ημερομηνίες",
+  "documents.today": "Σήμερα",
+  "documents.tomorrow": "Αύριο",
+  "documents.date": "Ημερομηνία",
+  "documents.doIt": "Ζήτησε από {name} να το κάνει",
+  "documents.asked": "Στο «{document}», κάνε αυτό και μετά τσέκαρέ το αν είναι εργασία: {task}"
 }

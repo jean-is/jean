@@ -17,8 +17,13 @@ const ID = /[ \t]+\{#([\p{L}\p{N}_-]+)\}[ \t]*$/u
 
 /** A reference (D575): `[[place|name]]`, or `[[name]]`. @param {RegExpExecArray | null} match */
 const refToken = (match) => match ? { type: 'ref', raw: match[0], uri: match[1].trim(), label: (match[2] ?? match[1]).trim() } : undefined
+/** A day written as a date cell holds it, a real one, never inside a longer number or word of digits and dashes. */
+const DAY = /^(\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])(?![\dT-])/
 const marked = new Marked({ extensions: [
   { name: 'ref', level: 'inline', start: (src) => src.indexOf('[['), tokenizer: (src) => refToken(/^\[\[([^[\]|\n]+)(?:\|([^[\]\n]+))?\]\]/.exec(src)) },
+  // Someone a line is for, the assistant or a person, as `@[their name]`; and a day, YYYY-MM-DD, drawn as the language writes it, both as their words in the file.
+  { name: 'mention', level: 'inline', start: (src) => src.indexOf('@['), tokenizer: (src) => ((match) => match ? { type: 'mention', raw: match[0], name: match[1].trim() } : undefined)(/^@\[([^[\]\n]{1,80})\](?!\()/.exec(src)) },
+  { name: 'day', level: 'inline', start: (src) => src.search(/(?<![\d-])\d{4}-[01]\d-[0-3]\d/), tokenizer: (src) => ((match) => match && new Date(`${match[0]}T00:00`).getDate() === Number(match[3]) ? { type: 'day', raw: match[0] } : undefined)(DAY.exec(src)) },
   ...mathTokens,
   columns,
 ] }, cjk)
@@ -113,6 +118,9 @@ export const schema = new Schema({
         : brought.has(src) ? ['img', { class: 'picture', src, alt, referrerpolicy: 'no-referrer', loading: 'lazy' }]
         : ['span', { class: 'image-alt', 'data-src': src, role: 'img', 'aria-label': alt || src }, `[${alt || src}]`]),
     },
+    // Someone a line is for, `@[name]`, and a day, YYYY-MM-DD: each drawn by its node view (editor.js), its words what a search or a copy reads.
+    mention: { attrs: { name: {} }, inline: true, group: 'inline', atom: true, leafText: (node) => `@${node.attrs.name}`, toDOM: ({ attrs: { name } }) => ['span', { class: 'mention', dir: 'auto' }, `@${name}`] },
+    day: { attrs: { value: {} }, inline: true, group: 'inline', atom: true, leafText: (node) => node.attrs.value, toDOM: ({ attrs: { value } }) => ['time', { class: 'day', datetime: value }, value] },
     // A reference to a creation (D575), by its place, or its name, which a click follows (editor.js).
     ref: {
       attrs: { uri: {}, label: { default: '' } }, inline: true, group: 'inline', atom: true,
@@ -163,7 +171,7 @@ const { nodes: N, marks: M } = schema
  * Inline tokens as nodes. @param {any[]} tokens @param {readonly PMMark[]} marks @returns {PMNode[]}
  */
 function inline(tokens, marks = []) {
-  return tokens.flatMap((token) => {
+  return tokens.flatMap((token, i) => {
     const text = (/** @type {string} */ value, /** @type {readonly PMMark[]} */ more = marks) => (value ? [schema.text(value, more)] : [])
     switch (token.type) {
       case 'text': return token.tokens ? inline(token.tokens, marks) : text(decode(token.text))
@@ -178,6 +186,8 @@ function inline(tokens, marks = []) {
       }
       case 'image': return [N.image.create({ src: token.href, alt: token.text ?? '', title: token.title || null }, null, marks)]
       case 'ref': return [N.ref.create({ uri: token.uri, label: token.label }, null, marks)]
+      case 'mention': return /[\p{L}\p{N}]$/u.test(tokens[i - 1]?.raw ?? '') ? text(token.raw) : [N.mention.create({ name: token.name }, null, marks)]
+      case 'day': return [N.day.create({ value: token.raw }, null, marks)]
       case 'br': return [N.hard_break.create(null, null, marks)]
       case 'math': return text(token.text, M.math.create({ display: token.block }).addToSet(marks))
       case 'html': return text(token.raw, M.html.create().addToSet(marks))
@@ -385,6 +395,8 @@ const NODES = {
     const { src, alt, title } = node.attrs
     state.write(`![${state.esc(alt)}](${src.replace(/[()\s]/g, (/** @type {string} */ c) => encodeURI(c) === c ? `\\${c}` : encodeURI(c))}${title ? ` "${title.replace(/"/g, '\\"')}"` : ''})`)
   },
+  mention(state, { attrs: { name } }) { state.write(`@[${String(name).replace(/[[\]\s]+/g, ' ').trim()}]`) },
+  day(state, { attrs: { value } }) { state.write(value) },
   ref(state, { attrs: { uri, label } }) {
     // Its name without what would end it.
     const name = String(label).replace(/[[\]|\n]+/g, ' ').trim()

@@ -130,3 +130,9 @@
 @media (max-width: 40rem) { .suggest-why { flex-basis: 100%; } }
 @media (forced-colors: active) { .doc .suggest { border-inline-start-color: Highlight; } .doc .suggest-new { background: Mark; color: MarkText; } .slash-option[aria-selected="true"] { outline-color: Highlight; } .bubble button[aria-pressed="true"] { border-color: Highlight; } .doc .block-selected { outline: 2px solid Highlight; } :is(.prosemirror-dropcursor-block, .prosemirror-dropcursor-inline) { forced-color-adjust: none; background: Highlight; } }
 @media (prefers-contrast: more) { .doc .block-selected { outline: 2px solid var(--flame); } .doc .suggest-new { text-decoration: underline; } }
+/* Who a line is for and a day (mentions.js): a pill each, the assistant's holding the button that asks it; a day's field over it. */
+.ProseMirror :is(.mention, time.day) { display: inline-flex; align-items: center; gap: 0.15rem; padding: 0 0.4em; border-radius: 0.65em; background: var(--doc-shade); color: var(--ink); white-space: nowrap; } .ProseMirror time.day { cursor: pointer; }
+.ProseMirror .ProseMirror-selectednode:is(.mention, time.day) { outline: 2px solid var(--ink-soft); outline-offset: 1px; }
+.mention-ask { display: inline-grid; place-items: center; inline-size: 1.25em; block-size: 1.25em; margin-inline-end: -0.2em; padding: 0; border: 0; border-radius: 50%; background: var(--flame); color: var(--on-flame); font: 700 0.75em/1 var(--sans); cursor: pointer; } .mention-ask:dir(rtl) { transform: scaleX(-1); }
+.day-box { position: fixed; inset: auto; margin: 0; padding: 0.35rem; border: 1px solid var(--line-strong); border-radius: 0.5rem; background: var(--room-2); color: var(--ink); box-shadow: var(--doc-shadow); } .day-field { font: inherit; }
+@media (forced-colors: active) { .ProseMirror :is(.mention, time.day) { border: 1px solid CanvasText; } .mention-ask { border: 1px solid ButtonText; } }

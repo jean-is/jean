@@ -78,5 +78,11 @@
   "documents.leave": "ဇယား သို့မဟုတ် စာရင်းမှ ထွက်ရန် Esc ပြီးနောက် Tab နှိပ်ပါ။",
   "documents.blocksSelected": {
     "other": "အကွက် {n} ခု ရွေးထား"
-  }
+  },
+  "documents.mentions": "လူများနှင့် ရက်စွဲများ",
+  "documents.today": "ယနေ့",
+  "documents.tomorrow": "မနက်ဖြန်",
+  "documents.date": "ရက်စွဲ",
+  "documents.doIt": "{name} ကို လုပ်ခိုင်းရန်",
+  "documents.asked": "“{document}” တွင် ဤအရာကို လုပ်ပါ၊ လုပ်ငန်းဖြစ်လျှင် အမှန်ခြစ်ပါ- {task}"
 }

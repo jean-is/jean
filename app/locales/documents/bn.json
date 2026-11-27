@@ -80,5 +80,11 @@
   "documents.blocksSelected": {
     "one": "{n}টি ব্লক নির্বাচিত",
     "other": "{n}টি ব্লক নির্বাচিত"
-  }
+  },
+  "documents.mentions": "মানুষ ও তারিখ",
+  "documents.today": "আজ",
+  "documents.tomorrow": "আগামীকাল",
+  "documents.date": "তারিখ",
+  "documents.doIt": "{name}-কে এটি করতে বলুন",
+  "documents.asked": "“{document}”-এ এটি করুন, তারপর এটি কাজ হলে টিক দিন: {task}"
 }

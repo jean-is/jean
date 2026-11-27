@@ -78,5 +78,11 @@
   "documents.leave": "หากต้องการออกจากตารางหรือรายการ ให้กด Esc แล้วกด Tab",
   "documents.blocksSelected": {
     "other": "เลือกแล้ว {n} บล็อก"
-  }
+  },
+  "documents.mentions": "ผู้คนและวันที่",
+  "documents.today": "วันนี้",
+  "documents.tomorrow": "พรุ่งนี้",
+  "documents.date": "วันที่",
+  "documents.doIt": "ให้ {name} ทำ",
+  "documents.asked": "ใน “{document}” ทำสิ่งนี้ แล้วติ๊กถ้าเป็นงาน: {task}"
 }

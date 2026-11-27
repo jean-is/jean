@@ -86,5 +86,11 @@
     "few": "{n} bloc’had diuzet",
     "many": "{n} a vloc’hadoù diuzet",
     "other": "{n} bloc’had diuzet"
-  }
+  },
+  "documents.mentions": "Tud ha deiziadoù",
+  "documents.today": "Hiziv",
+  "documents.tomorrow": "Warc’hoazh",
+  "documents.date": "Deiziad",
+  "documents.doIt": "Goulenn digant {name} ober se",
+  "documents.asked": "E « {document} », gra an dra-se, ha merk anezhañ goude ma’z eo un dever : {task}"
 }

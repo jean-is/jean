@@ -84,5 +84,11 @@
     "few": "Вибрано {n} блоки",
     "many": "Вибрано {n} блоків",
     "other": "Вибрано {n} блоку"
-  }
+  },
+  "documents.mentions": "Люди й дати",
+  "documents.today": "Сьогодні",
+  "documents.tomorrow": "Завтра",
+  "documents.date": "Дата",
+  "documents.doIt": "Попросити: {name}",
+  "documents.asked": "У «{document}» зроби це, а потім познач, якщо це завдання: {task}"
 }

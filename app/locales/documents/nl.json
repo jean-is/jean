@@ -80,5 +80,11 @@
   "documents.blocksSelected": {
     "one": "Blok geselecteerd",
     "other": "{n} blokken geselecteerd"
-  }
+  },
+  "documents.mentions": "Personen en datums",
+  "documents.today": "Vandaag",
+  "documents.tomorrow": "Morgen",
+  "documents.date": "Datum",
+  "documents.doIt": "{name} vragen het te doen",
+  "documents.asked": "Doe in ‘{document}’ het volgende en vink het af als het een taak is: {task}"
 }

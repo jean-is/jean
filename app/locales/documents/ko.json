@@ -78,5 +78,11 @@
   "documents.leave": "표나 목록에서 나가려면 Esc를 누른 다음 Tab을 누르세요.",
   "documents.blocksSelected": {
     "other": "블록 {n}개 선택됨"
-  }
+  },
+  "documents.mentions": "사람과 날짜",
+  "documents.today": "오늘",
+  "documents.tomorrow": "내일",
+  "documents.date": "날짜",
+  "documents.doIt": "{name}에게 맡기기",
+  "documents.asked": "‘{document}’에서 이 일을 하고, 할 일이면 체크해 주세요: {task}"
 }

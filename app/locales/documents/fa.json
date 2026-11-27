@@ -80,5 +80,11 @@
   "documents.blocksSelected": {
     "one": "{n} بلوک انتخاب شد",
     "other": "{n} بلوک انتخاب شد"
-  }
+  },
+  "documents.mentions": "افراد و تاریخ‌ها",
+  "documents.today": "امروز",
+  "documents.tomorrow": "فردا",
+  "documents.date": "تاریخ",
+  "documents.doIt": "از {name} بخواهید انجامش دهد",
+  "documents.asked": "در «{document}» این را انجام بده، و اگر کار است تیکش بزن: {task}"
 }

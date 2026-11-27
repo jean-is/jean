@@ -80,5 +80,11 @@
   "documents.blocksSelected": {
     "one": "ብሎክ ተመርጧል",
     "other": "{n} ብሎኮች ተመርጠዋል"
-  }
+  },
+  "documents.mentions": "ሰዎች እና ቀኖች",
+  "documents.today": "ዛሬ",
+  "documents.tomorrow": "ነገ",
+  "documents.date": "ቀን",
+  "documents.doIt": "{name} እንዲያደርገው ጠይቅ",
+  "documents.asked": "በ“{document}” ውስጥ ይህን አድርግ፣ ተግባር ከሆነም ምልክት አድርግበት፦ {task}"
 }

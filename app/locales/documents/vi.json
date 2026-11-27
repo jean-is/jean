@@ -78,5 +78,11 @@
   "documents.leave": "Để rời khỏi bảng hoặc danh sách, nhấn Esc rồi nhấn Tab.",
   "documents.blocksSelected": {
     "other": "Đã chọn {n} khối"
-  }
+  },
+  "documents.mentions": "Người và ngày",
+  "documents.today": "Hôm nay",
+  "documents.tomorrow": "Ngày mai",
+  "documents.date": "Ngày",
+  "documents.doIt": "Nhờ {name} làm",
+  "documents.asked": "Trong “{document}”, hãy làm việc này, rồi đánh dấu nếu đó là việc cần làm: {task}"
 }

@@ -78,5 +78,11 @@
   "documents.leave": "Untuk keluar dari tabel atau daftar, tekan Esc, lalu Tab.",
   "documents.blocksSelected": {
     "other": "{n} blok dipilih"
-  }
+  },
+  "documents.mentions": "Orang dan tanggal",
+  "documents.today": "Hari ini",
+  "documents.tomorrow": "Besok",
+  "documents.date": "Tanggal",
+  "documents.doIt": "Minta {name} mengerjakannya",
+  "documents.asked": "Di “{document}”, kerjakan ini, lalu centang jika ini tugas: {task}"
 }

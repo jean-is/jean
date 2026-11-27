@@ -78,5 +78,11 @@
   "documents.leave": "表やリストから出るには、Esc を押してから Tab を押します。",
   "documents.blocksSelected": {
     "other": "{n} 個のブロックを選択しました"
-  }
+  },
+  "documents.mentions": "人と日付",
+  "documents.today": "今日",
+  "documents.tomorrow": "明日",
+  "documents.date": "日付",
+  "documents.doIt": "{name} に頼む",
+  "documents.asked": "「{document}」で、次のことをして、タスクならチェックを付けてください：{task}"
 }

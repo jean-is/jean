@@ -80,5 +80,11 @@
   "documents.blocksSelected": {
     "one": "Kizuizi kimechaguliwa",
     "other": "Vizuizi {n} vimechaguliwa"
-  }
+  },
+  "documents.mentions": "Watu na tarehe",
+  "documents.today": "Leo",
+  "documents.tomorrow": "Kesho",
+  "documents.date": "Tarehe",
+  "documents.doIt": "Mwombe {name} afanye hivi",
+  "documents.asked": "Katika “{document}”, fanya hivi, kisha kiweke alama kama ni kazi: {task}"
 }

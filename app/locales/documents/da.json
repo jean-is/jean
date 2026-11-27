@@ -80,5 +80,11 @@
   "documents.blocksSelected": {
     "one": "Blok valgt",
     "other": "{n} blokke valgt"
-  }
+  },
+  "documents.mentions": "Personer og datoer",
+  "documents.today": "I dag",
+  "documents.tomorrow": "I morgen",
+  "documents.date": "Dato",
+  "documents.doIt": "Bed {name} om at gøre det",
+  "documents.asked": "I “{document}”: gør dette, og sæt så flueben, hvis det er en opgave: {task}"
 }

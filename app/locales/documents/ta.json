@@ -80,5 +80,11 @@
   "documents.blocksSelected": {
     "one": "தொகுதி தேர்ந்தெடுக்கப்பட்டது",
     "other": "{n} தொகுதிகள் தேர்ந்தெடுக்கப்பட்டன"
-  }
+  },
+  "documents.mentions": "நபர்களும் தேதிகளும்",
+  "documents.today": "இன்று",
+  "documents.tomorrow": "நாளை",
+  "documents.date": "தேதி",
+  "documents.doIt": "இதைச் செய்யுமாறு கேள்: {name}",
+  "documents.asked": "“{document}” இல் இதைச் செய், அது பணி என்றால் குறியிடு: {task}"
 }

@@ -82,5 +82,11 @@
     "one": "Bloc selectat",
     "few": "{n} blocuri selectate",
     "other": "{n} de blocuri selectate"
-  }
+  },
+  "documents.mentions": "Persoane și date",
+  "documents.today": "Azi",
+  "documents.tomorrow": "Mâine",
+  "documents.date": "Dată",
+  "documents.doIt": "Cere-i lui {name} să facă asta",
+  "documents.asked": "În „{document}”, fă asta, apoi bifează dacă e o sarcină: {task}"
 }

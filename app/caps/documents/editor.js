@@ -26,6 +26,7 @@ import { fromTree, bare } from './clipboard.js'
 import { suggestions, suggest, accept, reject, pending, proposal, suggestionKey } from './suggest.js'
 import { merge3 } from '../../ui/merge.js'
 import { slashMenu, slashKey } from './slash.js'
+import { mentions } from './mentions.js'
 import { bookmarks, askKey } from './bookmark.js'
 import { bubble } from './bubble.js'
 import { blocks } from './blocks.js'
@@ -447,10 +448,13 @@ export function create(box, { name, path, markdown: text, pictures, write, keep,
     return made.flatMap((item) => (item.path === path ? [] : [{ key: item.path, name: item.name, glyph: KINDS[item.kind.id] ?? '↗', words: item.kind.id, run: item.kind.id === 'tables' ? holding(item.path) : item.kind.id === 'pictures' ? picture(item.link.uri, item.name) : reference(item.link.uri, item.name) }]))
   }
 
+  // Who a line is for and a day, "@"'s (./mentions.js), the document named by its title.
+  const said = mentions({ label: t, announce, path, name: () => view.state.doc.firstChild?.textContent || name })
   const plugins = [
     // First, so that its Enter, Tab and arrows come before the keymaps' while it is open.
     slashMenu({ items: () => [...widgets(), ...collections()], label: t, announce }),
     slashMenu({ items: creations, label: t, announce, key: refKey, trigger: /[[［]{2}([^\]］\n]{0,32})$/, id: 'refs', name: () => translate('creations.title') }),
+    said.plugin, keymap({ Enter: said.change }),
     bookmarks({ href: linkHref, label: t, announce }),
     bubble({ formats: FORMATS, link: M.link, href: linkHref, label: t, mac: MAC, tabbable: (state) => !itemDepth(state.selection) && !isInTable(state), wrong: (said) => notify(said, { alert: true }) }),
     blocks({ label: t, announce, mac: MAC, kinds: TURNS, adds: () => widgets().filter((item) => !TURNS.includes(item)) }),
@@ -475,7 +479,7 @@ export function create(box, { name, path, markdown: text, pictures, write, keep,
   const attributes = (_state) => ({ id: me, class: 'doc prose', role: 'textbox', 'aria-multiline': 'true', 'aria-label': t('document', { file: name }), 'aria-description': t('leave'), spellcheck: 'true' })
 
   // A table scrolls sideways in a box of its own, so a wide one never widens the pane.
-  const views = () => ({ ...drawnViews((node) => new TableView(node, 64)), toc: contentsView(t) })
+  const views = () => ({ ...drawnViews((node) => new TableView(node, 64)), toc: contentsView(t), ...said.views })
   words.done = t('done')
   const view = new EditorView(mount, {
     state: EditorState.create({ doc: read.doc, plugins }),

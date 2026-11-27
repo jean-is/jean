@@ -80,5 +80,11 @@
   "documents.blocksSelected": {
     "one": "Blokk kijelölve",
     "other": "{n} blokk kijelölve"
-  }
+  },
+  "documents.mentions": "Személyek és dátumok",
+  "documents.today": "Ma",
+  "documents.tomorrow": "Holnap",
+  "documents.date": "Dátum",
+  "documents.doIt": "Kérje meg ezt: {name}",
+  "documents.asked": "A(z) „{document}” dokumentumban végezze el ezt, majd jelölje be, ha feladat: {task}"
 }

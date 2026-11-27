@@ -82,5 +82,11 @@
     "one": "Bloccu selezziunatu",
     "many": "{n} di blocchi selezziunati",
     "other": "{n} blocchi selezziunati"
-  }
+  },
+  "documents.mentions": "Persone è date",
+  "documents.today": "Oghje",
+  "documents.tomorrow": "Dumane",
+  "documents.date": "Data",
+  "documents.doIt": "Dumandà à {name} di fallu",
+  "documents.asked": "In « {document} », fà questu, po spuntalu s’ellu hè un impegnu : {task}"
 }

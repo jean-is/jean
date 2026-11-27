@@ -80,5 +80,11 @@
   "documents.blocksSelected": {
     "one": "An zaɓi sashe {n}",
     "other": "An zaɓi sassa {n}"
-  }
+  },
+  "documents.mentions": "Mutane da kwanan wata",
+  "documents.today": "Yau",
+  "documents.tomorrow": "Gobe",
+  "documents.date": "Kwanan wata",
+  "documents.doIt": "Nemi {name} ya yi",
+  "documents.asked": "A cikin “{document}”, yi wannan, sannan ka yi masa alama idan aiki ne: {task}"
 }

@@ -80,5 +80,11 @@
   "documents.blocksSelected": {
     "one": "Mga napiling block: {n}",
     "other": "Mga napiling block: {n}"
-  }
+  },
+  "documents.mentions": "Mga tao at petsa",
+  "documents.today": "Ngayon",
+  "documents.tomorrow": "Bukas",
+  "documents.date": "Petsa",
+  "documents.doIt": "Ipagawa kay {name}",
+  "documents.asked": "Sa “{document}”, gawin ito, saka lagyan ng tsek kung gawain ito: {task}"
 }

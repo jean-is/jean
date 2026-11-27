@@ -1319,6 +1319,60 @@ test.describe('the slash menu', () => {
     expect(await markdownOf(page)).toBe(arabic)
   })
 
+  test('"@" puts in who a line is for, the assistant first, or a day, today, tomorrow or one picked, drawn as the language writes it and changed with a press', async ({ page }) => {
+    await start(page, { markdown: '- [ ] Call the bank\n' })
+    const menu = page.getByRole('listbox', { name: 'People and dates' }), day = page.locator('#doc time.day')
+    /** A day from today as a date cell holds it, and as the page writes it. @param {number} ahead @param {string} [iso] */
+    const days = (ahead, iso) => page.evaluate(([n, given]) => { const d = new Date(); d.setDate(d.getDate() + n); const value = given ?? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; return [value, new Intl.DateTimeFormat('en', { dateStyle: 'medium' }).format(new Date(`${value}T00:00`))] }, /** @type {const} */ ([ahead, iso]))
+    await caretAt(page, 'Call the bank', 13)
+    await page.keyboard.type(' @')
+    await expect(menu.getByRole('option')).toHaveText([/Jean$/, /Today$/, /Tomorrow$/, /Date$/])
+    await page.keyboard.type('tom')
+    await expect(menu.getByRole('option')).toHaveText([/Tomorrow$/])
+    await page.keyboard.press('Enter')
+    const [iso, said] = await days(1)
+    await expect(day).toHaveText(said)
+    await page.keyboard.type('for @jea')
+    await page.keyboard.press('Enter')
+    await page.keyboard.type('now')
+    await expect.poll(() => markdownOf(page)).toBe(`- [ ] Call the bank ${iso} for @[Jean] now\n`)
+    // Pressed, a day opens a field over it, its changes written at once; Enter closes it, the keyboard after the day.
+    await day.click()
+    const field = page.locator('.day-field')
+    await expect(field).toBeFocused()
+    await field.fill('2027-01-15')
+    await page.keyboard.press('Enter')
+    await expect(field).toHaveCount(0)
+    await expect(day).toHaveText((await days(0, '2027-01-15'))[1])
+    await expect.poll(() => markdownOf(page)).toBe('- [ ] Call the bank 2027-01-15 for @[Jean] now\n')
+    // "@" in a word is no menu; the assistant's name asks it, in the box, to do what its line says and tick it.
+    await caretAt(page, 'now', 3)
+    await page.keyboard.type(' mail a@b')
+    await expect(menu).toBeHidden()
+    await page.locator('#doc .mention-ask').click()
+    await expect(page.locator('#prompt')).toHaveValue('In “notes”, do this, then tick it if it is a task: Call the bank 2027-01-15 for now mail a@b')
+    await expect(page.locator('#prompt')).toBeFocused()
+    // Date puts in today and opens its field at once; Escape closes it, today kept.
+    await caretAt(page, 'a@b', 3)
+    await page.keyboard.type(' @dat')
+    await page.keyboard.press('Enter')
+    await expect(field).toBeFocused()
+    await page.keyboard.press('Escape')
+    await expect(day.nth(1)).toHaveText((await days(0))[1])
+    expect(await problems(page)).toEqual([])
+  })
+
+  for (const [lang, today] of /** @type {const} */ ([['ar', 'اليوم'], ['ja', '今日']])) {
+    test(`"@" offers today in ${lang}, drawn as the language writes it`, async ({ page }) => {
+      await start(page, { lang, markdown: 'Note\n' })
+      await caretAt(page, 'Note', 4)
+      await page.keyboard.type(' @')
+      await page.getByRole('option', { name: today }).click()
+      const written = await page.evaluate((code) => { const d = new Date(); return new Intl.DateTimeFormat(code, { dateStyle: 'medium' }).format(new Date(d.getFullYear(), d.getMonth(), d.getDate())) }, lang)
+      await expect(page.locator('#doc time.day')).toHaveText(written)
+    })
+  }
+
   test('a fence and its language alone on a new line, then Enter, make a code block, as a space after them does', async ({ page }) => {
     await start(page, { markdown: 'First.\n' })
     await caretAt(page, 'First.', 6)

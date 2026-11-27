@@ -80,5 +80,11 @@
   "documents.blocksSelected": {
     "one": "Amabhulokhi akhethiwe: {n}",
     "other": "Amabhulokhi akhethiwe: {n}"
-  }
+  },
+  "documents.mentions": "Abantu nezinsuku",
+  "documents.today": "Namuhla",
+  "documents.tomorrow": "Kusasa",
+  "documents.date": "Usuku",
+  "documents.doIt": "Cela u-{name} akwenze",
+  "documents.asked": "Ku-“{document}”, yenza lokhu, bese uyamaka uma kungumsebenzi: {task}"
 }

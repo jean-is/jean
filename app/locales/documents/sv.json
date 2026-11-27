@@ -80,5 +80,11 @@
   "documents.blocksSelected": {
     "one": "Block markerat",
     "other": "{n} block markerade"
-  }
+  },
+  "documents.mentions": "Personer och datum",
+  "documents.today": "I dag",
+  "documents.tomorrow": "I morgon",
+  "documents.date": "Datum",
+  "documents.doIt": "Be {name} göra det",
+  "documents.asked": "Gör det här i ”{document}” och bocka sedan av det om det är en uppgift: {task}"
 }

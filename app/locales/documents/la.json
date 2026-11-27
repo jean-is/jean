@@ -82,5 +82,11 @@
     "one": "Frustum electum",
     "many": "{n} frusta electa",
     "other": "{n} frusta electa"
-  }
+  },
+  "documents.mentions": "Homines et dies",
+  "documents.today": "Hodie",
+  "documents.tomorrow": "Cras",
+  "documents.date": "Dies",
+  "documents.doIt": "Roga {name} ut id faciat",
+  "documents.asked": "In «{document}» hoc fac, deinde nota id, si munus est: {task}"
 }

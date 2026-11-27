@@ -80,5 +80,11 @@
   "documents.blocksSelected": {
     "one": "బ్లాక్ ఎంచుకోబడింది",
     "other": "{n} బ్లాక్‌లు ఎంచుకోబడ్డాయి"
-  }
+  },
+  "documents.mentions": "వ్యక్తులు, తేదీలు",
+  "documents.today": "ఈ రోజు",
+  "documents.tomorrow": "రేపు",
+  "documents.date": "తేదీ",
+  "documents.doIt": "ఇది చేయమని అడుగు: {name}",
+  "documents.asked": "“{document}”లో ఇది చేయి, అది పని అయితే టిక్ పెట్టు: {task}"
 }

@@ -80,5 +80,11 @@
   "documents.blocksSelected": {
     "one": "Block ausgewählt",
     "other": "{n} Blöcke ausgewählt"
-  }
+  },
+  "documents.mentions": "Personen und Daten",
+  "documents.today": "Heute",
+  "documents.tomorrow": "Morgen",
+  "documents.date": "Datum",
+  "documents.doIt": "{name} bitten, es zu erledigen",
+  "documents.asked": "Erledige in „{document}“ Folgendes und hake es ab, wenn es eine Aufgabe ist: {task}"
 }

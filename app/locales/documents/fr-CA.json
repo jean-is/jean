@@ -82,5 +82,11 @@
     "one": "Bloc sélectionné",
     "many": "{n} de blocs sélectionnés",
     "other": "{n} blocs sélectionnés"
-  }
+  },
+  "documents.mentions": "Personnes et dates",
+  "documents.today": "Aujourd’hui",
+  "documents.tomorrow": "Demain",
+  "documents.date": "Date",
+  "documents.doIt": "Demander à {name} de le faire",
+  "documents.asked": "Dans « {document} », fais ceci, puis coche-le si c’est une tâche : {task}"
 }

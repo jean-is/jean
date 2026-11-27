@@ -80,5 +80,11 @@
   "documents.blocksSelected": {
     "one": "Blok seçildi",
     "other": "{n} blok seçildi"
-  }
+  },
+  "documents.mentions": "Kişiler ve tarihler",
+  "documents.today": "Bugün",
+  "documents.tomorrow": "Yarın",
+  "documents.date": "Tarih",
+  "documents.doIt": "Yapması için iste: {name}",
+  "documents.asked": "“{document}” içinde bunu yap, görevse işaretle: {task}"
 }

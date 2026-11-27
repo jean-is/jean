@@ -80,5 +80,11 @@
   "documents.blocksSelected": {
     "one": "Block selected",
     "other": "{n} blocks selected"
-  }
+  },
+  "documents.mentions": "People and dates",
+  "documents.today": "Today",
+  "documents.tomorrow": "Tomorrow",
+  "documents.date": "Date",
+  "documents.doIt": "Ask {name} to do it",
+  "documents.asked": "In “{document}”, do this, then tick it if it is a task: {task}"
 }

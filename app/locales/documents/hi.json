@@ -80,5 +80,11 @@
   "documents.blocksSelected": {
     "one": "{n} ब्लॉक चुना गया",
     "other": "{n} ब्लॉक चुने गए"
-  }
+  },
+  "documents.mentions": "लोग और तारीख़ें",
+  "documents.today": "आज",
+  "documents.tomorrow": "कल",
+  "documents.date": "तारीख़",
+  "documents.doIt": "{name} से यह करने को कहें",
+  "documents.asked": "“{document}” में यह करें, फिर अगर यह काम है तो इसे टिक करें: {task}"
 }

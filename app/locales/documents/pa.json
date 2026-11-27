@@ -80,5 +80,11 @@
   "documents.blocksSelected": {
     "one": "{n} ਬਲਾਕ ਚੁਣਿਆ",
     "other": "{n} ਬਲਾਕ ਚੁਣੇ"
-  }
+  },
+  "documents.mentions": "ਲੋਕ ਅਤੇ ਤਾਰੀਖ਼ਾਂ",
+  "documents.today": "ਅੱਜ",
+  "documents.tomorrow": "ਕੱਲ੍ਹ",
+  "documents.date": "ਤਾਰੀਖ਼",
+  "documents.doIt": "{name} ਨੂੰ ਇਹ ਕਰਨ ਲਈ ਕਹੋ",
+  "documents.asked": "“{document}” ਵਿੱਚ ਇਹ ਕਰੋ, ਫਿਰ ਜੇ ਇਹ ਕੰਮ ਹੈ ਤਾਂ ਟਿੱਕ ਕਰੋ: {task}"
 }

@@ -78,5 +78,11 @@
   "documents.leave": "Iji pụọ na tebụl ma ọ bụ ndepụta, pịa Esc, wee pịa Tab.",
   "documents.blocksSelected": {
     "other": "Ahọrọla ngọngọ {n}"
-  }
+  },
+  "documents.mentions": "Ndị mmadụ na ụbọchị",
+  "documents.today": "Taa",
+  "documents.tomorrow": "Echi",
+  "documents.date": "Ụbọchị",
+  "documents.doIt": "Rịọ {name} ka o mee ya",
+  "documents.asked": "N’ime “{document}”, mee nke a, wee kaa ya akara ma ọ bụrụ ọrụ: {task}"
 }

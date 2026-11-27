@@ -78,5 +78,11 @@
   "documents.leave": "Láti jáde kúrò nínú tábìlì tàbí àkójọ, tẹ Esc, lẹ́yìn náà Tab.",
   "documents.blocksSelected": {
     "other": "A ti yan búlọ́ọ̀kù {n}"
-  }
+  },
+  "documents.mentions": "Àwọn ènìyàn àti ọjọ́",
+  "documents.today": "Òní",
+  "documents.tomorrow": "Ọ̀la",
+  "documents.date": "Ọjọ́",
+  "documents.doIt": "Ní kí {name} ṣe é",
+  "documents.asked": "Nínú “{document}”, ṣe èyí, lẹ́yìn náà sàmì sí i tí ó bá jẹ́ iṣẹ́: {task}"
 }

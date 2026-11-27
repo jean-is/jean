@@ -84,5 +84,11 @@
     "few": "Zaznaczono {n} bloki",
     "many": "Zaznaczono {n} bloków",
     "other": "Zaznaczono {n} bloku"
-  }
+  },
+  "documents.mentions": "Osoby i daty",
+  "documents.today": "Dzisiaj",
+  "documents.tomorrow": "Jutro",
+  "documents.date": "Data",
+  "documents.doIt": "Poproś o zrobienie tego: {name}",
+  "documents.asked": "W „{document}” zrób to, a potem odhacz, jeśli to zadanie: {task}"
 }

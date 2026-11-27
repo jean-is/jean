@@ -84,5 +84,11 @@
     "few": "Vybrané {n} bloky",
     "many": "Vybraného {n} bloku",
     "other": "Vybraných {n} blokov"
-  }
+  },
+  "documents.mentions": "Ľudia a dátumy",
+  "documents.today": "Dnes",
+  "documents.tomorrow": "Zajtra",
+  "documents.date": "Dátum",
+  "documents.doIt": "Požiadať: {name}, nech to urobí",
+  "documents.asked": "V „{document}“ urob toto a potom to odškrtni, ak je to úloha: {task}"
 }

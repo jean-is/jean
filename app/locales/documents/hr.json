@@ -82,5 +82,11 @@
     "one": "Odabran je {n} blok",
     "few": "Odabrana su {n} bloka",
     "other": "Odabrano je {n} blokova"
-  }
+  },
+  "documents.mentions": "Osobe i datumi",
+  "documents.today": "Danas",
+  "documents.tomorrow": "Sutra",
+  "documents.date": "Datum",
+  "documents.doIt": "Zamoli: {name}, neka to učini",
+  "documents.asked": "U „{document}” učini ovo, a zatim to označi ako je zadatak: {task}"
 }

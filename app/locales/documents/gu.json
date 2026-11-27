@@ -80,5 +80,11 @@
   "documents.blocksSelected": {
     "one": "{n} બ્લૉક પસંદ કર્યો",
     "other": "{n} બ્લૉક પસંદ કર્યા"
-  }
+  },
+  "documents.mentions": "લોકો અને તારીખો",
+  "documents.today": "આજે",
+  "documents.tomorrow": "કાલે",
+  "documents.date": "તારીખ",
+  "documents.doIt": "{name}ને આ કરવા કહો",
+  "documents.asked": "“{document}”માં આ કરો, પછી જો તે કાર્ય હોય તો ટિક કરો: {task}"
 }

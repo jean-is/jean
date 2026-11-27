@@ -80,5 +80,11 @@
   "documents.blocksSelected": {
     "one": "Kutaan filatame",
     "other": "Kutaalee {n} filataman"
-  }
+  },
+  "documents.mentions": "Namootaa fi guyyaawwan",
+  "documents.today": "Har’a",
+  "documents.tomorrow": "Boru",
+  "documents.date": "Guyyaa",
+  "documents.doIt": "{name} akka hojjetu gaafadhu",
+  "documents.asked": "“{document}” keessatti kana hojjedhu, hojii yoo ta’e mallattoo godhi: {task}"
 }

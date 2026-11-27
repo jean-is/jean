@@ -80,5 +80,11 @@
   "documents.blocksSelected": {
     "one": "ब्लॉक निवडला",
     "other": "{n} ब्लॉक निवडले"
-  }
+  },
+  "documents.mentions": "लोक आणि तारखा",
+  "documents.today": "आज",
+  "documents.tomorrow": "उद्या",
+  "documents.date": "तारीख",
+  "documents.doIt": "{name} ला हे करायला सांगा",
+  "documents.asked": "“{document}” मध्ये हे करा, मग ते काम असल्यास त्यावर खूण करा: {task}"
 }

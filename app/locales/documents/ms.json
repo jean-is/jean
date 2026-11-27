@@ -78,5 +78,11 @@
   "documents.leave": "Untuk keluar daripada jadual atau senarai, tekan Esc, kemudian Tab.",
   "documents.blocksSelected": {
     "other": "{n} blok dipilih"
-  }
+  },
+  "documents.mentions": "Orang dan tarikh",
+  "documents.today": "Hari ini",
+  "documents.tomorrow": "Esok",
+  "documents.date": "Tarikh",
+  "documents.doIt": "Minta {name} melakukannya",
+  "documents.asked": "Dalam “{document}”, lakukan ini, kemudian tandakannya jika ia tugasan: {task}"
 }

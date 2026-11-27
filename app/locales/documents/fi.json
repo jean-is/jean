@@ -80,5 +80,11 @@
   "documents.blocksSelected": {
     "one": "Lohko valittu",
     "other": "{n} lohkoa valittu"
-  }
+  },
+  "documents.mentions": "Henkilöt ja päivämäärät",
+  "documents.today": "Tänään",
+  "documents.tomorrow": "Huomenna",
+  "documents.date": "Päivämäärä",
+  "documents.doIt": "Pyydä tekemään tämä: {name}",
+  "documents.asked": "Tee tämä tiedostossa ”{document}” ja merkitse se tehdyksi, jos se on tehtävä: {task}"
 }

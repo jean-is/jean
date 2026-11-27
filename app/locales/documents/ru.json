@@ -84,5 +84,11 @@
     "few": "Выбрано {n} блока",
     "many": "Выбрано {n} блоков",
     "other": "Выбрано {n} блока"
-  }
+  },
+  "documents.mentions": "Люди и даты",
+  "documents.today": "Сегодня",
+  "documents.tomorrow": "Завтра",
+  "documents.date": "Дата",
+  "documents.doIt": "Попросить: {name}",
+  "documents.asked": "В «{document}» сделай это, а потом отметь, если это задача: {task}"
 }

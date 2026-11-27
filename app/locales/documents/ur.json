@@ -80,5 +80,11 @@
   "documents.blocksSelected": {
     "one": "بلاک منتخب ہوا",
     "other": "{n} بلاک منتخب ہوئے"
-  }
+  },
+  "documents.mentions": "لوگ اور تاریخیں",
+  "documents.today": "آج",
+  "documents.tomorrow": "کل",
+  "documents.date": "تاریخ",
+  "documents.doIt": "{name} سے یہ کرنے کو کہیں",
+  "documents.asked": "“{document}” میں یہ کریں، پھر اگر یہ کام ہے تو نشان لگائیں: {task}"
 }
