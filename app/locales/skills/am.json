@@ -3,6 +3,7 @@
   "skills.invalid": "ይህ ፋይል ክህሎት አይደለም።",
   "skills.added": "ክህሎቱ “{title}” ታክሏል።",
   "skills.steps": "ደረጃዎች",
+  "skills.brain": "አንጎል",
   "skills.confirmDelete": "ክህሎቱ “{title}” ይሰረዝ?",
   "skills.from": "ከ{source}",
   "skills.elsewhere": "ከሌላ ቦታ የመጡ ክህሎቶች",

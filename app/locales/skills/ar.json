@@ -3,6 +3,7 @@
   "skills.invalid": "هذا الملف ليس مهارة.",
   "skills.added": "أُضيفت المهارة «{title}».",
   "skills.steps": "الخطوات",
+  "skills.brain": "العقل",
   "skills.confirmDelete": "هل تريد حذف المهارة «{title}»؟",
   "skills.from": "المصدر: {source}",
   "skills.elsewhere": "مهارات من أماكن أخرى",

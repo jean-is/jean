@@ -3,6 +3,7 @@
   "skills.invalid": "Ova datoteka nije vještina.",
   "skills.added": "Dodana je vještina „{title}“.",
   "skills.steps": "Koraci",
+  "skills.brain": "Mozak",
   "skills.confirmDelete": "Izbrisati vještinu „{title}“?",
   "skills.from": "Izvor: {source}",
   "skills.elsewhere": "Vještine s drugih mjesta",

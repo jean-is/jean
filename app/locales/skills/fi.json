@@ -3,6 +3,7 @@
   "skills.invalid": "Tämä tiedosto ei ole taito.",
   "skills.added": "Taito lisätty: ”{title}”.",
   "skills.steps": "Vaiheet",
+  "skills.brain": "Aivot",
   "skills.confirmDelete": "Poistetaanko taito ”{title}”?",
   "skills.from": "Lähde: {source}",
   "skills.elsewhere": "Taitoja muualta",

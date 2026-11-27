@@ -3,6 +3,7 @@
   "skills.invalid": "Ten plik nie jest umiejętnością.",
   "skills.added": "Dodano umiejętność „{title}”.",
   "skills.steps": "Kroki",
+  "skills.brain": "Mózg",
   "skills.confirmDelete": "Usunąć umiejętność „{title}”?",
   "skills.from": "Źródło: {source}",
   "skills.elsewhere": "Umiejętności z innych miejsc",

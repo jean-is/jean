@@ -3,6 +3,7 @@
   "skills.invalid": "Цей файл — не навичка.",
   "skills.added": "Навичку «{title}» додано.",
   "skills.steps": "Кроки",
+  "skills.brain": "Мозок",
   "skills.confirmDelete": "Видалити навичку «{title}»?",
   "skills.from": "Джерело: {source}",
   "skills.elsewhere": "Навички з інших місць",

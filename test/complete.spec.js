@@ -5,7 +5,7 @@
 // the words picked, and the brain is told what each names just before it. + in the box opens a
 // menu beside it of the room's skills, and of its connections, each picked named as / names it (D292). What / names
 // is a chip in the box, by its name, a mode in the request, which says above it what it is, and a tag there looks for it.
-import { test, expect, start, connectFakeBrain, turnOn, closeSettings, connect, MAIL_URL, chooseLanguage } from './helpers.js'
+import { test, expect, start, connectFakeBrain, turnOn, openSettings, closeSettings, connect, MAIL_URL, chooseLanguage } from './helpers.js'
 
 /** A name as the box holds it once picked: a chip, by its name. @param {string} name */
 const chip = (name) => `\u2068\u202F${name}\u202F\u2069`
@@ -89,6 +89,41 @@ test('/ names what Jean can do, and once Skills is found, a ready-made skill, re
   await box.pressSequentially('/')
   await expect(menu(page).locator('.complete-label')).toContainText(['Files made for you'])
   await expect(menu(page)).not.toContainText('cap.')
+})
+
+test('a task that starts with a skill whose brain was set on its page answers with it all through, while Auto chooses (D773)', { tag: '@chromium' }, async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  // A second brain on the same server, at another version: the one the skill is set to.
+  await page.evaluate(async () => {
+    const { app, updateSettings } = await import('/ui/state.js')
+    const [first] = app.settings.value.brains
+    await updateSettings({ brains: [first, { ...first, id: 'second', model: 'fake-brain-2' }], activeBrain: first.id })
+  })
+  // The room's skills, Visual answers among them, come with its first message.
+  const box = page.locator('#prompt')
+  await box.fill('Hello')
+  await box.press('Enter')
+  await answered(page)
+  await turnOn(page, 'Skills')
+  await page.keyboard.press('Escape')
+  const knows = await openSettings(page, 'Skills')
+  await knows.locator('.skills .item', { hasText: 'Visual answers' }).click()
+  await expect(knows.getByLabel('Brain').locator('option:checked')).toHaveText('Auto')
+  await knows.getByLabel('Brain').selectOption({ label: 'fake-brain-2' })
+  expect(await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.skillBrains)).toEqual({ visual: { brain: 'second', model: 'fake-brain-2' } })
+  await closeSettings(page)
+  const models = () => page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records
+    .flatMap(({ update }) => (update?.sessionUpdate === 'tool_call' && !update.name && !update._meta?.parent ? [update.rawInput.model] : [])))
+  expect(await models()).toEqual(['fake-brain-1'])
+  await page.evaluate(async () => (await import('/ui/state.js')).newConversation())
+  await box.fill('/visual Plot sales by month')
+  await box.press('Enter')
+  await answered(page)
+  await box.fill('And by region?')
+  await box.press('Enter')
+  await answered(page)
+  await expect.poll(models).toEqual(['fake-brain-2', 'fake-brain-2'])
 })
 
 test('what / names is a chip in the box, by its name, removed whole and sent as its word; a mode in the request, which says what it is; a tag there looks for it', async ({ page }) => {

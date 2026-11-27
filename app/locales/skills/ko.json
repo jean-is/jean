@@ -3,6 +3,7 @@
   "skills.invalid": "이 파일은 스킬이 아니에요.",
   "skills.added": "스킬 ‘{title}’을(를) 추가했어요.",
   "skills.steps": "단계",
+  "skills.brain": "두뇌",
   "skills.confirmDelete": "스킬 ‘{title}’을(를) 삭제할까요?",
   "skills.from": "출처: {source}",
   "skills.elsewhere": "다른 곳의 스킬",

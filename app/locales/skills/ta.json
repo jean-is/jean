@@ -3,6 +3,7 @@
   "skills.invalid": "இந்தக் கோப்பு ஒரு திறன் அல்ல.",
   "skills.added": "“{title}” திறன் சேர்க்கப்பட்டது.",
   "skills.steps": "படிகள்",
+  "skills.brain": "மூளை",
   "skills.confirmDelete": "“{title}” திறனை நீக்கவா?",
   "skills.from": "மூலம்: {source}",
   "skills.elsewhere": "வேறு இடங்களிலிருந்து திறன்கள்",

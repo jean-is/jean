@@ -3,6 +3,7 @@
   "skills.invalid": "Tento súbor nie je zručnosť.",
   "skills.added": "Zručnosť „{title}“ pridaná.",
   "skills.steps": "Kroky",
+  "skills.brain": "Mozog",
   "skills.confirmDelete": "Odstrániť zručnosť „{title}“?",
   "skills.from": "Z {source}",
   "skills.elsewhere": "Zručnosti odinakiaľ",

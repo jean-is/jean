@@ -3,6 +3,7 @@
   "skills.invalid": "Den här filen är inte en färdighet.",
   "skills.added": "Lade till färdigheten ”{title}”.",
   "skills.steps": "Steg",
+  "skills.brain": "Hjärna",
   "skills.confirmDelete": "Radera färdigheten ”{title}”?",
   "skills.from": "Från {source}",
   "skills.elsewhere": "Färdigheter från andra håll",

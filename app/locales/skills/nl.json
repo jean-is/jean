@@ -3,6 +3,7 @@
   "skills.invalid": "Dit bestand is geen vaardigheid.",
   "skills.added": "Vaardigheid ‘{title}’ toegevoegd.",
   "skills.steps": "Stappen",
+  "skills.brain": "Brein",
   "skills.confirmDelete": "Vaardigheid ‘{title}’ verwijderen?",
   "skills.from": "Van {source}",
   "skills.elsewhere": "Vaardigheden van elders",

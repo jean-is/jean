@@ -12,7 +12,7 @@ import { bm25, words } from '../app/core/search.js'
 import { KEV, pack, answers, render } from '../app/core/decide.js'
 import { documentPart, sourceNumber } from '../app/core/files.js'
 import { openaiMessages } from '../app/core/llm.js'
-import { chooseBrain, chooseEffort, isLocal, tierFor, stepsOf, MIXES } from '../app/ui/auto.js'
+import { chooseBrain, chooseEffort, isLocal, tierFor, stepsOf, startedWith, MIXES } from '../app/ui/auto.js'
 import { REFLEXES, CAPABILITIES } from '../app/ui/questions.js'
 
 const brain = { id: 'b', provider: /** @type {const} */ ('custom'), api: /** @type {const} */ ('openai'), baseURL: 'http://x', model: 'm' }
@@ -392,6 +392,18 @@ test('Auto: each step any brain connected, how much it thinks, and a mix that cl
   const served = chooseBrain({ brains: [claude, lmstudio], steps: [{ brain: 'l', model: 'qwen3.6-35b-a3b', effort: 'low' }], signals: { demand: 0 } })
   assert.deepEqual([served?.brain.id, served?.effort], ['l', 'low'])
   assert.deepEqual(chosen({ steps: near, signals: { demand: 0, pictures: true }, sees: (brain) => brain.api !== 'device' })?.[0], 'c:claude-haiku-4-5')
+})
+
+test('a task that starts with a skill named with / is that skill’s, all through: its brain, when it names one (D773)', () => {
+  const names = ['make-a-site', 'reply-to-a-client']
+  assert.equal(startedWith('/make-a-site for my bakery', [], names), 'make-a-site')
+  assert.equal(startedWith('Make a site for my bakery', [], names), undefined)
+  assert.equal(startedWith('/make-a-sites please', [], names), undefined)
+  assert.equal(startedWith('first /reply-to-a-client, then /make-a-site', [], names), 'reply-to-a-client', 'the first it names')
+  // Once sent, what its first message named is read from the note it came with, whatever the next ones name.
+  const started = [noteRecord('', { kind: 'mentions', words: ['/make-a-site'], skills: ['make-a-site'] }), ...userRecords('/make-a-site for my bakery', [], 'dev')]
+  assert.equal(startedWith('now /reply-to-a-client', started, names), 'make-a-site')
+  assert.equal(startedWith('/make-a-site again', userRecords('hello', [], 'dev'), names), undefined, 'a task that started otherwise')
 })
 
 test('Auto: as much thinking as the request demands, a step more when the user is unhappy, never less; the brain’s own setting first (D414)', () => {

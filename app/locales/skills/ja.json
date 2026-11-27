@@ -3,6 +3,7 @@
   "skills.invalid": "このファイルはスキルではありません。",
   "skills.added": "スキル「{title}」を追加しました。",
   "skills.steps": "手順",
+  "skills.brain": "頭脳",
   "skills.confirmDelete": "スキル「{title}」を削除しますか？",
   "skills.from": "提供元：{source}",
   "skills.elsewhere": "ほかの場所のスキル",

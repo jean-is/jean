@@ -3,6 +3,7 @@
   "skills.invalid": "Acest fișier nu este o abilitate.",
   "skills.added": "S-a adăugat abilitatea „{title}”.",
   "skills.steps": "Pași",
+  "skills.brain": "Creier",
   "skills.confirmDelete": "Ștergeți abilitatea „{title}”?",
   "skills.from": "De la {source}",
   "skills.elsewhere": "Abilități din alte părți",

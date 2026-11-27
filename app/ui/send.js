@@ -259,13 +259,16 @@ const lastAnswer = (records) => {
  */
 async function pickBrain(text, records, boost = 0, chosen, pictured = false) {
   const { settings } = effective.value
-  const [{ sense }, { chooseBrain, chooseEffort, EFFORTS, TIERS }, { mayRead, limitedUse }] = await Promise.all([import('./discovery.js'), import('./auto.js'), import('../core/llm.js')])
+  const [{ sense }, { chooseBrain, chooseEffort, startedWith, EFFORTS, TIERS }, { mayRead, limitedUse }] = await Promise.all([import('./discovery.js'), import('./auto.js'), import('../core/llm.js')])
   const signals = await sense(text, lastAnswer(records))
   // How much it thinks: the brain's own setting, or as much as the request demands, never less than before (D414).
   const floor = effortLevel(records, EFFORTS)
   const meta = (/** @type {BrainConfig} */ brain, /** @type {Record<string, unknown>} */ more = {}, setting = brain.effort) => ({ ...more, effort: chooseEffort({ setting, signals: { ...signals, unhappy: signals.unhappy || boost > 0 }, floor }) })
-  if (chosen !== 'auto' && (chosen || !settings.auto)) {
-    const brain = chosen || activeBrain.value
+  // While Auto chooses, a task that started with a skill whose brain the user set answers with it, if it may read the task (D773).
+  const skill = chosen === undefined && settings.auto ? settings.skillBrains?.[startedWith(text, records, Object.keys(settings.skillBrains ?? {})) ?? ''] : undefined
+  const theirs = skill && brainsHere.value.find((brain) => brain.id === skill.brain && (cloudAllowed() || isLocal(brain)) && mayRead(brain, records, app.policy))
+  if (chosen !== 'auto' && (chosen || theirs || !settings.auto)) {
+    const brain = chosen || (theirs && { ...theirs, model: skill?.model || theirs.model }) || activeBrain.value
     return brain && (cloudAllowed() || isLocal(brain)) ? { brain, meta: meta(brain), signals } : null
   }
   // A task that used Google's services, among the brains that may read it, their plans checked, if any; with none, the request says why (D440).

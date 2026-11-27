@@ -3,6 +3,7 @@
   "skills.invalid": "Този файл не е умение.",
   "skills.added": "Добавено е умението „{title}“.",
   "skills.steps": "Стъпки",
+  "skills.brain": "Мозък",
   "skills.confirmDelete": "Да се изтрие ли умението „{title}“?",
   "skills.from": "От {source}",
   "skills.elsewhere": "Умения от другаде",

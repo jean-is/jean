@@ -3,6 +3,7 @@
   "skills.invalid": "Hic fasciculus ars non est.",
   "skills.added": "Ars “{title}” addita est.",
   "skills.steps": "Gradus",
+  "skills.brain": "Cerebrum",
   "skills.confirmDelete": "Delere artem “{title}”?",
   "skills.from": "Fons: {source}",
   "skills.elsewhere": "Artes aliunde",

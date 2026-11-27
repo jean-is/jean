@@ -3,6 +3,7 @@
   "skills.invalid": "הקובץ הזה אינו מיומנות.",
   "skills.added": "המיומנות “{title}” נוספה.",
   "skills.steps": "צעדים",
+  "skills.brain": "מוח",
   "skills.confirmDelete": "למחוק את המיומנות “{title}”?",
   "skills.from": "מקור: {source}",
   "skills.elsewhere": "מיומנויות ממקומות אחרים",

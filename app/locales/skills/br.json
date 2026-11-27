@@ -3,6 +3,7 @@
   "skills.invalid": "N’eo ket ur varregezh ar restr-mañ.",
   "skills.added": "Ouzhpennet ar varregezh « {title} ».",
   "skills.steps": "Pazennoù",
+  "skills.brain": "Empenn",
   "skills.confirmDelete": "Dilemel ar varregezh « {title} » ?",
   "skills.from": "Diwar {source}",
   "skills.elsewhere": "Barregezhioù eus lec’h all",

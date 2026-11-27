@@ -3,6 +3,7 @@
   "skills.invalid": "यह फ़ाइल कौशल नहीं है।",
   "skills.added": "कौशल “{title}” जोड़ा गया।",
   "skills.steps": "चरण",
+  "skills.brain": "दिमाग़",
   "skills.confirmDelete": "कौशल “{title}” हटाएँ?",
   "skills.from": "स्रोत: {source}",
   "skills.elsewhere": "दूसरी जगहों के कौशल",

@@ -3,6 +3,7 @@
   "skills.invalid": "Bu dosya bir beceri değil.",
   "skills.added": "“{title}” becerisi eklendi.",
   "skills.steps": "Adımlar",
+  "skills.brain": "Beyin",
   "skills.confirmDelete": "“{title}” becerisi silinsin mi?",
   "skills.from": "Kaynak: {source}",
   "skills.elsewhere": "Başka yerlerden beceriler",

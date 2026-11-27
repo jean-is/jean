@@ -3,6 +3,7 @@
   "skills.invalid": "এই ফাইলটি দক্ষতা নয়।",
   "skills.added": "“{title}” দক্ষতা যোগ হলো।",
   "skills.steps": "ধাপ",
+  "skills.brain": "মস্তিষ্ক",
   "skills.confirmDelete": "“{title}” দক্ষতা মুছবেন?",
   "skills.from": "উৎস: {source}",
   "skills.elsewhere": "অন্য জায়গার দক্ষতা",

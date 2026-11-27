@@ -3,6 +3,7 @@
   "skills.invalid": "ဤဖိုင်သည် ကျွမ်းကျင်မှု မဟုတ်ပါ။",
   "skills.added": "ကျွမ်းကျင်မှု “{title}” ထည့်ပြီး။",
   "skills.steps": "အဆင့်များ",
+  "skills.brain": "ဦးနှောက်",
   "skills.confirmDelete": "ကျွမ်းကျင်မှု “{title}” ကို ဖျက်မလား။",
   "skills.from": "{source} မှ",
   "skills.elsewhere": "အခြားနေရာမှ ကျွမ်းကျင်မှုများ",

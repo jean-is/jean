@@ -3,6 +3,7 @@
   "skills.invalid": "这个文件不是技能。",
   "skills.added": "已添加技能“{title}”。",
   "skills.steps": "步骤",
+  "skills.brain": "大脑",
   "skills.confirmDelete": "要删除技能“{title}”吗？",
   "skills.from": "来自 {source}",
   "skills.elsewhere": "来自其他地方的技能",

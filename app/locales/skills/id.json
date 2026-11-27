@@ -3,6 +3,7 @@
   "skills.invalid": "File ini bukan keterampilan.",
   "skills.added": "Keterampilan “{title}” ditambahkan.",
   "skills.steps": "Langkah",
+  "skills.brain": "Otak",
   "skills.confirmDelete": "Hapus keterampilan “{title}”?",
   "skills.from": "Dari {source}",
   "skills.elsewhere": "Keterampilan dari tempat lain",

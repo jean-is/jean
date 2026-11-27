@@ -3,6 +3,7 @@
   "skills.invalid": "Denne fil er ikke en færdighed.",
   "skills.added": "Tilføjede færdigheden “{title}”.",
   "skills.steps": "Trin",
+  "skills.brain": "Hjerne",
   "skills.confirmDelete": "Slette færdigheden “{title}”?",
   "skills.from": "Fra {source}",
   "skills.elsewhere": "Færdigheder fra andre steder",

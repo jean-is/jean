@@ -3,6 +3,7 @@
   "skills.invalid": "Αυτό το αρχείο δεν είναι δεξιότητα.",
   "skills.added": "Προστέθηκε η δεξιότητα «{title}».",
   "skills.steps": "Βήματα",
+  "skills.brain": "Εγκέφαλος",
   "skills.confirmDelete": "Διαγραφή της δεξιότητας «{title}»;",
   "skills.from": "Από {source}",
   "skills.elsewhere": "Δεξιότητες από αλλού",

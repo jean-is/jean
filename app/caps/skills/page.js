@@ -12,6 +12,7 @@ import { app, effective, notify, updateSettings, newConversation } from '../../u
 import { act } from '../../ui/acts.js'
 import { sectionOpen, lockedBy } from '../../ui/dialogs.js'
 import { focusComposer } from '../../ui/composer.js'
+import { choices } from '../../ui/picker.js'
 import { markdown } from '../../ui/markdown.js'
 import { save } from '../../ui/save.js'
 import { loadConversation } from '../../core/conversations.js'
@@ -213,6 +214,7 @@ function page(skill) {
   return html`${back('')}
     <header class="skill-head"><span class="item-icon">${glyphOf(skill)}</span><div><h2 dir="auto" tabindex="-1">${title}</h2><p class="lede" dir="auto">${said(skill)}</p></div>
       <input type="checkbox" class="switch" role="switch" title=${title} .checked=${!isOff(skill)} @change=${turn(skill)}></header>
+    ${brainOf(skill)}
     ${own ? html`<div class="ready-body">${body({ entry: own, unpacked: { body: skill.body, files: [] } })}</div>` : editing.value === skill.name ? html`
       <form class="skill-edit" @submit=${(/** @type {SubmitEvent} */ e) => change(e, skill)}>
         <label for="skill-when">${t('skills.when', { name: BRAND.name })}<textarea id="skill-when" name="description" rows="2" dir="auto" required .value=${skill.description}></textarea></label>
@@ -234,6 +236,26 @@ function page(skill) {
       <button class="button subtle" @click=${async () => save(new Blob([await app.fs.read(skill.path) ?? ''], { type: 'text/markdown' }), 'SKILL.md')}>${icons.download} ${t('skills.save')}</button>
       ${own ? nothing : html`<button class="button subtle danger" @click=${() => remove(skill)}>${icons.trash} ${t('skills.delete')}</button>`}
     </div>`}`
+}
+
+/**
+ * The brain a task that starts with this skill answers with while Auto chooses (D773): Auto's own choice, or one the picker
+ * offers; one at a version the picker no longer offers stays. @param {Skill} skill
+ */
+function brainOf(skill) {
+  const [offered, own] = [choices(), effective.value.settings.skillBrains?.[skill.name]]
+  if (!offered.length) return nothing
+  const listed = offered.some(({ brain, model }) => brain.id === own?.brain && model === own?.model)
+  const pick = (/** @type {Event} */ e) => {
+    const choice = offered[Number(/** @type {HTMLSelectElement} */ (e.target).value || NaN)]
+    const { [skill.name]: _, ...others } = app.settings.value.skillBrains ?? {}
+    updateSettings({ skillBrains: choice ? { ...others, [skill.name]: { brain: choice.brain.id, model: choice.model } } : Object.keys(others).length ? others : undefined })
+  }
+  return html`<label class="skill-brain" for="skill-brain">${t('skills.brain')}<select id="skill-brain" @change=${pick}>
+    <option value="" ?selected=${!own}>${t('auto.name')}</option>
+    ${offered.map(({ label, behind, brain, model }, i) => html`<option value=${i} title=${behind} ?selected=${brain.id === own?.brain && model === own?.model}>${label}</option>`)}
+    ${own && !listed ? html`<option selected>${(own.model ?? '').split('/').at(-1)}</option>` : nothing}
+  </select></label>`
 }
 
 /** The ways to add a skill, then Jean's own by what they are for, those the room has marked so. @param {Known} state */

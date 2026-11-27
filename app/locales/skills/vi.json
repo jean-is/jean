@@ -3,6 +3,7 @@
   "skills.invalid": "Tệp này không phải là kỹ năng.",
   "skills.added": "Đã thêm kỹ năng “{title}”.",
   "skills.steps": "Các bước",
+  "skills.brain": "Bộ não",
   "skills.confirmDelete": "Xóa kỹ năng “{title}”?",
   "skills.from": "Từ {source}",
   "skills.elsewhere": "Kỹ năng từ nơi khác",

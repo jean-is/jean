@@ -3,6 +3,7 @@
   "skills.invalid": "Ez a fájl nem készség.",
   "skills.added": "Hozzáadva a készség: „{title}”.",
   "skills.steps": "Lépések",
+  "skills.brain": "Agy",
   "skills.confirmDelete": "Törlöd ezt a készséget: „{title}”?",
   "skills.from": "Forrás: {source}",
   "skills.elsewhere": "Készségek máshonnan",

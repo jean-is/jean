@@ -3,6 +3,7 @@
   "skills.invalid": "This file isn’t a skill.",
   "skills.added": "Added the skill “{title}”.",
   "skills.steps": "Steps",
+  "skills.brain": "Brain",
   "skills.confirmDelete": "Delete the skill “{title}”?",
   "skills.from": "From {source}",
   "skills.elsewhere": "Skills from elsewhere",

@@ -3,6 +3,7 @@
   "skills.invalid": "دا فایل مهارت نه دی.",
   "skills.added": "مهارت «{title}» ورزیات شو.",
   "skills.steps": "ګامونه",
+  "skills.brain": "مغز",
   "skills.confirmDelete": "مهارت «{title}» ړنګ شي؟",
   "skills.from": "له {source} څخه",
   "skills.elsewhere": "له بل ځایه مهارتونه",

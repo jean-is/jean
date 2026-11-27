@@ -18,3 +18,4 @@
 /* On a phone, where it came from goes under its words, in line with them. */
 @media (max-width: 40rem) { .skills .item > .skill-from { margin-inline-start: 2.95rem; } }
 @media (forced-colors: active) { .skill-from { border: 1px solid CanvasText; } }
+.skill-brain { display: grid; gap: 0.3rem; max-inline-size: 20rem; margin-block-end: 1.25rem; }

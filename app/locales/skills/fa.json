@@ -3,6 +3,7 @@
   "skills.invalid": "این فایل یک مهارت نیست.",
   "skills.added": "مهارت «{title}» افزوده شد.",
   "skills.steps": "گام‌ها",
+  "skills.brain": "مغز",
   "skills.confirmDelete": "مهارت «{title}» حذف شود؟",
   "skills.from": "از {source}",
   "skills.elsewhere": "مهارت‌هایی از جاهای دیگر",

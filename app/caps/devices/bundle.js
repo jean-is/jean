@@ -13,7 +13,7 @@ import { DEFAULT_RULES, STRICT } from '../../core/rules.js'
 /** What one device sends another, a field cleared there as null. @typedef {{ fields: Record<string, { value: any, at: number }>, brains: Record<string, { value: any, at: number }>, connections: Record<string, { value: any, at: number }> }} Snapshot */
 
 /** The fields that follow the person, each with the kind of value it holds (core/types.d.ts), which another device's must be. @type {Record<string, string>} */
-const KINDS = { locale: 'string', name: 'string', brains: 'array', activeBrain: 'string', guards: 'array', unlocked: 'array', off: 'array', auto: 'boolean', mix: 'string', steps: 'array', offers: 'object',
+const KINDS = { locale: 'string', name: 'string', brains: 'array', activeBrain: 'string', guards: 'array', unlocked: 'array', off: 'array', auto: 'boolean', mix: 'string', steps: 'array', skillBrains: 'object', offers: 'object',
   memory: 'boolean', connections: 'array', urls: 'object', mapStyles: 'object', sources: 'array', searches: 'array', search: 'boolean', maskWords: 'array', services: 'object', rules: 'object' }
 export const FOLLOWS = /** @type {(keyof Settings)[]} */ (Object.keys(KINDS))
 /**

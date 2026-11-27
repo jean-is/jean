@@ -3,6 +3,7 @@
   "skills.invalid": "Этот файл — не навык.",
   "skills.added": "Навык «{title}» добавлен.",
   "skills.steps": "Шаги",
+  "skills.brain": "Мозг",
   "skills.confirmDelete": "Удалить навык «{title}»?",
   "skills.from": "Источник: {source}",
   "skills.elsewhere": "Навыки из других мест",

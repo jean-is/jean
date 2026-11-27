@@ -3,6 +3,7 @@
   "skills.invalid": "Ce fichier n’est pas une compétence.",
   "skills.added": "Compétence « {title} » ajoutée.",
   "skills.steps": "Étapes",
+  "skills.brain": "Cerveau",
   "skills.confirmDelete": "Supprimer la compétence « {title} » ?",
   "skills.from": "De {source}",
   "skills.elsewhere": "Compétences d’ailleurs",

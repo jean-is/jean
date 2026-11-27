@@ -3,6 +3,7 @@
   "skills.invalid": "ไฟล์นี้ไม่ใช่ทักษะ",
   "skills.added": "เพิ่มทักษะ “{title}” แล้ว",
   "skills.steps": "ขั้นตอน",
+  "skills.brain": "สมอง",
   "skills.confirmDelete": "ลบทักษะ “{title}” ไหม",
   "skills.from": "จาก {source}",
   "skills.elsewhere": "ทักษะจากที่อื่น",

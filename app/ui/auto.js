@@ -69,6 +69,18 @@ export function stepsOf({ brains, preferred, steps = [], tiers = TIERS, has = ()
   })
 }
 
+/**
+ * The skill among these a task started with (D773), named with / in its first message: the first that message named, read from
+ * the note it came with once sent, else from the words about to be.
+ * @param {string} text @param {import('../core/types.js').Envelope[]} records @param {string[]} names
+ */
+export function startedWith(text, records, names) {
+  const first = records.findIndex(({ update }) => update?.sessionUpdate === 'user_message_chunk')
+  if (first >= 0) return records.slice(0, first).flatMap(({ update }) => (update?.sessionUpdate === '_system_note' && update.data.kind === 'mentions' ? update.data.skills : [])).find((name) => names.includes(name))
+  const at = (/** @type {string} */ name) => text.search(new RegExp(`(?:^|\\s)/${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\\p{L}\\p{N}_-])`, 'iu'))
+  return names.filter((name) => at(name) >= 0).sort((a, b) => at(a) - at(b))[0]
+}
+
 /** How much a brain thinks, from least to most (D414). @type {readonly Effort[]} */
 export const EFFORTS = ['low', 'medium', 'high']
 
