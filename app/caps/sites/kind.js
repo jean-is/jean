@@ -270,6 +270,7 @@ export function folderKind(kind) {
   const changeTool = {
     spec: kind.specs.change, kind: 'edit', ...(kind.for && { for: kind.for }),
     title: (args) => `Change the ${noun} ${args?.[noun] ?? ''}`,
+    locations: (args) => [{ path: String(args?.[noun] ?? '') }],
     run: async (args, ctx) => {
       const one = await load(String(args?.[noun] ?? ''))
       if (!one) throw new Error(`There is no ${noun} at ${args?.[noun]}.`)

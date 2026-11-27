@@ -95,6 +95,7 @@ const gameTool = {
 const changeTool = {
   spec: CHANGE, kind: 'edit',
   title: (args) => `Change the game ${args?.game ?? ''}`,
+  locations: (args) => [{ path: String(args?.game ?? '') }],
   run: async (args, ctx) => {
     const one = await load(String(args?.game ?? ''))
     if (!one) throw new Error(`There is no game at ${args?.game}.`)

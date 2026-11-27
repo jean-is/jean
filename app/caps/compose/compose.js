@@ -16,6 +16,7 @@ import { register, isDenied, contributions, unlock } from '../../ui/caps.js'
 import { app, openFile, openConversation, notify, activeBrain, brainsHere } from '../../ui/state.js'
 import { markdown, declared, drawn as drawers } from '../../ui/markdown.js'
 import { held } from '../../ui/held.js'
+import { nameAt } from '../../ui/creations.js'
 import { opened } from '../../ui/dock.js'
 import { fire } from '../../core/hooks.js'
 import { isLocal, parseFrontMatter, stringifyFrontMatter } from '../../core/settings.js'
@@ -517,7 +518,7 @@ const linksTool = {
   spec: { name: 'creation_links', description: 'What uses a creation of the project and what it uses: the slides, documents, sites and prototypes that show a collection, the collections that relate to it, the sites whose form proposes rows to it, the files a creation holds, each with the version it reads and its recipe, then what is reached through them; with no place, every creation of the project that uses another, and what shows nothing. Read it before changing the columns of a collection others show, to bring up to date what shows it, or to tell how the project’s creations link.',
     parameters: { type: 'object', properties: { place: { type: 'string', description: 'Its place: collections/…, decks/….deck.html, documents/….md, sites/…; none for the whole project' } } } },
   kind: 'read',
-  title: (args) => (args?.place ? t('compose.linking', { name: String(args.place) }) : t('compose.linkingAll')),
+  title: (args) => (args?.place ? t('compose.linking', { name: nameAt(String(args.place)) ?? String(args.place) }) : t('compose.linkingAll')),
   run: async (args) => {
     const place = String(args?.place ?? '').trim().replace(/^(\.\.?\/)+/, ''), { edges, names } = await graph(), named = (/** @type {string} */ one) => `${names.get(one) ?? one} (${one})`
     const said = (/** @type {Edge} */ edge, /** @type {string} */ other) => [named(other), ...(edge.kind === 'relation' ? [`by its column ${edge.recipe.relation}`] : edge.kind === 'form' ? [`proposing rows to it through its form ${edge.recipe.form}`] : edge.kind ? [] : [`reading ${edge.at === 'live' ? 'it as it is now' : edge.at === 'published' ? 'its published version' : `its version ${edge.at}`}`, ...Object.entries(edge.recipe).map(([what, value]) => `${what}: ${value}`)]),

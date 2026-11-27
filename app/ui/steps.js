@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
 // What a stretch of work (ui/chat.js) opens on: its lines, in the order it happened, and what each name on them opens on:
 // what the brain thought and wrote that time, or what a call was given and what came back, and whose rule decided it
-// (D299). Loaded with the first stretch, not upfront, with its own style sheet.
+// (D299); and what a call says it does, which the stretch's line and an approval say too. Loaded with the first stretch,
+// not upfront, with its own style sheet.
 import { html, svg, nothing } from 'lit-html'
 import { repeat } from 'lit-html/directives/repeat.js'
 import { signal } from '@preact/signals-core'
@@ -12,7 +13,8 @@ import { markdown } from './markdown.js'
 import { styleSheet } from './sheet.js'
 import { icon, icons } from './menu-icons.js'
 import { counts } from './kinds.js'
-import { toolLabel, brainName } from './chat.js'
+import { brainName } from './chat.js'
+import { nameAt } from './creations.js'
 
 /** @import { Step } from '../core/events.js' */
 /** @import { ToolCallInfo, ResourceLink } from '../core/types.js' */
@@ -87,8 +89,34 @@ const kindOf = (entry) => (entry.name === 'write' ? 'tool.write' : entry.name &&
 /** What a call worked on, as the conversation knows it: a file's name, or what was searched for ('' for none). @param {ToolCallInfo} entry @param {ResourceLink[]} files */
 function nameOf(entry, files) {
   if (entry.name === 'web_search' || entry.name === 'write') return String((entry.name === 'write' ? entry.rawInput?.name : entry.rawInput?.query) ?? '')
-  const path = kindOf(entry) ? entry.locations?.[0]?.path ?? '' : ''
-  return files.findLast((file) => file.uri === path)?.name ?? path.split('/').at(-1) ?? path
+  return kindOf(entry) ? named(entry.locations?.[0]?.path ?? '', files) : ''
+}
+
+/**
+ * A place a call worked on, by name: a file shared in the conversation, the project's creation there (a document, a collection…), never its
+ * place, which holds its id; else the file's own name. @param {string} path @param {ResourceLink[]} files
+ */
+const named = (path, files) => files.findLast((file) => file.uri === path)?.name ?? nameAt(path) ?? path.split('/').at(-1) ?? path
+
+/**
+ * Plain-language label in the current language: from the kind and the file it touched, or
+ * from the tool's name; the brain's own title is the last resort.
+ * @param {ToolCallInfo} tool @param {ResourceLink[]} [files]
+ */
+export function toolLabel(tool, files = []) {
+  if (tool.name === 'helper') return tool.rawInput?.title ?? tool.title
+  if (tool.name === 'write') return t('tool.write', { name: tool.rawInput?.name ?? '' })
+  const path = tool.locations?.[0]?.path, target = path && named(path, files)
+  if (target) return t(`kind.${tool.kind ?? 'other'}.doing`, { target })
+  if (tool.name === 'offer') return t('tool.offer', { name: t(`cap.${String(tool.rawInput?.capability)}.name`) })
+  if (tool.name === 'meet') return t('tool.meet', { names: new Intl.ListFormat(intlLocales()).format(tool._meta?.names ?? []) })
+  if (tool.name === 'web_search') return `${t('tool.web_search')} · ${tool.rawInput?.query ?? ''}`
+  if (tool.name === 'ask_user') {
+    const asked = Array.isArray(tool.rawInput?.questions) ? tool.rawInput.questions : []
+    return `${t('tool.ask_user', { count: asked.length })} · ${asked[0]?.question ?? ''}`
+  }
+  const key = `tool.${String(tool.name)}`
+  return t(key) === key ? tool.title : t(key)
 }
 
 /**

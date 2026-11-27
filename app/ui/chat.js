@@ -314,7 +314,7 @@ function sourcesView(cited) {
   </details>`
 }
 
-/** ui/steps.js: a stretch's lines, glyphs and counts, loaded with the first stretch; when each stretch under way was first drawn. */
+/** ui/steps.js: a stretch's lines, glyphs, counts and what each call says it does, loaded with the first stretch; when each stretch under way was first drawn. */
 const drawn = signal(/** @type {typeof import('./steps.js') | null} */ (null)), began = new Map(), second = signal(0)
 // A second at a time while one is drawn, stopping once none was since the last.
 let ticking = 0, under = false
@@ -370,7 +370,7 @@ function stretch({ work, ms }, { last, said, entries, files, doing, steered, str
     const since = Date.now() - began.get(key)
     // The call it is on, drawn afresh as the next begins.
     line = html`${waiting ? t('inbox.waiting', { count: waiting }) : brain?._meta?.retrying ? t('activity.retrying')
-      : now ? repeat([now], (one) => one.toolCallId, (one) => html`<span class="stretch-now">${module?.glyphOf(one)}<span dir="auto">${toolLabel(one, files)}</span>${running.length > 1 ? html`<span class="muted">+${new Intl.NumberFormat(intlLocales()).format(running.length - 1)}</span>` : nothing}</span>`)
+      : now ? repeat([now], (one) => one.toolCallId, (one) => html`<span class="stretch-now">${module?.glyphOf(one)}<span dir="auto">${module?.toolLabel(one, files)}</span>${running.length > 1 ? html`<span class="muted">+${new Intl.NumberFormat(intlLocales()).format(running.length - 1)}</span>` : nothing}</span>`)
       : doing ?? t('activity.thinking')}${since >= 1000 ? html`<span class="muted"> · ${formatDuration(Math.floor(since / 1000) * 1000)}</span>` : nothing}`
     if (!now && brain?.status === 'in_progress' && step?.thought && !step.text) glimpse = step.thought.slice(-300)
   } else {
@@ -381,7 +381,7 @@ function stretch({ work, ms }, { last, said, entries, files, doing, steered, str
     const time = ms >= 1 ? formatDuration(ms) : '', thought = brains.some((one) => said.get(one.toolCallId)?.thought)
     line = failed ? t('activity.failed') : unfinished ? t('activity.unfinished')
       // A turn that was one call, with no brain asked (a flow run, D218): what that call did.
-      : !last ? toolLabel(calls.at(-1) ?? /** @type {ToolCallInfo} */ ({ toolCallId: '', title: '' }), files)
+      : !last ? module?.toolLabel(calls.at(-1) ?? /** @type {ToolCallInfo} */ ({ toolCallId: '', title: '' }), files)
       // Without its time (a file kept before it was), the brain asked.
       : html`${time && calls.length ? t('activity.workedFor', { time }) : time && thought ? t('activity.thoughtFor', { time })
         : t(end ? 'activity.answeredWith' : 'activity.brain', { brain: brainName(brain ?? last) })}${calls.length ? module?.tally(work) : nothing}`
@@ -421,28 +421,6 @@ export function brainName(entry) {
 }
 
 /**
- * Plain-language label in the current language: from the kind and the file it touched, or
- * from the tool's name; the brain's own title is the last resort.
- * @param {ToolCallInfo} tool @param {ResourceLink[]} [files]
- */
-export function toolLabel(tool, files = []) {
-  if (tool.name === 'helper') return tool.rawInput?.title ?? tool.title
-  if (tool.name === 'write') return t('tool.write', { name: tool.rawInput?.name ?? '' })
-  const path = tool.locations?.[0]?.path
-  const target = path && (files.findLast((file) => file.uri === path)?.name ?? path.split('/').at(-1))
-  if (target) return t(`kind.${tool.kind ?? 'other'}.doing`, { target })
-  if (tool.name === 'offer') return t('tool.offer', { name: t(`cap.${String(tool.rawInput?.capability)}.name`) })
-  if (tool.name === 'meet') return t('tool.meet', { names: new Intl.ListFormat(intlLocales()).format(tool._meta?.names ?? []) })
-  if (tool.name === 'web_search') return `${t('tool.web_search')} · ${tool.rawInput?.query ?? ''}`
-  if (tool.name === 'ask_user') {
-    const asked = Array.isArray(tool.rawInput?.questions) ? tool.rawInput.questions : []
-    return `${t('tool.ask_user', { count: asked.length })} · ${asked[0]?.question ?? ''}`
-  }
-  const key = `tool.${String(tool.name)}`
-  return t(key) === key ? tool.title : t(key)
-}
-
-/**
  * @param {Extract<import('./state.js').Decision, { toolCall: any }>} decision
  * @param {string | undefined} helper @param {ResourceLink[]} files
  */
@@ -454,7 +432,7 @@ function approval({ toolCall, task, resolve }, helper, files) {
   return html`<div class="approval" role="group" aria-label=${t('approval.title')}>
     ${asking(helper)}
     ${toolCall._meta?.why ? html`<p class="muted small" dir="auto">${toolCall._meta.why}</p>` : nothing}
-    <p>${t('approval.question', { action: toolLabel(toolCall, files) })}</p>
+    <p>${t('approval.question', { action: drawn.value?.toolLabel(toolCall, files) ?? toolCall.title })}</p>
     <div class="approval-actions">
       <button class="button primary" @click=${() => resolve('allow_once')}>${t('approval.allowOnce')}</button>
       ${task ? html`<button class="button" @click=${() => resolve('allow_task')}>${t('approval.allowTask')}</button>` : nothing}

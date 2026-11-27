@@ -205,6 +205,7 @@ const changeTool = {
   spec: CHANGE,
   kind: 'edit',
   title: (args) => `Change ${args?.design ?? ''}`,
+  locations: (args) => [{ path: String(args?.design ?? '') }],
   run: async (args, ctx) => {
     const one = await named(args?.design)
     if (!here(ctx)) return 'The user is in another task: change the design once they are back in this one.'

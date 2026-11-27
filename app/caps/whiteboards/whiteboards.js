@@ -143,6 +143,7 @@ const changeTool = {
   kind: 'edit',
   for: tables.passes,
   title: (args) => `Change ${args?.whiteboard ?? ''}`,
+  locations: (args) => [{ path: String(args?.whiteboard ?? '') }],
   run: async (args, ctx) => {
     refuse(ctx)
     const one = await named(args?.whiteboard), laid = layout(one.rows)

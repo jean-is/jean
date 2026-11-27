@@ -204,6 +204,7 @@ const suggestTool = {
   },
   kind: 'edit',
   title: (args) => `Suggest changes to ${args?.document ?? ''}`,
+  locations: (args) => [{ path: String(args?.document ?? '') }],
   run: async (args, ctx) => {
     const path = String(args?.document ?? '')
     if (!/^documents\/[^/]+\.md$/.test(path) || (!open.has(path) && !(await app.fs.exists(`${app.projectDir}/${path}`)))) throw new Error(`There is no document ${path}: make one with document.`)

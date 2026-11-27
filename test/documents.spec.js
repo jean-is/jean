@@ -476,6 +476,8 @@ test.describe('found and used by the brain', () => {
     await answered(page)
     await opened()
     await expect(page.locator('.msg-jean .prose').last()).toContainText('Application is open beside the conversation now, unchanged. It reads:')
+    // Its step names it, as the creations have it, never by its place and the id in it.
+    await expect(page.locator('.activity-list').last().locator('.line-words')).toHaveText('Edit Application')
     await expect(page.locator('#doc .suggest')).toHaveCount(0)
     await ask(page, change)
     await answered(page, 2)

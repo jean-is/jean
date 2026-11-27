@@ -537,6 +537,7 @@ const rowsTool = {
   spec: TABLE_ROWS,
   kind: 'read',
   title: (args) => `Read ${args?.table ?? ''}`,
+  locations: (args) => [{ path: String(args?.table ?? '') }],
   // A read leaves the screen and its address as they are: nothing opens beside the task (D657).
   run: async (args, ctx) => {
     const one = await named(args?.table)
@@ -556,6 +557,7 @@ const changeTool = {
   kind: 'edit',
   for: passes,
   title: (args) => `Change ${args?.table ?? ''}`,
+  locations: (args) => [{ path: String(args?.table ?? '') }],
   run: async (args, ctx) => {
     refuse(ctx)
     const one = await named(args?.table)
