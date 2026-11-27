@@ -84,5 +84,18 @@
   "documents.tomorrow": "Esok",
   "documents.date": "Tarikh",
   "documents.doIt": "Minta {name} melakukannya",
-  "documents.asked": "Dalam “{document}”, lakukan ini, kemudian tandakannya jika ia tugasan: {task}"
+  "documents.asked": "Dalam “{document}”, lakukan ini, kemudian tandakannya jika ia tugasan: {task}",
+  "documents.columnGrip": "Lajur {n}",
+  "documents.rowGrip": "Baris {n}",
+  "documents.insertAbove": "Sisip di atas",
+  "documents.deleteRow": "Padam baris",
+  "documents.deleteColumn": "Padam lajur",
+  "documents.rowMenu": "Baris",
+  "documents.columnMenu": "Lajur",
+  "documents.tableMenu": "Baris dan lajur",
+  "documents.insertStart": "Sisip di kiri",
+  "documents.insertEnd": "Sisip di kanan",
+  "documents.moveStart": "Alih ke kiri",
+  "documents.moveEnd": "Alih ke kanan",
+  "documents.insertBelow": "Sisip di bawah"
 }

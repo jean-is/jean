@@ -84,5 +84,18 @@
   "documents.tomorrow": "明天",
   "documents.date": "日期",
   "documents.doIt": "讓 {name} 來做",
-  "documents.asked": "在「{document}」中完成這件事，如果是待辦事項就勾選它：{task}"
+  "documents.asked": "在「{document}」中完成這件事，如果是待辦事項就勾選它：{task}",
+  "documents.columnGrip": "第 {n} 欄",
+  "documents.rowGrip": "第 {n} 列",
+  "documents.insertAbove": "在上方插入",
+  "documents.deleteRow": "刪除列",
+  "documents.deleteColumn": "刪除欄",
+  "documents.rowMenu": "列",
+  "documents.columnMenu": "欄",
+  "documents.tableMenu": "列與欄",
+  "documents.insertStart": "在左側插入",
+  "documents.insertEnd": "在右側插入",
+  "documents.moveStart": "左移",
+  "documents.moveEnd": "右移",
+  "documents.insertBelow": "在下方插入"
 }

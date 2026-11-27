@@ -86,5 +86,18 @@
   "documents.tomorrow": "કાલે",
   "documents.date": "તારીખ",
   "documents.doIt": "{name}ને આ કરવા કહો",
-  "documents.asked": "“{document}”માં આ કરો, પછી જો તે કાર્ય હોય તો ટિક કરો: {task}"
+  "documents.asked": "“{document}”માં આ કરો, પછી જો તે કાર્ય હોય તો ટિક કરો: {task}",
+  "documents.columnGrip": "કૉલમ {n}",
+  "documents.rowGrip": "હરોળ {n}",
+  "documents.insertAbove": "ઉપર ઉમેરો",
+  "documents.deleteRow": "હરોળ કાઢી નાખો",
+  "documents.deleteColumn": "કૉલમ કાઢી નાખો",
+  "documents.rowMenu": "હરોળ",
+  "documents.columnMenu": "કૉલમ",
+  "documents.tableMenu": "હરોળ અને કૉલમ",
+  "documents.insertStart": "ડાબે ઉમેરો",
+  "documents.insertEnd": "જમણે ઉમેરો",
+  "documents.moveStart": "ડાબે ખસેડો",
+  "documents.moveEnd": "જમણે ખસેડો",
+  "documents.insertBelow": "નીચે ઉમેરો"
 }

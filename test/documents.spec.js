@@ -1373,6 +1373,44 @@ test.describe('the slash menu', () => {
     })
   }
 
+  test('a table’s column or row is picked by its grip and changed from its menu, as a collection’s; ⌘⌥ and an arrow move it, Shift+F10 opens a menu for both', async ({ page }) => {
+    await start(page, { markdown: '| A | B |\n| --- | --- |\n| 1 | 2 |\n| 3 | 4 |\n' })
+    const grips = page.locator('#doc .grid-grip'), item = (/** @type {string} */ name) => page.getByRole('menuitem', { name, exact: true })
+    await expect(grips).toHaveCount(0)
+    await caretAt(page, '1', 1)
+    await expect(page.locator('#doc .grid-grip.is-column')).toHaveCount(2)
+    await expect(page.locator('#doc .grid-grip.is-row')).toHaveCount(3)
+    // A column's grip: its menu puts one before or after it, moves it or deletes it; the first can't move to the start.
+    await page.getByRole('button', { name: 'Column 2' }).click()
+    await expect(page.getByRole('menu', { name: 'Column' })).toBeVisible()
+    await expect(item('Move right')).toBeDisabled()
+    await item('Move left').click()
+    await expect.poll(() => markdownOf(page)).toBe('| B | A |\n| --- | --- |\n| 2 | 1 |\n| 4 | 3 |\n')
+    await page.getByRole('button', { name: 'Column 1' }).click()
+    await item('Insert right').click()
+    await page.getByRole('button', { name: 'Column 3' }).click()
+    await item('Delete column').click()
+    await expect.poll(() => markdownOf(page)).toBe('| B |  |\n| --- | --- |\n| 2 |  |\n| 4 |  |\n')
+    // A row's grip, the same for rows, the keyboard going through its menu.
+    await page.getByRole('button', { name: 'Row 3' }).click()
+    await expect(page.getByRole('menu', { name: 'Row' })).toBeVisible()
+    await page.keyboard.press('ArrowDown')
+    await page.keyboard.press('ArrowDown')
+    await expect(item('Move up')).toBeFocused()
+    await page.keyboard.press('Enter')
+    await expect.poll(() => markdownOf(page)).toBe('| B |  |\n| --- | --- |\n| 4 |  |\n| 2 |  |\n')
+    // ⌘⌥ and an arrow move the row the caret is in; Shift+F10 opens the menu for its row and its column, Escape closing it.
+    await caretAt(page, '4', 1)
+    await page.keyboard.press('ControlOrMeta+Alt+ArrowDown')
+    await expect.poll(() => markdownOf(page)).toBe('| B |  |\n| --- | --- |\n| 2 |  |\n| 4 |  |\n')
+    await page.keyboard.press('Shift+F10')
+    const both = page.getByRole('menu', { name: 'Rows and columns' })
+    await expect(both.getByRole('menuitem')).toHaveCount(10)
+    await page.keyboard.press('Escape')
+    await expect(both).toBeHidden()
+    expect(await problems(page)).toEqual([])
+  })
+
   test('a fence and its language alone on a new line, then Enter, make a code block, as a space after them does', async ({ page }) => {
     await start(page, { markdown: 'First.\n' })
     await caretAt(page, 'First.', 6)

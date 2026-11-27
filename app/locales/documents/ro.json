@@ -88,5 +88,18 @@
   "documents.tomorrow": "Mâine",
   "documents.date": "Dată",
   "documents.doIt": "Cere-i lui {name} să facă asta",
-  "documents.asked": "În „{document}”, fă asta, apoi bifează dacă e o sarcină: {task}"
+  "documents.asked": "În „{document}”, fă asta, apoi bifează dacă e o sarcină: {task}",
+  "documents.columnGrip": "Coloana {n}",
+  "documents.rowGrip": "Rândul {n}",
+  "documents.insertAbove": "Inserează deasupra",
+  "documents.deleteRow": "Șterge rândul",
+  "documents.deleteColumn": "Șterge coloana",
+  "documents.rowMenu": "Rând",
+  "documents.columnMenu": "Coloană",
+  "documents.tableMenu": "Rânduri și coloane",
+  "documents.insertStart": "Inserați la stânga",
+  "documents.insertEnd": "Inserați la dreapta",
+  "documents.moveStart": "Mutați la stânga",
+  "documents.moveEnd": "Mutați la dreapta",
+  "documents.insertBelow": "Inserați dedesubt"
 }

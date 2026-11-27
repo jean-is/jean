@@ -86,5 +86,18 @@
   "documents.tomorrow": "ਕੱਲ੍ਹ",
   "documents.date": "ਤਾਰੀਖ਼",
   "documents.doIt": "{name} ਨੂੰ ਇਹ ਕਰਨ ਲਈ ਕਹੋ",
-  "documents.asked": "“{document}” ਵਿੱਚ ਇਹ ਕਰੋ, ਫਿਰ ਜੇ ਇਹ ਕੰਮ ਹੈ ਤਾਂ ਟਿੱਕ ਕਰੋ: {task}"
+  "documents.asked": "“{document}” ਵਿੱਚ ਇਹ ਕਰੋ, ਫਿਰ ਜੇ ਇਹ ਕੰਮ ਹੈ ਤਾਂ ਟਿੱਕ ਕਰੋ: {task}",
+  "documents.columnGrip": "ਕਾਲਮ {n}",
+  "documents.rowGrip": "ਕਤਾਰ {n}",
+  "documents.insertAbove": "ਉੱਪਰ ਪਾਓ",
+  "documents.deleteRow": "ਕਤਾਰ ਮਿਟਾਓ",
+  "documents.deleteColumn": "ਕਾਲਮ ਮਿਟਾਓ",
+  "documents.rowMenu": "ਕਤਾਰ",
+  "documents.columnMenu": "ਕਾਲਮ",
+  "documents.tableMenu": "ਕਤਾਰਾਂ ਅਤੇ ਕਾਲਮ",
+  "documents.insertStart": "ਖੱਬੇ ਜੋੜੋ",
+  "documents.insertEnd": "ਸੱਜੇ ਜੋੜੋ",
+  "documents.moveStart": "ਖੱਬੇ ਲਿਜਾਓ",
+  "documents.moveEnd": "ਸੱਜੇ ਲਿਜਾਓ",
+  "documents.insertBelow": "ਹੇਠਾਂ ਜੋੜੋ"
 }

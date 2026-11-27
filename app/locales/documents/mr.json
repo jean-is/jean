@@ -86,5 +86,18 @@
   "documents.tomorrow": "उद्या",
   "documents.date": "तारीख",
   "documents.doIt": "{name} ला हे करायला सांगा",
-  "documents.asked": "“{document}” मध्ये हे करा, मग ते काम असल्यास त्यावर खूण करा: {task}"
+  "documents.asked": "“{document}” मध्ये हे करा, मग ते काम असल्यास त्यावर खूण करा: {task}",
+  "documents.columnGrip": "स्तंभ {n}",
+  "documents.rowGrip": "ओळ {n}",
+  "documents.insertAbove": "वर घाला",
+  "documents.deleteRow": "ओळ हटवा",
+  "documents.deleteColumn": "स्तंभ हटवा",
+  "documents.rowMenu": "ओळ",
+  "documents.columnMenu": "स्तंभ",
+  "documents.tableMenu": "ओळी आणि स्तंभ",
+  "documents.insertStart": "डावीकडे घाला",
+  "documents.insertEnd": "उजवीकडे घाला",
+  "documents.moveStart": "डावीकडे हलवा",
+  "documents.moveEnd": "उजवीकडे हलवा",
+  "documents.insertBelow": "खाली घाला"
 }

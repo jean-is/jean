@@ -86,5 +86,18 @@
   "documents.tomorrow": "Tomorrow",
   "documents.date": "Date",
   "documents.doIt": "Ask {name} to do it",
-  "documents.asked": "In “{document}”, do this, then tick it if it is a task: {task}"
+  "documents.asked": "In “{document}”, do this, then tick it if it is a task: {task}",
+  "documents.columnGrip": "Column {n}",
+  "documents.rowGrip": "Row {n}",
+  "documents.insertAbove": "Insert above",
+  "documents.deleteRow": "Delete row",
+  "documents.deleteColumn": "Delete column",
+  "documents.rowMenu": "Row",
+  "documents.columnMenu": "Column",
+  "documents.tableMenu": "Rows and columns",
+  "documents.insertStart": "Insert left",
+  "documents.insertEnd": "Insert right",
+  "documents.moveStart": "Move left",
+  "documents.moveEnd": "Move right",
+  "documents.insertBelow": "Insert below"
 }

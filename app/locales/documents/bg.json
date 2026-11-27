@@ -86,5 +86,18 @@
   "documents.tomorrow": "Утре",
   "documents.date": "Дата",
   "documents.doIt": "Помолете {name} да го свърши",
-  "documents.asked": "В „{document}“ свърши това, после го отметни, ако е задача: {task}"
+  "documents.asked": "В „{document}“ свърши това, после го отметни, ако е задача: {task}",
+  "documents.columnGrip": "Колона {n}",
+  "documents.rowGrip": "Ред {n}",
+  "documents.insertAbove": "Вмъкване отгоре",
+  "documents.deleteRow": "Изтриване на реда",
+  "documents.deleteColumn": "Изтриване на колоната",
+  "documents.rowMenu": "Ред",
+  "documents.columnMenu": "Колона",
+  "documents.tableMenu": "Редове и колони",
+  "documents.insertStart": "Вмъкни отляво",
+  "documents.insertEnd": "Вмъкни отдясно",
+  "documents.moveStart": "Премести наляво",
+  "documents.moveEnd": "Премести надясно",
+  "documents.insertBelow": "Вмъкни отдолу"
 }

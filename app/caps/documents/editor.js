@@ -27,6 +27,7 @@ import { suggestions, suggest, accept, reject, pending, proposal, suggestionKey 
 import { merge3 } from '../../ui/merge.js'
 import { slashMenu, slashKey } from './slash.js'
 import { mentions } from './mentions.js'
+import { grid } from './grid.js'
 import { bookmarks, askKey } from './bookmark.js'
 import { bubble } from './bubble.js'
 import { blocks } from './blocks.js'
@@ -454,7 +455,7 @@ export function create(box, { name, path, markdown: text, pictures, write, keep,
     // First, so that its Enter, Tab and arrows come before the keymaps' while it is open.
     slashMenu({ items: () => [...widgets(), ...collections()], label: t, announce }),
     slashMenu({ items: creations, label: t, announce, key: refKey, trigger: /[[［]{2}([^\]］\n]{0,32})$/, id: 'refs', name: () => translate('creations.title') }),
-    said.plugin, keymap({ Enter: said.change }),
+    said.plugin, keymap({ Enter: said.change }), grid({ label: t }),
     bookmarks({ href: linkHref, label: t, announce }),
     bubble({ formats: FORMATS, link: M.link, href: linkHref, label: t, mac: MAC, tabbable: (state) => !itemDepth(state.selection) && !isInTable(state), wrong: (said) => notify(said, { alert: true }) }),
     blocks({ label: t, announce, mac: MAC, kinds: TURNS, adds: () => widgets().filter((item) => !TURNS.includes(item)) }),

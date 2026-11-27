@@ -88,5 +88,18 @@
   "documents.tomorrow": "Cras",
   "documents.date": "Dies",
   "documents.doIt": "Roga {name} ut id faciat",
-  "documents.asked": "In «{document}» hoc fac, deinde nota id, si munus est: {task}"
+  "documents.asked": "In «{document}» hoc fac, deinde nota id, si munus est: {task}",
+  "documents.columnGrip": "Columna {n}",
+  "documents.rowGrip": "Ordo {n}",
+  "documents.insertAbove": "Supra insere",
+  "documents.deleteRow": "Ordinem dele",
+  "documents.deleteColumn": "Columnam dele",
+  "documents.rowMenu": "Ordo",
+  "documents.columnMenu": "Columna",
+  "documents.tableMenu": "Ordines et columnae",
+  "documents.insertStart": "Insere ad sinistram",
+  "documents.insertEnd": "Insere ad dextram",
+  "documents.moveStart": "Move ad sinistram",
+  "documents.moveEnd": "Move ad dextram",
+  "documents.insertBelow": "Infra insere"
 }

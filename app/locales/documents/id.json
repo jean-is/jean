@@ -84,5 +84,18 @@
   "documents.tomorrow": "Besok",
   "documents.date": "Tanggal",
   "documents.doIt": "Minta {name} mengerjakannya",
-  "documents.asked": "Di “{document}”, kerjakan ini, lalu centang jika ini tugas: {task}"
+  "documents.asked": "Di “{document}”, kerjakan ini, lalu centang jika ini tugas: {task}",
+  "documents.columnGrip": "Kolom {n}",
+  "documents.rowGrip": "Baris {n}",
+  "documents.insertAbove": "Sisipkan di atas",
+  "documents.deleteRow": "Hapus baris",
+  "documents.deleteColumn": "Hapus kolom",
+  "documents.rowMenu": "Baris",
+  "documents.columnMenu": "Kolom",
+  "documents.tableMenu": "Baris dan kolom",
+  "documents.insertStart": "Sisipkan di kiri",
+  "documents.insertEnd": "Sisipkan di kanan",
+  "documents.moveStart": "Pindahkan ke kiri",
+  "documents.moveEnd": "Pindahkan ke kanan",
+  "documents.insertBelow": "Sisipkan di bawah"
 }

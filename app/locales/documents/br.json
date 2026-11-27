@@ -92,5 +92,18 @@
   "documents.tomorrow": "Warc’hoazh",
   "documents.date": "Deiziad",
   "documents.doIt": "Goulenn digant {name} ober se",
-  "documents.asked": "E « {document} », gra an dra-se, ha merk anezhañ goude ma’z eo un dever : {task}"
+  "documents.asked": "E « {document} », gra an dra-se, ha merk anezhañ goude ma’z eo un dever : {task}",
+  "documents.columnGrip": "Bann {n}",
+  "documents.rowGrip": "Linenn {n}",
+  "documents.insertAbove": "Ensoc’hañ a-us",
+  "documents.deleteRow": "Dilemel al linenn",
+  "documents.deleteColumn": "Dilemel ar bann",
+  "documents.rowMenu": "Linenn",
+  "documents.columnMenu": "Bann",
+  "documents.tableMenu": "Linennoù ha bannoù",
+  "documents.insertStart": "Ensoc’hañ a-gleiz",
+  "documents.insertEnd": "Ensoc’hañ a-zehou",
+  "documents.moveStart": "Dilec’hiañ a-gleiz",
+  "documents.moveEnd": "Dilec’hiañ a-zehou",
+  "documents.insertBelow": "Ensoc’hañ dindan"
 }

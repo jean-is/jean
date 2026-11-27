@@ -90,5 +90,18 @@
   "documents.tomorrow": "Завтра",
   "documents.date": "Дата",
   "documents.doIt": "Попросить: {name}",
-  "documents.asked": "В «{document}» сделай это, а потом отметь, если это задача: {task}"
+  "documents.asked": "В «{document}» сделай это, а потом отметь, если это задача: {task}",
+  "documents.columnGrip": "Столбец {n}",
+  "documents.rowGrip": "Строка {n}",
+  "documents.insertAbove": "Вставить выше",
+  "documents.deleteRow": "Удалить строку",
+  "documents.deleteColumn": "Удалить столбец",
+  "documents.rowMenu": "Строка",
+  "documents.columnMenu": "Столбец",
+  "documents.tableMenu": "Строки и столбцы",
+  "documents.insertStart": "Вставить слева",
+  "documents.insertEnd": "Вставить справа",
+  "documents.moveStart": "Переместить влево",
+  "documents.moveEnd": "Переместить вправо",
+  "documents.insertBelow": "Вставить ниже"
 }

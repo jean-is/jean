@@ -86,5 +86,18 @@
   "documents.tomorrow": "రేపు",
   "documents.date": "తేదీ",
   "documents.doIt": "ఇది చేయమని అడుగు: {name}",
-  "documents.asked": "“{document}”లో ఇది చేయి, అది పని అయితే టిక్ పెట్టు: {task}"
+  "documents.asked": "“{document}”లో ఇది చేయి, అది పని అయితే టిక్ పెట్టు: {task}",
+  "documents.columnGrip": "నిలువు వరుస {n}",
+  "documents.rowGrip": "అడ్డు వరుస {n}",
+  "documents.insertAbove": "పైన చేర్చు",
+  "documents.deleteRow": "అడ్డు వరుసను తొలగించు",
+  "documents.deleteColumn": "నిలువు వరుసను తొలగించు",
+  "documents.rowMenu": "అడ్డు వరుస",
+  "documents.columnMenu": "నిలువు వరుస",
+  "documents.tableMenu": "అడ్డు, నిలువు వరుసలు",
+  "documents.insertStart": "ఎడమవైపు చొప్పించు",
+  "documents.insertEnd": "కుడివైపు చొప్పించు",
+  "documents.moveStart": "ఎడమవైపుకు తరలించు",
+  "documents.moveEnd": "కుడివైపుకు తరలించు",
+  "documents.insertBelow": "కింద చొప్పించు"
 }

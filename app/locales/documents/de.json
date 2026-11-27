@@ -86,5 +86,18 @@
   "documents.tomorrow": "Morgen",
   "documents.date": "Datum",
   "documents.doIt": "{name} bitten, es zu erledigen",
-  "documents.asked": "Erledige in „{document}“ Folgendes und hake es ab, wenn es eine Aufgabe ist: {task}"
+  "documents.asked": "Erledige in „{document}“ Folgendes und hake es ab, wenn es eine Aufgabe ist: {task}",
+  "documents.columnGrip": "Spalte {n}",
+  "documents.rowGrip": "Zeile {n}",
+  "documents.insertAbove": "Darüber einfügen",
+  "documents.deleteRow": "Zeile löschen",
+  "documents.deleteColumn": "Spalte löschen",
+  "documents.rowMenu": "Zeile",
+  "documents.columnMenu": "Spalte",
+  "documents.tableMenu": "Zeilen und Spalten",
+  "documents.insertStart": "Links einfügen",
+  "documents.insertEnd": "Rechts einfügen",
+  "documents.moveStart": "Nach links verschieben",
+  "documents.moveEnd": "Nach rechts verschieben",
+  "documents.insertBelow": "Darunter einfügen"
 }

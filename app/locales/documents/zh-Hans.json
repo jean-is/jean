@@ -84,5 +84,18 @@
   "documents.tomorrow": "明天",
   "documents.date": "日期",
   "documents.doIt": "让 {name} 来做",
-  "documents.asked": "在“{document}”中完成这件事，如果是待办事项就勾选它：{task}"
+  "documents.asked": "在“{document}”中完成这件事，如果是待办事项就勾选它：{task}",
+  "documents.columnGrip": "第 {n} 列",
+  "documents.rowGrip": "第 {n} 行",
+  "documents.insertAbove": "在上方插入",
+  "documents.deleteRow": "删除行",
+  "documents.deleteColumn": "删除列",
+  "documents.rowMenu": "行",
+  "documents.columnMenu": "列",
+  "documents.tableMenu": "行和列",
+  "documents.insertStart": "在左侧插入",
+  "documents.insertEnd": "在右侧插入",
+  "documents.moveStart": "左移",
+  "documents.moveEnd": "右移",
+  "documents.insertBelow": "在下方插入"
 }

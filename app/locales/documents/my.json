@@ -84,5 +84,18 @@
   "documents.tomorrow": "မနက်ဖြန်",
   "documents.date": "ရက်စွဲ",
   "documents.doIt": "{name} ကို လုပ်ခိုင်းရန်",
-  "documents.asked": "“{document}” တွင် ဤအရာကို လုပ်ပါ၊ လုပ်ငန်းဖြစ်လျှင် အမှန်ခြစ်ပါ- {task}"
+  "documents.asked": "“{document}” တွင် ဤအရာကို လုပ်ပါ၊ လုပ်ငန်းဖြစ်လျှင် အမှန်ခြစ်ပါ- {task}",
+  "documents.columnGrip": "ကော်လံ {n}",
+  "documents.rowGrip": "အတန်း {n}",
+  "documents.insertAbove": "အပေါ်တွင် ထည့်ရန်",
+  "documents.deleteRow": "အတန်း ဖျက်ရန်",
+  "documents.deleteColumn": "ကော်လံ ဖျက်ရန်",
+  "documents.rowMenu": "အတန်း",
+  "documents.columnMenu": "ကော်လံ",
+  "documents.tableMenu": "အတန်းများနှင့် ကော်လံများ",
+  "documents.insertStart": "ဘယ်ဘက်တွင် ထည့်",
+  "documents.insertEnd": "ညာဘက်တွင် ထည့်",
+  "documents.moveStart": "ဘယ်သို့ ရွှေ့",
+  "documents.moveEnd": "ညာသို့ ရွှေ့",
+  "documents.insertBelow": "အောက်တွင် ထည့်"
 }

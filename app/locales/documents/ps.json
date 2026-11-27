@@ -86,5 +86,18 @@
   "documents.tomorrow": "سبا",
   "documents.date": "نېټه",
   "documents.doIt": "له {name} وغواړئ چې دا وکړي",
-  "documents.asked": "په «{document}» کې دا وکړه، بیا یې په نښه کړه که دنده وي: {task}"
+  "documents.asked": "په «{document}» کې دا وکړه، بیا یې په نښه کړه که دنده وي: {task}",
+  "documents.columnGrip": "ستن {n}",
+  "documents.rowGrip": "قطار {n}",
+  "documents.insertAbove": "پورته ورزیات کړئ",
+  "documents.deleteRow": "قطار ړنګ کړئ",
+  "documents.deleteColumn": "ستن ړنګه کړئ",
+  "documents.rowMenu": "قطار",
+  "documents.columnMenu": "ستن",
+  "documents.tableMenu": "قطارونه او ستنې",
+  "documents.insertStart": "ښي خوا ته ورننویستل",
+  "documents.insertEnd": "کیڼ خوا ته ورننویستل",
+  "documents.moveStart": "ښي خوا ته وړل",
+  "documents.moveEnd": "کیڼ خوا ته وړل",
+  "documents.insertBelow": "لاندې ورننویستل"
 }

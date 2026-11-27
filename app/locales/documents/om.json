@@ -86,5 +86,18 @@
   "documents.tomorrow": "Boru",
   "documents.date": "Guyyaa",
   "documents.doIt": "{name} akka hojjetu gaafadhu",
-  "documents.asked": "“{document}” keessatti kana hojjedhu, hojii yoo ta’e mallattoo godhi: {task}"
+  "documents.asked": "“{document}” keessatti kana hojjedhu, hojii yoo ta’e mallattoo godhi: {task}",
+  "documents.columnGrip": "Tarree {n}",
+  "documents.rowGrip": "Toora {n}",
+  "documents.insertAbove": "Gubbaa galchi",
+  "documents.deleteRow": "Toora haqi",
+  "documents.deleteColumn": "Tarree haqi",
+  "documents.rowMenu": "Toora",
+  "documents.columnMenu": "Tarree",
+  "documents.tableMenu": "Tooraalee fi tarreewwan",
+  "documents.insertStart": "Bitaatti galchi",
+  "documents.insertEnd": "Mirgatti galchi",
+  "documents.moveStart": "Bitaatti socholchi",
+  "documents.moveEnd": "Mirgatti socholchi",
+  "documents.insertBelow": "Jalatti galchi"
 }

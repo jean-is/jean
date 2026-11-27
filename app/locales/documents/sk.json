@@ -90,5 +90,18 @@
   "documents.tomorrow": "Zajtra",
   "documents.date": "Dátum",
   "documents.doIt": "Požiadať: {name}, nech to urobí",
-  "documents.asked": "V „{document}“ urob toto a potom to odškrtni, ak je to úloha: {task}"
+  "documents.asked": "V „{document}“ urob toto a potom to odškrtni, ak je to úloha: {task}",
+  "documents.columnGrip": "Stĺpec {n}",
+  "documents.rowGrip": "Riadok {n}",
+  "documents.insertAbove": "Vložiť nad",
+  "documents.deleteRow": "Odstrániť riadok",
+  "documents.deleteColumn": "Odstrániť stĺpec",
+  "documents.rowMenu": "Riadok",
+  "documents.columnMenu": "Stĺpec",
+  "documents.tableMenu": "Riadky a stĺpce",
+  "documents.insertStart": "Vložiť vľavo",
+  "documents.insertEnd": "Vložiť vpravo",
+  "documents.moveStart": "Presunúť doľava",
+  "documents.moveEnd": "Presunúť doprava",
+  "documents.insertBelow": "Vložiť pod"
 }

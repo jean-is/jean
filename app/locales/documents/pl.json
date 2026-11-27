@@ -90,5 +90,18 @@
   "documents.tomorrow": "Jutro",
   "documents.date": "Data",
   "documents.doIt": "Poproś o zrobienie tego: {name}",
-  "documents.asked": "W „{document}” zrób to, a potem odhacz, jeśli to zadanie: {task}"
+  "documents.asked": "W „{document}” zrób to, a potem odhacz, jeśli to zadanie: {task}",
+  "documents.columnGrip": "Kolumna {n}",
+  "documents.rowGrip": "Wiersz {n}",
+  "documents.insertAbove": "Wstaw powyżej",
+  "documents.deleteRow": "Usuń wiersz",
+  "documents.deleteColumn": "Usuń kolumnę",
+  "documents.rowMenu": "Wiersz",
+  "documents.columnMenu": "Kolumna",
+  "documents.tableMenu": "Wiersze i kolumny",
+  "documents.insertStart": "Wstaw po lewej",
+  "documents.insertEnd": "Wstaw po prawej",
+  "documents.moveStart": "Przenieś w lewo",
+  "documents.moveEnd": "Przenieś w prawo",
+  "documents.insertBelow": "Wstaw poniżej"
 }

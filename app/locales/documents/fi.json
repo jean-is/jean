@@ -86,5 +86,18 @@
   "documents.tomorrow": "Huomenna",
   "documents.date": "Päivämäärä",
   "documents.doIt": "Pyydä tekemään tämä: {name}",
-  "documents.asked": "Tee tämä tiedostossa ”{document}” ja merkitse se tehdyksi, jos se on tehtävä: {task}"
+  "documents.asked": "Tee tämä tiedostossa ”{document}” ja merkitse se tehdyksi, jos se on tehtävä: {task}",
+  "documents.columnGrip": "Sarake {n}",
+  "documents.rowGrip": "Rivi {n}",
+  "documents.insertAbove": "Lisää yläpuolelle",
+  "documents.deleteRow": "Poista rivi",
+  "documents.deleteColumn": "Poista sarake",
+  "documents.rowMenu": "Rivi",
+  "documents.columnMenu": "Sarake",
+  "documents.tableMenu": "Rivit ja sarakkeet",
+  "documents.insertStart": "Lisää vasemmalle",
+  "documents.insertEnd": "Lisää oikealle",
+  "documents.moveStart": "Siirrä vasemmalle",
+  "documents.moveEnd": "Siirrä oikealle",
+  "documents.insertBelow": "Lisää alle"
 }

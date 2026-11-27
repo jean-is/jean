@@ -86,5 +86,18 @@
   "documents.tomorrow": "Morgen",
   "documents.date": "Datum",
   "documents.doIt": "{name} vragen het te doen",
-  "documents.asked": "Doe in ‘{document}’ het volgende en vink het af als het een taak is: {task}"
+  "documents.asked": "Doe in ‘{document}’ het volgende en vink het af als het een taak is: {task}",
+  "documents.columnGrip": "Kolom {n}",
+  "documents.rowGrip": "Rij {n}",
+  "documents.insertAbove": "Erboven invoegen",
+  "documents.deleteRow": "Rij verwijderen",
+  "documents.deleteColumn": "Kolom verwijderen",
+  "documents.rowMenu": "Rij",
+  "documents.columnMenu": "Kolom",
+  "documents.tableMenu": "Rijen en kolommen",
+  "documents.insertStart": "Links invoegen",
+  "documents.insertEnd": "Rechts invoegen",
+  "documents.moveStart": "Naar links verplaatsen",
+  "documents.moveEnd": "Naar rechts verplaatsen",
+  "documents.insertBelow": "Hieronder invoegen"
 }

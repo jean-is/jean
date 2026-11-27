@@ -86,5 +86,18 @@
   "documents.tomorrow": "Αύριο",
   "documents.date": "Ημερομηνία",
   "documents.doIt": "Ζήτησε από {name} να το κάνει",
-  "documents.asked": "Στο «{document}», κάνε αυτό και μετά τσέκαρέ το αν είναι εργασία: {task}"
+  "documents.asked": "Στο «{document}», κάνε αυτό και μετά τσέκαρέ το αν είναι εργασία: {task}",
+  "documents.columnGrip": "Στήλη {n}",
+  "documents.rowGrip": "Γραμμή {n}",
+  "documents.insertAbove": "Εισαγωγή από πάνω",
+  "documents.deleteRow": "Διαγραφή γραμμής",
+  "documents.deleteColumn": "Διαγραφή στήλης",
+  "documents.rowMenu": "Γραμμή",
+  "documents.columnMenu": "Στήλη",
+  "documents.tableMenu": "Γραμμές και στήλες",
+  "documents.insertStart": "Εισαγωγή αριστερά",
+  "documents.insertEnd": "Εισαγωγή δεξιά",
+  "documents.moveStart": "Μετακίνηση αριστερά",
+  "documents.moveEnd": "Μετακίνηση δεξιά",
+  "documents.insertBelow": "Εισαγωγή από κάτω"
 }

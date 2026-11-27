@@ -88,5 +88,18 @@
   "documents.tomorrow": "Amanhã",
   "documents.date": "Data",
   "documents.doIt": "Pedir a {name} que o faça",
-  "documents.asked": "Em «{document}», faz isto e depois marca-o se for uma tarefa: {task}"
+  "documents.asked": "Em «{document}», faz isto e depois marca-o se for uma tarefa: {task}",
+  "documents.columnGrip": "Coluna {n}",
+  "documents.rowGrip": "Linha {n}",
+  "documents.insertAbove": "Inserir acima",
+  "documents.deleteRow": "Eliminar linha",
+  "documents.deleteColumn": "Eliminar coluna",
+  "documents.rowMenu": "Linha",
+  "documents.columnMenu": "Coluna",
+  "documents.tableMenu": "Linhas e colunas",
+  "documents.insertStart": "Inserir à esquerda",
+  "documents.insertEnd": "Inserir à direita",
+  "documents.moveStart": "Mover para a esquerda",
+  "documents.moveEnd": "Mover para a direita",
+  "documents.insertBelow": "Inserir abaixo"
 }

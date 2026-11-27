@@ -94,5 +94,18 @@
   "documents.tomorrow": "غدًا",
   "documents.date": "تاريخ",
   "documents.doIt": "اطلب من {name} القيام بذلك",
-  "documents.asked": "في «{document}»، نفّذ هذا، ثم ضع عليه علامة إن كان مهمة: {task}"
+  "documents.asked": "في «{document}»، نفّذ هذا، ثم ضع عليه علامة إن كان مهمة: {task}",
+  "documents.columnGrip": "العمود {n}",
+  "documents.rowGrip": "الصف {n}",
+  "documents.insertAbove": "إدراج فوق",
+  "documents.deleteRow": "حذف الصف",
+  "documents.deleteColumn": "حذف العمود",
+  "documents.rowMenu": "الصف",
+  "documents.columnMenu": "العمود",
+  "documents.tableMenu": "الصفوف والأعمدة",
+  "documents.insertStart": "إدراج على اليمين",
+  "documents.insertEnd": "إدراج على اليسار",
+  "documents.moveStart": "نقل إلى اليمين",
+  "documents.moveEnd": "نقل إلى اليسار",
+  "documents.insertBelow": "إدراج أسفل"
 }

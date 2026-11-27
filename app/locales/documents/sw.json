@@ -86,5 +86,18 @@
   "documents.tomorrow": "Kesho",
   "documents.date": "Tarehe",
   "documents.doIt": "Mwombe {name} afanye hivi",
-  "documents.asked": "Katika “{document}”, fanya hivi, kisha kiweke alama kama ni kazi: {task}"
+  "documents.asked": "Katika “{document}”, fanya hivi, kisha kiweke alama kama ni kazi: {task}",
+  "documents.columnGrip": "Safu wima {n}",
+  "documents.rowGrip": "Safu mlalo {n}",
+  "documents.insertAbove": "Weka juu",
+  "documents.deleteRow": "Futa safu mlalo",
+  "documents.deleteColumn": "Futa safu wima",
+  "documents.rowMenu": "Safu mlalo",
+  "documents.columnMenu": "Safu wima",
+  "documents.tableMenu": "Safu mlalo na wima",
+  "documents.insertStart": "Ingiza kushoto",
+  "documents.insertEnd": "Ingiza kulia",
+  "documents.moveStart": "Hamisha kushoto",
+  "documents.moveEnd": "Hamisha kulia",
+  "documents.insertBelow": "Ingiza chini"
 }

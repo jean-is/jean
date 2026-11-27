@@ -86,5 +86,18 @@
   "documents.tomorrow": "Yarın",
   "documents.date": "Tarih",
   "documents.doIt": "Yapması için iste: {name}",
-  "documents.asked": "“{document}” içinde bunu yap, görevse işaretle: {task}"
+  "documents.asked": "“{document}” içinde bunu yap, görevse işaretle: {task}",
+  "documents.columnGrip": "Sütun {n}",
+  "documents.rowGrip": "Satır {n}",
+  "documents.insertAbove": "Üste ekle",
+  "documents.deleteRow": "Satırı sil",
+  "documents.deleteColumn": "Sütunu sil",
+  "documents.rowMenu": "Satır",
+  "documents.columnMenu": "Sütun",
+  "documents.tableMenu": "Satırlar ve sütunlar",
+  "documents.insertStart": "Sola ekle",
+  "documents.insertEnd": "Sağa ekle",
+  "documents.moveStart": "Sola taşı",
+  "documents.moveEnd": "Sağa taşı",
+  "documents.insertBelow": "Alta ekle"
 }

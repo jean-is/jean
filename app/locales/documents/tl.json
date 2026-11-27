@@ -86,5 +86,18 @@
   "documents.tomorrow": "Bukas",
   "documents.date": "Petsa",
   "documents.doIt": "Ipagawa kay {name}",
-  "documents.asked": "Sa “{document}”, gawin ito, saka lagyan ng tsek kung gawain ito: {task}"
+  "documents.asked": "Sa “{document}”, gawin ito, saka lagyan ng tsek kung gawain ito: {task}",
+  "documents.columnGrip": "Column {n}",
+  "documents.rowGrip": "Row {n}",
+  "documents.insertAbove": "Isingit sa itaas",
+  "documents.deleteRow": "Burahin ang row",
+  "documents.deleteColumn": "Burahin ang column",
+  "documents.rowMenu": "Row",
+  "documents.columnMenu": "Column",
+  "documents.tableMenu": "Mga row at column",
+  "documents.insertStart": "Magsingit sa kaliwa",
+  "documents.insertEnd": "Magsingit sa kanan",
+  "documents.moveStart": "Ilipat pakaliwa",
+  "documents.moveEnd": "Ilipat pakanan",
+  "documents.insertBelow": "Magsingit sa ibaba"
 }

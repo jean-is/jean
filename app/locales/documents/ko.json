@@ -84,5 +84,18 @@
   "documents.tomorrow": "내일",
   "documents.date": "날짜",
   "documents.doIt": "{name}에게 맡기기",
-  "documents.asked": "‘{document}’에서 이 일을 하고, 할 일이면 체크해 주세요: {task}"
+  "documents.asked": "‘{document}’에서 이 일을 하고, 할 일이면 체크해 주세요: {task}",
+  "documents.columnGrip": "{n}열",
+  "documents.rowGrip": "{n}행",
+  "documents.insertAbove": "위에 삽입",
+  "documents.deleteRow": "행 삭제",
+  "documents.deleteColumn": "열 삭제",
+  "documents.rowMenu": "행",
+  "documents.columnMenu": "열",
+  "documents.tableMenu": "행과 열",
+  "documents.insertStart": "왼쪽에 삽입",
+  "documents.insertEnd": "오른쪽에 삽입",
+  "documents.moveStart": "왼쪽으로 이동",
+  "documents.moveEnd": "오른쪽으로 이동",
+  "documents.insertBelow": "아래에 삽입"
 }

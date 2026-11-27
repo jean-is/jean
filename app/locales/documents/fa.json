@@ -86,5 +86,18 @@
   "documents.tomorrow": "فردا",
   "documents.date": "تاریخ",
   "documents.doIt": "از {name} بخواهید انجامش دهد",
-  "documents.asked": "در «{document}» این را انجام بده، و اگر کار است تیکش بزن: {task}"
+  "documents.asked": "در «{document}» این را انجام بده، و اگر کار است تیکش بزن: {task}",
+  "documents.columnGrip": "ستون {n}",
+  "documents.rowGrip": "ردیف {n}",
+  "documents.insertAbove": "درج در بالا",
+  "documents.deleteRow": "حذف ردیف",
+  "documents.deleteColumn": "حذف ستون",
+  "documents.rowMenu": "ردیف",
+  "documents.columnMenu": "ستون",
+  "documents.tableMenu": "ردیف‌ها و ستون‌ها",
+  "documents.insertStart": "درج در سمت راست",
+  "documents.insertEnd": "درج در سمت چپ",
+  "documents.moveStart": "جابه‌جایی به راست",
+  "documents.moveEnd": "جابه‌جایی به چپ",
+  "documents.insertBelow": "درج در پایین"
 }

@@ -88,5 +88,18 @@
   "documents.tomorrow": "Sutra",
   "documents.date": "Datum",
   "documents.doIt": "Zamoli: {name}, neka to učini",
-  "documents.asked": "U „{document}” učini ovo, a zatim to označi ako je zadatak: {task}"
+  "documents.asked": "U „{document}” učini ovo, a zatim to označi ako je zadatak: {task}",
+  "documents.columnGrip": "Stupac {n}",
+  "documents.rowGrip": "Redak {n}",
+  "documents.insertAbove": "Umetni iznad",
+  "documents.deleteRow": "Izbriši redak",
+  "documents.deleteColumn": "Izbriši stupac",
+  "documents.rowMenu": "Redak",
+  "documents.columnMenu": "Stupac",
+  "documents.tableMenu": "Retci i stupci",
+  "documents.insertStart": "Umetni lijevo",
+  "documents.insertEnd": "Umetni desno",
+  "documents.moveStart": "Premjesti lijevo",
+  "documents.moveEnd": "Premjesti desno",
+  "documents.insertBelow": "Umetni ispod"
 }

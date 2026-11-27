@@ -86,5 +86,18 @@
   "documents.tomorrow": "کل",
   "documents.date": "تاریخ",
   "documents.doIt": "{name} سے یہ کرنے کو کہیں",
-  "documents.asked": "“{document}” میں یہ کریں، پھر اگر یہ کام ہے تو نشان لگائیں: {task}"
+  "documents.asked": "“{document}” میں یہ کریں، پھر اگر یہ کام ہے تو نشان لگائیں: {task}",
+  "documents.columnGrip": "کالم {n}",
+  "documents.rowGrip": "قطار {n}",
+  "documents.insertAbove": "اوپر شامل کریں",
+  "documents.deleteRow": "قطار حذف کریں",
+  "documents.deleteColumn": "کالم حذف کریں",
+  "documents.rowMenu": "قطار",
+  "documents.columnMenu": "کالم",
+  "documents.tableMenu": "قطاریں اور کالم",
+  "documents.insertStart": "دائیں جانب داخل کریں",
+  "documents.insertEnd": "بائیں جانب داخل کریں",
+  "documents.moveStart": "دائیں جانب منتقل کریں",
+  "documents.moveEnd": "بائیں جانب منتقل کریں",
+  "documents.insertBelow": "نیچے داخل کریں"
 }

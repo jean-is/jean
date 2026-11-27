@@ -86,5 +86,18 @@
   "documents.tomorrow": "ነገ",
   "documents.date": "ቀን",
   "documents.doIt": "{name} እንዲያደርገው ጠይቅ",
-  "documents.asked": "በ“{document}” ውስጥ ይህን አድርግ፣ ተግባር ከሆነም ምልክት አድርግበት፦ {task}"
+  "documents.asked": "በ“{document}” ውስጥ ይህን አድርግ፣ ተግባር ከሆነም ምልክት አድርግበት፦ {task}",
+  "documents.columnGrip": "ዓምድ {n}",
+  "documents.rowGrip": "ረድፍ {n}",
+  "documents.insertAbove": "ከላይ አስገባ",
+  "documents.deleteRow": "ረድፉን ሰርዝ",
+  "documents.deleteColumn": "ዓምዱን ሰርዝ",
+  "documents.rowMenu": "ረድፍ",
+  "documents.columnMenu": "ዓምድ",
+  "documents.tableMenu": "ረድፎች እና ዓምዶች",
+  "documents.insertStart": "በግራ በኩል አስገባ",
+  "documents.insertEnd": "በቀኝ በኩል አስገባ",
+  "documents.moveStart": "ወደ ግራ አንቀሳቅስ",
+  "documents.moveEnd": "ወደ ቀኝ አንቀሳቅስ",
+  "documents.insertBelow": "ከታች አስገባ"
 }

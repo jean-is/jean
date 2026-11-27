@@ -84,5 +84,18 @@
   "documents.tomorrow": "Echi",
   "documents.date": "Ụbọchị",
   "documents.doIt": "Rịọ {name} ka o mee ya",
-  "documents.asked": "N’ime “{document}”, mee nke a, wee kaa ya akara ma ọ bụrụ ọrụ: {task}"
+  "documents.asked": "N’ime “{document}”, mee nke a, wee kaa ya akara ma ọ bụrụ ọrụ: {task}",
+  "documents.columnGrip": "Kọlụm {n}",
+  "documents.rowGrip": "Ahịrị {n}",
+  "documents.insertAbove": "Tinye n’elu",
+  "documents.deleteRow": "Hichapụ ahịrị",
+  "documents.deleteColumn": "Hichapụ kọlụm",
+  "documents.rowMenu": "Ahịrị",
+  "documents.columnMenu": "Kọlụm",
+  "documents.tableMenu": "Ahịrị na kọlụm",
+  "documents.insertStart": "Tinye n’aka ekpe",
+  "documents.insertEnd": "Tinye n’aka nri",
+  "documents.moveStart": "Bugharịa n’aka ekpe",
+  "documents.moveEnd": "Bugharịa n’aka nri",
+  "documents.insertBelow": "Tinye n’okpuru"
 }

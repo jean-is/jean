@@ -90,5 +90,18 @@
   "documents.tomorrow": "Завтра",
   "documents.date": "Дата",
   "documents.doIt": "Попросити: {name}",
-  "documents.asked": "У «{document}» зроби це, а потім познач, якщо це завдання: {task}"
+  "documents.asked": "У «{document}» зроби це, а потім познач, якщо це завдання: {task}",
+  "documents.columnGrip": "Стовпець {n}",
+  "documents.rowGrip": "Рядок {n}",
+  "documents.insertAbove": "Вставити вище",
+  "documents.deleteRow": "Видалити рядок",
+  "documents.deleteColumn": "Видалити стовпець",
+  "documents.rowMenu": "Рядок",
+  "documents.columnMenu": "Стовпець",
+  "documents.tableMenu": "Рядки й стовпці",
+  "documents.insertStart": "Вставити ліворуч",
+  "documents.insertEnd": "Вставити праворуч",
+  "documents.moveStart": "Перемістити ліворуч",
+  "documents.moveEnd": "Перемістити праворуч",
+  "documents.insertBelow": "Вставити нижче"
 }

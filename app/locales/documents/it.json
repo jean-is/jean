@@ -88,5 +88,18 @@
   "documents.tomorrow": "Domani",
   "documents.date": "Data",
   "documents.doIt": "Chiedi a {name} di farlo",
-  "documents.asked": "In «{document}», fai questo, poi spuntalo se è un’attività: {task}"
+  "documents.asked": "In «{document}», fai questo, poi spuntalo se è un’attività: {task}",
+  "documents.columnGrip": "Colonna {n}",
+  "documents.rowGrip": "Riga {n}",
+  "documents.insertAbove": "Inserisci sopra",
+  "documents.deleteRow": "Elimina riga",
+  "documents.deleteColumn": "Elimina colonna",
+  "documents.rowMenu": "Riga",
+  "documents.columnMenu": "Colonna",
+  "documents.tableMenu": "Righe e colonne",
+  "documents.insertStart": "Inserisci a sinistra",
+  "documents.insertEnd": "Inserisci a destra",
+  "documents.moveStart": "Sposta a sinistra",
+  "documents.moveEnd": "Sposta a destra",
+  "documents.insertBelow": "Inserisci sotto"
 }

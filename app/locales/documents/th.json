@@ -84,5 +84,18 @@
   "documents.tomorrow": "พรุ่งนี้",
   "documents.date": "วันที่",
   "documents.doIt": "ให้ {name} ทำ",
-  "documents.asked": "ใน “{document}” ทำสิ่งนี้ แล้วติ๊กถ้าเป็นงาน: {task}"
+  "documents.asked": "ใน “{document}” ทำสิ่งนี้ แล้วติ๊กถ้าเป็นงาน: {task}",
+  "documents.columnGrip": "คอลัมน์ {n}",
+  "documents.rowGrip": "แถว {n}",
+  "documents.insertAbove": "แทรกด้านบน",
+  "documents.deleteRow": "ลบแถว",
+  "documents.deleteColumn": "ลบคอลัมน์",
+  "documents.rowMenu": "แถว",
+  "documents.columnMenu": "คอลัมน์",
+  "documents.tableMenu": "แถวและคอลัมน์",
+  "documents.insertStart": "แทรกทางซ้าย",
+  "documents.insertEnd": "แทรกทางขวา",
+  "documents.moveStart": "ย้ายไปทางซ้าย",
+  "documents.moveEnd": "ย้ายไปทางขวา",
+  "documents.insertBelow": "แทรกด้านล่าง"
 }

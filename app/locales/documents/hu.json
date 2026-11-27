@@ -86,5 +86,18 @@
   "documents.tomorrow": "Holnap",
   "documents.date": "Dátum",
   "documents.doIt": "Kérje meg ezt: {name}",
-  "documents.asked": "A(z) „{document}” dokumentumban végezze el ezt, majd jelölje be, ha feladat: {task}"
+  "documents.asked": "A(z) „{document}” dokumentumban végezze el ezt, majd jelölje be, ha feladat: {task}",
+  "documents.columnGrip": "{n}. oszlop",
+  "documents.rowGrip": "{n}. sor",
+  "documents.insertAbove": "Beszúrás fölé",
+  "documents.deleteRow": "Sor törlése",
+  "documents.deleteColumn": "Oszlop törlése",
+  "documents.rowMenu": "Sor",
+  "documents.columnMenu": "Oszlop",
+  "documents.tableMenu": "Sorok és oszlopok",
+  "documents.insertStart": "Beszúrás balra",
+  "documents.insertEnd": "Beszúrás jobbra",
+  "documents.moveStart": "Áthelyezés balra",
+  "documents.moveEnd": "Áthelyezés jobbra",
+  "documents.insertBelow": "Beszúrás alá"
 }

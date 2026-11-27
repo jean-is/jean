@@ -136,3 +136,8 @@
 .mention-ask { display: inline-grid; place-items: center; inline-size: 1.25em; block-size: 1.25em; margin-inline-end: -0.2em; padding: 0; border: 0; border-radius: 50%; background: var(--flame); color: var(--on-flame); font: 700 0.75em/1 var(--sans); cursor: pointer; } .mention-ask:dir(rtl) { transform: scaleX(-1); }
 .day-box { position: fixed; inset: auto; margin: 0; padding: 0.35rem; border: 1px solid var(--line-strong); border-radius: 0.5rem; background: var(--room-2); color: var(--ink); box-shadow: var(--doc-shadow); } .day-field { font: inherit; }
 @media (forced-colors: active) { .ProseMirror :is(.mention, time.day) { border: 1px solid CanvasText; } .mention-ask { border: 1px solid ButtonText; } }
+/* A table's grips (grid.js), while the caret is in it: over each column's head and at each row's start, in the cell's padding, which its box doesn't clip. */
+.ProseMirror :is(td, th):has(> .grid-grip) { position: relative; }
+.grid-grip { position: absolute; z-index: 1; padding: 0; border: 0; border-radius: 0.2rem; background: var(--line-strong); cursor: pointer; } .grid-grip:hover, .grid-grip[aria-expanded="true"] { background: var(--flame); }
+.grid-grip.is-column { inset-block-start: 0.15rem; inset-inline-start: calc(50% - 0.75rem); inline-size: 1.5rem; block-size: 0.3rem; } .grid-grip.is-row { inset-inline-start: 0.15rem; inset-block-start: calc(50% - 0.75rem); inline-size: 0.3rem; block-size: 1.5rem; }
+@media (forced-colors: active) { .grid-grip { background: ButtonText; } }

@@ -86,5 +86,18 @@
   "documents.tomorrow": "कल",
   "documents.date": "तारीख़",
   "documents.doIt": "{name} से यह करने को कहें",
-  "documents.asked": "“{document}” में यह करें, फिर अगर यह काम है तो इसे टिक करें: {task}"
+  "documents.asked": "“{document}” में यह करें, फिर अगर यह काम है तो इसे टिक करें: {task}",
+  "documents.columnGrip": "कॉलम {n}",
+  "documents.rowGrip": "पंक्ति {n}",
+  "documents.insertAbove": "ऊपर जोड़ें",
+  "documents.deleteRow": "पंक्ति हटाएँ",
+  "documents.deleteColumn": "कॉलम हटाएँ",
+  "documents.rowMenu": "पंक्ति",
+  "documents.columnMenu": "कॉलम",
+  "documents.tableMenu": "पंक्तियाँ और कॉलम",
+  "documents.insertStart": "बाईं ओर डालें",
+  "documents.insertEnd": "दाईं ओर डालें",
+  "documents.moveStart": "बाईं ओर खिसकाएँ",
+  "documents.moveEnd": "दाईं ओर खिसकाएँ",
+  "documents.insertBelow": "नीचे डालें"
 }

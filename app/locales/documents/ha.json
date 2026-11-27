@@ -86,5 +86,18 @@
   "documents.tomorrow": "Gobe",
   "documents.date": "Kwanan wata",
   "documents.doIt": "Nemi {name} ya yi",
-  "documents.asked": "A cikin “{document}”, yi wannan, sannan ka yi masa alama idan aiki ne: {task}"
+  "documents.asked": "A cikin “{document}”, yi wannan, sannan ka yi masa alama idan aiki ne: {task}",
+  "documents.columnGrip": "Ginshiƙi {n}",
+  "documents.rowGrip": "Layi {n}",
+  "documents.insertAbove": "Saka a sama",
+  "documents.deleteRow": "Share layi",
+  "documents.deleteColumn": "Share ginshiƙi",
+  "documents.rowMenu": "Layi",
+  "documents.columnMenu": "Ginshiƙi",
+  "documents.tableMenu": "Layuka da ginshiƙai",
+  "documents.insertStart": "Saka a hagu",
+  "documents.insertEnd": "Saka a dama",
+  "documents.moveStart": "Matsar zuwa hagu",
+  "documents.moveEnd": "Matsar zuwa dama",
+  "documents.insertBelow": "Saka a ƙasa"
 }

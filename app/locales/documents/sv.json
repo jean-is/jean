@@ -86,5 +86,18 @@
   "documents.tomorrow": "I morgon",
   "documents.date": "Datum",
   "documents.doIt": "Be {name} göra det",
-  "documents.asked": "Gör det här i ”{document}” och bocka sedan av det om det är en uppgift: {task}"
+  "documents.asked": "Gör det här i ”{document}” och bocka sedan av det om det är en uppgift: {task}",
+  "documents.columnGrip": "Kolumn {n}",
+  "documents.rowGrip": "Rad {n}",
+  "documents.insertAbove": "Infoga ovanför",
+  "documents.deleteRow": "Ta bort rad",
+  "documents.deleteColumn": "Ta bort kolumn",
+  "documents.rowMenu": "Rad",
+  "documents.columnMenu": "Kolumn",
+  "documents.tableMenu": "Rader och kolumner",
+  "documents.insertStart": "Infoga till vänster",
+  "documents.insertEnd": "Infoga till höger",
+  "documents.moveStart": "Flytta åt vänster",
+  "documents.moveEnd": "Flytta åt höger",
+  "documents.insertBelow": "Infoga nedanför"
 }

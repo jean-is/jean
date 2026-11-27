@@ -84,5 +84,18 @@
   "documents.tomorrow": "Ọ̀la",
   "documents.date": "Ọjọ́",
   "documents.doIt": "Ní kí {name} ṣe é",
-  "documents.asked": "Nínú “{document}”, ṣe èyí, lẹ́yìn náà sàmì sí i tí ó bá jẹ́ iṣẹ́: {task}"
+  "documents.asked": "Nínú “{document}”, ṣe èyí, lẹ́yìn náà sàmì sí i tí ó bá jẹ́ iṣẹ́: {task}",
+  "documents.columnGrip": "Ọ̀wọ̀n {n}",
+  "documents.rowGrip": "Ìlà {n}",
+  "documents.insertAbove": "Fi sí òkè",
+  "documents.deleteRow": "Pa ìlà rẹ́",
+  "documents.deleteColumn": "Pa ọ̀wọ̀n rẹ́",
+  "documents.rowMenu": "Ìlà",
+  "documents.columnMenu": "Ọ̀wọ̀n",
+  "documents.tableMenu": "Àwọn ìlà àti ọ̀wọ̀n",
+  "documents.insertStart": "Fi sí apá òsì",
+  "documents.insertEnd": "Fi sí apá ọ̀tún",
+  "documents.moveStart": "Gbé lọ sí òsì",
+  "documents.moveEnd": "Gbé lọ sí ọ̀tún",
+  "documents.insertBelow": "Fi sí ìsàlẹ̀"
 }

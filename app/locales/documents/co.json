@@ -88,5 +88,18 @@
   "documents.tomorrow": "Dumane",
   "documents.date": "Data",
   "documents.doIt": "Dumandà à {name} di fallu",
-  "documents.asked": "In « {document} », fà questu, po spuntalu s’ellu hè un impegnu : {task}"
+  "documents.asked": "In « {document} », fà questu, po spuntalu s’ellu hè un impegnu : {task}",
+  "documents.columnGrip": "Culonna {n}",
+  "documents.rowGrip": "Linea {n}",
+  "documents.insertAbove": "Inserisce sopra",
+  "documents.deleteRow": "Squassà a linea",
+  "documents.deleteColumn": "Squassà a culonna",
+  "documents.rowMenu": "Linea",
+  "documents.columnMenu": "Culonna",
+  "documents.tableMenu": "Linee è culonne",
+  "documents.insertStart": "Inserisce à manca",
+  "documents.insertEnd": "Inserisce à diritta",
+  "documents.moveStart": "Spiazzà à manca",
+  "documents.moveEnd": "Spiazzà à diritta",
+  "documents.insertBelow": "Inserisce sottu"
 }

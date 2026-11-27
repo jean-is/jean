@@ -84,5 +84,18 @@
   "documents.tomorrow": "Ngày mai",
   "documents.date": "Ngày",
   "documents.doIt": "Nhờ {name} làm",
-  "documents.asked": "Trong “{document}”, hãy làm việc này, rồi đánh dấu nếu đó là việc cần làm: {task}"
+  "documents.asked": "Trong “{document}”, hãy làm việc này, rồi đánh dấu nếu đó là việc cần làm: {task}",
+  "documents.columnGrip": "Cột {n}",
+  "documents.rowGrip": "Hàng {n}",
+  "documents.insertAbove": "Chèn phía trên",
+  "documents.deleteRow": "Xóa hàng",
+  "documents.deleteColumn": "Xóa cột",
+  "documents.rowMenu": "Hàng",
+  "documents.columnMenu": "Cột",
+  "documents.tableMenu": "Hàng và cột",
+  "documents.insertStart": "Chèn bên trái",
+  "documents.insertEnd": "Chèn bên phải",
+  "documents.moveStart": "Chuyển sang trái",
+  "documents.moveEnd": "Chuyển sang phải",
+  "documents.insertBelow": "Chèn bên dưới"
 }

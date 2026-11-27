@@ -86,5 +86,18 @@
   "documents.tomorrow": "நாளை",
   "documents.date": "தேதி",
   "documents.doIt": "இதைச் செய்யுமாறு கேள்: {name}",
-  "documents.asked": "“{document}” இல் இதைச் செய், அது பணி என்றால் குறியிடு: {task}"
+  "documents.asked": "“{document}” இல் இதைச் செய், அது பணி என்றால் குறியிடு: {task}",
+  "documents.columnGrip": "நெடுவரிசை {n}",
+  "documents.rowGrip": "வரிசை {n}",
+  "documents.insertAbove": "மேலே செருகு",
+  "documents.deleteRow": "வரிசையை நீக்கு",
+  "documents.deleteColumn": "நெடுவரிசையை நீக்கு",
+  "documents.rowMenu": "வரிசை",
+  "documents.columnMenu": "நெடுவரிசை",
+  "documents.tableMenu": "வரிசைகளும் நெடுவரிசைகளும்",
+  "documents.insertStart": "இடப்புறம் செருகு",
+  "documents.insertEnd": "வலப்புறம் செருகு",
+  "documents.moveStart": "இடப்புறம் நகர்த்து",
+  "documents.moveEnd": "வலப்புறம் நகர்த்து",
+  "documents.insertBelow": "கீழே செருகு"
 }

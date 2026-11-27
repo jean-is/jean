@@ -86,5 +86,18 @@
   "documents.tomorrow": "I morgen",
   "documents.date": "Dato",
   "documents.doIt": "Bed {name} om at gøre det",
-  "documents.asked": "I “{document}”: gør dette, og sæt så flueben, hvis det er en opgave: {task}"
+  "documents.asked": "I “{document}”: gør dette, og sæt så flueben, hvis det er en opgave: {task}",
+  "documents.columnGrip": "Kolonne {n}",
+  "documents.rowGrip": "Række {n}",
+  "documents.insertAbove": "Indsæt over",
+  "documents.deleteRow": "Slet række",
+  "documents.deleteColumn": "Slet kolonne",
+  "documents.rowMenu": "Række",
+  "documents.columnMenu": "Kolonne",
+  "documents.tableMenu": "Rækker og kolonner",
+  "documents.insertStart": "Indsæt til venstre",
+  "documents.insertEnd": "Indsæt til højre",
+  "documents.moveStart": "Flyt til venstre",
+  "documents.moveEnd": "Flyt til højre",
+  "documents.insertBelow": "Indsæt nedenunder"
 }

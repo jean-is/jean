@@ -88,5 +88,18 @@
   "documents.tomorrow": "מחר",
   "documents.date": "תאריך",
   "documents.doIt": "לבקש מ־{name} לעשות את זה",
-  "documents.asked": "במסמך “{document}”, יש לעשות את זה ולסמן אם זו משימה: {task}"
+  "documents.asked": "במסמך “{document}”, יש לעשות את זה ולסמן אם זו משימה: {task}",
+  "documents.columnGrip": "עמודה {n}",
+  "documents.rowGrip": "שורה {n}",
+  "documents.insertAbove": "הוספה מעל",
+  "documents.deleteRow": "מחיקת השורה",
+  "documents.deleteColumn": "מחיקת העמודה",
+  "documents.rowMenu": "שורה",
+  "documents.columnMenu": "עמודה",
+  "documents.tableMenu": "שורות ועמודות",
+  "documents.insertStart": "הוספה מימין",
+  "documents.insertEnd": "הוספה משמאל",
+  "documents.moveStart": "הזזה ימינה",
+  "documents.moveEnd": "הזזה שמאלה",
+  "documents.insertBelow": "הוספה מתחת"
 }

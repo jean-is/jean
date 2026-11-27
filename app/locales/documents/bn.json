@@ -86,5 +86,18 @@
   "documents.tomorrow": "আগামীকাল",
   "documents.date": "তারিখ",
   "documents.doIt": "{name}-কে এটি করতে বলুন",
-  "documents.asked": "“{document}”-এ এটি করুন, তারপর এটি কাজ হলে টিক দিন: {task}"
+  "documents.asked": "“{document}”-এ এটি করুন, তারপর এটি কাজ হলে টিক দিন: {task}",
+  "documents.columnGrip": "কলাম {n}",
+  "documents.rowGrip": "সারি {n}",
+  "documents.insertAbove": "উপরে যোগ করুন",
+  "documents.deleteRow": "সারি মুছুন",
+  "documents.deleteColumn": "কলাম মুছুন",
+  "documents.rowMenu": "সারি",
+  "documents.columnMenu": "কলাম",
+  "documents.tableMenu": "সারি ও কলাম",
+  "documents.insertStart": "বাঁদিকে যোগ করুন",
+  "documents.insertEnd": "ডানদিকে যোগ করুন",
+  "documents.moveStart": "বাঁদিকে সরান",
+  "documents.moveEnd": "ডানদিকে সরান",
+  "documents.insertBelow": "নিচে যোগ করুন"
 }
