@@ -59,7 +59,7 @@ test('a slide shows a collection live: a row changed shows changed, at once and 
   await open(page)
   await expect(beside.locator('.deck-slide .deck-table table').first().locator('tbody td')).toHaveText(['Ana', 'Weaver'])
   // The slides' pane: what they use, live, which opens it.
-  const links = page.getByRole('button', { name: 'Links with other creations' })
+  const links = page.getByRole('button', { name: 'Linked creations' })
   await links.click()
   const menu = page.locator('.menu:popover-open')
   await expect(menu.getByRole('group', { name: 'Uses' })).toContainText('Artisans')
@@ -73,7 +73,7 @@ test('a slide shows a collection live: a row changed shows changed, at once and 
   await menu.getByRole('button', { name: /Artisans/ }).click()
   // The collection's pane: what uses it.
   await expect(page.locator('app-preview .table-grid')).toBeVisible()
-  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  await page.getByRole('button', { name: 'Linked creations' }).click()
   await expect(page.locator('.menu:popover-open').getByRole('group', { name: 'Used in' })).toContainText('Neighbourhood')
 })
 
@@ -158,7 +158,7 @@ test('a slide’s key figures worked out from a collection follow it as it chang
   await change(page, 'Baker')
   await expect(leads).toHaveText(['1', '1', '—'])
   // The slides use the collection, as the links menu says.
-  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  await page.getByRole('button', { name: 'Linked creations' }).click()
   await expect(page.locator('.menu:popover-open').getByRole('group', { name: 'Uses' }).getByRole('listitem')).toHaveCount(3)
   await page.keyboard.press('Escape')
   // Saved as PowerPoint: the figures, never their formulas.
@@ -245,7 +245,7 @@ test('slides pinned to version 1 stay as they were once version 2 is published, 
   await expect(cells.locator('p').first()).toHaveText('This collection has no version yet.')
   // Version 1, published from the collection's pane.
   await show(page, COLLECTION, 'Artisans')
-  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  await page.getByRole('button', { name: 'Linked creations' }).click()
   const menu = page.locator('.menu:popover-open'), versions = menu.getByRole('group', { name: 'Versions' })
   await expect(versions.getByRole('status')).toHaveText('Changes not in a version yet: 1')
   await versions.getByRole('button', { name: 'Publish version 1' }).click()
@@ -264,7 +264,7 @@ test('slides pinned to version 1 stay as they were once version 2 is published, 
   // The pinned slides, told to read the published version from their pane's head: written so, they follow it.
   await show(page, pinned, 'Pinned')
   await expect(cells.locator('tbody td').nth(1)).toHaveText('Baker')
-  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  await page.getByRole('button', { name: 'Linked creations' }).click()
   await page.locator('.menu:popover-open').getByRole('button', { name: /Artisans/ }).click()
   await page.locator('.menu:popover-open').getByRole('button', { name: 'Published', exact: true }).click()
   await expect.poll(() => page.evaluate(async (pinned) => (await (await import('/caps/skills/decks.js')).load(pinned))?.source, pinned)).toContain('-artisans@published')
@@ -284,18 +284,18 @@ test('slides pinned to version 1 stay as they were once version 2 is published, 
   await retype(page, { name: 'Craft' })
   await show(page, COLLECTION, 'Artisans')
   await expect.poll(() => page.evaluate(async ({ COLLECTION }) => { const { app } = await import('/ui/state.js'); return (await app.fs.list(`${app.projectDir}/${COLLECTION}/versions`)).length }, { COLLECTION })).toBe(3)
-  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  await page.getByRole('button', { name: 'Linked creations' }).click()
   await expect(page.locator('.menu:popover-open').getByRole('group', { name: 'Versions' })).toContainText(/Version 3, .*, as its columns changed/)
   await page.keyboard.press('Escape')
   await show(page, 'documents/01K85Z1T00000000000000000N-notes.md', 'Notes')
   await expect(page.locator('app-preview app-composed th')).toHaveText('Trade')
-  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  await page.getByRole('button', { name: 'Linked creations' }).click()
   await page.locator('.menu:popover-open').getByRole('button', { name: /Artisans/ }).click()
   await expect(page.locator('.menu:popover-open')).toContainText('“Trade” is now “Craft”')
   await page.keyboard.press('Escape')
   await retype(page, { type: 'number' })
   await show(page, COLLECTION, 'Artisans')
-  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  await page.getByRole('button', { name: 'Linked creations' }).click()
   const now = page.locator('.menu:popover-open').getByRole('group', { name: 'Versions' })
   await expect(now.getByRole('alert')).toHaveText('No version can be made while these columns have another kind: Craft. Give them back their kind, or add new columns.')
   await expect(now.getByRole('button', { name: 'Publish version 4' })).toBeDisabled()
@@ -328,7 +328,7 @@ test('a document’s figure follows its collection, a prototype that shows it is
   expect(words).not.toContain('collections/')
   // The collection's pane lists the prototype among what uses it.
   await show(page, COLLECTION, 'Artisans')
-  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  await page.getByRole('button', { name: 'Linked creations' }).click()
   await expect(page.locator('.menu:popover-open').getByRole('group', { name: 'Used in' }).getByRole('button')).toContainText(['Neighbourhood', 'Report', 'Booking'].map((name) => new RegExp(name)), { ignoreCase: false })
 })
 
@@ -353,14 +353,14 @@ test('the graph whole: a collection that relates to another, a picture held by i
   }, { COLLECTION, ORDERS, PICTURE, KEPT, TASK })
   // A collection that relates to the artisans is among what uses them, by its column; the artisans are among what it uses.
   await show(page, COLLECTION, 'Artisans')
-  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  await page.getByRole('button', { name: 'Linked creations' }).click()
   const menu = page.locator('.menu:popover-open')
   await expect(menu.getByRole('group', { name: 'Used in' }).getByRole('button', { name: /Orders/ })).toContainText('Maker')
   await page.keyboard.press('Escape')
   await show(page, ORDERS, 'Orders')
   // The menu is drawn again as its links are read: opened, then its row pressed, until the artisans are on show.
   await expect(async () => {
-    if (!(await menu.count())) await page.getByRole('button', { name: 'Links with other creations' }).click()
+    if (!(await menu.count())) await page.getByRole('button', { name: 'Linked creations' }).click()
     await menu.getByRole('group', { name: 'Uses' }).getByRole('button', { name: /Artisans/ }).click({ timeout: 2000 })
     await expect(page.locator('app-preview .pane-name')).toHaveValue('Artisans', { timeout: 2000 })
   }).toPass()
@@ -370,8 +370,38 @@ test('the graph whole: a collection that relates to another, a picture held by i
   expect(await page.evaluate(async () => { const { app } = await import('/ui/state.js'); return app.fs.read(`${app.projectDir}/composed/01K85Z1T00000000000000000K.jsonl`) })).toBeNull()
   // The picture says what holds it.
   await show(page, PICTURE, 'Ana')
-  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  await page.getByRole('button', { name: 'Linked creations' }).click()
   await expect(menu.getByRole('group', { name: 'Used in' }).getByRole('button')).toHaveText([/Kept/])
+})
+
+test('a creation many others use lists each once, the first five, then all of them on asking, found by their names', async ({ page }) => {
+  await start(page)
+  await seed(page)
+  await page.evaluate(async ({ COLLECTION }) => {
+    const { app } = await import('/ui/state.js'), at = '2026-11-21T10:00:00.000Z'
+    for (let n = 1; n <= 11; n++) {
+      const name = n === 11 ? 'Budget' : `Note ${n}`, block = `\`\`\`table\n${COLLECTION}${n === 3 ? '@published' : ''}\n\`\`\`\n`
+      await app.fs.write(`${app.projectDir}/documents/01K85Z1T0000000000000001${String(n).padStart(2, '0')}-note.md`, `---\nformat: 1\nname: ${name}\nauthor: user\ncreated: ${at}\nchanged: ${at}\n---\n# ${name}\n\n${block}\n${n === 3 ? `${block}\n` : ''}`)
+    }
+  }, { COLLECTION })
+  await show(page, COLLECTION, 'Artisans')
+  await page.getByRole('button', { name: 'Linked creations' }).click()
+  const used = page.locator('.menu:popover-open').getByRole('group', { name: 'Used in' })
+  // Twelve use it (the slides, and eleven documents, one reading it twice and at two versions): five, then a button for the rest.
+  await expect(used.locator('li')).toHaveCount(6)
+  await used.getByRole('button', { name: 'Show all 12' }).click()
+  const find = used.getByTitle('Find among them')
+  await expect(find).toBeFocused()
+  await expect(used.locator('li button')).toHaveCount(12)
+  await find.fill('budg')
+  await expect(used.locator('li button')).toHaveText([/Budget/])
+  // Escape empties the words, then closes the menu; opened again, it shows the first five again.
+  await page.keyboard.press('Escape')
+  await expect(find).toHaveValue('')
+  await page.keyboard.press('Escape')
+  await expect(page.locator('.menu:popover-open')).toHaveCount(0)
+  await page.getByRole('button', { name: 'Linked creations' }).click()
+  await expect(used.locator('li')).toHaveCount(6)
 })
 
 test('the graph answers: what is reached further, what still uses a column or a collection deleted or a kind changed, and the brain’s tool', async ({ page }) => {
@@ -384,11 +414,14 @@ test('the graph answers: what is reached further, what still uses a column or a 
       properties: [{ id: 'item', name: 'Item', type: 'text' }, { id: 'maker', name: 'Maker', type: 'relation', collection: COLLECTION }], views: [{ id: 'table', type: 'table' }] }))
     await (await import('/caps/skills/decks.js')).rewrite(BOOK, `# Book\n\n---\n\n\`\`\`table\n${ORDERS}\nfields: Item\n\`\`\`\n`, 'Book', app.projectDir)
   }, { COLLECTION, ORDERS, BOOK })
-  // The slides that show the orders are reached from the artisans, through the orders that relate to them.
+  // The slides that show the orders are reached from the artisans, through the orders that relate to them: drawn, never listed in the menu.
   await show(page, COLLECTION, 'Artisans')
-  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  await page.getByRole('button', { name: 'Linked creations' }).click()
   const menu = page.locator('.menu:popover-open')
-  await expect(menu.getByRole('group', { name: 'Further along' }).getByRole('button')).toHaveText([/Book.*through Orders/])
+  await expect(menu.getByRole('group', { name: 'Used in' })).toBeVisible()
+  await expect(menu.getByRole('group', { name: 'Further along' })).toHaveCount(0)
+  await menu.getByRole('button', { name: 'See them drawn' }).click()
+  await expect(page.locator('dialog.links-sheet')).toContainText('Book')
   await page.keyboard.press('Escape')
   // A column deleted: its Undo says what still reads it; a kind changed: what it changes.
   await page.locator('app-preview .table-grid .table-head').filter({ hasText: 'Trade' }).click()
@@ -441,7 +474,7 @@ test('an answer composes: its block and its figure show a collection as it was w
   expect(await page.evaluate(async (path) => (await import('/ui/state.js')).app.fs.read(path), path)).not.toContain('Potter')
   // The task is among what uses the artisans, as in its answer, and opens from there.
   await show(page, COLLECTION, 'Artisans')
-  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  await page.getByRole('button', { name: 'Linked creations' }).click()
   const task = page.locator('.menu:popover-open').getByRole('group', { name: 'Used in' }).getByRole('button', { name: /Who bakes/ })
   await expect(task).toContainText('As in its answer')
   await task.click()
@@ -470,7 +503,7 @@ test('a document’s section is a source: slides and a site follow it through a 
   // Version 1, published from the document's pane, shows no id.
   await show(page, HELP, 'Help')
   await expect(page.locator('app-preview .doc h2').first()).toHaveText('Our prices')
-  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  await page.getByRole('button', { name: 'Linked creations' }).click()
   const menu = page.locator('.menu:popover-open')
   await expect(menu.getByRole('group', { name: 'Used in' }).getByRole('button', { name: /Prices/ })).toBeVisible()
   await menu.getByRole('group', { name: 'Versions' }).getByRole('button', { name: 'Publish version 1' }).click()
@@ -541,14 +574,14 @@ test('more consumers: one badge per baker and one more for another, a game given
   await expect(list.locator('li')).toHaveCount(0)
   // The whiteboard is a source: what uses it, and its versions.
   await show(page, WB, 'Board')
-  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  await page.getByRole('button', { name: 'Linked creations' }).click()
   const menu = page.locator('.menu:popover-open')
   await expect(menu.getByRole('group', { name: 'Used in' }).getByRole('button', { name: /Ideas/ })).toBeVisible()
   await expect(menu.getByRole('group', { name: 'Versions' }).getByRole('button', { name: 'Publish version 1' })).toBeEnabled()
   // The artisans list the badges and the game among what uses them.
   await page.keyboard.press('Escape')
   await show(page, COLLECTION, 'Artisans')
-  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  await page.getByRole('button', { name: 'Linked creations' }).click()
   await expect(menu.getByRole('group', { name: 'Used in' })).toContainText('Badges')
   await expect(menu.getByRole('group', { name: 'Used in' })).toContainText('Quiz')
 })
@@ -576,7 +609,7 @@ test('the design system is a source: a site that wears it follows it at once, a 
   // Version 1 of the design system; the slides pinned to it from their menu.
   expect(await page.evaluate(async () => (await (await import('/caps/compose/compose.js')).publish('kit.json'))?.version?.n)).toBe(1)
   await show(page, DECK, 'Neighbourhood')
-  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  await page.getByRole('button', { name: 'Linked creations' }).click()
   const menu = page.locator('.menu:popover-open')
   await menu.getByRole('group', { name: 'Uses' }).getByRole('button', { name: /Design system/ }).click()
   await menu.getByRole('button', { name: 'Version 1', exact: true }).click()
@@ -626,7 +659,7 @@ test('one clock: a routine that reads the bakers runs as they change, given thei
   const reader = await made('Who bakes', `Tell me who bakes.\n\n\`\`\`table\n${COLLECTION}\nwhere: Trade is Baker\nrefresh: auto\n\`\`\`\n`)
   // It is among what uses the artisans.
   await show(page, COLLECTION, 'Artisans')
-  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  await page.getByRole('button', { name: 'Linked creations' }).click()
   await expect(page.locator('.menu:popover-open').getByRole('group', { name: 'Used in' })).toContainText('Who bakes')
   await page.keyboard.press('Escape')
   // A baker added: the routine runs by itself, given the rows as they are, and its run is certified with what it read.
@@ -663,7 +696,7 @@ test('a creation outside the graph has no links menu, and has one once something
     await app.fs.write(`${app.projectDir}/${LONE}/collection.json`, JSON.stringify({ format: 1, id: LONE.slice(12, 38), name: 'Lone', author: 'user', created: at, changed: at, properties: [{ id: 'name', name: 'Name', type: 'text' }], views: [{ id: 'table', type: 'table' }] }))
     await app.fs.write(`${app.projectDir}/${LONE}/changes.jsonl`, `${JSON.stringify({ row: '01K8000000000000000000000C', set: { name: 'Alone' }, at, by: 'user' })}\n`)
   }, LONE)
-  const links = page.locator('app-preview').getByRole('button', { name: 'Links with other creations' })
+  const links = page.locator('app-preview').getByRole('button', { name: 'Linked creations' })
   await show(page, LONE, 'Lone')
   await expect(page.locator('app-preview .table-grid')).toBeVisible()
   await expect(links).toHaveCount(0)
@@ -705,7 +738,7 @@ test('a recipe that sums up the approved artisans on a slide updates by itself o
   await expect(slide).toHaveText('Summary: Ana.')
   expect(await runs()).toHaveLength(1)
   // Update now runs it on the rows as they are; pressed again with nothing changed, it reads that run again, unpaid.
-  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  await page.getByRole('button', { name: 'Linked creations' }).click()
   const menu = page.locator('.menu:popover-open')
   await menu.getByRole('button', { name: /Neighbours/ }).click()
   await menu.getByRole('button', { name: 'Update now' }).click()
@@ -744,7 +777,7 @@ test('from slides, their provenance is checked back to the collection’s versio
   await show(page, SUMMARY, 'Proof')
   await expect(page.locator('app-preview .deck-slide .deck-table > div').first()).toHaveText('Summary: Ana.')
   // In Jean: the run, and the version it read, certified; the pinned version on its own; the rows as they are, none.
-  await page.getByRole('button', { name: 'Links with other creations' }).click()
+  await page.getByRole('button', { name: 'Linked creations' }).click()
   const menu = page.locator('.menu:popover-open'), uses = menu.getByRole('group', { name: 'Uses' }).getByRole('listitem')
   await expect(uses).toHaveCount(3)
   // Each one's settings say it, Back between them.

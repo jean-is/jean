@@ -56,23 +56,29 @@ const CONSUMERS = [['decks', /\.deck\.html$/, async (path, dir) => ((one) => one
 const blockOf = (from) => (from ? `\`\`\`table\n${from}\n\`\`\`` : '')
 const HOW = () => ({ locales: intlLocales(locale.peek()), labels: { yes: '✓', no: '' }, today: new Date() })
 
-/** The project's graph, each reference and each creation's name by its place, and the links that are no references (./refs.js `linksIn()`): read again once a consumer or a collection's columns are written, else every five minutes at most (a folder changed outside Jean). */
+/** The project's graph, each reference and each creation's name by its place, and the links that are no references (./refs.js `linksIn()`): read again once a consumer or a collection's columns are written, else every five minutes at most (a folder changed outside Jean), from what each file gave it but those written since (`once()`). */
 let read = { at: 0, dir: '', graph: /** @type {Promise<typeof known> | null} */ (null) }
 /** The graph as it was last read, for what must answer at once (a toast's words), with each collection's columns' kinds. */
 let known = { edges: /** @type {Edge[]} */ ([]), names: /** @type {Map<string, string>} */ (new Map()), kinds: /** @type {Map<string, Map<string, string>>} */ (new Map()) }
 /** The blocks of the answers that name a collection (../../ui/held.js), each making its task a consumer. */
 const answers = held({ fence: 'table', record: 'reference', named: () => '', extension: 'md', mimeType: 'text/markdown' })
+/** What each file gave the graph, by its path, kept until the watcher below sees it written, or for five minutes (a folder changed outside Jean): read again, the graph reads only those. @type {Map<string, Promise<any>>} */
+const files = new Map()
+let fresh = 0
+/** @template T @param {string} path @param {() => Promise<T>} make @returns {Promise<T | null>} */
+const once = (path, make) => files.get(path) ?? (files.set(path, make().catch(() => null)), /** @type {Promise<T | null>} */ (files.get(path)))
 function graph(dir = app.projectDir) {
+  if (Date.now() - fresh > 300_000) files.clear(), fresh = Date.now()
   if (read.dir !== dir || Date.now() - read.at > 300_000) read = { at: Date.now(), dir, graph: (async () => {
     const tables = await import('../tables/tables.js'), names = new Map(), edges = /** @type {Edge[]} */ ([]), kinds = new Map(), kit = await app.fs.exists(kitFile(dir))
     if (kit) names.set(KIT, t('compose.kit'))
     for (const folder of await tables.folders(dir).catch(() => [])) {
-      const table = await app.fs.read(`${dir}/${folder}/collection.json`).then((text) => JSON.parse(text ?? 'null')).catch(() => null)
+      const table = await once(`${dir}/${folder}/collection.json`, () => app.fs.read(`${dir}/${folder}/collection.json`).then((text) => JSON.parse(text ?? 'null')))
       if (table) names.set(folder, table.name), kinds.set(folder, new Map((table?.properties ?? []).map((/** @type {{ id: string, type: string }} */ { id, type }) => [id, type]))), edges.push(...linksIn(folder, table))
     }
     for (const [folder, own, readOf] of CONSUMERS) for (const { name } of (await app.fs.list(`${dir}/${folder}`).catch(() => [])).filter((entry) => own.test(entry.name))) {
-      const path = `${folder}/${name}`, one = await readOf(path, dir).catch(() => null)
-      if (one) names.set(path, one.name), edges.push(...refsIn(one.source).map((ref, index) => ({ from: path, to: ref.place, at: ref.at, recipe: ref.recipe, index })), ...linksIn(path, null, one.source), ...(kit && one.wears !== undefined ? [{ from: path, to: KIT, at: one.wears, recipe: {}, index: -1, kind: /** @type {const} */ ('kit') }] : []))
+      const path = `${folder}/${name}`, one = await once(`${dir}/${path}`, async () => ((got) => got && { name: got.name, wears: got.wears, edges: [...refsIn(got.source).map((ref, index) => ({ from: path, to: ref.place, at: ref.at, recipe: ref.recipe, index })), ...linksIn(path, null, got.source)] })(await readOf(path, dir)))
+      if (one) names.set(path, one.name), edges.push(...one.edges, ...(kit && one.wears !== undefined ? [{ from: path, to: KIT, at: one.wears, recipe: {}, index: -1, kind: /** @type {const} */ ('kit') }] : []))
     }
     // A routine whose request holds a reference reads it as it runs (../routines/routines.js), the project's routines where Routines keeps them.
     for (const one of await (await import('../routines/schedule.js')).listRoutines(app.fs, app.project.peek().data.default === true && dir === app.projectDir ? '' : dir).catch(() => [])) if (refsIn(one.request).length) names.set(one.path, one.title), edges.push(...refsIn(one.request).map((ref, index) => ({ from: one.path, to: ref.place, at: ref.at, recipe: ref.recipe, index })))
@@ -349,6 +355,7 @@ async function propagate(place, dir, depth = 0) {
 // A consumer written: the graph is read again, a second later, so that a toast's words are as it is.
 const later = new Map()
 app.fs.watch?.((path) => {
+  for (const key of files.keys()) if (path === key || path.startsWith(`${key}/`)) files.delete(key)
   const [, dir, folder, file] = /^(.*)\/(collections\/[^/]+)\/(collection\.json|changes\.jsonl|versions\/\d+\.json)$/.exec(path) ?? []; if (/(^|\/)(decks|documents|sites|prototypes|games|designs|routines)\/|(^|\/)(collection|kit|port)\.json$|\/versions\/\d+\.json$/.test(path)) read.at = 0, checked.clear(), (inside.value = new Map(inside.peek())), clearTimeout(later.get('graph')), later.set('graph', setTimeout(() => app.projectDir && graph(), 1000))
   if (file === 'collection.json') clearTimeout(later.get(folder)), later.set(folder, setTimeout(() => publish(folder, 'schema', dir), 500)), dir === app.projectDir && void retyped(folder, dir)
   if (folder && dir === app.projectDir) void propagate(folder, dir)
@@ -398,7 +405,7 @@ async function choose(from, index, change) {
 }
 /** When a reference's `ask` runs again, each choice by its `refresh`: by hand, every five minutes, every hour, or as its source changes. */
 const PACES = [['', 'compose.byHand'], ['5 min', 'compose.every5'], ['60 min', 'compose.hourly'], ['auto', 'compose.auto']]
-/** What the pane's head lists for each place, once read: `source`, a collection, not a whiteboard; `runs`, each `ask`'s last run; `proofs`, the certificates of what each shows, checked. @typedef {{ source: boolean, fed: boolean, uses: Edge[], usedIn: Edge[], further: [string, string][], names: Map<string, string>, versions: Map<string, (Version & { text?: string })[]>, old: Map<Edge, [string, string][]>, runs: Map<Edge, Run | undefined>, proofs: Map<Edge, { chain: import('../receipt/certificate.js').Sealed[], holds: boolean, n?: number } | null>, changes: number, broken: string[] }} Links */
+/** What the pane's head lists for each place, once read: `source`, a collection, not a whiteboard; `runs`, each `ask`'s last run; `proofs`, the certificates of what each shows, checked. @typedef {{ source: boolean, fed: boolean, uses: Edge[], usedIn: Edge[], names: Map<string, string>, versions: Map<string, (Version & { text?: string })[]>, old: Map<Edge, [string, string][]>, runs: Map<Edge, Run | undefined>, proofs: Map<Edge, { chain: import('../receipt/certificate.js').Sealed[], holds: boolean, n?: number } | null>, changes: number, broken: string[] }} Links */
 const links = signal(/** @type {Map<string, Links>} */ (new Map()))
 /** Whether each place is in the graph, read as its pane's head first draws and again after any change of the graph, the last answer kept meanwhile so that an open menu stays: a link to or from it, a version, an open port or a source (a routine naming it). */
 const inside = signal(/** @type {Map<string, boolean>} */ (new Map())), asking = new Set(), checked = new Set()
@@ -418,7 +425,7 @@ async function linksOf(uri) {
     const version = all.find((one) => `v${one.n}` === read), chain = [run?.certificate, version?.certificate].filter((one) => one !== undefined)
     proofs.set(edge, chain.length ? { chain, holds: holds(await chainOf(chain)), n: version?.n } : null)
   }
-  links.value = new Map(links.peek()).set(uri, { source: Boolean(loaded) || text !== null, fed: Boolean(own), uses, usedIn: edges.filter((edge) => edge.to === uri), further: [...further(edges, uri, true), ...further(edges, uri, false)].filter(([place]) => names.has(place)), names, versions, old, proofs, runs: new Map(uses.map((edge) => [edge, lastOf(edge)])), broken: loaded && last ? breaks(last.table, loaded.table) : [],
+  links.value = new Map(links.peek()).set(uri, { source: Boolean(loaded) || text !== null, fed: Boolean(own), uses, usedIn: edges.filter((edge) => edge.to === uri), names, versions, old, proofs, runs: new Map(uses.map((edge) => [edge, lastOf(edge)])), broken: loaded && last ? breaks(last.table, loaded.table) : [],
     changes: loaded ? loaded.lines.filter((line) => 'at' in line && line.at > (last?.head ?? '')).length : Number(text !== null && text !== last?.text) })
 }
 
@@ -448,6 +455,8 @@ let wanted = ''
 const mapped = (dir = app.projectDir) => ((wanted = dir), Promise.all([drawingOf(dir), import('./map.js')]).then(([drawing, { drawn }]) => { whole.value = drawing.places.length > 2 ? { dir, drawing, drawn } : null }))
 /** The reference whose settings the links menu shows, as its consumer's place and its index there; the list while it is empty. */
 const deep = signal('')
+/** Whether the menu shows every creation that uses its own, past the first five, and the words they are found by among them. */
+const every = signal(false), among = signal('')
 /** Sources' part of a collection's links menu, fetched as the first collection's opens. @type {typeof import('../sources/sources.js') | undefined} */
 let fed
 
@@ -487,16 +496,20 @@ function head({ uri }) {
   /** What a reference shows, said under its row where its consumer reads that source more than once: a figure, a brain's words, a chart, a section, a table and its columns. @param {Edge} edge */
   const shows = ({ recipe }) => (recipe.total ? t('compose.shows.figure') : recipe.ask ? t('compose.shows.ask') : recipe.chart ? t('compose.shows.chart', { by: recipe.by ?? '' }) : recipe.section ? t('compose.shows.section', { section: recipe.section })
     : recipe.fields ? t('compose.shows.columns', { columns: listed(recipe.fields.split('|').map((one) => one.trim())) }) : t('compose.shows.table'))
-  // Each consumer once for each version it reads, however many of its blocks read it so.
-  const list = these && html`${group('compose.usedIn', [...new Map(these.usedIn.map((one) => [`${one.from} ${one.kind ?? ''} ${one.at}`, one])).values()].map((one) => html`<li>${open(one.from, beside(one))}</li>`))}
+  // Each creation that uses it once, however many of its blocks read it and at whichever version: the first five, then, once asked, all of them, found by their
+  // names past eight; how they link further along is drawn (See them drawn), never listed.
+  const users = these ? [...new Map(these.usedIn.map((one) => [`${one.from} ${one.kind ?? ''}`, one])).values()] : [], words = among.value.trim().toLocaleLowerCase()
+  const more = () => { every.value = true; requestAnimationFrame(() => /** @type {HTMLElement | null | undefined} */ (document.getElementById(id)?.querySelector('.links-find, [role="group"] li:nth-child(6) button'))?.focus()) }
+  const list = these && html`${group('compose.usedIn', [...(every.value && users.length > 8 ? [html`<li><input type="search" class="links-find" dir="auto" title=${t('compose.find')} placeholder=${t('compose.find')} .value=${among.value} @input=${(/** @type {Event} */ e) => { among.value = /** @type {HTMLInputElement} */ (e.target).value }}></li>`] : []),
+      ...(every.value ? users.filter((one) => name(one.from).toLocaleLowerCase().includes(words)) : users.slice(0, 5)).map((one) => html`<li>${open(one.from, beside(one))}</li>`),
+      ...(users.length > 5 && !every.value ? [html`<li><button type="button" @click=${more}>${icons.list}<span>${t('compose.all', { count: users.length })}</span></button></li>`] : [])])}
     ${group('compose.uses', these.uses.map((one) => (one.kind && one.kind !== 'kit' ? html`<li>${open(one.to, beside(one))}</li>` : html`<li><button type="button" class="submenu" @click=${() => go(`${uri} ${one.index}`)}>${KIND[one.to.split('/')[0]]}<span dir="auto">${name(one.to)}</span>${beside(one)}${icons.chevron}</button>
       ${!one.kind && these.uses.filter((other) => !other.kind && other.to === one.to).length > 1 ? said(shows(one)) : nothing}</li>`)))}
-    ${group('compose.further', these.further.map(([place, via]) => html`<li>${open(place, html`<span class="menu-value" dir="auto">${t('compose.through', { name: name(via) })}</span>`)}</li>`))}
     ${these.uses.concat(these.usedIn).some((one) => one.kind !== 'file' && one.kind !== 'kit') ? html`<ul><li><button type="button" popovertarget=${id} popovertargetaction="hide" @click=${() => Promise.all([drawingOf(app.projectDir, uri), import('./map.js')]).then(([drawing, map]) => map.sheet(name(uri), drawing))}>${icons.graph}<span>${t('compose.drawn')}</span></button></li></ul>` : nothing}
     ${these.fed && fed ? fed.linked(uri, id) : nothing}${versions}`
   // Keyed by its place: a pane that shows another creation draws its menu anew, closed; closed, it opens on its list again.
   return keyed(uri, html`<button class="icon-button" popovertarget=${id} aria-label=${t('compose.links')}>${icons.graph}</button>
-    <div id=${id} class="menu links-menu" popover @toggle=${(/** @type {ToggleEvent} */ event) => (event.newState === 'open' ? linksOf(uri) : (deep.value = ''))}>${edge ? settings(edge) : list || nothing}</div>`)
+    <div id=${id} class="menu links-menu" popover @toggle=${(/** @type {ToggleEvent} */ event) => (event.newState === 'open' ? linksOf(uri) : (deep.value = '', every.value = false, among.value = ''))}>${edge ? settings(edge) : list || nothing}</div>`)
 }
 
 /** What the brain reads of the graph: what uses a creation and what it uses, each with the version it reads and its recipe, then what is reached further; or, given no place, every creation that uses another, and what shows nothing and why. @type {import('../../core/loop.js').Tool} */

@@ -8,7 +8,7 @@ Each step was committed alone (`:sparkles: composition: étape N — …`), and 
 
 ### Step 1 — A live reference, and the graph
 
-A slide's ```` ```table ```` block shows a collection live, read again while it shows after every change; the reader's right is asked at each resolution, a loop refused, and the pane's head lists *Links with other creations*.
+A slide's ```` ```table ```` block shows a collection live, read again while it shows after every change; the reader's right is asked at each resolution, a loop refused, and the pane's head lists *Linked creations*.
 
 **Exit criterion** (in English, Arabic and Japanese): a row changed shows changed on the slide at once while it shows, and once the slides are opened again.
 
@@ -44,9 +44,9 @@ What already linked creations outside the graph comes into it (`linksIn()`): a c
 
 ### Step 7 — The graph answers
 
-What the graph knows, said where it matters, each answer a read of edges. From the graph as last read (`known`, read again a second after a creation changes): a column deleted in Tables, or a creation deleted from Creations, says with its Undo what still uses it (the `touched` slot, `usersOf()`: references that name the column or show every column, any link for a creation); a column whose kind changed, here or by Sync, says where that changes what shows (`retyped()`). The links menu adds *Further along*, what is reached through the creation's own links, each with the one it is reached through (`further()`). The brain reads the same graph with `creation_links`, a read tool: what uses a creation and what it uses, each with the version it reads and its recipe, then what is further.
+What the graph knows, said where it matters, each answer a read of edges. From the graph as last read (`known`, read again a second after a creation changes): a column deleted in Tables, or a creation deleted from Creations, says with its Undo what still uses it (the `touched` slot, `usersOf()`: references that name the column or show every column, any link for a creation); a column whose kind changed, here or by Sync, says where that changes what shows (`retyped()`). What is reached through the creation's own links, each with the one it is reached through (`further()`), is drawn on its map rather than listed in the links menu, which lists each creation that uses it once, the first five, then all of them on asking, found by their names. The brain reads the same graph with `creation_links`, a read tool: what uses a creation and what it uses, each with the version it reads and its recipe, then what is further.
 
-**Exit criterion**: slides that show a collection relating to the artisans are under the artisans' *Further along*, through it; the column the artisans' slides show deleted, its Undo says those slides still use it, and its kind changed, a toast says what that changes in them; `creation_links` says the same as the menu; that collection deleted from Creations, its Undo names the slides that use it.
+**Exit criterion**: slides that show a collection relating to the artisans are on the artisans' map, through it; the column the artisans' slides show deleted, its Undo says those slides still use it, and its kind changed, a toast says what that changes in them; `creation_links` says the same as the menu; that collection deleted from Creations, its Undo names the slides that use it.
 
 ### Step 8 — Answers that compose
 
@@ -159,7 +159,7 @@ Built first on a main whose line budget was nearly full, each step from the seco
 
 Composition and the graph are one ([architecture.md](architecture.md#composition)): every way a creation shows another becomes a reference, and every reference is an edge the graph reads. Steps 6 to 12 built the graph out from that; what is left of their plan is in the departures above: a flow's step reading a reference, a link carrying its ingredients' certificates, apps and a design's figures, counts on Creations' cards and `@`, an answer's figures as edges. Three rules hold for what comes next:
 
-- **Nothing shown outside a reference.** A kind that starts showing another's content joins `CONSUMERS` in the same change, and its test checks that the source's *Links with other creations* lists it.
+- **Nothing shown outside a reference.** A kind that starts showing another's content joins `CONSUMERS` in the same change, and its test checks that the source's *Linked creations* lists it.
 - **Budgets first.** Each step measures what it needs, deletes first where it can, asks for a raise in a change of its own, and stays out of Tables' folder and the first load, at their limits.
 - **What is paid stays opt-in.** A step that makes the graph carry more never makes a brain run, or anything leave Jean, that the person didn't choose.
 

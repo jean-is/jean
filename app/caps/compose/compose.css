@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: MIT */
-/* The menu of Links with other creations in a pane's head, placed as its way out is (ui/preview.css's .out-menu), loaded with composition, off the
+/* The menu of Linked creations in a pane's head, placed as its way out is (ui/preview.css's .out-menu), loaded with composition, off the
    first screen: a status under the row it is about, set in from the menu's edge as far as the row's words, and a collection's past versions so. */
 .links-menu { --links-words: calc(0.75rem + var(--icon-m) + 0.7rem); position-anchor: auto; position-area: block-end span-inline-start; position-try-fallbacks: flip-block, flip-inline; margin: 0.25rem 0; min-inline-size: 16rem; max-inline-size: min(22rem, 92vw); max-block-size: calc(100dvh - 5rem); overflow-y: auto; }
 .links-menu button { white-space: normal; } .links-menu [aria-current] { padding-inline-start: var(--links-words); } .links-menu [aria-current] > span { flex: 1; } .links-menu button > :first-child { flex: none; } .links-menu .back { font-weight: 600; }
@@ -22,3 +22,4 @@ app-links-map button > span { font-weight: 600; overflow-wrap: anywhere; } app-l
 app-links-map[data-chain] .links-lines path:not(.is-chain) { stroke-opacity: 0.35; } .links-lines path.is-chain { stroke: var(--flame); stroke-width: 2; }
 @container (inline-size < 34rem) { .links-columns { flex-direction: column; align-items: stretch; gap: 1.25rem; } .links-columns ul { max-inline-size: none; } }
 @media (forced-colors: active) { .links-lines, .links-lines path.is-chain { stroke: CanvasText; } .links-lines marker path { fill: CanvasText; } app-links-map .is-here button { border-color: Highlight; } }
+.links-find { box-sizing: border-box; inline-size: calc(100% - 1rem); margin: 0.15rem 0.5rem 0.35rem; }

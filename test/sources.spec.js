@@ -32,7 +32,7 @@ const routines = (page) => page.evaluate(async () => (await (await import('/caps
 
 test('a source is a routine that names the collection: begun from its links menu, made in the band, each morning, on, and turned off by its switch', async ({ page }) => {
   await start(page)
-  const folder = await bills(page), band = page.locator('app-preview .sources'), links = page.getByRole('button', { name: 'Links with other creations' })
+  const folder = await bills(page), band = page.locator('app-preview .sources'), links = page.getByRole('button', { name: 'Linked creations' })
   // None yet: no band, and no links menu, the collection being in no graph.
   await expect(page.locator('app-preview .table-grid')).toBeVisible()
   await expect(band).toHaveCount(0)
