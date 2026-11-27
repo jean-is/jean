@@ -443,6 +443,43 @@ test('the picker: a menu above the chip, Auto by default, a brain by hand, kept 
   await expect(brains.locator('[data-brain="key"]')).toBeFocused()
 })
 
+test('Auto’s steps: what matters most, each step any brain in the cloud, and the picker’s Fast, Smart and Best are them (D773)', { tag: '@chromium' }, async ({ page }) => {
+  await start(page)
+  await page.evaluate(async () => {
+    const { app, updateSettings } = await import('/ui/state.js')
+    await updateSettings({ activeBrain: 'claude', brains: [
+      { id: 'claude', provider: 'anthropic', api: 'anthropic', baseURL: 'https://api.anthropic.invalid/v1', model: 'claude-sonnet-5-5' },
+      { id: 'gemini', provider: 'gemini', api: 'openai', baseURL: 'https://gemini.invalid/v1beta/openai', model: 'gemini-3.8-flash' }] })
+    app.models.value = { claude: ['claude-haiku-4-5', 'claude-sonnet-5-5', 'claude-opus-5-5'].map((id) => ({ id })), gemini: ['gemini-3.5-flash-lite', 'gemini-3.8-flash', 'gemini-3.1-pro-preview'].map((id) => ({ id })) }
+  })
+  const brains = await openSettings(page, 'Brains')
+  await brains.getByRole('button', { name: 'How Auto chooses' }).click()
+  await expect(brains.getByRole('heading', { name: 'Auto' })).toBeFocused()
+  // Without Intuition every message gets its mix's everyday step: Smart when Balanced, the quick one to spend less, the top one for the best.
+  const step = brains.getByRole('group', { name: 'Every message' })
+  const version = step.getByTitle('Brain')
+  await expect(brains.getByRole('radio', { name: /^Balanced/ })).toBeChecked()
+  await expect(version.locator('option:checked')).toHaveText('claude-sonnet-5-5')
+  await brains.getByRole('radio', { name: /^Spend less/ }).check()
+  await expect(version.locator('option:checked')).toHaveText('claude-haiku-4-5')
+  // That step becomes another maker's brain, thinking little, and the line under Auto names both.
+  await version.selectOption({ label: 'gemini-3.5-flash-lite' })
+  await step.getByTitle('Thinking').selectOption('low')
+  await expect(brains.locator('.brain-head .lede')).toContainText('Google Gemini and Anthropic')
+  expect(await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value)).toMatchObject({ mix: 'less', steps: [{ brain: 'gemini', model: 'gemini-3.5-flash-lite', effort: 'low' }, null, null] })
+  await brains.getByRole('radio', { name: /^Best answers/ }).check()
+  await expect(version.locator('option:checked')).toHaveText('claude-opus-5-5')
+  // Picking what Auto would choose itself gives the step back to it, how much it thinks kept.
+  await brains.getByRole('radio', { name: /^Spend less/ }).check()
+  await version.selectOption({ label: 'claude-haiku-4-5' })
+  expect(await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.steps)).toEqual([{ effort: 'low' }, null, null])
+  await version.selectOption({ label: 'gemini-3.5-flash-lite' })
+  await closeSettings(page)
+  await page.locator('.brain-chip').click()
+  await expect(page.locator('#brain-menu').getByRole('button', { name: 'Fast' })).toHaveAttribute('title', /^gemini-3\.5-flash-lite/)
+  await expect(page.locator('#brain-menu').getByRole('button', { name: 'Smart' })).toHaveAttribute('title', /^claude-sonnet-5-5/)
+})
+
 test('beside the organisation’s brains, a person keeps their own of the providers policy leaves them, each of policy’s locked, and adds only those', { tag: '@chromium' }, async ({ page }) => {
   await withPolicy(page, { brains: [{ id: 'corp', provider: 'custom', api: 'openai', baseURL: BRAIN_URL, model: 'fake-brain-1', label: 'Corp' }], ownBrains: ['openai'] })
   await start(page)

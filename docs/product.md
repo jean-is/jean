@@ -258,7 +258,7 @@ A chip in the message box, beside its send button, reads **Auto ▾**, or the na
 
 - **Auto** (recommended)
 - **On this device:** private, free, works offline
-- **Fast / Smart / Best,** taken from the connected provider. Each shows the real model name and a plain cost ("about 1¢ per answer") on hover; a plan's say "in your Claude plan", "in your Gemini plan", "in your Copilot plan" or "in your ChatGPT plan" instead (D235 · D262, D756).
+- **Fast / Smart / Best,** Auto's three steps (D773), by default the versions of the connected provider. Each shows the real model name and a plain cost ("about 1¢ per answer") on hover; a plan's say "in your Claude plan", "in your Gemini plan", "in your Copilot plan" or "in your ChatGPT plan" instead (D235 · D262, D756).
 - **All brains**
 - **Keep on this device,** an explicit switch, while a brain is in the cloud. While it is on, the picker offers no brain in the cloud, and one picked by hand gives way to Auto. In a project kept on this device, it is on and can't be turned off, and says why (D307)
 
@@ -279,7 +279,9 @@ The picker offers the brains of the project the user is in. A brain is used in e
 | Is the browser offline? | The on-device brain, when one is installed (D269) |
 
 - **Stable choices.** Auto steps up when needed and never steps down within a conversation; a new conversation starts again from the bottom. This keeps the provider's cache warm and the tool-call format consistent.
-- **Without Intuition,** Auto picks the Smart level (D70).
+- **Its steps** (D773). Settings › Brains › Auto lists who answers each kind of message: a quick question, an everyday task, a demanding task, then anything personal and while offline. Each of the three steps is, by default, the Fast, Smart or Best version of the brain Auto leans on (the one last picked by hand); any of them can be another brain connected in the cloud, whoever makes it, at any of its Fast, Smart and Best versions or the version it is set to, with how much it thinks: Auto, Quick, Balanced or Thorough. Picking the default again gives the step back to Auto. The picker's Fast, Smart and Best are these three steps.
+- **What matters most** (D773), above the steps: **Balanced** (the default) starts each message on the step its demand needs; **Spend less** starts every message on the quick step, thinking Quick there, a step up only when an answer falls short; **Best answers** sends everything past a quick question to the demanding step, thinking Thorough. A step's own thinking, then its brain's, comes before the mix's.
+- **Without Intuition,** Auto picks the everyday step of its mix: Smart when Balanced (D70).
 - **How much it thinks** (D414). Auto asks each brain to think as much as the request demands, more when the user seems unhappy, never less within a conversation. Once the user has asked for an answer now, Settings › Brains lets each brain keep its own: Auto, Quick, Balanced or Thorough.
 - **A month's limit** (D711). What it cost, under Brains' title, holds a Monthly limit: once this month's answers reached it, the next request to a brain that costs money asks first, Not now recommended, and Allow for this task lets that task go on. The brain on this device, a server on this computer and a plan don't count.
 - **Visible.** Every answer shows where it came from ("answered on this device"), with a one-tap "Ask a smarter brain".

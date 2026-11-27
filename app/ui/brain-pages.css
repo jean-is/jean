@@ -12,8 +12,9 @@
 :is(.brain-rows .item, .brain-link) > .icon:last-child { flex: none; rotate: -90deg; color: var(--ink-faint); } :dir(rtl) :is(.brain-rows .item, .brain-link) > .icon:last-child { rotate: 90deg; }
 .brain-link { display: inline-flex; align-items: center; gap: 0.2rem; color: var(--ink); text-decoration: none; } .brain-link:hover { text-decoration: underline; }
 .brain-trouble { flex: none; padding: 0.1rem 0.55rem; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--danger); color: var(--danger); font-size: 0.78rem; font-weight: 500; white-space: nowrap; }
-/* Always the same's brain beside its name, under it on a phone; how Auto chooses, each kind of message with its price at its end. */
-.brain-same { flex: 0 1 16rem; min-inline-size: 0; } .brain-lean { display: grid; gap: 0.3rem; max-inline-size: 20rem; margin-block-end: 1rem; }
+/* Always the same's brain beside its name, under it on a phone; how Auto chooses, each kind of message with its price, then its step's brain and how much it thinks, under it on a phone. */
+.brain-same { flex: 0 1 16rem; min-inline-size: 0; }
+.auto-steps .item-text { flex: 1 1 9rem; } .auto-steps select { flex: 1 1 12rem; min-inline-size: 0; } .auto-steps select + select { flex: 0 1 8rem; }
 .brain-price { margin-inline-start: auto; color: var(--ink-soft); font-size: 0.85rem; font-variant-numeric: tabular-nums; }
 .brain-way { display: grid; gap: 0.75rem; } .sheet .brain-way p { margin: 0; } .model-input { inline-size: 100%; max-inline-size: 20rem; margin-block-end: 0.75rem; }
 @media (forced-colors: active) { .brain-trouble, .brain-wait { border: 1px solid CanvasText; } }

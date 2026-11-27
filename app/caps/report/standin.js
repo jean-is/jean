@@ -81,7 +81,7 @@ export function standIn(report, { now = new Date(), providers, directory }) {
   })
   const urls = Object.fromEntries(Object.entries(s.urls ?? {}).flatMap(([key, kind]) => (/^local:\d+$/.test(String(kind)) ? [[key, `http://localhost:${String(kind).slice(6)}/`]] : (kind !== 'none' && kind !== 'default' && missing.add('own'), []))))
   const plain = (/** @type {unknown} */ value) => (value && typeof value === 'object' ? undefined : value)
-  const switches = Object.fromEntries(['format', 'locale', 'auto', 'cloud', 'wasAuto', 'memory', 'naturalVoice', 'notifications', 'hurried', 'restored', 'terminal', 'films', 'search', 'limit', 'forget', 'retried', 'cited', 'browsed', 'photos', 'readAloud', 'stepped', 'dictated', 'voice', 'pictures']
+  const switches = Object.fromEntries(['format', 'locale', 'auto', 'cloud', 'wasAuto', 'mix', 'memory', 'naturalVoice', 'notifications', 'hurried', 'restored', 'terminal', 'films', 'search', 'limit', 'forget', 'retried', 'cited', 'browsed', 'photos', 'readAloud', 'stepped', 'dictated', 'voice', 'pictures']
     .flatMap((key) => (plain(s[key]) !== undefined ? [[key, s[key]]] : [])))
   const rules = (/** @type {Record<string, unknown> | undefined} */ given) => Object.fromEntries(Object.entries(given ?? {}).filter(([, value]) => typeof value === 'string'))
   add('settings.json', `${JSON.stringify({ format: 1, brains, activeBrain: s.activeBrain ? idOf(s.activeBrain) : null, rules: rules(s.rules), voice: null, unlocked: s.unlocked ?? [], offers: Object.fromEntries((s.offers ?? []).map((/** @type {string} */ id) => [id, now.toISOString()])),

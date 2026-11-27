@@ -76,6 +76,17 @@ export async function setEffort(id, effort) {
   await updateSettings({ brains: app.settings.value.brains.map((brain) => (brain.id === id ? { ...brain, effort: /** @type {BrainConfig['effort']} */ (effort || undefined) } : brain)) })
 }
 
+/**
+ * Sets one of Auto's steps, 0 quick to 2 demanding: its brain and version, how much it thinks; with none of them left, the step
+ * is Auto's to choose again (D773). @param {number} level @param {import('../core/types.js').Step} change
+ */
+export async function setStep(level, change) {
+  const steps = [0, 1, 2].map((at) => app.settings.value.steps?.[at] ?? null)
+  const step = Object.fromEntries(Object.entries({ ...steps[level], ...change }).filter(([, value]) => value))
+  steps[level] = Object.keys(step).length ? step : null
+  await updateSettings({ steps: steps.some(Boolean) ? steps : undefined })
+}
+
 /** Keeps a brain to some projects, or, with none, uses it in every one (D194). @param {string} id @param {string[] | undefined} projects */
 export async function keepBrain(id, projects) {
   await updateSettings({ brains: app.settings.value.brains.map((brain) => (brain.id === id ? { ...brain, projects } : brain)) })

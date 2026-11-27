@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: MIT
 // Auto: the cheapest brain that can do the job, chosen from reflex answers (docs/product.md,
 // "Brains: picker and Auto"). Within a conversation it steps up, never down, so the
-// provider's cache stays warm; a new conversation starts again from the bottom.
+// provider's cache stays warm; a new conversation starts again from the bottom. Its three
+// steps may each be any brain in the cloud, and a mix says how it climbs them (D773).
 import { isLocal } from '../core/settings.js'
 
 /** @typedef {import('../core/types.js').BrainConfig} BrainConfig */
 /** @typedef {import('../core/types.js').Effort} Effort */
+/** @typedef {import('../core/types.js').Step} Step */
+/** @typedef {'less' | 'balanced' | 'best'} Mix */
 /** @typedef {'only' | 'private' | 'offline' | 'personal' | 'demand' | 'unhappy' | 'default'} Reason */
 /**
  * What the reflexes made of a message, when they're on (ui/discovery.js), and whether it shares a picture; in a child's profile, a danger (D228).
@@ -34,8 +37,35 @@ export const TIERS = /** @type {Record<string, string[]>} */ ({
 // Whether a brain never leaves this computer is a setting's matter, known before Auto loads (D140).
 export { isLocal }
 
-/** Demand (0 chat → 3 expert) to a tier: fast, smart, smart, best. @param {number} demand */
-export const tierFor = (demand) => [0, 1, 1, 2][Math.min(3, Math.max(0, Math.round(demand)))]
+/**
+ * How each mix climbs the three steps (D773): the step each demand starts on, 0 chat → 3 expert, and without Intuition as
+ * for an everyday request; and how much a step thinks when neither it nor its brain says.
+ * @type {Record<Mix, { levels: number[], efforts: (Effort | undefined)[] }>}
+ */
+export const MIXES = {
+  less: { levels: [0, 0, 0, 0], efforts: ['low'] },
+  balanced: { levels: [0, 1, 1, 2], efforts: [] },
+  best: { levels: [0, 2, 2, 2], efforts: [undefined, undefined, 'high'] },
+}
+
+/** Demand (0 chat → 3 expert) to a step, as a mix climbs them: fast, smart, smart, best. @param {number} demand */
+export const tierFor = (demand, levels = MIXES.balanced.levels) => levels[Math.min(3, Math.max(0, Math.round(demand)))]
+
+/**
+ * Auto's three steps, quick, everyday and demanding (D773): each the brain and version the user set, while that brain is
+ * among these; else the version for that level of the brain Auto leans on, when its provider's list has one; else none.
+ * @param {{ brains: BrainConfig[], preferred?: string | null, steps?: (Step | null)[], tiers?: Record<string, string[]>,
+ *   has?: (brain: BrainConfig, model: string) => boolean }} input brains: those in the cloud it may choose
+ * @returns {(BrainConfig | null)[]}
+ */
+export function stepsOf({ brains, preferred, steps = [], tiers = TIERS, has = () => true }) {
+  const lean = brains.find((brain) => brain.id === preferred) ?? brains[0]
+  return [0, 1, 2].map((level) => {
+    const set = steps[level]?.model && brains.find((brain) => brain.id === steps[level]?.brain)
+    const model = lean && tiers[lean.provider]?.[level]
+    return set ? { ...set, model: /** @type {string} */ (steps[level]?.model) } : model && has(lean, model) ? { ...lean, model } : null
+  })
+}
 
 /** How much a brain thinks, from least to most (D414). @type {readonly Effort[]} */
 export const EFFORTS = ['low', 'medium', 'high']
@@ -55,22 +85,25 @@ export function chooseEffort({ setting, signals = {}, floor = -1 }) {
 /**
  * @param {{ brains: BrainConfig[], preferred?: string | null, cloud?: boolean, online?: boolean, signals?: Signals,
  *   floor?: number, has?: (brain: BrainConfig, model: string) => boolean, sees?: (brain: BrainConfig) => boolean,
- *   tiers?: Record<string, string[]> }} input
+ *   tiers?: Record<string, string[]>, mix?: Mix, steps?: (Step | null)[] }} input
  *   floor: the level already used in this conversation; cloud false: "Keep on this device";
  *   online false: the browser is offline, so a brain on this device answers when there is one (D269);
- *   sees: whether a brain is shown pictures
- * @returns {{ brain: BrainConfig, level: number, reason: Reason } | null}
+ *   sees: whether a brain is shown pictures; mix and steps: the user's, which Auto climbs (D773)
+ * @returns {{ brain: BrainConfig, level: number, reason: Reason, effort?: Effort } | null} effort: how much the step thinks, if anything says
  */
-export function chooseBrain({ brains, preferred, cloud = true, online = true, signals = {}, floor = 0, has = () => true, sees = () => true, tiers = TIERS }) {
+export function chooseBrain({ brains, preferred, cloud = true, online = true, signals = {}, floor = 0, has = () => true, sees = () => true, tiers = TIERS, mix = 'balanced', steps = [] }) {
   // The device's brain first, unless a picture needs a private brain that can see it.
   const local = (signals.pictures && brains.find((brain) => isLocal(brain) && sees(brain))) || brains.find((brain) => brain.api === 'device') || brains.find(isLocal)
-  // In the cloud, the one preferred, or the first; one that can see when there is a picture, if any can (D645).
-  const remotes = cloud && (online || !local) ? [brains.find((brain) => brain.id === preferred), ...brains].filter((brain) => brain && !isLocal(brain)) : []
-  const remote = (signals.pictures && remotes.find((brain) => brain && sees(brain))) || remotes[0]
-  if (!remote) return local ? { brain: local, level: floor, reason: !cloud ? 'private' : brains.every(isLocal) ? 'only' : 'offline' } : null
+  // In the cloud, the ones that can see when there is a picture, if any can (D645), leaning on the one preferred, or the first.
+  const remotes = cloud && (online || !local) ? brains.filter((brain) => !isLocal(brain)) : []
+  const seeing = remotes.filter((brain) => signals.pictures && sees(brain))
+  const pool = seeing.length ? seeing : remotes
+  const lean = pool.find((brain) => brain.id === preferred) ?? pool[0]
+  if (!lean) return local ? { brain: local, level: floor, reason: !cloud ? 'private' : brains.every(isLocal) ? 'only' : 'offline' } : null
   if (local && signals.personal && (!signals.pictures || sees(local))) return { brain: local, level: floor, reason: 'personal' }
-  const level = Math.min(2, Math.max(floor, (signals.demand === undefined ? 1 : tierFor(signals.demand)) + (signals.unhappy ? 1 : 0)))
-  const model = tiers[remote.provider]?.[level]
+  const { levels, efforts } = MIXES[mix] ?? MIXES.balanced
+  const level = Math.min(2, Math.max(floor, tierFor(signals.demand ?? 1, levels) + (signals.unhappy ? 1 : 0)))
+  const brain = stepsOf({ brains: pool, preferred, steps, tiers, has })[level] ?? lean
   const reason = signals.unhappy ? 'unhappy' : signals.demand !== undefined ? 'demand' : 'default'
-  return { brain: model && has(remote, model) ? { ...remote, model } : remote, level, reason }
+  return { brain, level, reason, effort: steps[level]?.effort ?? brain.effort ?? efforts[level] }
 }

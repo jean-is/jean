@@ -10,7 +10,7 @@ import { Element, define } from './base.js'
 import { app, effective, activeBrain, brainsHere, updateSettings, loadModels, cloudAllowed } from './state.js'
 import { useBrain, keepOnDevice } from './brains.js'
 import { openSettings } from './dialogs.js'
-import { TIERS, isLocal } from './auto.js'
+import { TIERS, isLocal, stepsOf } from './auto.js'
 import { t, intlLocales } from '../core/i18n.js'
 import { icons } from './menu-icons.js'
 import { priceOf, PLANS } from './prices.js'
@@ -46,8 +46,8 @@ export function cost(pricing) {
 }
 
 /**
- * What the picker offers besides Auto, as a routine's own brain does too (D303): Fast, Smart and Best from the
- * connected provider, then every other brain of the room's project (D194), each with what is behind it, its
+ * What the picker offers besides Auto, as a routine's own brain does too (D303): Fast, Smart and Best as Auto's steps
+ * have them (D773), then every other brain of the room's project (D194), each with what is behind it, its
  * price once `priced`; none in the cloud while messages are kept on this device, and for a task's records,
  * only those that may read it (D440). @param {boolean} [priced] @param {Envelope[]} [records]
  * @returns {{ icon: unknown, label: string, behind: string, brain: BrainConfig, model: string, tier?: boolean }[]}
@@ -56,15 +56,13 @@ export function choices(priced = false, records = []) {
   const cloud = cloudAllowed()
   const may = (/** @type {BrainConfig | null} */ brain) => brain && (cloud || isLocal(brain)) && mayRead(brain, records, app.policy)
   const brains = brainsHere.value.filter(may)
-  const remote = cloud ? [activeBrain.value, ...brains].find((brain) => may(brain) && !isLocal(brain)) : undefined
-  const models = remote ? app.models.value[remote.id] ?? [] : []
-  const tiers = remote ? /** @type {Record<string, string[]>} */ (app.policy.tiers ?? TIERS)[remote.provider] ?? [] : []
-  const offered = tiers.filter((model) => models.some((info) => info.id === model))
-  const plan = remote && PLANS[remote.provider]
+  const listed = (/** @type {BrainConfig} */ brain) => app.models.value[brain.id] ?? []
+  const steps = cloud ? stepsOf({ brains: brains.filter((brain) => !isLocal(brain)), preferred: activeBrain.value?.id, steps: effective.value.settings.steps,
+    tiers: app.policy.tiers ?? TIERS, has: (brain, model) => listed(brain).some((info) => info.id === model) }) : []
   return [
-    ...(remote ? offered.map((model) => ({ icon: TIER_ICONS[tiers.indexOf(model)], label: t(`picker.${TIER_NAMES[tiers.indexOf(model)]}`), brain: remote, model, tier: true,
-      behind: [short(model), plan ? t('picker.plan', { plan }) : priced && cost(priceOf(remote.provider, model, models.find((info) => info.id === model)?.pricing))].filter(Boolean).join(' · ') })) : []),
-    ...brains.filter((brain) => !(brain === remote && offered.includes(brain.model))).map((brain) => (brain.api === 'device'
+    ...steps.flatMap((step, level) => (step ? [{ icon: TIER_ICONS[level], label: t(`picker.${TIER_NAMES[level]}`), brain: step, model: step.model, tier: true,
+      behind: [short(step.model), PLANS[step.provider] ? t('picker.plan', { plan: PLANS[step.provider] }) : priced && cost(priceOf(step.provider, step.model, listed(step).find((info) => info.id === step.model)?.pricing))].filter(Boolean).join(' · ') }] : [])),
+    ...brains.filter((brain) => !steps.some((step) => step?.id === brain.id && step.model === brain.model)).map((brain) => (brain.api === 'device'
       ? { icon: icons['brain-device'], label: t('brain.device.title'), behind: t('brain.device.private'), brain, model: brain.model }
       : { icon: isLocal(brain) ? icons['brain-device'] : icons.cloud, label: short(brain.model), behind: t(`provider.${brain.provider}`), brain, model: brain.model })),
   ]

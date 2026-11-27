@@ -12,7 +12,7 @@ import { bm25, words } from '../app/core/search.js'
 import { KEV, pack, answers, render } from '../app/core/decide.js'
 import { documentPart, sourceNumber } from '../app/core/files.js'
 import { openaiMessages } from '../app/core/llm.js'
-import { chooseBrain, chooseEffort, isLocal, tierFor } from '../app/ui/auto.js'
+import { chooseBrain, chooseEffort, isLocal, tierFor, stepsOf, MIXES } from '../app/ui/auto.js'
 import { REFLEXES, CAPABILITIES } from '../app/ui/questions.js'
 
 const brain = { id: 'b', provider: /** @type {const} */ ('custom'), api: /** @type {const} */ ('openai'), baseURL: 'http://x', model: 'm' }
@@ -335,9 +335,52 @@ test('Auto: cheapest brain that can do it, private when personal, never steps do
   assert.equal(chooseBrain({ brains: [device], online: false })?.reason, 'only')
   assert.equal(chooseBrain({ brains: [cloud], online: false, signals: { demand: 0 } })?.brain.model, 'claude-haiku-4-5')
   assert.equal(chooseBrain({ brains: [cloud, device], online: true })?.brain.id, 'c')
-  assert.deepEqual([0, 1, 2, 3].map(tierFor), [0, 1, 1, 2])
+  assert.deepEqual([0, 1, 2, 3].map((demand) => tierFor(demand)), [0, 1, 1, 2])
   assert.ok(isLocal({ ...brain, baseURL: 'http://127.0.0.1:11434/v1' }))
   assert.ok(!isLocal(brain))
+})
+
+test('Auto: each step any brain in the cloud, how much it thinks, and a mix that climbs them (D773)', () => {
+  const claude = { id: 'c', provider: /** @type {const} */ ('anthropic'), api: /** @type {const} */ ('anthropic'), baseURL: 'https://api.anthropic.com/v1', model: 'claude-opus-5-5' }
+  const gemini = { id: 'g', provider: /** @type {const} */ ('gemini'), api: /** @type {const} */ ('openai'), baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai', model: 'gemini-3.8-flash', effort: /** @type {const} */ ('medium') }
+  const groq = { id: 'q', provider: /** @type {const} */ ('groq'), api: /** @type {const} */ ('openai'), baseURL: 'https://api.groq.com/openai/v1', model: 'kimi-k3' }
+  const device = { id: 'd', provider: /** @type {const} */ ('device'), api: /** @type {const} */ ('device'), baseURL: '', model: 'gemma' }
+  // With nothing set, the steps are the versions of the brain Auto leans on; one with none at a level has nothing there.
+  assert.deepEqual(stepsOf({ brains: [claude, gemini], preferred: 'c' }).map((brain) => brain?.model), ['claude-haiku-4-5', 'claude-sonnet-5-5', 'claude-opus-5-5'])
+  assert.deepEqual(stepsOf({ brains: [groq] }), [null, null, null])
+  assert.deepEqual(stepsOf({ brains: [claude], has: (_, model) => model !== 'claude-haiku-4-5' }).map((brain) => brain?.model), [undefined, 'claude-sonnet-5-5', 'claude-opus-5-5'])
+  // A step the user set is any brain and version, whoever makes it; one whose brain isn't here gives way to the usual.
+  const steps = [{ brain: 'g', model: 'gemini-3.5-flash-lite', effort: /** @type {const} */ ('low') }, null, { brain: 'q', model: 'kimi-k3', effort: /** @type {const} */ ('high') }]
+  assert.deepEqual(stepsOf({ brains: [claude, gemini, groq], preferred: 'c', steps }).map((brain) => brain && `${brain.id}:${brain.model}`), ['g:gemini-3.5-flash-lite', 'c:claude-sonnet-5-5', 'q:kimi-k3'])
+  assert.deepEqual(stepsOf({ brains: [claude], steps }).map((brain) => brain?.id), ['c', 'c', 'c'])
+  assert.equal(stepsOf({ brains: [claude], steps: [{ effort: 'low' }] })[0]?.model, 'claude-haiku-4-5', 'a step that only says how much it thinks keeps its brain')
+  // Auto climbs them as before: each step's brain and how much it thinks, its own setting before its brain's.
+  const chosen = (/** @type {Partial<Parameters<typeof chooseBrain>[0]>} */ input) => { const choice = chooseBrain({ brains: [claude, gemini, groq, device], preferred: 'c', steps, ...input }); return choice && [`${choice.brain.id}:${choice.brain.model}`, choice.level, choice.effort] }
+  assert.deepEqual(chosen({ signals: { demand: 0 } }), ['g:gemini-3.5-flash-lite', 0, 'low'])
+  assert.deepEqual(chosen({ signals: { demand: 1 } }), ['c:claude-sonnet-5-5', 1, undefined])
+  assert.deepEqual(chosen({ signals: { demand: 3 } }), ['q:kimi-k3', 2, 'high'])
+  assert.deepEqual(chosen({ signals: { demand: 0 }, steps: [{ brain: 'g', model: 'gemini-3.5-flash-lite' }] }), ['g:gemini-3.5-flash-lite', 0, 'medium'], 'the brain’s own thinking, when its step says none')
+  assert.deepEqual(chosen({ signals: { demand: 0 }, floor: 2 }), ['q:kimi-k3', 2, 'high'], 'never a step down')
+  assert.equal(chooseBrain({ brains: [groq] })?.brain.model, 'kimi-k3', 'a brain with no steps answers as it is')
+  // Personal, offline and kept on this device stay the device's, whatever the steps say.
+  assert.equal(chosen({ signals: { demand: 0, personal: true } })?.[0], 'd:gemma')
+  assert.equal(chosen({ online: false })?.[0], 'd:gemma')
+  assert.equal(chosen({ cloud: false })?.[0], 'd:gemma')
+  // A picture takes the step of a brain that sees it, or the usual version of one that does.
+  assert.deepEqual(chosen({ signals: { demand: 0, pictures: true }, sees: (brain) => brain.id === 'c' })?.slice(0, 2), ['c:claude-haiku-4-5', 0])
+  // Spend less starts every message at the bottom and thinks little there; Best answers goes to the top past a quick question, thinking thoroughly.
+  const mixed = (/** @type {import('../app/ui/auto.js').Mix} */ mix, /** @type {number | undefined} */ demand, unhappy = false) => {
+    const choice = chooseBrain({ brains: [claude], mix, signals: { demand, unhappy } })
+    return choice && [choice.brain.model, choice.effort]
+  }
+  assert.deepEqual(mixed('less', 3), ['claude-haiku-4-5', 'low'])
+  assert.deepEqual(mixed('less', 3, true), ['claude-sonnet-5-5', undefined], 'a step up when an answer falls short')
+  assert.deepEqual(mixed('less', undefined), ['claude-haiku-4-5', 'low'])
+  assert.deepEqual(mixed('balanced', undefined), ['claude-sonnet-5-5', undefined])
+  assert.deepEqual(mixed('best', 0), ['claude-haiku-4-5', undefined])
+  assert.deepEqual(mixed('best', 1), ['claude-opus-5-5', 'high'])
+  assert.deepEqual(mixed('best', undefined), ['claude-opus-5-5', 'high'])
+  assert.deepEqual(Object.keys(MIXES), ['less', 'balanced', 'best'])
 })
 
 test('Auto: as much thinking as the request demands, a step more when the user is unhappy, never less; the brain’s own setting first (D414)', () => {

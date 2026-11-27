@@ -263,7 +263,7 @@ async function pickBrain(text, records, boost = 0, chosen, pictured = false) {
   const signals = await sense(text, lastAnswer(records))
   // How much it thinks: the brain's own setting, or as much as the request demands, never less than before (D414).
   const floor = effortLevel(records, EFFORTS)
-  const meta = (/** @type {BrainConfig} */ brain, /** @type {Record<string, unknown>} */ more = {}) => ({ ...more, effort: chooseEffort({ setting: brain.effort, signals: { ...signals, unhappy: signals.unhappy || boost > 0 }, floor }) })
+  const meta = (/** @type {BrainConfig} */ brain, /** @type {Record<string, unknown>} */ more = {}, setting = brain.effort) => ({ ...more, effort: chooseEffort({ setting, signals: { ...signals, unhappy: signals.unhappy || boost > 0 }, floor }) })
   if (chosen !== 'auto' && (chosen || !settings.auto)) {
     const brain = chosen || activeBrain.value
     return brain && (cloudAllowed() || isLocal(brain)) ? { brain, meta: meta(brain), signals } : null
@@ -284,8 +284,10 @@ async function pickBrain(text, records, boost = 0, chosen, pictured = false) {
     has: (brain, model) => (app.models.value[brain.id] ?? []).some((info) => info.id === model),
     sees: seesPictures,
     tiers: app.policy.tiers ?? TIERS,
+    mix: settings.mix,
+    steps: settings.steps,
   })
-  return choice && { brain: choice.brain, meta: meta(choice.brain, { auto: { level: choice.level, reason: choice.reason } }), signals }
+  return choice && { brain: choice.brain, meta: meta(choice.brain, { auto: { level: choice.level, reason: choice.reason } }, choice.effort), signals }
 }
 
 /**

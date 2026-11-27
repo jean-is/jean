@@ -8,8 +8,8 @@ import { html, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal, effect, untracked } from '@preact/signals-core'
 import { app, effective, activeBrain, brainsHere, updateSettings, cloudAllowed, showError, notify, sitePage } from './state.js'
-import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, setVersion, setEffort, keepBrain, startOpenRouter, leave, keepOnDevice } from './brains.js'
-import { isLocal, TIERS } from './auto.js'
+import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, setVersion, setEffort, setStep, keepBrain, startOpenRouter, leave, keepOnDevice } from './brains.js'
+import { isLocal, TIERS, MIXES, EFFORTS, stepsOf } from './auto.js'
 import { unlock, isDenied, loaded, slots } from './caps.js'
 import { openSettings, sectionOpen, pageOpen, placeable, where, projectName, lockedBy, valueOf } from './dialogs.js'
 import { choices, cost } from './picker.js'
@@ -23,6 +23,8 @@ import { icons } from './menu-icons.js'
 import { styleSheet } from './sheet.js'
 
 /** @typedef {import('../core/types.js').BrainConfig} BrainConfig */
+/** @typedef {import('../core/types.js').Effort} Effort */
+/** @typedef {import('./auto.js').Mix} Mix */
 
 await Promise.all([useStrings('brains'), styleSheet(new URL('brain-pages.css', import.meta.url))])
 
@@ -368,10 +370,12 @@ function line(brain) {
   return html`${describe(brain).where}${names.length ? html` · <bdi dir="ltr">${new Intl.ListFormat(intlLocales(), { type: 'unit', style: 'short' }).format(names)}</bdi>` : nothing}`
 }
 
-/** What Auto does, truly: the brain in the cloud it leans on as each message needs, and this device for anything personal, which Intuition tells. */
+/** What Auto does, truly: the brains in the cloud its steps use as each message needs, and this device for anything personal, which Intuition tells. */
 function autoLine() {
-  const remote = cloudAllowed() ? [activeBrain.value, ...brainsHere.value].find((brain) => brain && !isLocal(brain)) : undefined
-  return remote ? t(brainsHere.value.some(isLocal) && loaded.value.has('reflexes') ? 'auto.both' : 'auto.cloud', { brain: describe(remote).name }) : t('auto.text')
+  const { lean, steps } = ladder()
+  if (!lean) return t('auto.text')
+  const names = [...new Set(steps.map((brain) => describe(/** @type {BrainConfig} */ (brain)).name))]
+  return t(brainsHere.value.some(isLocal) && loaded.value.has('reflexes') ? 'auto.both' : 'auto.cloud', { brain: new Intl.ListFormat(intlLocales()).format(names) })
 }
 
 /**
@@ -427,35 +431,66 @@ function listed(closed) {
 const LEVELS = ['picker.fast', 'picker.smart', 'picker.best']
 
 /**
- * How Auto chooses, as ui/auto.js does: the brain in the cloud it leans on, which to change; then, for each kind of
- * message, the version it asks for with its price, the device's for anything personal or offline. Without Intuition there
- * is no telling one message from another: every one gets Smart.
+ * How Auto chooses, as ui/auto.js does (D773): what matters most, which says how it climbs its steps; then, for each kind of
+ * message, its step's brain and version, any in the cloud, which to change, with its price and how much it thinks; the device's
+ * for anything personal or offline. Without Intuition there is no telling one message from another: every one gets the
+ * everyday step of its mix.
  */
 function auto() {
-  const cloud = cloudAllowed() ? brainsHere.value.filter((brain) => !isLocal(brain)) : []
-  const remote = [activeBrain.value, ...cloud].find((brain) => brain && !isLocal(brain) && cloud.includes(brain))
+  const { settings } = effective.value
+  const { cloud, lean, usual, steps } = ladder()
   const near = brainsHere.value.find((brain) => brain.api === 'device') ?? brainsHere.value.find(isLocal)
   const sensed = loaded.value.has('reflexes')
-  const tiers = remote ? /** @type {Record<string, string[]>} */ (app.policy.tiers ?? TIERS)[remote.provider] ?? [] : []
-  const models = remote ? app.models.value[remote.id] ?? [] : []
-  /** A kind of message, the version Auto asks for and what it costs. @param {unknown} icon @param {string} kind @param {number} level */
+  const mix = settings.mix ?? 'balanced'
+  const tiers = /** @type {Record<string, string[]>} */ (app.policy.tiers ?? TIERS)
+  // What a step may be: each brain's Fast, Smart and Best that its list has, the version it is set to, and any a step names.
+  const versions = cloud.flatMap((brain) => [...new Set([...(tiers[brain.provider] ?? []).filter((model) => modelsOf(brain).some((info) => info.id === model)), brain.model,
+    ...steps.flatMap((step) => (step?.id === brain.id ? [step.model] : []))])].map((model) => ({ brain, model })))
+  /** A kind of message: its step's brain and version, which to change, what it costs and how much it thinks. @param {unknown} icon @param {string} kind @param {number} level */
   const step = (icon, kind, level) => {
-    const model = models.some((info) => info.id === tiers[level]) ? tiers[level] : /** @type {BrainConfig} */ (remote).model
-    const info = models.find((one) => one.id === model)
-    return html`<li><span class="item-icon">${icon}</span><span class="item-text"><strong>${t(`auto.${kind}`)}</strong><small>${model === tiers[level] ? `${t(LEVELS[level])} · ` : ''}<bdi>${info?.name ?? model.split('/').at(-1)}</bdi></small></span>
-      <span class="brain-price">${price(/** @type {BrainConfig} */ (remote), model, info?.pricing)}</span></li>`
+    const brain = /** @type {BrainConfig} */ (steps[level])
+    const effort = settings.steps?.[level]?.effort ?? ''
+    const choose = (/** @type {Event} */ e) => {
+      const { brain: one, model } = versions[Number(valueOf(e))]
+      const own = usual[level]?.id !== one.id || usual[level]?.model !== model
+      setStep(level, { brain: own ? one.id : undefined, model: own ? model : undefined }).catch(showError)
+    }
+    return html`<li role="group" aria-labelledby=${`auto-${kind}`}><span class="item-icon">${icon}</span><span class="item-text"><strong id=${`auto-${kind}`}>${t(`auto.${kind}`)}</strong>
+      <small>${[PLANS[brain.provider] ? '' : describe(brain).name, price(brain, brain.model, modelsOf(brain).find((info) => info.id === brain.model)?.pricing)].filter(Boolean).join(' · ')}</small></span>
+      <select title=${t('auto.brain')} dir="ltr" @change=${choose}>${cloud.map((one) => html`<optgroup label=${PLANS[one.provider] ?? describe(one).name}>${versions.map((version, i) => (version.brain === one
+        ? html`<option value=${i} ?selected=${one.id === brain.id && version.model === brain.model}>${version.model.split('/').at(-1)}</option>` : nothing))}</optgroup>`)}</select>
+      ${thinks(brain) ? html`<select title=${t('brain.thinking')} @change=${(/** @type {Event} */ e) => setStep(level, { effort: /** @type {Effort} */ (valueOf(e)) || undefined }).catch(showError)}>
+        ${['', ...EFFORTS].map((one) => html`<option value=${one} ?selected=${effort === one}>${t(one ? `brain.thinking.${one}` : 'auto.name')}</option>`)}</select>` : nothing}</li>`
   }
   const here = (/** @type {unknown} */ icon, /** @type {string} */ kind) => html`<li><span class="item-icon">${icon}</span><span class="item-text"><strong>${t(`auto.${kind}`)}</strong>
     <small><bdi dir="ltr">${describe(/** @type {BrainConfig} */ (near)).name}</bdi></small></span><span class="brain-price">${t('brain.free')}</span></li>`
   return html`${head(t('auto.name'), autoLine())}
-    ${cloud.length > 1 ? html`<label class="brain-lean" for="brain-lean">${t('auto.uses')}<select id="brain-lean" @change=${(/** @type {Event} */ e) => updateSettings({ activeBrain: valueOf(e) })}>
-      ${cloud.map((brain) => html`<option value=${brain.id} ?selected=${brain === remote}>${describe(brain).name}</option>`)}</select></label>` : nothing}
-    <ul class="list auto-steps">
-      ${remote ? (sensed ? [step(icons.bolt, 'quick', 0), step(icons.lamp, 'everyday', 1), step(icons.star, 'demanding', 2)] : step(icons.lamp, 'all', 1)) : nothing}
-      ${near && sensed && remote ? here(icons.lock, 'personal') : nothing}
-      ${near ? here(icons['brain-device'], remote ? 'offline' : 'all') : nothing}
-    </ul>
+    ${lean ? html`<section><h3 id="auto-mix">${t('auto.mix')}</h3><div class="list brains" role="radiogroup" aria-labelledby="auto-mix">${Object.keys(MIXES).map((id) => html`<div class=${mix === id ? 'is-selected' : ''}>
+      <label class="item" for=${`mix-${id}`}><input id=${`mix-${id}`} type="radio" name="mix" .checked=${live(mix === id)} @change=${() => updateSettings({ mix: /** @type {Mix} */ (id) }).catch(showError)}>
+      <span class="item-text"><strong>${t(`auto.mix.${id}`)}</strong><small>${t(`auto.mix.${id}Text`)}</small></span></label></div>`)}</div></section>` : nothing}
+    <section><h3 id="auto-who">${t('brain.who')}</h3><ul class="list auto-steps" aria-labelledby="auto-who">
+      ${lean ? (sensed ? [step(icons.bolt, 'quick', 0), step(icons.lamp, 'everyday', 1), step(icons.star, 'demanding', 2)] : step(icons.lamp, 'all', MIXES[mix].levels[1])) : nothing}
+      ${near && sensed && lean ? here(icons.lock, 'personal') : nothing}
+      ${near ? here(icons['brain-device'], lean ? 'offline' : 'all') : nothing}
+    </ul></section>
     <p class="hint">${t('auto.steps')}</p>`
+}
+
+/** The versions a brain's service lists, once asked. @param {BrainConfig} brain */
+const modelsOf = (brain) => app.models.value[brain.id] ?? []
+
+/** Whether how much a brain thinks can be set: a plan's CLI decides it itself (D414). @param {BrainConfig} brain */
+const thinks = (brain) => !/^(claudecode|copilot|antigravity)$/.test(brain.provider)
+
+/**
+ * Auto's steps here (D773): the brains in the cloud it chooses among, the one it leans on, each step as Auto would set it
+ * itself, and as it is, that brain as it is where its service has no version for the step.
+ */
+function ladder() {
+  const cloud = cloudAllowed() ? brainsHere.value.filter((brain) => !isLocal(brain)) : []
+  const lean = cloud.find((brain) => brain.id === activeBrain.value?.id) ?? cloud[0]
+  const input = { brains: cloud, preferred: lean?.id, tiers: app.policy.tiers ?? TIERS, has: (/** @type {BrainConfig} */ brain, /** @type {string} */ model) => modelsOf(brain).some((info) => info.id === model) }
+  return { cloud, lean, usual: stepsOf(input), steps: stepsOf({ ...input, steps: effective.value.settings.steps }).map((step) => step ?? lean) }
 }
 
 /** A version's price for a typical answer, or the plan it is in (D235). @param {BrainConfig} brain @param {string} model @param {import('./prices.js').Pricing} [listed] */
@@ -502,7 +537,7 @@ function page(brain, closed) {
         <div class="list brains" role="radiogroup" aria-labelledby="brain-version">${tiers.map((model) => version(model))}${tiers.includes(brain.model) ? nothing : version(brain.model)}</div>` : nothing}
       <input class="model-input" aria-labelledby="brain-version" title=${t('brain.model')} list=${`models-${brain.id}`} .value=${live(brain.model)} dir="ltr" @change=${(/** @type {Event} */ e) => setVersion(brain.id, valueOf(e).trim())}>
       <datalist id=${`models-${brain.id}`}>${models.map((model) => html`<option value=${model.id}>${model.name ?? ''}</option>`)}</datalist>
-      ${!closed && !/^(claudecode|copilot|antigravity)$/.test(brain.provider) && (effective.value.settings.hurried || brain.effort) ? html`<label for="brain-effort">${t('brain.thinking')}<select id="brain-effort" @change=${(/** @type {Event} */ e) => setEffort(brain.id, valueOf(e)).catch(showError)}>
+      ${!closed && thinks(brain) && (effective.value.settings.hurried || brain.effort) ? html`<label for="brain-effort">${t('brain.thinking')}<select id="brain-effort" @change=${(/** @type {Event} */ e) => setEffort(brain.id, valueOf(e)).catch(showError)}>
         ${['', 'low', 'medium', 'high'].map((effort) => html`<option value=${effort} ?selected=${(brain.effort ?? '') === effort}>${t(effort ? `brain.thinking.${effort}` : 'auto.name')}</option>`)}</select></label>` : nothing}
     </section>`}
     ${closed || !placeable(brain) ? nothing : html`<section>${where(brain, (projects) => keepBrain(brain.id, projects).catch(showError))}</section>`}

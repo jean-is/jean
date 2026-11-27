@@ -38,6 +38,9 @@ export interface BrainConfig {
 /** How much a brain thinks before answering, as providers name it (D414). */
 export type Effort = 'low' | 'medium' | 'high'
 
+/** One of Auto's three steps as the user set it (D773): a brain in the cloud by its id and its version, how much it thinks. */
+export type Step = { brain?: string, model?: string, effort?: Effort }
+
 // ─── Provider-neutral chat ───────────────────────────────────────────────────
 
 export type ToolCall = { id: string, name: string, args: any }
@@ -298,6 +301,10 @@ export interface Settings {
   cloud: boolean
   /** Auto as it was before keeping messages on this device set it */
   wasAuto?: boolean
+  /** How Auto climbs its steps: less, balanced (none) or best (D773) */
+  mix?: 'less' | 'balanced' | 'best'
+  /** Auto's quick, everyday and demanding steps as the user set them, null where Auto chooses (D773) */
+  steps?: (Step | null)[]
   /** offer id → when the user answered it (ISO) */
   offers: Record<string, string>
   /** false: Jean neither notes nor reads what it noticed */
