@@ -134,13 +134,12 @@ register({ id: 'sync', waiting: () => !state.value.folder, slots: { data: { id: 
     state: stuck() ? 'wait' : state.value.at ? 'ok' : 'off', flow: Boolean(state.value.at) && !stuck() }) : undefined),
   copy: () => (state.value.folder && state.value.at && !stuck() ? t('sync.safe', { folder: nameOf(state.value.folder) }) : undefined) } } })
 
-// The folder chosen on an earlier visit: synced now, or once the user lets the browser open it again.
-const kept = await stored('readonly', (store) => store.get('folder'))
-if (kept) {
-  state.value = { folder: kept, status: 'syncing' }
-  if (!(await allowed(kept))) {
+// The folder chosen on an earlier visit: synced now, or once the user lets the browser open it again; rounds start after. Sync's load
+// never waits for it, since IndexedDB or the browser's word on the folder may never come, and a request waits for what loads (ui/send.js, D771).
+stored('readonly', (store) => store.get('folder')).then(async (kept) => {
+  if (kept) state.value = { folder: kept, status: 'syncing' }
+  if (kept && !(await allowed(kept))) {
     state.value = { folder: kept, status: 'waiting' }
     notify(t('sync.waiting', { folder: nameOf(kept) }), { label: t('sync.allow'), run: allow })
   }
-}
-rounds({ carry: carried, run })
+}).catch((error) => console.warn('Sync', error)).finally(() => rounds({ carry: carried, run }))

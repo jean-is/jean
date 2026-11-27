@@ -196,6 +196,15 @@ async function context(task) {
   return Object.assign({ ...(!home && { project }), ...(instructions && { instructions }) }, ...added)
 }
 
+/** When a request stops waiting for capabilities to come back: five seconds after the first one waited, and from then on at once. */
+let late = /** @type {Promise<void> | null} */ (null)
+/**
+ * What a request waits for, or less once five seconds have passed since the first request: a capability that never comes back,
+ * its module stuck on what the browser never answers, holds no request, and its tools are deferred once it comes (D47, D771).
+ * @param {Promise<unknown>} capabilities
+ */
+const inTime = (capabilities) => Promise.race([capabilities, late ??= new Promise((resolve) => setTimeout(resolve, 5000))])
+
 /**
  * The records a message adds: the frozen prompt when the conversation has none yet, or
  * notes for what changed since (D46), any notes the message comes with, then the message itself.
@@ -210,7 +219,7 @@ async function prepare(text, brain, task, notes = [], items = app.attachments.va
   // own skills, which the brain may read before Skills is found (D406), and the receipt, so the browser's
   // record of what the page reached covers the first answer (D252), pages, for their rule (D289), and layouts, which draw it;
   // each comes back at the next visit, so pages already written show again.
-  await Promise.all([app.ready, ...FIRST_REQUEST.map(unlock)])
+  await inTime(Promise.all([app.ready, ...FIRST_REQUEST.map(unlock)]))
   const { tools: all, lines, rules } = contributions()
   // A tool for some brains only (D491) is neither declared nor listed for another.
   const tools = all.filter((tool) => tool.for?.(brain) ?? true)
@@ -590,7 +599,7 @@ async function runAgent(conversation, brain, meta, call, after, held, trail = be
   beginRun(run)
   try {
     // The loop and the brains' adapters load with the first message, not with the first screen.
-    const [{ runTurn }, { elsewhere }] = await Promise.all([import('../core/loop.js'), import('./elsewhere.js'), app.ready])
+    const [{ runTurn }, { elsewhere }] = await Promise.all([import('../core/loop.js'), import('./elsewhere.js'), inTime(app.ready)])
     const careful = elsewhere(async (task) => (await loadConversation(app.fs, task).catch(() => null))?.records, () => app.policy.rules, () => useStrings('approvals').then(() => t('approvals.elsewhere')))
     const frozen = frozenPrompt(sent)
     // A turn the page closed on while it waited for the user goes on from there, asking again (D212); one that is a single call starts on it.

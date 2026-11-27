@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Report a problem (D771): a request held before the brain's first words says what it waits for, in the person's language, then
-// offers a report that names that stage, copied and saved; a send the box gave back says so; Settings opens a report with no task;
+// offers a report that names that stage, copied and saved; a capability that never comes back holds a request only a while, and a
+// report names it; a send the box gave back says so; Settings opens a report with no task;
 // a report becomes a sealed link whose page holds it, and, opened by support, a stand-in that restores.
 import { readFile } from 'node:fs/promises'
 import { test, expect, start, connectFakeBrain, ask, answered, holdAnswers, openSettings, SHARE_URL } from './helpers.js'
@@ -62,6 +63,27 @@ for (const lang of /** @type {const} */ (['en', 'ar', 'ja'])) {
     await answered(page)
   })
 }
+
+test('a capability that never comes back holds a request five seconds at most, and a report names it', async ({ page }) => {
+  await page.clock.install()
+  await start(page)
+  await connectFakeBrain(page)
+  // Formulas, found on an earlier visit, whose module never arrives, as a capability stuck on what the browser never answers.
+  await page.route('**/caps/math/math.js', () => {})
+  await page.evaluate(async () => { const { app, updateSettings } = await import('/ui/state.js'); await updateSettings({ unlocked: [...app.settings.value.unlocked, 'math'] }) })
+  await page.reload()
+  await expect(page.locator('#prompt')).toBeFocused()
+  let asked = false
+  page.on('request', (request) => { if (request.url().endsWith('/chat/completions') && request.postDataJSON()?.tools?.length) asked = true })
+  await ask(page, 'Hello')
+  await expect(async () => { await page.clock.fastForward(1000); expect(asked).toBe(true) }).toPass()
+  await answered(page)
+  const settings = await openSettings(page)
+  await settings.getByRole('button', { name: 'Report a problem' }).click()
+  const dialog = page.locator('dialog.report[open]')
+  await expect(async () => { await page.clock.fastForward(1000); expect((await reportIn(dialog)).now?.capabilities.coming).toEqual(['math']) }).toPass()
+  expect((await reportIn(dialog)).now.probes.ready).toBe('no answer')
+})
 
 test('a send the box gave back says it wasn’t sent, and offers a report', async ({ page }) => {
   const words = await strings('en')

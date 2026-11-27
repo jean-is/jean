@@ -6,7 +6,7 @@
 // sent, or Settings asks for it, never offered. Opened by support, a report becomes a stand-in to restore in a new profile (standin.js).
 import { html, nothing, render } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
-import { register, slots, loaded, isDenied, contributions } from '../../ui/caps.js'
+import { register, slots, loaded, isDenied, contributions, unlock } from '../../ui/caps.js'
 import { app, runs } from '../../ui/state.js'
 import { act } from '../../ui/acts.js'
 import { save } from '../../ui/save.js'
@@ -111,8 +111,9 @@ async function made(why, include) {
   const [extensions, directory, status] = await Promise.all([loaded.peek().has('extensions') ? import('../extensions/extensions.js') : null, import('../connections/directory.js'),
     loaded.peek().has('connections') ? import('../connections/connections.js').then((module) => module.status.peek()) : {}])
   const run = runs.get(path), trail = trails.get(path) ?? null
-  const probes = Object.fromEntries(await Promise.all(Object.entries({ storage: app.fs.read('settings.json'), ready: app.ready, send: import('../../ui/send.js'), key: active ? getSecret(app.fs, active.id) : null })
-    .map(async ([name, promise]) => [name, promise === null ? 'none' : await timed(promise)])))
+  // The probes, and what the user found, or policy turns on, that hasn't come back within theirs: what holds `app.ready`, which a request waits for a while (ui/send.js).
+  const [probes, coming] = await Promise.all([Promise.all(Object.entries({ storage: app.fs.read('settings.json'), ready: app.ready, send: import('../../ui/send.js'), key: active ? getSecret(app.fs, active.id) : null })
+    .map(async ([name, promise]) => [name, promise === null ? 'none' : await timed(promise)])).then(Object.fromEntries), Promise.all([...new Set([...settings.unlocked, ...(policy.capabilities?.preUnlock ?? [])])].map(async (id) => (isDenied(id) || (await timed(unlock(id))) !== 'no answer' ? [] : [id]))).then((ids) => ids.flat())])
   return build({
     made: Date.now(), why, origin: location.origin, include,
     jean: { version: listing.release?.version, date: listing.release?.date, files: listing.version, host: location.hostname === BRAND.domain ? BRAND.domain : 'own', sub: location.pathname !== '/',
@@ -134,7 +135,7 @@ async function made(why, include) {
       runs: [...runs.values()].map((one) => ({ path: one.path, provider: one.brain.provider, model: one.brain.model, steps: one.turn.steps.length, stopped: one.controller.signal.aborted })),
       waiting: app.decisions.peek().map((decision) => ({ path: decision.conversation, kind: 'toolCall' in decision ? String(decision.toolCall.kind ?? 'other') : 'question' })),
       hooks: contributions().hooks.filter((hook) => /^(task|turn|tool|report)\./.test(hook.on)).map((hook) => ({ by: hook.by ?? '', on: hook.on, tier: hook.tier ?? 'jean' })),
-      loaded: [...loaded.peek().keys()], denied: ids.filter(isDenied), probes, ...(run && { since: Date.now() - Date.parse(run.turn.at) }) },
+      loaded: [...loaded.peek().keys()], denied: ids.filter(isDenied), coming, probes, ...(run && { since: Date.now() - Date.parse(run.turn.at) }) },
     task: task ? { path, records: task.records } : null, log: [...log],
   })
 }

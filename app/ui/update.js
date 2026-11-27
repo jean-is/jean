@@ -53,8 +53,8 @@ export function start() {
     navigator.serviceWorker.addEventListener('message', ({ data, source }) => { if (data?.type === 'WAITING' && source === registration.waiting) { updating = false; app.updateReady.value = registration.waiting } })
     // A page not touched since it loaded, nothing under way, has nothing to keep, and a reload asks for the newest: it
     // lets it in on its own, if alone. Once what it unlocked has asked the worker to keep its files: a message restarting
-    // the old worker as it stops for the new one leaves Chromium's swap stuck.
-    const check = () => { const next = registration.waiting; if (next && navigator.serviceWorker.controller) app.ready.catch(() => {}).then(() => { if (registration.waiting !== next || updating) return; if (touched || working()) app.updateReady.value = next; else { updating = true; next.postMessage({ type: 'SKIP_WAITING', alone: true }) } }) }
+    // the old worker as it stops for the new one leaves Chromium's swap stuck. Thirty seconds at most: one that never comes back asks nothing (D771).
+    const check = () => { const next = registration.waiting; if (next && navigator.serviceWorker.controller) Promise.race([app.ready, new Promise((resolve) => setTimeout(resolve, 30_000))]).catch(() => {}).then(() => { if (registration.waiting !== next || updating) return; if (touched || working()) app.updateReady.value = next; else { updating = true; next.postMessage({ type: 'SKIP_WAITING', alone: true }) } }) }
     check()
     registration.addEventListener('updatefound', () => registration.installing?.addEventListener('statechange', check))
     // The browser asks only when a page loads, and an installed app comes back on screen without loading (Android's, for days), so it asks then, at most

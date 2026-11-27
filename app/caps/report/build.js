@@ -161,7 +161,7 @@ export function skeleton(records, known, turns = 3) {
  *   skills: { name: string, source?: string, blocks?: string[], body: string, ready: boolean }[], routines: Record<string, unknown>[], flows: number, memory: number,
  *   extensions: { name: string, source: string, hooks: string[], slots: string[], rights: string[], on: boolean, failed?: boolean }[], status: Record<string, { tools?: unknown[], error?: string }>,
  *   now: { busy: boolean, presence: string, task: string | null, runs: { path: string, provider: string, model: string, steps: number, stopped: boolean }[], trail: import('../../ui/trail.js').Trail | null,
- *     ended: import('../../ui/trail.js').Trail[], attempts: import('../../ui/trail.js').Attempt[], waiting: { path?: string, kind: string }[], hooks: { by: string, on: string, tier: string }[], loaded: string[], denied: string[],
+ *     ended: import('../../ui/trail.js').Trail[], attempts: import('../../ui/trail.js').Attempt[], waiting: { path?: string, kind: string }[], hooks: { by: string, on: string, tier: string }[], loaded: string[], denied: string[], coming?: string[],
  *     probes: Record<string, string | number> }, task: { path: string, records: Envelope[] } | null, include: boolean, log: { at: number, level: string, text: string, stack?: string }[] }} Gathered
  */
 export function build(given) {
@@ -188,7 +188,7 @@ export function build(given) {
       attempts: now.attempts.map((one) => ({ ago: given.made - one.at, busy: one.busy, asked: one.asked, reached: one.reached, outcome: one.outcome })),
       waiting: now.waiting.map((one) => ({ task: where(one.path), kind: one.kind })),
       hooks: now.hooks.map((hook) => `${words.has(hook.by) ? hook.by : 'other'} ${hook.on} ${hook.tier}`),
-      capabilities: { loaded: now.loaded, denied: now.denied }, probes: now.probes },
+      capabilities: { loaded: now.loaded, denied: now.denied, coming: now.coming }, probes: now.probes },
     task: given.task && { id: where(given.task.path), records: given.task.records.length, last: skeleton(given.task.records, { ...known, tools, include: given.include }) },
     log: given.log.map((line) => ({ ago: given.made - line.at, level: line.level, text: scrub(line.text, line.stack, given.origin) })),
   }

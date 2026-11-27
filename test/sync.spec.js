@@ -516,3 +516,19 @@ test('a folder of other files is refused, and nothing of it comes in', async ({ 
   expect(await folder(page, 'Documents')).toEqual({ 'Taxes 2025.txt': 'Mine', 'projects/notes.md': 'Mine too' })
   expect(await page.evaluate(async () => (await import('/ui/state.js')).app.fs.exists('projects/notes.md'))).toBe(false)
 })
+
+test('a folder the browser never says it may open, at the next visit, holds neither Sync nor a request (D771)', async ({ page }) => {
+  await picker(page)
+  await start(page)
+  await connectFakeBrain(page)
+  await turnOn(page, 'Synced folder')
+  await page.keyboard.press('Escape')
+  await expect.poll(async () => Object.keys(await folder(page, 'Jean'))).toContain('mirror.json')
+  // As when the browser's word on a folder kept from an earlier visit never comes.
+  await page.addInitScript(() => Object.assign(/** @type {any} */ (FileSystemHandle.prototype), { queryPermission: () => new Promise(() => {}) }))
+  await page.reload()
+  await expect(page.locator('#prompt')).toBeFocused()
+  expect(await page.evaluate(async () => Promise.race([(await import('/ui/caps.js')).unlock('sync'), new Promise((resolve) => setTimeout(() => resolve('waiting'), 2000))]))).toBe(true)
+  await ask(page, 'Explain photosynthesis in simple words')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Anything else?')
+})
