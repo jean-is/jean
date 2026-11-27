@@ -53,13 +53,15 @@ export const tierFor = (demand, levels = MIXES.balanced.levels) => levels[Math.m
 
 /**
  * Auto's three steps, quick, everyday and demanding (D773): each the brain and version the user set, while that brain is
- * among these; else the version for that level of the brain Auto leans on, when its provider's list has one; else none.
+ * among these, in the cloud, on this device or on this computer; else the version for that level of the brain in the cloud
+ * Auto leans on, when its provider's list has one; else none.
  * @param {{ brains: BrainConfig[], preferred?: string | null, steps?: (Step | null)[], tiers?: Record<string, string[]>,
- *   has?: (brain: BrainConfig, model: string) => boolean }} input brains: those in the cloud it may choose
+ *   has?: (brain: BrainConfig, model: string) => boolean }} input brains: those it may choose
  * @returns {(BrainConfig | null)[]}
  */
 export function stepsOf({ brains, preferred, steps = [], tiers = TIERS, has = () => true }) {
-  const lean = brains.find((brain) => brain.id === preferred) ?? brains[0]
+  const clouds = brains.filter((brain) => !isLocal(brain))
+  const lean = clouds.find((brain) => brain.id === preferred) ?? clouds[0]
   return [0, 1, 2].map((level) => {
     const set = steps[level]?.model && brains.find((brain) => brain.id === steps[level]?.brain)
     const model = lean && tiers[lean.provider]?.[level]
@@ -103,7 +105,9 @@ export function chooseBrain({ brains, preferred, cloud = true, online = true, si
   if (local && signals.personal && (!signals.pictures || sees(local))) return { brain: local, level: floor, reason: 'personal' }
   const { levels, efforts } = MIXES[mix] ?? MIXES.balanced
   const level = Math.min(2, Math.max(floor, tierFor(signals.demand ?? 1, levels) + (signals.unhappy ? 1 : 0)))
-  const brain = stepsOf({ brains: pool, preferred, steps, tiers, has })[level] ?? lean
+  // A step may be a brain on this device or this computer, one that sees a picture when there is one.
+  const near = brains.filter((one) => isLocal(one) && (!signals.pictures || sees(one)))
+  const brain = stepsOf({ brains: [...pool, ...near], preferred, steps, tiers, has })[level] ?? lean
   const reason = signals.unhappy ? 'unhappy' : signals.demand !== undefined ? 'demand' : 'default'
   return { brain, level, reason, effort: steps[level]?.effort ?? brain.effort ?? efforts[level] }
 }

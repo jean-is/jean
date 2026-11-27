@@ -443,13 +443,14 @@ test('the picker: a menu above the chip, Auto by default, a brain by hand, kept 
   await expect(brains.locator('[data-brain="key"]')).toBeFocused()
 })
 
-test('Auto’s steps: what matters most, each step any brain in the cloud, and the picker’s Fast, Smart and Best are them (D773)', { tag: '@chromium' }, async ({ page }) => {
+test('Auto’s steps: what matters most, each step any brain connected, and the picker’s Fast, Smart and Best are them (D773)', { tag: '@chromium' }, async ({ page }) => {
   await start(page)
   await page.evaluate(async () => {
     const { app, updateSettings } = await import('/ui/state.js')
     await updateSettings({ activeBrain: 'claude', brains: [
       { id: 'claude', provider: 'anthropic', api: 'anthropic', baseURL: 'https://api.anthropic.invalid/v1', model: 'claude-sonnet-5-5' },
-      { id: 'gemini', provider: 'gemini', api: 'openai', baseURL: 'https://gemini.invalid/v1beta/openai', model: 'gemini-3.8-flash' }] })
+      { id: 'gemini', provider: 'gemini', api: 'openai', baseURL: 'https://gemini.invalid/v1beta/openai', model: 'gemini-3.8-flash' },
+      { id: 'near', provider: 'lmstudio', api: 'openai', baseURL: 'http://localhost:1234/v1', model: 'qwen3.6-35b-a3b' }] })
     app.models.value = { claude: ['claude-haiku-4-5', 'claude-sonnet-5-5', 'claude-opus-5-5'].map((id) => ({ id })), gemini: ['gemini-3.5-flash-lite', 'gemini-3.8-flash', 'gemini-3.1-pro-preview'].map((id) => ({ id })) }
   })
   const brains = await openSettings(page, 'Brains')
@@ -473,6 +474,9 @@ test('Auto’s steps: what matters most, each step any brain in the cloud, and t
   await brains.getByRole('radio', { name: /^Spend less/ }).check()
   await version.selectOption({ label: 'claude-haiku-4-5' })
   expect(await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.steps)).toEqual([{ effort: 'low' }, null, null])
+  // A brain on this computer can be a step too, free.
+  await version.selectOption({ label: 'qwen3.6-35b-a3b' })
+  await expect(step.locator('small')).toHaveText('LM Studio · Free')
   await version.selectOption({ label: 'gemini-3.5-flash-lite' })
   await closeSettings(page)
   await page.locator('.brain-chip').click()

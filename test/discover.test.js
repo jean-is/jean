@@ -340,7 +340,7 @@ test('Auto: cheapest brain that can do it, private when personal, never steps do
   assert.ok(!isLocal(brain))
 })
 
-test('Auto: each step any brain in the cloud, how much it thinks, and a mix that climbs them (D773)', () => {
+test('Auto: each step any brain connected, how much it thinks, and a mix that climbs them (D773)', () => {
   const claude = { id: 'c', provider: /** @type {const} */ ('anthropic'), api: /** @type {const} */ ('anthropic'), baseURL: 'https://api.anthropic.com/v1', model: 'claude-opus-5-5' }
   const gemini = { id: 'g', provider: /** @type {const} */ ('gemini'), api: /** @type {const} */ ('openai'), baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai', model: 'gemini-3.8-flash', effort: /** @type {const} */ ('medium') }
   const groq = { id: 'q', provider: /** @type {const} */ ('groq'), api: /** @type {const} */ ('openai'), baseURL: 'https://api.groq.com/openai/v1', model: 'kimi-k3' }
@@ -381,6 +381,17 @@ test('Auto: each step any brain in the cloud, how much it thinks, and a mix that
   assert.deepEqual(mixed('best', 1), ['claude-opus-5-5', 'high'])
   assert.deepEqual(mixed('best', undefined), ['claude-opus-5-5', 'high'])
   assert.deepEqual(Object.keys(MIXES), ['less', 'balanced', 'best'])
+  // A step can be a brain on this device or on this computer, which answers that step's messages, free; Auto still leans on
+  // one in the cloud for the others, and a picture goes past one that can't see it.
+  const lmstudio = { id: 'l', provider: /** @type {const} */ ('lmstudio'), api: /** @type {const} */ ('openai'), baseURL: 'http://localhost:1234/v1', model: 'qwen3.6-35b-a3b' }
+  const near = [{ brain: 'd', model: 'gemma' }, null, null]
+  assert.deepEqual(stepsOf({ brains: [device, claude], steps: near }).map((brain) => brain && `${brain.id}:${brain.model}`), ['d:gemma', 'c:claude-sonnet-5-5', 'c:claude-opus-5-5'])
+  assert.deepEqual(stepsOf({ brains: [device, claude] }).map((brain) => brain?.id), ['c', 'c', 'c'], 'leaning on the cloud’s, though one on this device comes first')
+  assert.deepEqual(chosen({ steps: near, signals: { demand: 0 } }), ['d:gemma', 0, undefined])
+  assert.deepEqual(chosen({ steps: near, signals: { demand: 1 } }), ['c:claude-sonnet-5-5', 1, undefined])
+  const served = chooseBrain({ brains: [claude, lmstudio], steps: [{ brain: 'l', model: 'qwen3.6-35b-a3b', effort: 'low' }], signals: { demand: 0 } })
+  assert.deepEqual([served?.brain.id, served?.effort], ['l', 'low'])
+  assert.deepEqual(chosen({ steps: near, signals: { demand: 0, pictures: true }, sees: (brain) => brain.api !== 'device' })?.[0], 'c:claude-haiku-4-5')
 })
 
 test('Auto: as much thinking as the request demands, a step more when the user is unhappy, never less; the brain’s own setting first (D414)', () => {

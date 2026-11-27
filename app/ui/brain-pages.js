@@ -374,7 +374,7 @@ function line(brain) {
 function autoLine() {
   const { lean, steps } = ladder()
   if (!lean) return t('auto.text')
-  const names = [...new Set(steps.map((brain) => describe(/** @type {BrainConfig} */ (brain)).name))]
+  const names = [...new Set([...steps, lean].filter((brain) => brain && !isLocal(brain)).map((brain) => describe(/** @type {BrainConfig} */ (brain)).name))]
   return t(brainsHere.value.some(isLocal) && loaded.value.has('reflexes') ? 'auto.both' : 'auto.cloud', { brain: new Intl.ListFormat(intlLocales()).format(names) })
 }
 
@@ -438,13 +438,13 @@ const LEVELS = ['picker.fast', 'picker.smart', 'picker.best']
  */
 function auto() {
   const { settings } = effective.value
-  const { cloud, lean, usual, steps } = ladder()
+  const { choosable, lean, usual, steps } = ladder()
   const near = brainsHere.value.find((brain) => brain.api === 'device') ?? brainsHere.value.find(isLocal)
   const sensed = loaded.value.has('reflexes')
   const mix = settings.mix ?? 'balanced'
   const tiers = /** @type {Record<string, string[]>} */ (app.policy.tiers ?? TIERS)
   // What a step may be: each brain's Fast, Smart and Best that its list has, the version it is set to, and any a step names.
-  const versions = cloud.flatMap((brain) => [...new Set([...(tiers[brain.provider] ?? []).filter((model) => modelsOf(brain).some((info) => info.id === model)), brain.model,
+  const versions = choosable.flatMap((brain) => [...new Set([...(tiers[brain.provider] ?? []).filter((model) => modelsOf(brain).some((info) => info.id === model)), brain.model,
     ...steps.flatMap((step) => (step?.id === brain.id ? [step.model] : []))])].map((model) => ({ brain, model })))
   /** A kind of message: its step's brain and version, which to change, what it costs and how much it thinks. @param {unknown} icon @param {string} kind @param {number} level */
   const step = (icon, kind, level) => {
@@ -456,8 +456,8 @@ function auto() {
       setStep(level, { brain: own ? one.id : undefined, model: own ? model : undefined }).catch(showError)
     }
     return html`<li role="group" aria-labelledby=${`auto-${kind}`}><span class="item-icon">${icon}</span><span class="item-text"><strong id=${`auto-${kind}`}>${t(`auto.${kind}`)}</strong>
-      <small>${[PLANS[brain.provider] ? '' : describe(brain).name, price(brain, brain.model, modelsOf(brain).find((info) => info.id === brain.model)?.pricing)].filter(Boolean).join(' · ')}</small></span>
-      <select title=${t('auto.brain')} dir="ltr" @change=${choose}>${cloud.map((one) => html`<optgroup label=${PLANS[one.provider] ?? describe(one).name}>${versions.map((version, i) => (version.brain === one
+      <small>${[PLANS[brain.provider] ? '' : describe(brain).name, isLocal(brain) ? t('brain.free') : price(brain, brain.model, modelsOf(brain).find((info) => info.id === brain.model)?.pricing)].filter(Boolean).join(' · ')}</small></span>
+      <select title=${t('auto.brain')} dir="ltr" @change=${choose}>${choosable.map((one) => html`<optgroup label=${PLANS[one.provider] ?? describe(one).name}>${versions.map((version, i) => (version.brain === one
         ? html`<option value=${i} ?selected=${one.id === brain.id && version.model === brain.model}>${version.model.split('/').at(-1)}</option>` : nothing))}</optgroup>`)}</select>
       ${thinks(brain) ? html`<select title=${t('brain.thinking')} @change=${(/** @type {Event} */ e) => setStep(level, { effort: /** @type {Effort} */ (valueOf(e)) || undefined }).catch(showError)}>
         ${['', ...EFFORTS].map((one) => html`<option value=${one} ?selected=${effort === one}>${t(one ? `brain.thinking.${one}` : 'auto.name')}</option>`)}</select>` : nothing}</li>`
@@ -483,14 +483,16 @@ const modelsOf = (brain) => app.models.value[brain.id] ?? []
 const thinks = (brain) => !/^(claudecode|copilot|antigravity)$/.test(brain.provider)
 
 /**
- * Auto's steps here (D773): the brains in the cloud it chooses among, the one it leans on, each step as Auto would set it
- * itself, and as it is, that brain as it is where its service has no version for the step.
+ * Auto's steps here (D773): the brains it may set a step to, those in the cloud then those on this device or this computer,
+ * the one in the cloud it leans on, each step as Auto would set it itself, and as it is, that brain as it is where its
+ * service has no version for the step.
  */
 function ladder() {
   const cloud = cloudAllowed() ? brainsHere.value.filter((brain) => !isLocal(brain)) : []
   const lean = cloud.find((brain) => brain.id === activeBrain.value?.id) ?? cloud[0]
-  const input = { brains: cloud, preferred: lean?.id, tiers: app.policy.tiers ?? TIERS, has: (/** @type {BrainConfig} */ brain, /** @type {string} */ model) => modelsOf(brain).some((info) => info.id === model) }
-  return { cloud, lean, usual: stepsOf(input), steps: stepsOf({ ...input, steps: effective.value.settings.steps }).map((step) => step ?? lean) }
+  const choosable = lean ? [...cloud, ...brainsHere.value.filter(isLocal)] : []
+  const input = { brains: choosable, preferred: lean?.id, tiers: app.policy.tiers ?? TIERS, has: (/** @type {BrainConfig} */ brain, /** @type {string} */ model) => modelsOf(brain).some((info) => info.id === model) }
+  return { choosable, lean, usual: stepsOf(input), steps: stepsOf({ ...input, steps: effective.value.settings.steps }).map((step) => step ?? lean) }
 }
 
 /** A version's price for a typical answer, or the plan it is in (D235). @param {BrainConfig} brain @param {string} model @param {import('./prices.js').Pricing} [listed] */
