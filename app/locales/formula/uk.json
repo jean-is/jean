@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Стовпці та функції",
+  "formula.column": "Стовпець",
+  "formula.columns": "Стовпці",
+  "formula.logic": "Логіка",
+  "formula.numbers": "Числа",
+  "formula.text": "Текст",
+  "formula.dates": "Дати",
+  "formula.lists": "Списки",
+  "formula.functions": "Функції",
+  "formula.results": "Результати",
+  "formula.noRows": "Додайте рядок, щоб побачити, що обчислює формула.",
+  "formula.cant": "Не можна обчислити",
+  "formula.yes": "Так",
+  "formula.no": "Ні",
+  "formula.word": "«{word}» — не стовпець і не функція.",
+  "formula.like": "Ви мали на увазі {name}?",
+  "formula.close": "Ця дужка ніде не закривається.",
+  "formula.quote": "Цим словам бракує закривальних лапок.",
+  "formula.parts": "Пишіть {word} так: {use}",
+  "formula.more": "Тут чогось бракує.",
+  "formula.extra": "Тут щось заважає: можливо, перед цим бракує оператора або коми."
+}

@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Sütunlar ve işlevler",
+  "formula.column": "Sütun",
+  "formula.columns": "Sütunlar",
+  "formula.logic": "Mantık",
+  "formula.numbers": "Sayılar",
+  "formula.text": "Metin",
+  "formula.dates": "Tarihler",
+  "formula.lists": "Listeler",
+  "formula.functions": "İşlevler",
+  "formula.results": "Sonuçlar",
+  "formula.noRows": "Formülün ne hesapladığını görmek için bir satır ekleyin.",
+  "formula.cant": "Hesaplanamıyor",
+  "formula.yes": "Evet",
+  "formula.no": "Hayır",
+  "formula.word": "“{word}” ne bir sütun ne de bir işlev.",
+  "formula.like": "Bunu mu demek istediniz: {name}?",
+  "formula.close": "Bu parantez hiç kapanmıyor.",
+  "formula.quote": "Bu sözcüklerin kapanış tırnağı eksik.",
+  "formula.parts": "{word} işlevini şöyle yazın: {use}",
+  "formula.more": "Burada bir şey eksik.",
+  "formula.extra": "Burada bir şey engel oluyor: belki önünde bir işleç ya da virgül eksik."
+}

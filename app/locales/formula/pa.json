@@ -1,0 +1,23 @@
+{
+  "formula.offers": "ਕਾਲਮ ਅਤੇ ਫ਼ੰਕਸ਼ਨ",
+  "formula.column": "ਕਾਲਮ",
+  "formula.columns": "ਕਾਲਮ",
+  "formula.logic": "ਤਰਕ",
+  "formula.numbers": "ਨੰਬਰ",
+  "formula.text": "ਲਿਖਤ",
+  "formula.dates": "ਤਾਰੀਖ਼ਾਂ",
+  "formula.lists": "ਸੂਚੀਆਂ",
+  "formula.functions": "ਫ਼ੰਕਸ਼ਨ",
+  "formula.results": "ਨਤੀਜੇ",
+  "formula.noRows": "ਫ਼ਾਰਮੂਲਾ ਕੀ ਗਿਣਦਾ ਹੈ, ਵੇਖਣ ਲਈ ਇੱਕ ਕਤਾਰ ਜੋੜੋ।",
+  "formula.cant": "ਗਿਣਿਆ ਨਹੀਂ ਜਾ ਸਕਦਾ",
+  "formula.yes": "ਹਾਂ",
+  "formula.no": "ਨਹੀਂ",
+  "formula.word": "“{word}” ਨਾ ਕਾਲਮ ਹੈ, ਨਾ ਫ਼ੰਕਸ਼ਨ।",
+  "formula.like": "ਕੀ ਤੁਹਾਡਾ ਮਤਲਬ {name} ਸੀ?",
+  "formula.close": "ਇਹ ਬਰੈਕਟ ਕਦੇ ਬੰਦ ਨਹੀਂ ਹੁੰਦੀ।",
+  "formula.quote": "ਇਹਨਾਂ ਸ਼ਬਦਾਂ ਨੂੰ ਬੰਦ ਕਰਨ ਵਾਲਾ ਹਵਾਲਾ ਚਿੰਨ੍ਹ ਚਾਹੀਦਾ ਹੈ।",
+  "formula.parts": "{word} ਇਸ ਤਰ੍ਹਾਂ ਲਿਖੋ: {use}",
+  "formula.more": "ਇੱਥੇ ਕੁਝ ਰਹਿ ਗਿਆ ਹੈ।",
+  "formula.extra": "ਇੱਥੇ ਕੁਝ ਅੜਿੱਕਾ ਹੈ: ਸ਼ਾਇਦ ਇਸ ਤੋਂ ਪਹਿਲਾਂ ਕੋਈ ਓਪਰੇਟਰ ਜਾਂ ਕਾਮਾ ਰਹਿ ਗਿਆ ਹੈ।"
+}

@@ -11,7 +11,8 @@ import { query, valueOf, ordered, total, filterOf } from '../app/caps/tables/que
 import { toCSV, exportTable, textOf, namesOf, rowNamed, said, amount, digitsOf } from '../app/caps/tables/export.js'
 import { fill, rules } from '../app/caps/fill/fill.js'
 import { TABLE_CREATE, LINE, EXAMPLES, tableCreate } from '../app/caps/tables/tool.js'
-import { compile, worked, renamed } from '../app/caps/tables/formula.js'
+import { renamed } from '../app/caps/tables/formula.js'
+import { compile, worked, result } from '../app/caps/formula/engine.js'
 import { score, matchNames, STRICT } from '../scripts/tables.js'
 import Ajv from 'ajv'
 
@@ -963,7 +964,7 @@ test('a Formula works out each row from its other cells, by their names, with Ma
   assert.equal(run('Name != "Lyon"'), false)
   assert.equal(run('if(Nights > 2, "long", "short")'), 'long')
   assert.equal(run('IF(Name = "Paris", 1, if(Nights < 3, 2, 3)) * 2'), 6)
-  for (const text of ['Nights *', 'round(Nights', 'eval("1")', 'constructor', 'Nightsx', 'Math.round(1)', '1 2', 'if(Nights)', 'if(Nights, 1)', 'Nights >', '= 3']) assert.throws(() => compile(text, table.properties), /can't be worked out/, text)
+  for (const text of ['Nights *', 'round(Nights', 'eval("1")', 'constructor', 'Nightsx', 'Math.round(1)', '1 2', 'if(Nights)', 'if(Nights, 1, 2, 3)', 'Nights >', '= 3']) assert.throws(() => compile(text, table.properties), /can't be worked out/, text)
 
   // Read, each row gets its cell, a later formula seen by an earlier one; one that can't be read, or an empty one, leaves its cells empty.
   const total = { id: 'total', name: 'Total', type: /** @type {const} */ ('formula'), formula: 'Unit price * Nights' }
@@ -978,6 +979,43 @@ test('a Formula works out each row from its other cells, by their names, with Ma
   assert.equal(renamed('round(unit price * Nights) + Unit price', both.properties, price.id, 'Price'), 'round(Price * Nights) + Price')
   const after = reshape(reshape(both, { rename: { id: nights.id, name: 'Stays' } }, at), { formula: { id: 'twice', text: 'Total * 3' } }, at)
   assert.deepEqual(after.properties.filter((one) => one.type === 'formula').map((one) => one.formula), ['Total * 3', 'Unit price * Stays', 'Stays +'])
+})
+
+test('a Formula has functions for logic, numbers, words, days and lists, and says why and where one can\'t be read', () => {
+  const table = createTable({ name: 'Tasks', columns: [{ name: 'Name', type: 'text' }, { name: 'Due', type: 'date' }, { name: 'Tags', type: 'multi-select' }, { name: 'Hours', type: 'number' }] }, { id: TABLE_ID, author: 'user', at: T(0) })
+  const [name, due, tags, hours] = table.properties
+  const cells = { [name.id]: '  Write  the report ', [due.id]: '2026-01-31', [tags.id]: ['Urgent', 'Home'], [hours.id]: 2.345 }
+  const run = (/** @type {string} */ text, given = cells) => compile(text, table.properties)(given)
+  assert.equal(run('dateadd(Due, 1, "month")'), '2026-02-28', 'a month on, within its month')
+  assert.equal(run('dateadd(Due, 2, "weeks")'), '2026-02-14')
+  assert.equal(run('dateadd("2026-03-01T09:30", 90, "minutes")'), '2026-03-01T11:00', 'a time keeps its time of day')
+  assert.equal(run('datediff(Due, "2026-03-01", "days")'), 29)
+  assert.equal(run('datediff(Due, "2026-02-28", "months")'), 0, 'a month not yet whole')
+  assert.equal(run('datediff("2024-02-29", Due, "y")'), 1)
+  assert.deepEqual([run('year(Due)'), run('month(Due)'), run('day(Due)'), run('weekday(Due)')], [2026, 1, 31, 6])
+  assert.equal(run('date(2026, 2, 30)'), '2026-03-02')
+  assert.match(run('today()'), /^\d{4}-\d\d-\d\d$/)
+  assert.equal(run('round(Hours, 1) & " h"'), '2.3 h')
+  assert.equal(run('sum(1, Hours, "x", 3) > 6'), true)
+  assert.equal(run('average(2, 4) + max(Tags, 1)'), 4, 'what is no number is left out')
+  assert.equal(run('upper(left(trim(Name), 5))'), 'WRITE')
+  assert.equal(run('replace(trim(Name), "report", "plan")'), 'Write the plan')
+  assert.equal(run('and(contains(Tags, "urgent"), not(contains(Name, "x")))'), true, 'a list holds a choice in any case')
+  assert.equal(run('count(Tags) & " · " & join(Tags, " / ")'), '2 · Urgent / Home')
+  assert.equal(run('ifs(Hours > 5, "long", Hours > 2, "medium", "short")'), 'medium')
+  assert.deepEqual([run('ifempty(Tags, "none")', {}), run('if(empty(Due), "no date")', {}), run('if(false, 1)')], ['none', 'no date', ''])
+  assert.deepEqual([run('first(Tags) <> last(Tags)'), run('length(Name)'), run('length(Tags)')], [true, 20, 2])
+  assert.equal(result(compile('Tags', table.properties), cells), 'Urgent, Home', 'a list kept as words')
+  assert.equal(result(compile('Name * 2', table.properties), cells), null, 'what is no number is none')
+  /** Why and where a formula can't be read. @param {string} text */
+  const why = (text) => { try { compile(text, table.properties) } catch (error) { return [/** @type {any} */ (error).why, /** @type {any} */ (error).at, /** @type {any} */ (error).word] } }
+  assert.deepEqual(why('Hours * Rate'), ['word', 8, 'Rate'])
+  assert.deepEqual(why('round(Hours, 2'), ['close', 5, ''])
+  assert.deepEqual(why('upper(Name, 2)'), ['parts', 0, 'upper'])
+  assert.deepEqual(why('Hours +'), ['more', 7, ''])
+  assert.deepEqual(why('Hours 2'), ['extra', 6, ''])
+  assert.deepEqual(why('"open'), ['quote', 0, '"'])
+  assert.deepEqual(why('toString(1)'), ['word', 0, 'toString'], 'nothing an object has by itself')
 })
 
 // ─── parts of a page filled from a collection (D633) ─────────────────────────────

@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Ginshiƙai da ayyuka",
+  "formula.column": "Ginshiƙi",
+  "formula.columns": "Ginshiƙai",
+  "formula.logic": "Mantiƙi",
+  "formula.numbers": "Lambobi",
+  "formula.text": "Rubutu",
+  "formula.dates": "Kwanan wata",
+  "formula.lists": "Jerin abubuwa",
+  "formula.functions": "Ayyuka",
+  "formula.results": "Sakamako",
+  "formula.noRows": "Ƙara layi don ganin abin da dabarar take lissafawa.",
+  "formula.cant": "Ba za a iya lissafa ba",
+  "formula.yes": "Ee",
+  "formula.no": "A’a",
+  "formula.word": "“{word}” ba ginshiƙi ba ne, kuma ba aiki ba ne.",
+  "formula.like": "Kuna nufin {name}?",
+  "formula.close": "Ba a taɓa rufe wannan baka ba.",
+  "formula.quote": "Waɗannan kalmomi suna buƙatar alamar rufe zance.",
+  "formula.parts": "Rubuta {word} kamar haka: {use}",
+  "formula.more": "Akwai abin da ya ɓace a nan.",
+  "formula.extra": "Akwai abin da ke kawo cikas a nan: wataƙila alamar lissafi ko waƙafi ta ɓace a gabansa."
+}

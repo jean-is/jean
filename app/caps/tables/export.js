@@ -38,7 +38,7 @@ export function textOf(row, property, { labels = {}, names } = {}) {
  */
 export function said(row, property, { locales, digits, ...options } = {}) {
   const value = valueOf(row, property)
-  if (property.type === 'date' && typeof value === 'string') return format('DateTimeFormat', locales, { dateStyle: 'medium', ...(value.includes('T') && { timeStyle: 'short' }) }).format(new Date(value.includes('T') ? value : `${value}T00:00`))
+  if ((property.type === 'date' || (property.type === 'formula' && /^\d{4}-\d\d-\d\d(T\d\d:\d\d)?$/.test(String(value)))) && typeof value === 'string') return format('DateTimeFormat', locales, { dateStyle: 'medium', ...(value.includes('T') && { timeStyle: 'short' }) }).format(new Date(value.includes('T') ? value : `${value}T00:00`))
   return typeof value === 'number' ? amount(value, property, locales, digits) : textOf(row, property, options)
 }
 

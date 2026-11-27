@@ -1,0 +1,23 @@
+{
+  "formula.offers": "열과 함수",
+  "formula.column": "열",
+  "formula.columns": "열",
+  "formula.logic": "논리",
+  "formula.numbers": "숫자",
+  "formula.text": "텍스트",
+  "formula.dates": "날짜",
+  "formula.lists": "목록",
+  "formula.functions": "함수",
+  "formula.results": "결과",
+  "formula.noRows": "행을 추가하면 수식의 계산 결과를 볼 수 있어요.",
+  "formula.cant": "계산할 수 없음",
+  "formula.yes": "예",
+  "formula.no": "아니요",
+  "formula.word": "‘{word}’은(는) 열도 함수도 아니에요.",
+  "formula.like": "{name}을(를) 말씀하신 건가요?",
+  "formula.close": "이 괄호가 닫히지 않았어요.",
+  "formula.quote": "이 단어에는 닫는 따옴표가 필요해요.",
+  "formula.parts": "{word}은(는) 이렇게 써요: {use}",
+  "formula.more": "여기에 빠진 것이 있어요.",
+  "formula.extra": "여기에 걸리는 것이 있어요. 앞에 연산자나 쉼표가 빠졌을 수 있어요."
+}

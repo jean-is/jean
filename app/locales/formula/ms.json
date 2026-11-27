@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Lajur dan fungsi",
+  "formula.column": "Lajur",
+  "formula.columns": "Lajur",
+  "formula.logic": "Logik",
+  "formula.numbers": "Nombor",
+  "formula.text": "Teks",
+  "formula.dates": "Tarikh",
+  "formula.lists": "Senarai",
+  "formula.functions": "Fungsi",
+  "formula.results": "Keputusan",
+  "formula.noRows": "Tambah baris untuk melihat apa yang dikira oleh formula.",
+  "formula.cant": "Tidak dapat dikira",
+  "formula.yes": "Ya",
+  "formula.no": "Tidak",
+  "formula.word": "“{word}” bukan lajur dan bukan fungsi.",
+  "formula.like": "Adakah maksud anda {name}?",
+  "formula.close": "Kurungan ini tidak pernah ditutup.",
+  "formula.quote": "Perkataan ini memerlukan tanda petik penutup.",
+  "formula.parts": "Tulis {word} begini: {use}",
+  "formula.more": "Ada sesuatu yang tertinggal di sini.",
+  "formula.extra": "Ada sesuatu yang menghalang di sini: mungkin operator atau koma tertinggal sebelumnya."
+}

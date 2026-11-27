@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Tarreewwan fi faankishinoota",
+  "formula.column": "Tarree",
+  "formula.columns": "Tarreewwan",
+  "formula.logic": "Loojikii",
+  "formula.numbers": "Lakkoofsota",
+  "formula.text": "Barreeffama",
+  "formula.dates": "Guyyaawwan",
+  "formula.lists": "Tarreeffamoota",
+  "formula.functions": "Faankishinoota",
+  "formula.results": "Bu’aawwan",
+  "formula.noRows": "Foormulaan maal akka herregu arguuf sarara tokko dabali.",
+  "formula.cant": "Herregamuu hin danda’u",
+  "formula.yes": "Eeyyee",
+  "formula.no": "Lakki",
+  "formula.word": "“{word}” tarrees miti, faankishinis miti.",
+  "formula.like": "{name} jechuu barbaaddee?",
+  "formula.close": "Qaxxaamuraan kun gonkumaa hin cufamne.",
+  "formula.quote": "Jechoonni kun mallattoo waraabbii cufaa barbaadu.",
+  "formula.parts": "{word} akkana barreessi: {use}",
+  "formula.more": "Asitti wanti tokko hir’ateera.",
+  "formula.extra": "Asitti wanti tokko gufuu ta’eera: tarii isa dura mallattoon herregaa ykn qooddiin hir’ateera."
+}

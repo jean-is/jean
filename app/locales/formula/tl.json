@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Mga column at function",
+  "formula.column": "Column",
+  "formula.columns": "Mga column",
+  "formula.logic": "Lohika",
+  "formula.numbers": "Mga numero",
+  "formula.text": "Teksto",
+  "formula.dates": "Mga petsa",
+  "formula.lists": "Mga listahan",
+  "formula.functions": "Mga function",
+  "formula.results": "Mga resulta",
+  "formula.noRows": "Magdagdag ng row para makita kung ano ang kinukuwenta ng formula.",
+  "formula.cant": "Hindi makuwenta",
+  "formula.yes": "Oo",
+  "formula.no": "Hindi",
+  "formula.word": "Ang “{word}” ay hindi column at hindi rin function.",
+  "formula.like": "{name} ba ang ibig mong sabihin?",
+  "formula.close": "Hindi kailanman nasasara ang panaklong na ito.",
+  "formula.quote": "Kailangan ng mga salitang ito ng pansarang panipi.",
+  "formula.parts": "Isulat ang {word} nang ganito: {use}",
+  "formula.more": "May kulang dito.",
+  "formula.extra": "May nakaharang dito: baka may kulang na operator o kuwit bago nito."
+}

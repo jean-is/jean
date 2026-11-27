@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Kolom dan fungsi",
+  "formula.column": "Kolom",
+  "formula.columns": "Kolom",
+  "formula.logic": "Logika",
+  "formula.numbers": "Angka",
+  "formula.text": "Teks",
+  "formula.dates": "Tanggal",
+  "formula.lists": "Daftar",
+  "formula.functions": "Fungsi",
+  "formula.results": "Hasil",
+  "formula.noRows": "Tambahkan baris untuk melihat hasil hitungan rumus.",
+  "formula.cant": "Tidak bisa dihitung",
+  "formula.yes": "Ya",
+  "formula.no": "Tidak",
+  "formula.word": "“{word}” bukan kolom dan bukan fungsi.",
+  "formula.like": "Maksudnya {name}?",
+  "formula.close": "Tanda kurung ini tidak pernah ditutup.",
+  "formula.quote": "Kata-kata ini perlu tanda kutip penutup.",
+  "formula.parts": "Tulis {word} seperti ini: {use}",
+  "formula.more": "Ada yang kurang di sini.",
+  "formula.extra": "Ada yang mengganjal di sini: mungkin kurang operator atau koma sebelumnya."
+}

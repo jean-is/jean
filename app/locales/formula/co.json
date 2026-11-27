@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Culonne è funzioni",
+  "formula.column": "Culonna",
+  "formula.columns": "Culonne",
+  "formula.logic": "Logica",
+  "formula.numbers": "Numeri",
+  "formula.text": "Testu",
+  "formula.dates": "Date",
+  "formula.lists": "Liste",
+  "formula.functions": "Funzioni",
+  "formula.results": "Risultati",
+  "formula.noRows": "Aghjunghjite una linea per vede ciò chì a formula calcula.",
+  "formula.cant": "Ùn si pò calculà",
+  "formula.yes": "Iè",
+  "formula.no": "Innò",
+  "formula.word": "« {word} » ùn hè nè una culonna nè una funzione.",
+  "formula.like": "Vulete dì {name} ?",
+  "formula.close": "Sta parentesi ùn hè mai chjusa.",
+  "formula.quote": "Ste parolle anu bisognu d’una virgulette di chjusura.",
+  "formula.parts": "Scrivite {word} cusì : {use}",
+  "formula.more": "Ci manca qualcosa quì.",
+  "formula.extra": "Qualcosa quì hè di troppu : forse ci manca un operatore o una virgula nanzu."
+}

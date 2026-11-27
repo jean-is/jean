@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Oszlopok és függvények",
+  "formula.column": "Oszlop",
+  "formula.columns": "Oszlopok",
+  "formula.logic": "Logika",
+  "formula.numbers": "Számok",
+  "formula.text": "Szöveg",
+  "formula.dates": "Dátumok",
+  "formula.lists": "Listák",
+  "formula.functions": "Függvények",
+  "formula.results": "Eredmények",
+  "formula.noRows": "Adjon hozzá egy sort, hogy lássa, mit számol a képlet.",
+  "formula.cant": "Nem számolható ki",
+  "formula.yes": "Igen",
+  "formula.no": "Nem",
+  "formula.word": "„{word}” se nem oszlop, se nem függvény.",
+  "formula.like": "Erre gondolt: {name}?",
+  "formula.close": "Ez a zárójel sosincs bezárva.",
+  "formula.quote": "Ezekről a szavakról hiányzik a záró idézőjel.",
+  "formula.parts": "Így írja a(z) {word} függvényt: {use}",
+  "formula.more": "Itt hiányzik valami.",
+  "formula.extra": "Itt valami útban van: talán egy műveleti jel vagy vessző hiányzik előtte."
+}

@@ -1,0 +1,23 @@
+{
+  "formula.offers": "ကော်လံများနှင့် ဖန်ရှင်များ",
+  "formula.column": "ကော်လံ",
+  "formula.columns": "ကော်လံများ",
+  "formula.logic": "ယုတ္တိ",
+  "formula.numbers": "ကိန်းဂဏန်းများ",
+  "formula.text": "စာသား",
+  "formula.dates": "ရက်စွဲများ",
+  "formula.lists": "စာရင်းများ",
+  "formula.functions": "ဖန်ရှင်များ",
+  "formula.results": "ရလဒ်များ",
+  "formula.noRows": "ဖော်မြူလာ တွက်ချက်သည်ကို ကြည့်ရန် အတန်းတစ်ခု ထည့်ပါ။",
+  "formula.cant": "တွက်၍မရပါ",
+  "formula.yes": "ဟုတ်ကဲ့",
+  "formula.no": "မဟုတ်ပါ",
+  "formula.word": "“{word}” သည် ကော်လံလည်း မဟုတ်၊ ဖန်ရှင်လည်း မဟုတ်ပါ။",
+  "formula.like": "{name} ကို ဆိုလိုပါသလား။",
+  "formula.close": "ဤကွင်းကို မပိတ်ထားပါ။",
+  "formula.quote": "ဤစကားလုံးများတွင် ပိတ်သည့် မျက်တောင်အမှတ် လိုအပ်သည်။",
+  "formula.parts": "{word} ကို ဤသို့ ရေးပါ- {use}",
+  "formula.more": "ဤနေရာတွင် တစ်ခုခု လိုနေသည်။",
+  "formula.extra": "ဤနေရာတွင် တစ်ခုခု ပိတ်ဆို့နေသည်- ၎င်းရှေ့တွင် အော်ပရေတာ သို့မဟုတ် ကော်မာ လိုနေနိုင်သည်။"
+}

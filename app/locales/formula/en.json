@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Columns and functions",
+  "formula.column": "Column",
+  "formula.columns": "Columns",
+  "formula.logic": "Logic",
+  "formula.numbers": "Numbers",
+  "formula.text": "Words",
+  "formula.dates": "Dates",
+  "formula.lists": "Lists",
+  "formula.functions": "Functions",
+  "formula.results": "Results",
+  "formula.noRows": "Add a row to see what the formula works out.",
+  "formula.cant": "Can’t be worked out",
+  "formula.yes": "Yes",
+  "formula.no": "No",
+  "formula.word": "“{word}” is neither a column nor a function.",
+  "formula.like": "Did you mean {name}?",
+  "formula.close": "This bracket is never closed.",
+  "formula.quote": "These words need a closing quote.",
+  "formula.parts": "Write {word} like this: {use}",
+  "formula.more": "Something is missing here.",
+  "formula.extra": "Something here is in the way: an operator or a comma may be missing before it."
+}

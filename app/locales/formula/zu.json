@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Amakholomu nemisebenzi",
+  "formula.column": "Ikholomu",
+  "formula.columns": "Amakholomu",
+  "formula.logic": "Ingqondo",
+  "formula.numbers": "Izinombolo",
+  "formula.text": "Umbhalo",
+  "formula.dates": "Izinsuku",
+  "formula.lists": "Uhlu",
+  "formula.functions": "Imisebenzi",
+  "formula.results": "Imiphumela",
+  "formula.noRows": "Engeza umugqa ukuze ubone ukuthi ifomula ibalani.",
+  "formula.cant": "Ayikwazi ukubalwa",
+  "formula.yes": "Yebo",
+  "formula.no": "Cha",
+  "formula.word": "“{word}” akuyona ikholomu futhi akuwona umsebenzi.",
+  "formula.like": "Ingabe ubusho {name}?",
+  "formula.close": "Lo bakaki awuvalwa neze.",
+  "formula.quote": "La magama adinga uphawu lokuvala isicaphuno.",
+  "formula.parts": "Bhala {word} kanje: {use}",
+  "formula.more": "Kukhona okushodayo lapha.",
+  "formula.extra": "Kukhona okuvimbayo lapha: mhlawumbe kushoda i-opharetha noma ukhefana ngaphambi kwakho."
+}

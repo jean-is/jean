@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Cột và hàm",
+  "formula.column": "Cột",
+  "formula.columns": "Cột",
+  "formula.logic": "Logic",
+  "formula.numbers": "Số",
+  "formula.text": "Văn bản",
+  "formula.dates": "Ngày",
+  "formula.lists": "Danh sách",
+  "formula.functions": "Hàm",
+  "formula.results": "Kết quả",
+  "formula.noRows": "Hãy thêm một hàng để xem công thức tính ra gì.",
+  "formula.cant": "Không tính được",
+  "formula.yes": "Có",
+  "formula.no": "Không",
+  "formula.word": "“{word}” không phải là cột cũng không phải là hàm.",
+  "formula.like": "Có phải ý bạn là {name}?",
+  "formula.close": "Dấu ngoặc này không bao giờ được đóng.",
+  "formula.quote": "Những từ này cần dấu ngoặc kép đóng.",
+  "formula.parts": "Hãy viết {word} như sau: {use}",
+  "formula.more": "Ở đây thiếu một thứ gì đó.",
+  "formula.extra": "Có gì đó cản trở ở đây: có thể thiếu một toán tử hoặc dấu phẩy phía trước."
+}

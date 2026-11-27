@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Στήλες και συναρτήσεις",
+  "formula.column": "Στήλη",
+  "formula.columns": "Στήλες",
+  "formula.logic": "Λογική",
+  "formula.numbers": "Αριθμοί",
+  "formula.text": "Κείμενο",
+  "formula.dates": "Ημερομηνίες",
+  "formula.lists": "Λίστες",
+  "formula.functions": "Συναρτήσεις",
+  "formula.results": "Αποτελέσματα",
+  "formula.noRows": "Προσθέστε μια γραμμή για να δείτε τι υπολογίζει ο τύπος.",
+  "formula.cant": "Δεν υπολογίζεται",
+  "formula.yes": "Ναι",
+  "formula.no": "Όχι",
+  "formula.word": "Το «{word}» δεν είναι ούτε στήλη ούτε συνάρτηση.",
+  "formula.like": "Μήπως εννοείτε {name};",
+  "formula.close": "Αυτή η παρένθεση δεν κλείνει ποτέ.",
+  "formula.quote": "Σε αυτές τις λέξεις λείπουν τα εισαγωγικά κλεισίματος.",
+  "formula.parts": "Γράψτε το {word} έτσι: {use}",
+  "formula.more": "Κάτι λείπει εδώ.",
+  "formula.extra": "Κάτι εδώ περισσεύει: ίσως λείπει πριν από αυτό ένας τελεστής ή ένα κόμμα."
+}

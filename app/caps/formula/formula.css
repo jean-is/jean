@@ -1,0 +1,16 @@
+/* SPDX-License-Identifier: MIT */
+/* A Formula's dialog (formula.js): what is offered under the words, what is wrong and where, what the first rows work out, and the functions by group. */
+.formula-offers { display: grid; margin: 0; padding: 0.3rem; list-style: none; font-size: 0.875rem; border: 1px solid var(--line-strong); border-radius: 0.5rem; background: var(--room-2); }
+.formula-offers li { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; min-block-size: 2rem; padding: 0.2rem 0.6rem; border-radius: 0.35rem; cursor: pointer; }
+.formula-offers [aria-selected="true"] { background: var(--chosen-fill); outline: 1.5px solid var(--ink-soft); outline-offset: -1.5px; }
+.table-formula code { font: 0.85rem/1.5 var(--mono); overflow-wrap: anywhere; }
+.formula-said:empty { display: none; } .formula-said { display: grid; gap: 0.25rem; }
+.formula-said mark { background: none; color: inherit; text-decoration: wavy underline var(--danger); text-decoration-skip-ink: none; text-underline-offset: 0.2em; white-space: pre; }
+.table-formula h3 { margin: 0 0 0.35rem; font-size: 0.8rem; font-weight: 600; color: var(--ink-soft); }
+.formula-results dl { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 0.25rem 1rem; margin: 0; }
+.formula-results dt { overflow: hidden; color: var(--ink-soft); text-overflow: ellipsis; white-space: nowrap; } .formula-results dd { margin: 0; font-variant-numeric: tabular-nums; }
+.formula-help { display: grid; gap: 0.5rem; } .formula-help summary { cursor: pointer; font-weight: 600; } .formula-help h3 { margin-block-start: 0.5rem; }
+.formula-help ul { display: grid; margin: 0; padding: 0; list-style: none; }
+.formula-help button { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; inline-size: 100%; padding: 0.3rem 0.5rem; border: 0; border-radius: 0.35rem; background: none; color: inherit; font: inherit; text-align: start; cursor: pointer; }
+.formula-help button:hover, .formula-help button:focus-visible { background: var(--room-2); } .formula-help button span { flex-shrink: 0; max-inline-size: 45%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (forced-colors: active) { .formula-offers [aria-selected="true"] { outline-color: Highlight; } .formula-said mark { text-decoration-color: CanvasText; } }

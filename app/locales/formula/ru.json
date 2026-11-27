@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Столбцы и функции",
+  "formula.column": "Столбец",
+  "formula.columns": "Столбцы",
+  "formula.logic": "Логика",
+  "formula.numbers": "Числа",
+  "formula.text": "Текст",
+  "formula.dates": "Даты",
+  "formula.lists": "Списки",
+  "formula.functions": "Функции",
+  "formula.results": "Результаты",
+  "formula.noRows": "Добавьте строку, чтобы увидеть, что вычисляет формула.",
+  "formula.cant": "Нельзя вычислить",
+  "formula.yes": "Да",
+  "formula.no": "Нет",
+  "formula.word": "«{word}» — не столбец и не функция.",
+  "formula.like": "Вы имели в виду {name}?",
+  "formula.close": "Эта скобка нигде не закрыта.",
+  "formula.quote": "Этим словам не хватает закрывающей кавычки.",
+  "formula.parts": "Пишите {word} так: {use}",
+  "formula.more": "Здесь чего-то не хватает.",
+  "formula.extra": "Здесь что-то мешает: возможно, перед этим не хватает оператора или запятой."
+}

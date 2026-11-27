@@ -30,7 +30,6 @@ import { page, grid, reread as listed } from '../../ui/creations.js'
 import { createTable, readTable, folderOf, propertyOf, checkCell, grown, reshape, converted, canonical, isOwn, ownProblem, kindOf, notesOf, spotOf, arranged, currencyOf, filesOf, viewOf, PLACE as FOLDER } from './table.js'
 import { stringifyChanges, stamp, fold, undo, reading, marked, inverse } from './changes.js'
 import { query, ordered, valueOf, filterOf, total } from './query.js'
-import { worked } from './formula.js'
 import { exportTable, namesOf, rowNamed, said, digitsOf, amount, calcOf } from './export.js'
 import { tableCreate, tableView, LINE, TABLE_ROWS, TABLE_CHANGE } from './tool.js'
 
@@ -86,6 +85,8 @@ export async function alone(one, id, view) {
   // What it no longer holds is written as none, so that it still holds none once read again.
   return Object.keys(all).length ? app.fs.write(at, `${JSON.stringify({ format: 1, views: all }, (_, value) => value ?? null, 2)}\n`) : app.fs.remove(at)
 }
+/** Its rows with each formula's cells worked out, by ../formula/engine.js, fetched for a collection that has one. @param {Table} table @param {Row[]} rows @returns {Promise<Row[]>} */
+const worked = async (table, rows) => (table.properties.some((property) => property.type === 'formula' && !property.deleted) ? (await import('../formula/engine.js')).worked(table, rows) : rows)
 /** The name the person goes by in a collection, which a rule on "Me" keeps: the one those who work on it with them see, else the one they gave Jean. @param {Loaded} one @returns {string | undefined} */
 export const meIn = (one) => slots('names').map((part) => part.me?.(one.folder)).find(Boolean) ?? effective.value.settings.name
 /** The tables blank() made that a document hasn't drawn yet, whose first field then takes the keyboard. */
@@ -99,7 +100,7 @@ export async function load(folder, dir = app.projectDir, alone = false) {
   const text = FOLDER.test(folder) && await app.fs.read(`${dir}/${folder}/collection.json`)
   if (!text) return drafts.get(folder) ?? null
   const { lines, rows } = reading(`${dir}/${folder}`, (await app.fs.read(`${dir}/${folder}/changes.jsonl`)) ?? ''), table = readTable(text)
-  const one = { dir, folder, table, lines, rows: worked(table, ordered(rows(), table.order)) }
+  const one = { dir, folder, table, lines, rows: await worked(table, ordered(rows(), table.order)) }
   if (alone) return one
   const places = [...new Set(table.properties.flatMap((property) => (property.type === 'relation' && !property.deleted ? [String(property.collection)] : [])))]
   const related = new Map(/** @type {[string, Loaded][]} */ ((await Promise.all(places.map(async (place) => [place, await targetOf(one, place)]))).filter(([, target]) => target)))

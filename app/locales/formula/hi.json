@@ -1,0 +1,23 @@
+{
+  "formula.offers": "कॉलम और फ़ंक्शन",
+  "formula.column": "कॉलम",
+  "formula.columns": "कॉलम",
+  "formula.logic": "तर्क",
+  "formula.numbers": "संख्याएँ",
+  "formula.text": "टेक्स्ट",
+  "formula.dates": "तारीख़ें",
+  "formula.lists": "सूचियाँ",
+  "formula.functions": "फ़ंक्शन",
+  "formula.results": "नतीजे",
+  "formula.noRows": "फ़ॉर्मूला क्या गिनता है, यह देखने के लिए एक पंक्ति जोड़ें।",
+  "formula.cant": "गिना नहीं जा सकता",
+  "formula.yes": "हाँ",
+  "formula.no": "नहीं",
+  "formula.word": "“{word}” न तो कॉलम है, न फ़ंक्शन।",
+  "formula.like": "क्या आपका मतलब {name} था?",
+  "formula.close": "यह कोष्ठक कभी बंद नहीं होता।",
+  "formula.quote": "इन शब्दों को बंद करने वाला उद्धरण चिह्न चाहिए।",
+  "formula.parts": "{word} ऐसे लिखें: {use}",
+  "formula.more": "यहाँ कुछ छूट गया है।",
+  "formula.extra": "यहाँ कुछ अटक रहा है: शायद इससे पहले कोई ऑपरेटर या अल्पविराम छूट गया है।"
+}

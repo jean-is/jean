@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Колони и функции",
+  "formula.column": "Колона",
+  "formula.columns": "Колони",
+  "formula.logic": "Логика",
+  "formula.numbers": "Числа",
+  "formula.text": "Текст",
+  "formula.dates": "Дати",
+  "formula.lists": "Списъци",
+  "formula.functions": "Функции",
+  "formula.results": "Резултати",
+  "formula.noRows": "Добавете ред, за да видите какво изчислява формулата.",
+  "formula.cant": "Не може да се изчисли",
+  "formula.yes": "Да",
+  "formula.no": "Не",
+  "formula.word": "„{word}“ не е нито колона, нито функция.",
+  "formula.like": "Имахте предвид {name}?",
+  "formula.close": "Тази скоба никога не се затваря.",
+  "formula.quote": "Тези думи се нуждаят от затваряща кавичка.",
+  "formula.parts": "Напишете {word} така: {use}",
+  "formula.more": "Тук нещо липсва.",
+  "formula.extra": "Нещо тук пречи: може би преди него липсва оператор или запетая."
+}

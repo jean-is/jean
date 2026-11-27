@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Safu na vitendakazi",
+  "formula.column": "Safu",
+  "formula.columns": "Safu",
+  "formula.logic": "Mantiki",
+  "formula.numbers": "Namba",
+  "formula.text": "Maandishi",
+  "formula.dates": "Tarehe",
+  "formula.lists": "Orodha",
+  "formula.functions": "Vitendakazi",
+  "formula.results": "Matokeo",
+  "formula.noRows": "Ongeza safu mlalo ili uone kile fomula inachokokotoa.",
+  "formula.cant": "Haiwezi kukokotolewa",
+  "formula.yes": "Ndiyo",
+  "formula.no": "Hapana",
+  "formula.word": "“{word}” si safu wala kitendakazi.",
+  "formula.like": "Ulimaanisha {name}?",
+  "formula.close": "Mabano haya hayafungwi kamwe.",
+  "formula.quote": "Maneno haya yanahitaji alama ya kufunga nukuu.",
+  "formula.parts": "Andika {word} hivi: {use}",
+  "formula.more": "Kuna kitu kinakosekana hapa.",
+  "formula.extra": "Kuna kitu kinachozuia hapa: labda kabla yake kinakosekana kiendeshi au koma."
+}

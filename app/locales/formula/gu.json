@@ -1,0 +1,23 @@
+{
+  "formula.offers": "કૉલમ અને ફંક્શન",
+  "formula.column": "કૉલમ",
+  "formula.columns": "કૉલમ્સ",
+  "formula.logic": "તર્ક",
+  "formula.numbers": "સંખ્યાઓ",
+  "formula.text": "લખાણ",
+  "formula.dates": "તારીખો",
+  "formula.lists": "યાદીઓ",
+  "formula.functions": "ફંક્શન",
+  "formula.results": "પરિણામો",
+  "formula.noRows": "સૂત્ર શું ગણે છે તે જોવા માટે એક પંક્તિ ઉમેરો.",
+  "formula.cant": "ગણી શકાતું નથી",
+  "formula.yes": "હા",
+  "formula.no": "ના",
+  "formula.word": "“{word}” ન તો કૉલમ છે કે ન તો ફંક્શન.",
+  "formula.like": "શું તમારો મતલબ {name} હતો?",
+  "formula.close": "આ કૌંસ ક્યારેય બંધ થતો નથી.",
+  "formula.quote": "આ શબ્દોને બંધ કરતું અવતરણચિહ્ન જોઈએ.",
+  "formula.parts": "{word} આ રીતે લખો: {use}",
+  "formula.more": "અહીં કંઈક ખૂટે છે.",
+  "formula.extra": "અહીં કંઈક નડે છે: કદાચ તેની પહેલાં ઑપરેટર કે અલ્પવિરામ ખૂટે છે."
+}

@@ -7,7 +7,7 @@
 // and `{count}`, what a table of the page adds up to as it stands, the rows its forms added too; a chart's `from="its id"`, drawn from it by
 // `by` and `sum`; a choice named as a table's column, which keeps the rows that hold it, one no row holds (All) keeping them all.
 // What can't be worked out is a dash. A page with none of these stays as it was written. Pure, so Node's tests run it.
-import { compile } from '../tables/formula.js'
+import { compile } from '../formula/engine.js'
 import { all, form, lines, number, split, table } from './parts.js'
 
 /** @import { Part } from './parts.js' */

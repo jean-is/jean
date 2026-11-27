@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Stupci i funkcije",
+  "formula.column": "Stupac",
+  "formula.columns": "Stupci",
+  "formula.logic": "Logika",
+  "formula.numbers": "Brojevi",
+  "formula.text": "Tekst",
+  "formula.dates": "Datumi",
+  "formula.lists": "Popisi",
+  "formula.functions": "Funkcije",
+  "formula.results": "Rezultati",
+  "formula.noRows": "Dodajte redak da vidite što formula izračunava.",
+  "formula.cant": "Ne može se izračunati",
+  "formula.yes": "Da",
+  "formula.no": "Ne",
+  "formula.word": "„{word}” nije ni stupac ni funkcija.",
+  "formula.like": "Jeste li mislili na {name}?",
+  "formula.close": "Ova se zagrada nikad ne zatvara.",
+  "formula.quote": "Ovim riječima nedostaju zatvarajući navodnici.",
+  "formula.parts": "Napišite {word} ovako: {use}",
+  "formula.more": "Ovdje nešto nedostaje.",
+  "formula.extra": "Ovdje nešto smeta: možda ispred nedostaje operator ili zarez."
+}

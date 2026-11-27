@@ -1,0 +1,23 @@
+{
+  "formula.offers": "स्तंभ आणि फंक्शन",
+  "formula.column": "स्तंभ",
+  "formula.columns": "स्तंभ",
+  "formula.logic": "तर्क",
+  "formula.numbers": "संख्या",
+  "formula.text": "मजकूर",
+  "formula.dates": "तारखा",
+  "formula.lists": "याद्या",
+  "formula.functions": "फंक्शन",
+  "formula.results": "निकाल",
+  "formula.noRows": "सूत्र काय मोजते ते पाहण्यासाठी एक ओळ जोडा.",
+  "formula.cant": "मोजता येत नाही",
+  "formula.yes": "होय",
+  "formula.no": "नाही",
+  "formula.word": "“{word}” हा स्तंभही नाही आणि फंक्शनही नाही.",
+  "formula.like": "तुम्हाला {name} म्हणायचे होते का?",
+  "formula.close": "हा कंस कधीच बंद होत नाही.",
+  "formula.quote": "या शब्दांना बंद करणारे अवतरणचिन्ह हवे.",
+  "formula.parts": "{word} असे लिहा: {use}",
+  "formula.more": "इथे काहीतरी राहिले आहे.",
+  "formula.extra": "इथे काहीतरी अडते आहे: कदाचित त्याआधी ऑपरेटर किंवा स्वल्पविराम राहिला आहे."
+}

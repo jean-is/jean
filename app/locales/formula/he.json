@@ -1,0 +1,23 @@
+{
+  "formula.offers": "עמודות ופונקציות",
+  "formula.column": "עמודה",
+  "formula.columns": "עמודות",
+  "formula.logic": "לוגיקה",
+  "formula.numbers": "מספרים",
+  "formula.text": "טקסט",
+  "formula.dates": "תאריכים",
+  "formula.lists": "רשימות",
+  "formula.functions": "פונקציות",
+  "formula.results": "תוצאות",
+  "formula.noRows": "כדאי להוסיף שורה כדי לראות מה הנוסחה מחשבת.",
+  "formula.cant": "אי אפשר לחשב",
+  "formula.yes": "כן",
+  "formula.no": "לא",
+  "formula.word": "“{word}” אינו עמודה ואינו פונקציה.",
+  "formula.like": "האם התכוונת: {name}?",
+  "formula.close": "הסוגר הזה לא נסגר לעולם.",
+  "formula.quote": "למילים האלה חסרות מירכאות סוגרות.",
+  "formula.parts": "כך כותבים את {word}: {use}",
+  "formula.more": "משהו חסר כאן.",
+  "formula.extra": "משהו כאן מפריע: אולי חסרים לפניו אופרטור או פסיק."
+}

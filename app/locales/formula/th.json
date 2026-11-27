@@ -1,0 +1,23 @@
+{
+  "formula.offers": "คอลัมน์และฟังก์ชัน",
+  "formula.column": "คอลัมน์",
+  "formula.columns": "คอลัมน์",
+  "formula.logic": "ตรรกะ",
+  "formula.numbers": "ตัวเลข",
+  "formula.text": "ข้อความ",
+  "formula.dates": "วันที่",
+  "formula.lists": "รายการ",
+  "formula.functions": "ฟังก์ชัน",
+  "formula.results": "ผลลัพธ์",
+  "formula.noRows": "เพิ่มแถวเพื่อดูว่าสูตรคำนวณได้อะไร",
+  "formula.cant": "คำนวณไม่ได้",
+  "formula.yes": "ใช่",
+  "formula.no": "ไม่",
+  "formula.word": "“{word}” ไม่ใช่ทั้งคอลัมน์และฟังก์ชัน",
+  "formula.like": "หมายถึง {name} ใช่ไหม",
+  "formula.close": "วงเล็บนี้ไม่ได้ถูกปิด",
+  "formula.quote": "คำเหล่านี้ต้องมีเครื่องหมายอัญประกาศปิด",
+  "formula.parts": "เขียน {word} แบบนี้: {use}",
+  "formula.more": "ตรงนี้ขาดบางอย่าง",
+  "formula.extra": "มีบางอย่างเกินมาตรงนี้ อาจขาดตัวดำเนินการหรือจุลภาคข้างหน้า"
+}

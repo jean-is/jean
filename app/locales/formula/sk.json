@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Stĺpce a funkcie",
+  "formula.column": "Stĺpec",
+  "formula.columns": "Stĺpce",
+  "formula.logic": "Logika",
+  "formula.numbers": "Čísla",
+  "formula.text": "Text",
+  "formula.dates": "Dátumy",
+  "formula.lists": "Zoznamy",
+  "formula.functions": "Funkcie",
+  "formula.results": "Výsledky",
+  "formula.noRows": "Pridajte riadok a uvidíte, čo vzorec vypočíta.",
+  "formula.cant": "Nedá sa vypočítať",
+  "formula.yes": "Áno",
+  "formula.no": "Nie",
+  "formula.word": "„{word}“ nie je stĺpec ani funkcia.",
+  "formula.like": "Mysleli ste {name}?",
+  "formula.close": "Táto zátvorka sa nikde nezatvára.",
+  "formula.quote": "Týmto slovám chýba koncová úvodzovka.",
+  "formula.parts": "Napíšte {word} takto: {use}",
+  "formula.more": "Tu niečo chýba.",
+  "formula.extra": "Tu niečo prekáža: možno pred tým chýba operátor alebo čiarka."
+}

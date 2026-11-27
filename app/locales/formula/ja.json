@@ -1,0 +1,23 @@
+{
+  "formula.offers": "列と関数",
+  "formula.column": "列",
+  "formula.columns": "列",
+  "formula.logic": "論理",
+  "formula.numbers": "数値",
+  "formula.text": "文字列",
+  "formula.dates": "日付",
+  "formula.lists": "リスト",
+  "formula.functions": "関数",
+  "formula.results": "結果",
+  "formula.noRows": "行を追加すると、数式の計算結果が表示されます。",
+  "formula.cant": "計算できません",
+  "formula.yes": "はい",
+  "formula.no": "いいえ",
+  "formula.word": "「{word}」は列でも関数でもありません。",
+  "formula.like": "{name} のことですか？",
+  "formula.close": "このかっこが閉じられていません。",
+  "formula.quote": "この文字列には閉じる引用符が必要です。",
+  "formula.parts": "{word} はこのように書きます：{use}",
+  "formula.more": "ここに何かが足りません。",
+  "formula.extra": "ここに余分なものがあります。前に演算子かカンマが足りないかもしれません。"
+}

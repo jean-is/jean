@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Kolumner och funktioner",
+  "formula.column": "Kolumn",
+  "formula.columns": "Kolumner",
+  "formula.logic": "Logik",
+  "formula.numbers": "Tal",
+  "formula.text": "Text",
+  "formula.dates": "Datum",
+  "formula.lists": "Listor",
+  "formula.functions": "Funktioner",
+  "formula.results": "Resultat",
+  "formula.noRows": "Lägg till en rad för att se vad formeln räknar ut.",
+  "formula.cant": "Kan inte räknas ut",
+  "formula.yes": "Ja",
+  "formula.no": "Nej",
+  "formula.word": "”{word}” är varken en kolumn eller en funktion.",
+  "formula.like": "Menade du {name}?",
+  "formula.close": "Den här parentesen stängs aldrig.",
+  "formula.quote": "De här orden saknar ett avslutande citattecken.",
+  "formula.parts": "Skriv {word} så här: {use}",
+  "formula.more": "Här saknas något.",
+  "formula.extra": "Något här står i vägen: kanske saknas en operator eller ett kommatecken före."
+}

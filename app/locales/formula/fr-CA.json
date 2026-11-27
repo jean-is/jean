@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Colonnes et fonctions",
+  "formula.column": "Colonne",
+  "formula.columns": "Colonnes",
+  "formula.logic": "Logique",
+  "formula.numbers": "Nombres",
+  "formula.text": "Texte",
+  "formula.dates": "Dates",
+  "formula.lists": "Listes",
+  "formula.functions": "Fonctions",
+  "formula.results": "Résultats",
+  "formula.noRows": "Ajoutez une ligne pour voir ce que calcule la formule.",
+  "formula.cant": "Ne peut pas être calculé",
+  "formula.yes": "Oui",
+  "formula.no": "Non",
+  "formula.word": "« {word} » n’est ni une colonne ni une fonction.",
+  "formula.like": "Vouliez-vous dire {name}?",
+  "formula.close": "Cette parenthèse n’est jamais fermée.",
+  "formula.quote": "Il manque des guillemets fermants à ces mots.",
+  "formula.parts": "Écrivez {word} ainsi : {use}",
+  "formula.more": "Il manque quelque chose ici.",
+  "formula.extra": "Quelque chose nuit ici : il manque peut-être un opérateur ou une virgule avant."
+}

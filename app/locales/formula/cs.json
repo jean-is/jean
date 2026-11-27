@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Sloupce a funkce",
+  "formula.column": "Sloupec",
+  "formula.columns": "Sloupce",
+  "formula.logic": "Logika",
+  "formula.numbers": "Čísla",
+  "formula.text": "Text",
+  "formula.dates": "Datumy",
+  "formula.lists": "Seznamy",
+  "formula.functions": "Funkce",
+  "formula.results": "Výsledky",
+  "formula.noRows": "Přidejte řádek a uvidíte, co vzorec spočítá.",
+  "formula.cant": "Nelze spočítat",
+  "formula.yes": "Ano",
+  "formula.no": "Ne",
+  "formula.word": "„{word}“ není sloupec ani funkce.",
+  "formula.like": "Mysleli jste {name}?",
+  "formula.close": "Tato závorka se nikde nezavírá.",
+  "formula.quote": "Těmto slovům chybí uzavírací uvozovka.",
+  "formula.parts": "Napište {word} takto: {use}",
+  "formula.more": "Tady něco chybí.",
+  "formula.extra": "Tady něco překáží: možná před tím chybí operátor nebo čárka."
+}

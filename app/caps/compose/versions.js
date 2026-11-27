@@ -7,7 +7,7 @@
 import { canonical } from '../tables/table.js'
 import { fold } from '../tables/changes.js'
 import { ordered } from '../tables/query.js'
-import { worked } from '../tables/formula.js'
+import { worked } from '../formula/engine.js'
 
 /** @import { Table } from '../tables/table.js' */
 /** @import { Row, Line } from '../tables/changes.js' */

@@ -17,7 +17,7 @@ import { parse, all } from './parts.js'
 import { shared } from './live.js'
 
 /** What keeps it live, by the name each goes by in the page, and where each is beside this module. */
-const MODULES = /** @type {Record<string, string>} */ ({ alive: './alive.js', parts: './parts.js', live: './live.js', formula: '../tables/formula.js', option: '../charts/option.js' })
+const MODULES = /** @type {Record<string, string>} */ ({ alive: './alive.js', parts: './parts.js', live: './live.js', engine: '../formula/engine.js', formula: '../tables/formula.js', option: '../charts/option.js' })
 /** Each read once. @type {Map<string, Promise<string>>} */
 const read = new Map()
 /** @param {string} path */

@@ -1,0 +1,23 @@
+{
+  "formula.offers": "నిలువు వరుసలు, ఫంక్షన్‌లు",
+  "formula.column": "నిలువు వరుస",
+  "formula.columns": "నిలువు వరుసలు",
+  "formula.logic": "తర్కం",
+  "formula.numbers": "సంఖ్యలు",
+  "formula.text": "వచనం",
+  "formula.dates": "తేదీలు",
+  "formula.lists": "జాబితాలు",
+  "formula.functions": "ఫంక్షన్‌లు",
+  "formula.results": "ఫలితాలు",
+  "formula.noRows": "సూత్రం ఏమి లెక్కిస్తుందో చూడటానికి ఒక అడ్డు వరుసను జోడించండి.",
+  "formula.cant": "లెక్కించలేము",
+  "formula.yes": "అవును",
+  "formula.no": "కాదు",
+  "formula.word": "“{word}” నిలువు వరుస కాదు, ఫంక్షన్ కాదు.",
+  "formula.like": "మీరు {name} అనాలనుకున్నారా?",
+  "formula.close": "ఈ కుండలీకరణం ఎక్కడా మూయబడలేదు.",
+  "formula.quote": "ఈ పదాలకు ముగింపు కొటేషన్ గుర్తు కావాలి.",
+  "formula.parts": "{word} ఇలా రాయాలి: {use}",
+  "formula.more": "ఇక్కడ ఏదో లోపించింది.",
+  "formula.extra": "ఇక్కడ ఏదో అడ్డుగా ఉంది: దీనికి ముందు ఒక ఆపరేటర్ లేదా కామా లోపించి ఉండవచ్చు."
+}

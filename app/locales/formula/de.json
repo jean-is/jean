@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Spalten und Funktionen",
+  "formula.column": "Spalte",
+  "formula.columns": "Spalten",
+  "formula.logic": "Logik",
+  "formula.numbers": "Zahlen",
+  "formula.text": "Text",
+  "formula.dates": "Datum",
+  "formula.lists": "Listen",
+  "formula.functions": "Funktionen",
+  "formula.results": "Ergebnisse",
+  "formula.noRows": "Füg eine Zeile hinzu, um zu sehen, was die Formel berechnet.",
+  "formula.cant": "Lässt sich nicht berechnen",
+  "formula.yes": "Ja",
+  "formula.no": "Nein",
+  "formula.word": "„{word}“ ist weder eine Spalte noch eine Funktion.",
+  "formula.like": "Meintest du {name}?",
+  "formula.close": "Diese Klammer wird nie geschlossen.",
+  "formula.quote": "Diesen Wörtern fehlt das schließende Anführungszeichen.",
+  "formula.parts": "Schreib {word} so: {use}",
+  "formula.more": "Hier fehlt etwas.",
+  "formula.extra": "Hier steht etwas im Weg: Vielleicht fehlt davor ein Operator oder ein Komma."
+}

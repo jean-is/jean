@@ -1,0 +1,23 @@
+{
+  "formula.offers": "ستنې او فنکشنونه",
+  "formula.column": "ستن",
+  "formula.columns": "ستنې",
+  "formula.logic": "منطق",
+  "formula.numbers": "شمېرې",
+  "formula.text": "متن",
+  "formula.dates": "نېټې",
+  "formula.lists": "لېستونه",
+  "formula.functions": "فنکشنونه",
+  "formula.results": "پایلې",
+  "formula.noRows": "یو قطار ورزیات کړئ چې وګورئ فورمول څه حسابوي.",
+  "formula.cant": "نه شي حسابېدای",
+  "formula.yes": "هو",
+  "formula.no": "نه",
+  "formula.word": "«{word}» نه ستن ده او نه فنکشن.",
+  "formula.like": "ستاسو مطلب {name} و؟",
+  "formula.close": "دا قوس هېڅکله نه تړل کېږي.",
+  "formula.quote": "دې کلمو ته د تړلو نښه اړینه ده.",
+  "formula.parts": "{word} داسې ولیکئ: {use}",
+  "formula.more": "دلته یو څه کم دي.",
+  "formula.extra": "دلته یو څه خنډ دی: ښايي له دې مخکې یو عملګر یا کامه کمه وي."
+}

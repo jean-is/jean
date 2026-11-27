@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Coloane și funcții",
+  "formula.column": "Coloană",
+  "formula.columns": "Coloane",
+  "formula.logic": "Logică",
+  "formula.numbers": "Numere",
+  "formula.text": "Text",
+  "formula.dates": "Date",
+  "formula.lists": "Liste",
+  "formula.functions": "Funcții",
+  "formula.results": "Rezultate",
+  "formula.noRows": "Adaugă un rând ca să vezi ce calculează formula.",
+  "formula.cant": "Nu se poate calcula",
+  "formula.yes": "Da",
+  "formula.no": "Nu",
+  "formula.word": "„{word}” nu este nici coloană, nici funcție.",
+  "formula.like": "Te-ai gândit la {name}?",
+  "formula.close": "Această paranteză nu se închide niciodată.",
+  "formula.quote": "Acestor cuvinte le lipsesc ghilimelele de închidere.",
+  "formula.parts": "Scrie {word} așa: {use}",
+  "formula.more": "Aici lipsește ceva.",
+  "formula.extra": "Aici ceva stă în cale: poate lipsește înainte un operator sau o virgulă."
+}

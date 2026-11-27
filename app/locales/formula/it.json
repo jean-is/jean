@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Colonne e funzioni",
+  "formula.column": "Colonna",
+  "formula.columns": "Colonne",
+  "formula.logic": "Logica",
+  "formula.numbers": "Numeri",
+  "formula.text": "Testo",
+  "formula.dates": "Date",
+  "formula.lists": "Elenchi",
+  "formula.functions": "Funzioni",
+  "formula.results": "Risultati",
+  "formula.noRows": "Aggiungi una riga per vedere cosa calcola la formula.",
+  "formula.cant": "Non si può calcolare",
+  "formula.yes": "Sì",
+  "formula.no": "No",
+  "formula.word": "«{word}» non è né una colonna né una funzione.",
+  "formula.like": "Intendevi {name}?",
+  "formula.close": "Questa parentesi non viene mai chiusa.",
+  "formula.quote": "A queste parole manca la virgoletta di chiusura.",
+  "formula.parts": "Scrivi {word} così: {use}",
+  "formula.more": "Qui manca qualcosa.",
+  "formula.extra": "Qui c’è qualcosa di troppo: forse prima manca un operatore o una virgola."
+}

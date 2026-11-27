@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Kolonner og funktioner",
+  "formula.column": "Kolonne",
+  "formula.columns": "Kolonner",
+  "formula.logic": "Logik",
+  "formula.numbers": "Tal",
+  "formula.text": "Tekst",
+  "formula.dates": "Datoer",
+  "formula.lists": "Lister",
+  "formula.functions": "Funktioner",
+  "formula.results": "Resultater",
+  "formula.noRows": "Tilføj en række for at se, hvad formlen regner ud.",
+  "formula.cant": "Kan ikke beregnes",
+  "formula.yes": "Ja",
+  "formula.no": "Nej",
+  "formula.word": "“{word}” er hverken en kolonne eller en funktion.",
+  "formula.like": "Mente du {name}?",
+  "formula.close": "Denne parentes lukkes aldrig.",
+  "formula.quote": "Disse ord mangler et afsluttende anførselstegn.",
+  "formula.parts": "Skriv {word} sådan her: {use}",
+  "formula.more": "Her mangler noget.",
+  "formula.extra": "Noget her står i vejen: måske mangler der en operator eller et komma foran."
+}

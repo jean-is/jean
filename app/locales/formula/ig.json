@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Kọlụm na ọrụ",
+  "formula.column": "Kọlụm",
+  "formula.columns": "Kọlụm niile",
+  "formula.logic": "Ezi uche",
+  "formula.numbers": "Nọmba",
+  "formula.text": "Ederede",
+  "formula.dates": "Ụbọchị",
+  "formula.lists": "Ndepụta",
+  "formula.functions": "Ọrụ",
+  "formula.results": "Nsonaazụ",
+  "formula.noRows": "Tinye ahịrị ka ị hụ ihe usoro ahụ na-agbakọ.",
+  "formula.cant": "Enweghị ike ịgbakọ ya",
+  "formula.yes": "Ee",
+  "formula.no": "Mba",
+  "formula.word": "“{word}” abụghị kọlụm, abụghịkwa ọrụ.",
+  "formula.like": "Ọ̀ bụ {name} ka ị pụtara?",
+  "formula.close": "Emechighị mkpọchi a ma ọlị.",
+  "formula.quote": "Okwu ndị a chọrọ akara nhota mmechi.",
+  "formula.parts": "Dee {word} otu a: {use}",
+  "formula.more": "Ihe fọdụrụ ebe a.",
+  "formula.extra": "Ihe na-egbochi ebe a: ma eleghị anya, akara mgbakọ ma ọ bụ rikoma adịghị n’ihu ya."
+}

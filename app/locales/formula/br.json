@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Bannoù ha fonksionoù",
+  "formula.column": "Bann",
+  "formula.columns": "Bannoù",
+  "formula.logic": "Poell",
+  "formula.numbers": "Niveroù",
+  "formula.text": "Testenn",
+  "formula.dates": "Deiziadoù",
+  "formula.lists": "Listennoù",
+  "formula.functions": "Fonksionoù",
+  "formula.results": "Disoc’hoù",
+  "formula.noRows": "Ouzhpennit ul linenn evit gwelet petra a jed ar formulenn.",
+  "formula.cant": "N’haller ket jediñ",
+  "formula.yes": "Ya",
+  "formula.no": "Ket",
+  "formula.word": "« {word} » n’eo na bann na fonksion.",
+  "formula.like": "Ha {name} a felle deoc’h lavaret ?",
+  "formula.close": "N’eo ket serret ar grommell-mañ.",
+  "formula.quote": "Ur merk-arroud serriñ a vank d’ar gerioù-mañ.",
+  "formula.parts": "Skrivit {word} evel-se : {use}",
+  "formula.more": "Un dra bennak a vank amañ.",
+  "formula.extra": "Un dra bennak a stank amañ : marteze e vank un oberier pe ur virgulenn a-raok."
+}

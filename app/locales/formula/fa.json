@@ -1,0 +1,23 @@
+{
+  "formula.offers": "ستون‌ها و تابع‌ها",
+  "formula.column": "ستون",
+  "formula.columns": "ستون‌ها",
+  "formula.logic": "منطق",
+  "formula.numbers": "اعداد",
+  "formula.text": "متن",
+  "formula.dates": "تاریخ‌ها",
+  "formula.lists": "فهرست‌ها",
+  "formula.functions": "تابع‌ها",
+  "formula.results": "نتیجه‌ها",
+  "formula.noRows": "یک ردیف اضافه کنید تا ببینید فرمول چه حساب می‌کند.",
+  "formula.cant": "محاسبه‌پذیر نیست",
+  "formula.yes": "بله",
+  "formula.no": "نه",
+  "formula.word": "«{word}» نه ستون است نه تابع.",
+  "formula.like": "منظورتان {name} بود؟",
+  "formula.close": "این پرانتز هیچ‌وقت بسته نمی‌شود.",
+  "formula.quote": "این کلمه‌ها به گیومهٔ بسته نیاز دارند.",
+  "formula.parts": "{word} را این‌طور بنویسید: {use}",
+  "formula.more": "اینجا چیزی کم است.",
+  "formula.extra": "چیزی اینجا مانع است: شاید پیش از آن یک عملگر یا ویرگول کم باشد."
+}

@@ -1,0 +1,23 @@
+{
+  "formula.offers": "الأعمدة والدوال",
+  "formula.column": "عمود",
+  "formula.columns": "الأعمدة",
+  "formula.logic": "المنطق",
+  "formula.numbers": "الأرقام",
+  "formula.text": "النصوص",
+  "formula.dates": "التواريخ",
+  "formula.lists": "القوائم",
+  "formula.functions": "الدوال",
+  "formula.results": "النتائج",
+  "formula.noRows": "أضف صفًا لترى ما تحسبه الصيغة.",
+  "formula.cant": "تعذّر الحساب",
+  "formula.yes": "نعم",
+  "formula.no": "لا",
+  "formula.word": "«{word}» ليس عمودًا ولا دالة.",
+  "formula.like": "هل تقصد {name}؟",
+  "formula.close": "هذا القوس لم يُغلق.",
+  "formula.quote": "هذه الكلمات تحتاج إلى علامة اقتباس للإغلاق.",
+  "formula.parts": "اكتب {word} هكذا: {use}",
+  "formula.more": "ينقص شيء هنا.",
+  "formula.extra": "شيء هنا في غير مكانه: ربما ينقص قبله عامل أو فاصلة."
+}

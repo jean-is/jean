@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Kolommen en functies",
+  "formula.column": "Kolom",
+  "formula.columns": "Kolommen",
+  "formula.logic": "Logica",
+  "formula.numbers": "Getallen",
+  "formula.text": "Tekst",
+  "formula.dates": "Datums",
+  "formula.lists": "Lijsten",
+  "formula.functions": "Functies",
+  "formula.results": "Resultaten",
+  "formula.noRows": "Voeg een rij toe om te zien wat de formule berekent.",
+  "formula.cant": "Kan niet worden berekend",
+  "formula.yes": "Ja",
+  "formula.no": "Nee",
+  "formula.word": "‘{word}’ is geen kolom en geen functie.",
+  "formula.like": "Bedoelde je {name}?",
+  "formula.close": "Dit haakje wordt nooit gesloten.",
+  "formula.quote": "Deze woorden missen een sluitend aanhalingsteken.",
+  "formula.parts": "Schrijf {word} zo: {use}",
+  "formula.more": "Hier ontbreekt iets.",
+  "formula.extra": "Hier staat iets in de weg: misschien ontbreekt er een operator of een komma voor."
+}

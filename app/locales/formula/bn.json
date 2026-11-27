@@ -1,0 +1,23 @@
+{
+  "formula.offers": "কলাম ও ফাংশন",
+  "formula.column": "কলাম",
+  "formula.columns": "কলামগুলো",
+  "formula.logic": "যুক্তি",
+  "formula.numbers": "সংখ্যা",
+  "formula.text": "লেখা",
+  "formula.dates": "তারিখ",
+  "formula.lists": "তালিকা",
+  "formula.functions": "ফাংশন",
+  "formula.results": "ফলাফল",
+  "formula.noRows": "সূত্রটি কী হিসাব করে দেখতে একটি সারি যোগ করুন।",
+  "formula.cant": "হিসাব করা যায় না",
+  "formula.yes": "হ্যাঁ",
+  "formula.no": "না",
+  "formula.word": "“{word}” কোনো কলামও নয়, ফাংশনও নয়।",
+  "formula.like": "আপনি কি {name} বোঝাতে চেয়েছেন?",
+  "formula.close": "এই বন্ধনীটি কখনো বন্ধ হয়নি।",
+  "formula.quote": "এই শব্দগুলোর একটি শেষের উদ্ধৃতিচিহ্ন দরকার।",
+  "formula.parts": "{word} এভাবে লিখুন: {use}",
+  "formula.more": "এখানে কিছু একটা নেই।",
+  "formula.extra": "এখানে কিছু একটা বাধা দিচ্ছে: এর আগে হয়তো একটি অপারেটর বা কমা নেই।"
+}

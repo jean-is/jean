@@ -1,0 +1,23 @@
+{
+  "formula.offers": "کالم اور فنکشن",
+  "formula.column": "کالم",
+  "formula.columns": "کالم",
+  "formula.logic": "منطق",
+  "formula.numbers": "اعداد",
+  "formula.text": "متن",
+  "formula.dates": "تاریخیں",
+  "formula.lists": "فہرستیں",
+  "formula.functions": "فنکشن",
+  "formula.results": "نتائج",
+  "formula.noRows": "فارمولا کیا حساب کرتا ہے، یہ دیکھنے کے لیے ایک قطار شامل کریں۔",
+  "formula.cant": "حساب نہیں ہو سکتا",
+  "formula.yes": "ہاں",
+  "formula.no": "نہیں",
+  "formula.word": "“{word}” نہ کالم ہے نہ فنکشن۔",
+  "formula.like": "کیا آپ کا مطلب {name} تھا؟",
+  "formula.close": "یہ قوس کبھی بند نہیں ہوتا۔",
+  "formula.quote": "ان الفاظ کو بند کرنے والے واوین کی ضرورت ہے۔",
+  "formula.parts": "{word} یوں لکھیں: {use}",
+  "formula.more": "یہاں کچھ کم ہے۔",
+  "formula.extra": "یہاں کچھ رکاوٹ ہے: شاید اس سے پہلے کوئی آپریٹر یا کاما رہ گیا ہے۔"
+}

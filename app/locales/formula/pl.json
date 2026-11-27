@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Kolumny i funkcje",
+  "formula.column": "Kolumna",
+  "formula.columns": "Kolumny",
+  "formula.logic": "Logika",
+  "formula.numbers": "Liczby",
+  "formula.text": "Tekst",
+  "formula.dates": "Daty",
+  "formula.lists": "Listy",
+  "formula.functions": "Funkcje",
+  "formula.results": "Wyniki",
+  "formula.noRows": "Dodaj wiersz, żeby zobaczyć, co oblicza formuła.",
+  "formula.cant": "Nie da się obliczyć",
+  "formula.yes": "Tak",
+  "formula.no": "Nie",
+  "formula.word": "„{word}” nie jest ani kolumną, ani funkcją.",
+  "formula.like": "Czy chodziło ci o {name}?",
+  "formula.close": "Ten nawias nigdzie się nie zamyka.",
+  "formula.quote": "Tym słowom brakuje cudzysłowu zamykającego.",
+  "formula.parts": "Zapisz {word} tak: {use}",
+  "formula.more": "Tu czegoś brakuje.",
+  "formula.extra": "Coś tu przeszkadza: może brakuje przed tym operatora albo przecinka."
+}

@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Àwọn ọ̀wọ̀n àti iṣẹ́",
+  "formula.column": "Ọ̀wọ̀n",
+  "formula.columns": "Àwọn ọ̀wọ̀n",
+  "formula.logic": "Ìrònú",
+  "formula.numbers": "Àwọn nọ́ńbà",
+  "formula.text": "Ọ̀rọ̀",
+  "formula.dates": "Àwọn ọjọ́",
+  "formula.lists": "Àwọn àtòjọ",
+  "formula.functions": "Àwọn iṣẹ́",
+  "formula.results": "Àwọn àbájáde",
+  "formula.noRows": "Ṣàfikún ìlà kan láti rí ohun tí àgbékalẹ̀ náà ṣírò.",
+  "formula.cant": "A kò lè ṣírò rẹ̀",
+  "formula.yes": "Bẹ́ẹ̀ni",
+  "formula.no": "Rárá",
+  "formula.word": "“{word}” kì í ṣe ọ̀wọ̀n, bẹ́ẹ̀ ni kì í ṣe iṣẹ́.",
+  "formula.like": "Ṣé {name} ni o ní lọ́kàn?",
+  "formula.close": "A kò pa àkámọ́ yìí dé rárá.",
+  "formula.quote": "Àwọn ọ̀rọ̀ wọ̀nyí nílò àmì àyọlò ìparí.",
+  "formula.parts": "Kọ {word} báyìí: {use}",
+  "formula.more": "Nǹkan kan kù síbí.",
+  "formula.extra": "Nǹkan kan ń dí ọ̀nà síbí: bóyá àmì ìṣirò tàbí kọ́mà kù níwájú rẹ̀."
+}

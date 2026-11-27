@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Columnas y funciones",
+  "formula.column": "Columna",
+  "formula.columns": "Columnas",
+  "formula.logic": "Lógica",
+  "formula.numbers": "Números",
+  "formula.text": "Texto",
+  "formula.dates": "Fechas",
+  "formula.lists": "Listas",
+  "formula.functions": "Funciones",
+  "formula.results": "Resultados",
+  "formula.noRows": "Añade una fila para ver lo que calcula la fórmula.",
+  "formula.cant": "No se puede calcular",
+  "formula.yes": "Sí",
+  "formula.no": "No",
+  "formula.word": "«{word}» no es ni una columna ni una función.",
+  "formula.like": "¿Querías decir {name}?",
+  "formula.close": "Este paréntesis nunca se cierra.",
+  "formula.quote": "A estas palabras les falta la comilla de cierre.",
+  "formula.parts": "Escribe {word} así: {use}",
+  "formula.more": "Aquí falta algo.",
+  "formula.extra": "Algo aquí sobra: quizá falte un operador o una coma antes."
+}

@@ -1,0 +1,23 @@
+{
+  "formula.offers": "欄位和函數",
+  "formula.column": "欄位",
+  "formula.columns": "欄位",
+  "formula.logic": "邏輯",
+  "formula.numbers": "數字",
+  "formula.text": "文字",
+  "formula.dates": "日期",
+  "formula.lists": "清單",
+  "formula.functions": "函數",
+  "formula.results": "結果",
+  "formula.noRows": "新增一列即可查看公式的計算結果。",
+  "formula.cant": "無法計算",
+  "formula.yes": "是",
+  "formula.no": "否",
+  "formula.word": "「{word}」既不是欄位，也不是函數。",
+  "formula.like": "你是不是想寫 {name}？",
+  "formula.close": "這個括號沒有閉合。",
+  "formula.quote": "這些文字缺少結束引號。",
+  "formula.parts": "{word} 應這樣寫：{use}",
+  "formula.more": "這裡少了點什麼。",
+  "formula.extra": "這裡有多餘的內容：前面可能缺少運算子或逗號。"
+}

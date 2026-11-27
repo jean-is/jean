@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Sarakkeet ja funktiot",
+  "formula.column": "Sarake",
+  "formula.columns": "Sarakkeet",
+  "formula.logic": "Logiikka",
+  "formula.numbers": "Luvut",
+  "formula.text": "Teksti",
+  "formula.dates": "Päivämäärät",
+  "formula.lists": "Luettelot",
+  "formula.functions": "Funktiot",
+  "formula.results": "Tulokset",
+  "formula.noRows": "Lisää rivi nähdäksesi, mitä kaava laskee.",
+  "formula.cant": "Ei voi laskea",
+  "formula.yes": "Kyllä",
+  "formula.no": "Ei",
+  "formula.word": "”{word}” ei ole sarake eikä funktio.",
+  "formula.like": "Tarkoititko tätä: {name}?",
+  "formula.close": "Tätä sulkua ei suljeta koskaan.",
+  "formula.quote": "Näistä sanoista puuttuu loppulainausmerkki.",
+  "formula.parts": "Kirjoita funktio {word} näin: {use}",
+  "formula.more": "Tästä puuttuu jotain.",
+  "formula.extra": "Tässä on jotain ylimääräistä: ehkä sen edestä puuttuu operaattori tai pilkku."
+}

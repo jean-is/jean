@@ -1,0 +1,23 @@
+{
+  "formula.offers": "Columnae et functiones",
+  "formula.column": "Columna",
+  "formula.columns": "Columnae",
+  "formula.logic": "Logica",
+  "formula.numbers": "Numeri",
+  "formula.text": "Textus",
+  "formula.dates": "Dies",
+  "formula.lists": "Indices",
+  "formula.functions": "Functiones",
+  "formula.results": "Exitus",
+  "formula.noRows": "Adde ordinem ut videas quid formula computet.",
+  "formula.cant": "Computari non potest",
+  "formula.yes": "Ita",
+  "formula.no": "Non",
+  "formula.word": "«{word}» neque columna neque functio est.",
+  "formula.like": "Num {name} dicere voluisti?",
+  "formula.close": "Hic uncus numquam clauditur.",
+  "formula.quote": "His verbis signum citationis claudens deest.",
+  "formula.parts": "Scribe {word} sic: {use}",
+  "formula.more": "Hic aliquid deest.",
+  "formula.extra": "Hic aliquid obstat: fortasse ante id operator aut comma deest."
+}

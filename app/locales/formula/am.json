@@ -1,0 +1,23 @@
+{
+  "formula.offers": "ዓምዶች እና ተግባሮች",
+  "formula.column": "ዓምድ",
+  "formula.columns": "ዓምዶች",
+  "formula.logic": "ሎጂክ",
+  "formula.numbers": "ቁጥሮች",
+  "formula.text": "ጽሑፍ",
+  "formula.dates": "ቀኖች",
+  "formula.lists": "ዝርዝሮች",
+  "formula.functions": "ተግባሮች",
+  "formula.results": "ውጤቶች",
+  "formula.noRows": "ቀመሩ ምን እንደሚያሰላ ለማየት ረድፍ ያክሉ።",
+  "formula.cant": "ሊሰላ አይችልም",
+  "formula.yes": "አዎ",
+  "formula.no": "አይ",
+  "formula.word": "“{word}” ዓምድም ተግባርም አይደለም።",
+  "formula.like": "{name} ማለትዎ ነው?",
+  "formula.close": "ይህ ቅንፍ አልተዘጋም።",
+  "formula.quote": "እነዚህ ቃላት የመዝጊያ ትዕምርተ ጥቅስ ያስፈልጋቸዋል።",
+  "formula.parts": "{word} እንዲህ ይጻፋል፦ {use}",
+  "formula.more": "እዚህ የሆነ ነገር ጎድሏል።",
+  "formula.extra": "እዚህ ያለ ነገር ያደናቅፋል፦ ከሱ በፊት ኦፕሬተር ወይም ኮማ ሊጎድል ይችላል።"
+}
