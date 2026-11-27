@@ -2,8 +2,7 @@
 // Files (D24): a file shared in one task of a project is found by search_files from another, without
 // being shared again; the passage comes with its page, and the answer cites it. Its index is kept (D306).
 import { readFileSync } from 'node:fs'
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, inkOf, pdf } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, answered, inkOf, pdf } from './helpers.js'
 import { numbersFile } from './fixtures/numbers.js'
 
 /** The answer on screen, once it has ended. @param {import('@playwright/test').Page} page */

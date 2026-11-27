@@ -8,8 +8,7 @@
 // handle's menu, to duplicate or delete it. A relation to this collection
 // or another, each of its cells a row there picked by its name, which a brain makes too. A brain on this computer, which
 // doesn't make tables right, makes and changes none, but reads them, and finds their rows and documents' words with search_files. In Arabic and Japanese, the view reads as its language does.
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, turnOn, openSettings, closeSettings, openTasks, BRAIN_URL, chooseLanguage, nameOf } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, answered, turnOn, openSettings, closeSettings, openTasks, BRAIN_URL, chooseLanguage, nameOf } from './helpers.js'
 import { readZip } from '../app/core/zip.js'
 
 /** A plan's brain, Claude Code through the bridge, which the fake brain answers for: not on this computer, so it passes. @param {import('@playwright/test').Page} page */

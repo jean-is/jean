@@ -4,8 +4,7 @@
 // a choice of what matters, in the page under the box that keeps the request (D366). OpenRouter's sign-in is
 // stopped as it leaves, or answered by the fake brain; the device is made capable and its worker replaced, as
 // in device.spec.js, so no 3 GB download is needed.
-import { test, expect } from '@playwright/test'
-import { start, ask, connectFakeBrain, BRAIN_URL } from './helpers.js'
+import { test, expect, start, ask, connectFakeBrain, BRAIN_URL } from './helpers.js'
 
 const WORKER = `self.onmessage = ({ data }) => {
   if (data.type === 'load') {

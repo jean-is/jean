@@ -4,7 +4,7 @@
 // and a call under way, then done, with its chart; and with wait, the next request only once its
 // follow-up is pressed. In English, Arabic and Japanese, the room's words and direction.
 import { readFile } from 'node:fs/promises'
-import { test, expect } from '@playwright/test'
+import { test, expect } from './helpers.js'
 
 const TASK = await readFile(new URL('./fixtures/demo.jsonl', import.meta.url), 'utf8')
 

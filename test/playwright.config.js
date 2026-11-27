@@ -3,12 +3,14 @@
 // one (an opaque-origin frame running a classic worker). Jean is served as written, or as a web
 // deploy serves it with SITE=dist/web after npm run build:web (D318), and a deterministic fake
 // brain answers (D37). Each is a <capability>.spec.js, beside the unit tests'
-// *.test.js, which node --test runs (D247). Usage: npm run e2e, or SHARD=2/8 npm run e2e for one part of eight.
+// *.test.js, which node --test runs (D247). Usage: npm run e2e, AFFECTED=origin/main npm run e2e for only the specs a
+// change since then affects (D772), SPECS='ask files' npm run e2e for those, or SHARD=2/8 npm run e2e for one part of eight.
 import { readFileSync, readdirSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { defineConfig, devices } from '@playwright/test'
+import { BASE, affected, said } from '../scripts/affected.js'
 import { part } from './parts.js'
 import { ISSUER, JWKS, POLICY } from './fixtures/fake-issuer.js'
 import { vapid } from '../relay/relay.js'
@@ -32,14 +34,30 @@ const CHROMIUM_ONLY = ['out', 'report', 'begin', 'collect', 'soon', 'look', 'rel
   'guards', 'help', 'learn', 'lists', 'meaning', 'microsoft', 'notifications', 'panes', 'plan', 'policy', 'reach', 'remember', 'retention', 'signin', 'site', 'steer',
   'thinking', 'you', 'compose']
 
-/** Every spec's name, and those each engine runs. */
-const SPECS = readdirSync(new URL('.', import.meta.url)).filter((name) => name.endsWith('.spec.js')).map((name) => name.slice(0, -'.spec.js'.length)).sort()
-const ENGINES = { chromium: SPECS, webkit: SPECS.filter((name) => !CHROMIUM_ONLY.includes(name)) }
+// Only the specs a change affects, as the last runs read them (scripts/affected.js): AFFECTED=<base>, or AFFECTED=1 since
+// origin/main, picks them; SPECS names them, as npm run ci -- --affected does. Each runs in every engine that runs it.
+if (process.env.AFFECTED && process.env.SPECS === undefined) {
+  const base = /^(?:1|true)$/.test(process.env.AFFECTED) ? BASE : process.env.AFFECTED
+  const found = affected(base)
+  console.log(said(found, base))
+  // Each worker reads this config again: it reads these.
+  process.env.SPECS = [...found.chosen.keys()].join(' ')
+}
+const CHOSEN = process.env.SPECS?.split(/[\s,]+/).filter(Boolean)
+if (CHOSEN?.some((name) => !/^[\w.-]+$/.test(name))) throw new Error(`SPECS=${process.env.SPECS}: specs by name, as ask files`)
+if (CHOSEN && !CHOSEN.length) { console.log('No spec to run'); process.exit(0) }
+
+/** Every spec's name, or those SPECS names, and those each engine runs. */
+const NAMES = CHOSEN ?? readdirSync(new URL('.', import.meta.url)).filter((name) => name.endsWith('.spec.js')).map((name) => name.slice(0, -'.spec.js'.length)).sort()
+const ENGINES = { chromium: NAMES, webkit: NAMES.filter((name) => !CHROMIUM_ONLY.includes(name)) }
 
 // One part of them on each of CI's runners, both engines' specs in each, packed by how long each took (test/parts.js).
 const PART = process.env.SHARD ? part(process.env.SHARD, ENGINES, JSON.parse(readFileSync(new URL('durations.json', import.meta.url), 'utf8'))) : null
-/** An engine's specs as testMatch: its part's alone when there is one (none matches no file). @param {string} engine */
-const specsOf = (engine) => (PART ? new RegExp(`/test/(?:${PART[engine].join('|') || '(?!)'})\\.spec\\.js$`) : '**/*.spec.js')
+/**
+ * An engine's specs as testMatch: its part's, or those SPECS names, alone (none matches no file).
+ * @param {'chromium' | 'webkit'} engine
+ */
+const specsOf = (engine) => (PART || CHOSEN ? new RegExp(`/test/(?:${(PART ?? ENGINES)[engine].map((name) => name.replaceAll('.', '\\.')).join('|') || '(?!)'})\\.spec\\.js$`) : '**/*.spec.js')
 
 const RELAYED = { origins: [`http://127.0.0.1:${APP}`], hosts: ['127.0.0.1'],
   clients: [{ issuer: `http://127.0.0.1:${MAIL}/closed`, tokenEndpoint: `http://127.0.0.1:${MAIL}/token`, clientId: 'gateway-app', clientSecret: 'gateway-secret' }] }
@@ -57,8 +75,9 @@ export default defineConfig({
   // Half of the cores, Playwright's own default, said here because each worker's browser takes several: at 85% a run took
   // hardly less time, the processor well over-committed, and tests that wait on timers failed by the handful.
   workers: '50%',
-  // And how long each spec took, for CI's parts (scripts/durations.js).
-  reporter: [['list'], [fileURLToPath(new URL('../scripts/durations.js', import.meta.url))]],
+  // And how long each spec took, for CI's parts (scripts/durations.js), and what each one's tests read, for AFFECTED's next
+  // run (scripts/affected.js).
+  reporter: [['list'], [fileURLToPath(new URL('../scripts/durations.js', import.meta.url))], [fileURLToPath(new URL('../scripts/affected.js', import.meta.url))]],
   // Without motion: Jean's light and face move for as long as a page is open, and with a few
   // pages at once that alone kept the processor busy. A test that needs it turns it back on for its page.
   // Service workers blocked: Playwright's script for it reads navigator.serviceWorker in every frame, which throws

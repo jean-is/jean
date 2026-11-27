@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Policy's `session` (D676, ee/): on a shared computer, signing out erases this profile, once the person confirms; and going
 // idle signs out, or locks. On localhost no key is needed.
-import { test, expect } from '@playwright/test'
-import { start, ask, openProfile, openData, withPolicy } from './helpers.js'
+import { test, expect, start, ask, openProfile, openData, withPolicy } from './helpers.js'
 import { POLICY, fakeIssuer, fakeGateway } from './fixtures/fake-issuer.js'
 
 /** What this browser holds: its profiles' folders, and whether anything of theirs is in its storage. @param {import('@playwright/test').Page} page */

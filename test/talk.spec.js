@@ -8,8 +8,7 @@
 // Once a task has started, a line under the box says the assistant is an AI and can make mistakes (D273). Before any
 // task, the box sits under the question on a wide window, at the foot on a phone (D366).
 // What is typed while a request gets ready stays in the box: only its words leave, and on a first request the rest goes with its task.
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, openSettings, closeSettings, openTasks, BRAIN_URL, chooseLanguage } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, answered, openSettings, closeSettings, openTasks, BRAIN_URL, chooseLanguage } from './helpers.js'
 
 /**
  * Holds requests back before their words leave the box, as a brain being chosen does, where Jean reads the instructions that go

@@ -4,9 +4,8 @@
 // lit as it sounds, paused where it is, and copied as its source and its picture at once. A tune
 // saved as a .abc file, or in a Markdown file, is drawn so too, in the preview and in the browser. The tunes
 // answers hold are among the creations, where Create's Score asks for one with Music score (D542).
-import { test, expect } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
-import { start, connectFakeBrain, ask, turnOn, openSettings, openTasks, nextCopy, SHARE_URL, nameOf, servedInstruments, withPolicy } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, turnOn, openSettings, openTasks, nextCopy, SHARE_URL, nameOf, servedInstruments, withPolicy } from './helpers.js'
 
 test('a tune is drawn as a score once its skill is added, and plays, each note lit as it sounds', async ({ page }) => {
   const instruments = await servedInstruments(page.context())

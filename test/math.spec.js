@@ -5,8 +5,7 @@
 // single line has no frame, its Copy in that line; one being written is drawn as it comes; a pgf-pie
 // chart in it is drawn as a pie, its slices' labels and numbers beside it.
 // Follow-ups and requests draw theirs too.
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, nextCopy } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, nextCopy } from './helpers.js'
 
 test('formulas are drawn, set apart or in a line, and prices stay text', async ({ page }) => {
   await start(page)

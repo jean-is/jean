@@ -4,7 +4,7 @@
 // once the viewer clicks what they point at, a follow-up that plays the next request. Its words are the
 // page's language's where it has them, and Next is Jean's own, in English and Arabic.
 import { readFile } from 'node:fs/promises'
-import { test, expect } from '@playwright/test'
+import { test, expect } from './helpers.js'
 
 const TASK = await readFile(new URL('./fixtures/demo.jsonl', import.meta.url), 'utf8')
 const TOUR = await readFile(new URL('./fixtures/demo.tour.json', import.meta.url), 'utf8')

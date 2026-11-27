@@ -3,9 +3,8 @@
 // going; then a task done step by step shows its plan above the activity, waits for Go ahead in the box, ticks each step
 // off and folds once done. The box's words change the plan, Always go ahead sets the rule, and the rule's row is in
 // Settings once plans are found. The fake brain plans a move, and counts to twenty a step a number.
-import { test, expect } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
-import { start, connectFakeBrain, ask, openSettings, closeSettings } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, openSettings, closeSettings } from './helpers.js'
 
 /** @param {string} part @param {string} lang @returns {Promise<Record<string, string>>} */
 const strings = async (part, lang) => JSON.parse(await readFile(new URL(`../app/locales/${part}${lang}.json`, import.meta.url), 'utf8'))

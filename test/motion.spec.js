@@ -6,8 +6,7 @@
 // light move only while Jean works. Settings' Motion asks for less or for all of it on this device, over what the device asks, from
 // before the first paint. Chromium only: what stops is the style sheets' (one rule for every element) and the same scripts',
 // in every engine.
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, openSettings, closeSettings, openTasks, closeTasks } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, openSettings, closeSettings, openTasks, closeTasks } from './helpers.js'
 import { readFileSync } from 'node:fs'
 import { LOOKS } from '../app/ui/looks.js'
 

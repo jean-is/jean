@@ -2,8 +2,7 @@
 // Settings in several tabs (D700): a tab reads settings.json again when another changes it (ui/app.js's watch calls changeSettings()
 // in ui/state.js), and writes a change over the file as it is, one tab at a time, so a tab open all along never writes back what it
 // held before: a person's devices would spread that revert.
-import { test, expect } from '@playwright/test'
-import { start, openSettings, openTasks, chooseLanguage, closeSettings } from './helpers.js'
+import { test, expect, start, openSettings, openTasks, chooseLanguage, closeSettings } from './helpers.js'
 
 /** @param {import('@playwright/test').Page} page */
 const ephemeral = (page) => page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value)

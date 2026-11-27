@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Data-loss checks (D674, ee/): what policy's `dlp` names, found on the device, reaches no brain it doesn't allow, and Settings
 // › Your data says so. A brain on this computer keeps it here, so these answer from elsewhere. On localhost no key is needed.
-import { test, expect } from '@playwright/test'
-import { start, ask, withPolicy, openData } from './helpers.js'
+import { test, expect, start, ask, withPolicy, openData } from './helpers.js'
 
 const FAR = 'https://ai.corp.example/v1'
 const CORS = { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': '*' }

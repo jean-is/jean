@@ -1,9 +1,39 @@
 // SPDX-License-Identifier: MIT
-// Shared steps: a fresh Jean in a given language, with the fake brain connected.
+// Shared steps: a fresh Jean in a given language, with the fake brain connected; and the test every spec runs.
 import { readFile } from 'node:fs/promises'
 import { deflateSync } from 'node:zlib'
-import { expect } from '@playwright/test'
+import { test as base, expect } from '@playwright/test'
 import { crc32 } from '../app/core/zip.js'
+
+export { expect }
+
+/** What this computer's servers were asked for in the test under way, by address. */
+let asked = new Set()
+const HERE = /^https?:\/\/(?:127\.0\.0\.1|localhost|[\w-]+\.localhost):\d+\//
+
+/**
+ * Records what a context's pages, their frames and workers ask this computer's servers for, in the test under way. Every
+ * context of the test's browser is recorded already: a persistent one, of a browser of its own, is given here.
+ * @param {import('@playwright/test').BrowserContext} context
+ */
+export function recorded(context) {
+  context.on('request', (request) => { const address = request.url().replace(/[?#].*$/, ''); if (HERE.test(address)) asked.add(address) })
+}
+
+/**
+ * Playwright's test, each one noting the addresses its pages asked for, Jean's files among them, as the annotation
+ * `requested`: scripts/affected.js keeps them to tell which specs a change affects (D772). Not on GitHub's runners, which keep nothing.
+ */
+export const test = base.extend({
+  requested: [async ({ browser }, use, testInfo) => {
+    if (process.env.GITHUB_ACTIONS) return use()
+    asked = new Set()
+    browser.on('context', recorded)
+    await use()
+    browser.off('context', recorded)
+    testInfo.annotations.push({ type: 'requested', description: [...asked].join('\n') })
+  }, { auto: true, box: true }],
+})
 
 export const BRAIN_URL = 'http://127.0.0.1:4181/v1'
 export const MAIL_URL = 'http://127.0.0.1:4182'

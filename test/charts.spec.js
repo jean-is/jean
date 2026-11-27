@@ -3,8 +3,7 @@
 // blocks; from then on they are widgets in the conversation, drawn by ECharts, copied as their
 // source and their picture at once, and as a picture when the answer is copied. Until a skill of
 // the room declares them, they stay code. While an answer writes one, it is drawn as far as it goes.
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, openSettings, nextCopy } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, turnOn, openSettings, nextCopy } from './helpers.js'
 import { DIRECTORY } from '../app/caps/skills/directory.js'
 
 test('a chart is code until a skill declares it, then drawn in the answer, and copied with it as a picture', async ({ page }) => {

@@ -5,12 +5,11 @@
 // computer's own addresses, which a program it runs lists (D260). The host is played by the test, on a folder
 // of its own: Neutralino's globals, whose key comes once, and its calls and events over a WebSocket. In
 // WebKit too, the Mac app's engine, where a page alone can't open a folder.
-import { test, expect } from '@playwright/test'
 import { spawn } from 'node:child_process'
 import { mkdir, mkdtemp, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { start, turnOn, openFromCase, openSettings } from './helpers.js'
+import { test, expect, start, turnOn, openFromCase, openSettings } from './helpers.js'
 import { kiwix } from './fixtures/kiwix.js'
 import { NATIVE } from '../scripts/desktop.js'
 

@@ -7,8 +7,7 @@
 // brain on a device (D402), whose readers a stranger's browser downloads once they agree (D410).
 import { readFile } from 'node:fs/promises'
 import { deflateSync } from 'node:zlib'
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, openTasks } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, openTasks } from './helpers.js'
 import { reply, logged, logPem } from './fixtures/tsa.js'
 
 /** An answer's certificate and its proof, saved from its card. @param {import('@playwright/test').Page} page */

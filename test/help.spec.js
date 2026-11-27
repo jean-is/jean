@@ -4,8 +4,7 @@
 // where its steps start and points at each part they name, by Jean's own words, until its end or Escape; its pane
 // replays a request whose call waits on its card for the viewer; a brain whose key was refused, or that couldn't be
 // reached, a plan's too, links to its fix; and the user's menu has the Help center.
-import { test, expect } from '@playwright/test'
-import { BRAIN_URL, connectFakeBrain, openProfile } from './helpers.js'
+import { test, expect, BRAIN_URL, connectFakeBrain, openProfile } from './helpers.js'
 
 const JEAN_IS = 'http://127.0.0.1:4186/'
 

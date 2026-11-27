@@ -4,8 +4,7 @@
 // authority is in, off the page in a worker, checks their signatures, and says the seal is qualified while that list
 // granted its authority; a list changed after it was signed gives nothing, and the card then says nothing of trust
 // rather than that no authority vouches. Jean itself keeps the lists it read in .cache/. On localhost no key is needed.
-import { test, expect } from '@playwright/test'
-import { start, withPolicy } from './helpers.js'
+import { test, expect, start, withPolicy } from './helpers.js'
 import { authority, issue, ocspAnswer, QUALIFIED } from './fixtures/ca.js'
 import { signed, lotl, memberList } from './fixtures/lists.js'
 import { makeSeal, seal, thumbprint, ISSUER } from '../app/caps/receipt/certificate.js'

@@ -5,9 +5,8 @@
 // on this computer, so its pictures go through the check (D275, D280), which a worker stands in for,
 // and say a trained model made them (D279), in Content Credentials too (D324). What it made is among the creations (D542).
 import { readFile } from 'node:fs/promises'
-import { test, expect } from '@playwright/test'
 import { credentialsOf } from '../app/caps/receipt/c2pa.js'
-import { start, connectFakeBrain, ask, turnOn, openSettings, closeSettings, openTasks } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, turnOn, openSettings, closeSettings, openTasks } from './helpers.js'
 
 /**
  * SD-Turbo's worker, where the check runs, giving each picture in turn its levels of nudity (neutral, low, medium,

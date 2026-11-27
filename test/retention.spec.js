@@ -3,8 +3,7 @@
 // is kept first, out of sight, its certificate with it, and Settings › Your data says for how long; on localhost no
 // key is needed, a profile can't be removed, and served from elsewhere, a policy asking for it without one stops Jean
 // with a message for IT.
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, withPolicy, openSettings, openProfile, openProfiles, deleteOpenTask, openData, servedFrom } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, withPolicy, openSettings, openProfile, openProfiles, deleteOpenTask, openData, servedFrom } from './helpers.js'
 
 /** What .kept/ holds, each copy line by line, read as Jean reads its files. @param {import('@playwright/test').Page} page */
 const kept = (page) => page.evaluate(async () => {

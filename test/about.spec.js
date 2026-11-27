@@ -4,9 +4,8 @@
 // code, Settings' sections, the keyboard's shortcuts, what the organisation locked, and once Connections is found, the
 // services reached here and those not yet; asked about something, the parts that match come whole. In Arabic and
 // Japanese, the names of menus, shortcuts and how each capability is found are the screen's.
-import { test, expect } from '@playwright/test'
 import { readFileSync } from 'node:fs'
-import { start, connectFakeBrain, ask, withPolicy, openSettings, closeSettings, BRAIN_URL } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, withPolicy, openSettings, closeSettings, BRAIN_URL } from './helpers.js'
 
 /** A language's strings, the room's and the dialogs'. @param {string} lang */
 const strings = (lang) => ({ ...JSON.parse(readFileSync(new URL(`../app/locales/${lang}.json`, import.meta.url), 'utf8')), ...JSON.parse(readFileSync(new URL(`../app/locales/dialogs/${lang}.json`, import.meta.url), 'utf8')) })

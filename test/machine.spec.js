@@ -4,14 +4,14 @@
 // (here, run by the test); the brain's commands then run on this machine, asked first, and a server they
 // start keeps running and shows in the browser; the user's own commands in the terminal run there too;
 // "always" for the folder is listed on its page, to take back; Ctrl+C ends it all.
-import { test, expect, chromium } from '@playwright/test'
+import { chromium } from '@playwright/test'
 import { spawn, spawnSync } from 'node:child_process'
 import { createServer } from 'node:http'
 import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { start, connectFakeBrain, ask, answered, turnOn, openSettings, closeSettings, giveFolder, callTool } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, answered, turnOn, openSettings, closeSettings, giveFolder, callTool } from './helpers.js'
 
 test.skip(process.platform === 'win32', 'The bridge needs bash')
 

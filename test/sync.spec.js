@@ -5,8 +5,7 @@
 // drive by the test: by hand, copying one computer's folder over the other's, or on its own, as Dropbox
 // does; two Jeans on one folder are two profiles of one browser. Chromium only: elsewhere a page can't
 // open a folder in place.
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, noted, turnOn, openFromCase, openSettings, openTasks, openProfile, deleteOpenTask, withPolicy } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, noted, turnOn, openFromCase, openSettings, openTasks, openProfile, deleteOpenTask, withPolicy } from './helpers.js'
 
 /** The system's folder picker, played by `.picked/<e2e.pick>` in the private file system, where Jean’s own files (sealed, D371) never are. @param {import('@playwright/test').Page} page */
 const picker = (page) => page.addInitScript(() => {

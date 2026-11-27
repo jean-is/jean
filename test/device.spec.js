@@ -3,8 +3,7 @@
 // then answering with no account, no key and no request leaving the page. The device is made
 // capable (WebGPU with shader-f16, memory, space) and the worker that would run Gemma 4 E2B is
 // replaced by one that streams in Gemma's own format, so no 3 GB download is needed.
-import { test, expect } from '@playwright/test'
-import { start, ask, openSettings } from './helpers.js'
+import { test, expect, start, ask, openSettings } from './helpers.js'
 
 const WORKER = `
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))

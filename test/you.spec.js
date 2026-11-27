@@ -4,8 +4,7 @@
 // its page, the drawer open beside the conversation staying so (D153, D165). Jean notes the name the user
 // gives for themselves in a conversation, while they have never set one, and says so with an
 // Undo; they change it in About you. A long title stays inside the list. A toast shows over Settings.
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, openProfile, openSettings, openTasks, withPolicy } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, openProfile, openSettings, openTasks, withPolicy } from './helpers.js'
 
 /** What settings.json holds for the name. @param {import('@playwright/test').Page} page */
 const savedName = (page) => page.evaluate(async () => JSON.parse(await (await import('/ui/state.js')).app.fs.read('settings.json') ?? '{}').name)

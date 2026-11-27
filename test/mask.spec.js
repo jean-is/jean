@@ -5,9 +5,8 @@
 import { existsSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
-import { test, expect } from '@playwright/test'
 import { readZip } from '../app/core/zip.js'
-import { start, ask, fadeOut, withPolicy, openData } from './helpers.js'
+import { test, expect, start, ask, fadeOut, withPolicy, openData } from './helpers.js'
 
 const FAR = 'https://ai.corp.example/v1'
 const CORS = { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': '*' }

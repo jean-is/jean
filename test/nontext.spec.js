@@ -7,8 +7,7 @@
 // outside; and the ring the keyboard's focus draws, against what it covers. Pixels, as
 // test/contrast.spec.js measures words: Chromium draws borders and shadows on whole pixels. Chromium only.
 import { readFileSync } from 'node:fs'
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, openSettings, closeSettings, openTasks, closeTasks } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, openSettings, closeSettings, openTasks, closeTasks } from './helpers.js'
 import { LOOKS } from '../app/ui/looks.js'
 
 test.skip(({ browserName }) => browserName !== 'chromium', 'pixels are compared in one engine')

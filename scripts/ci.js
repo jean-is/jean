@@ -12,9 +12,11 @@
 // before anything starts, and test/ci.test.js holds every workflow to that in npm test.
 // It needs Docker (OrbStack on a Mac); the containers job helm, kind and kubectl; CodeQL's job the codeql CLI, or it is
 // skipped. Logs and artifacts go to dist/ci/, the last run's.
-// Usage: npm run ci [-- <job>[:<matrix value>…] …] [--worktree] [--amd64] [--keep] [--list]
+// Usage: npm run ci [-- <job>[:<matrix value>…] …] [--worktree] [--affected[=<base>]] [--amd64] [--keep] [--list]
 //   npm run ci -- e2e:webkit   WebKit's three parts of the browser tests (npm run ci -- check audit: those two jobs)
 //   --worktree  the working tree, uncommitted changes and new files too, as if committed, rather than HEAD
+//   --affected  only the browser tests a change since origin/main affects (=<base>: since then), as the last runs read them
+//               (scripts/affected.js, D772); every run of them here keeps what they read, for the next
 //   --amd64     the image's jobs as linux/amd64, GitHub's runners' platform: under emulation on Apple silicon, slower
 //   --keep      leave a failed job's container and kind cluster for a look
 //   --list      the jobs, where each runs and how each step is replayed, without running any
@@ -22,8 +24,9 @@ import { execFileSync, spawn } from 'node:child_process'
 import { createWriteStream, existsSync, readFileSync, readdirSync } from 'node:fs'
 import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { arch } from 'node:os'
-import { join, relative } from 'node:path'
+import { basename, join, relative } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import { BASE, KEPT, affected, keep, said } from './affected.js'
 import { RELEASES, pinned } from './lts.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
@@ -540,7 +543,7 @@ function sh (command, args, log, options = {}) {
   })
 }
 
-/** @typedef {{ src: string, image: Record<string, string>, platform: string, keep: boolean, github: GitHub, install: string }} Shared */
+/** @typedef {{ src: string, image: Record<string, string>, platform: string, keep: boolean, github: GitHub, install: string, specs?: string }} Shared */
 
 /**
  * A clean copy of the commit, as GitHub's checkout makes one (a shallow clone), with the working tree's changes committed
@@ -684,16 +687,30 @@ async function execute (run, shared, needs) {
       else {
         // Each step its own $GITHUB_OUTPUT, as on GitHub, what it wrote there its outputs.
         const file = job.host ? join(OUT, 'work', `${run.slug}.${n}.output`) : `/tmp/github-output-${n}`
-        code = await job.sh(substitute(/** @type {string} */ (step.script), context), { ...Object.fromEntries(Object.entries(step.env).map(([key, value]) => [key, substitute(value, context)])), GITHUB_OUTPUT: file }, step.minutes ?? run.minutes)
+        // The browser tests a change affects, with --affected (D772): an engine may have none of them.
+        const narrowed = shared.specs !== undefined && E2E.test(step.script ?? '')
+        const script = narrowed ? /** @type {string} */ (step.script).replace(/^(\s*npm run e2e\b.*)$/gm, '$1 --pass-with-no-tests') : /** @type {string} */ (step.script)
+        code = await job.sh(substitute(script, context), { ...Object.fromEntries(Object.entries(step.env).map(([key, value]) => [key, substitute(value, context)])), ...(narrowed ? { SPECS: shared.specs } : {}), GITHUB_OUTPUT: file }, step.minutes ?? run.minutes)
         if (step.id && context.steps) context.steps[step.id] = { outputs: outputs(await job.read(file)) }
       }
     } catch (error) { log(`${/** @type {Error} */ (error).stack}\n`); code = 1 }
     if (code) { log(`✘ ${step.name}: exit ${code}\n`); failed ??= step.name }
   }
+  // What the browser tests read, kept here for the next --affected (D772): a few MB, copied out.
+  if (run.steps.some((step) => E2E.test(step.script ?? ''))) {
+    const to = join(OUT, 'work', `${run.slug}.affected`)
+    await mkdir(to, { recursive: true })
+    if (!(await job.copyOut(KEPT, to))) {
+      try { keep(JSON.parse(await readFile(join(to, basename(KEPT)), 'utf8'))) } catch (error) { log(`what the browser tests read, not kept: ${/** @type {Error} */ (error).message}\n`) }
+    }
+  }
   await job.close(Boolean(failed))
   await new Promise((resolve) => stream.end(resolve))
   return { failed, skipped, outputs: Object.fromEntries(Object.entries(run.outputs).map(([key, value]) => [key, substitute(value, context)])) }
 }
+
+/** A step that runs the browser tests. */
+const E2E = /^\s*npm run e2e\b/m
 
 /** @param {number} ms */
 const duration = (ms) => { const s = Math.round(ms / 1000); return s < 60 ? `${s}s` : `${Math.floor(s / 60)}m${String(s % 60).padStart(2, '0')}s` }
@@ -749,14 +766,25 @@ function describe (runs) {
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const flags = process.argv.slice(2)
   const picked = flags.filter((flag) => !flag.startsWith('--'))
-  const unknown = flags.filter((flag) => flag.startsWith('--') && !['--worktree', '--amd64', '--keep', '--list'].includes(flag))
+  const unknown = flags.filter((flag) => flag.startsWith('--') && !['--worktree', '--amd64', '--keep', '--list'].includes(flag) && !/^--affected(?:=.+)?$/.test(flag))
   if (unknown.length) { console.error(`npm run ci doesn't know ${unknown.join(', ')}`); process.exit(2) }
   const branch = git('rev-parse', '--abbrev-ref', 'HEAD')
   const owner = /github\.com[/:]([^/]+)\/([^/.]+)/.exec(JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8')).repository?.url ?? '') ?? ['', 'local', 'jean']
   /** @type {GitHub} */
   const github = { ref: `refs/heads/${branch}`, ref_name: branch, sha: git('rev-parse', 'HEAD'), actor: 'local', repository: `${owner[1]}/${owner[2]}`, repository_owner: owner[1], event_name: branch === 'main' ? 'push' : 'pull_request' }
   const all = workflows()
-  const runs = all.filter((run) => chosen(run, picked)).sort((a, b) => (FIRST.indexOf(a.job) + 1 || 99) - (FIRST.indexOf(b.job) + 1 || 99))
+  // Only the browser tests a change affects, picked here, where their runs' record is (D772): none, and their job doesn't run.
+  const narrowed = flags.find((flag) => flag.startsWith('--affected'))
+  /** @type {string | undefined} */
+  let specs
+  if (narrowed) {
+    const base = narrowed.split('=')[1] ?? BASE
+    const found = affected(base)
+    console.log(said(found, base))
+    specs = [...found.chosen.keys()].join(' ')
+  }
+  const runs = all.filter((run) => chosen(run, picked) && !(specs === '' && run.steps.some((step) => E2E.test(step.script ?? '')))).sort((a, b) => (FIRST.indexOf(a.job) + 1 || 99) - (FIRST.indexOf(b.job) + 1 || 99))
+  if (!runs.length && specs === '') { console.log('No browser test to run'); process.exit(0) }
   if (!runs.length) { console.error(`No job is ${picked.join(' or ')}: ${[...new Set(all.map((run) => run.job))].join(', ')}`); process.exit(2) }
   if (flags.includes('--list')) { describe(runs); process.exit(0) }
 
@@ -794,7 +822,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   const src = await snapshot(worktree)
   github.sha = git('-C', src, 'rev-parse', 'HEAD')
   /** @type {Shared} */
-  const shared = { src, image: {}, platform, keep: flags.includes('--keep'), github, install: installs[0] ?? 'npm ci' }
+  const shared = { src, image: {}, platform, keep: flags.includes('--keep'), github, install: installs[0] ?? 'npm ci', specs }
   // A job on GitHub's runner itself runs in the image the workflows' container jobs name, Ubuntu 24.04 as that runner is.
   const standIn = all.find((run) => run.image)?.image
   for (const run of runnable.filter((one) => !one.host && !one.image)) {

@@ -6,8 +6,7 @@
 // it where its file opens.
 import { readFile } from 'node:fs/promises'
 import { pathToFileURL } from 'node:url'
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, openTasks } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, answered, openTasks } from './helpers.js'
 
 test.setTimeout(120_000)
 

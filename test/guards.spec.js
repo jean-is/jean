@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Guards (D295): rules for one kind of action or one service, in Settings › Approvals › Exceptions, that only
 // ever make Jean more careful, and with a question, only when its answer about the call is yes.
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, openApprovals, closeSettings } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, openApprovals, closeSettings } from './helpers.js'
 
 test('a guard of the user’s refuses what it covers when its question says so, and the organisation’s shows locked', async ({ page }) => {
   await start(page)

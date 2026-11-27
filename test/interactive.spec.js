@@ -10,8 +10,7 @@
 // The pages answers hold are apps among the creations once the project holds one (D553).
 import { readFile } from 'node:fs/promises'
 import { pathToFileURL } from 'node:url'
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, openApp, openSettings, openApprovals, closeSettings, openTasks, nextCopy, chooseLanguage, SHARE_URL } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, answered, openApp, openSettings, openApprovals, closeSettings, openTasks, nextCopy, chooseLanguage, SHARE_URL } from './helpers.js'
 
 /** The language, picked in Settings as start() picks it. @param {import('@playwright/test').Page} page @param {string} lang */
 async function speak(page, lang) {

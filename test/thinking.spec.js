@@ -2,9 +2,8 @@
 // How much a brain thinks (D414): one that thinks at length, with nothing written yet, can be told to answer now, and answers
 // at once, asked to think little; the first time, a toast leads to Settings › Brains, where the brain then has Thinking, which
 // goes with its next requests. The fake brain thinks on when asked to think it over.
-import { test, expect } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
-import { start, connectFakeBrain, ask, closeSettings } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, closeSettings } from './helpers.js'
 
 /** @param {string} lang @param {string} [part] @returns {Promise<Record<string, string>>} */
 const strings = async (lang, part = '') => JSON.parse(await readFile(new URL(`../app/locales/${part}${lang}.json`, import.meta.url), 'utf8'))

@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: MIT
 // Extensions (D296): read before they are added, run in a sandbox of their own, drawing with Jean's
 // elements and hooking Jean's events, but only within the rights the user granted and hasn't taken back.
-import { test, expect } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
-import { start, connectFakeBrain, ask, noted, turnOn, openSettings, closeSettings, withPolicy } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, noted, turnOn, openSettings, closeSettings, withPolicy } from './helpers.js'
 
 const FIXTURE = new URL('./fixtures/extensions/word-count/', import.meta.url)
 

@@ -4,7 +4,7 @@
 // faster, mutes and goes on in another language, each remembered or said; its captions reach a screen reader; and
 // /watch frames each reel in its language, and scrolls under the wheel over one. In English, Arabic and Japanese.
 import { readFile } from 'node:fs/promises'
-import { test, expect } from '@playwright/test'
+import { test, expect } from './helpers.js'
 
 const JEAN_IS = 'http://127.0.0.1:4186/'
 /** The page's words in a language, as the reels say them, `{name}` the brand's. @param {string} lang */

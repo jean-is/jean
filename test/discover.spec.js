@@ -3,8 +3,7 @@
 // capabilities, a page each, "turn on everything" says what still waits, a capability found turns off and on
 // again (D433), what the organisation turned on stays on, and the brain picker offers Auto, the connected brains and
 // "Keep on this device".
-import { test, expect } from '@playwright/test'
-import { start, connect, connectFakeBrain, openSettings, closeSettings, ask, openTasks, turnOn, withPolicy, BRAIN_URL, MAIL_URL } from './helpers.js'
+import { test, expect, start, connect, connectFakeBrain, openSettings, closeSettings, ask, openTasks, turnOn, withPolicy, BRAIN_URL, MAIL_URL } from './helpers.js'
 
 test('every capability’s modules load in this engine', async ({ page }) => {
   await start(page)

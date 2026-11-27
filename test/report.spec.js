@@ -2,9 +2,8 @@
 // Report a problem (D771): a request held before the brain's first words says what it waits for, in the person's language, then
 // offers a report that names that stage, copied and saved; a send the box gave back says so; Settings opens a report with no task;
 // a report becomes a sealed link whose page holds it, and, opened by support, a stand-in that restores.
-import { test, expect } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
-import { start, connectFakeBrain, ask, answered, holdAnswers, openSettings, SHARE_URL } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, answered, holdAnswers, openSettings, SHARE_URL } from './helpers.js'
 import { bytesOf, openValue } from '../app/caps/share/seal.js'
 import { readZip } from '../app/core/zip.js'
 

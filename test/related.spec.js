@@ -2,8 +2,7 @@
 // The rows that relate to a row, in its sheet (caps/row/related.js): a client's sheet lists the invoices whose Client is that row, how many, the
 // total of their amounts as the column writes money, their names, and a button that opens their collection; a row nothing relates to says
 // nothing. In Arabic and Japanese, the button is in the language.
-import { test, expect } from '@playwright/test'
-import { start } from './helpers.js'
+import { test, expect, start } from './helpers.js'
 
 /** Clients beside the task, and invoices related to them: two to the first client, none to the second. @param {import('@playwright/test').Page} page */
 const clients = (page) => page.evaluate(async () => {

@@ -3,8 +3,7 @@
 // fake organisation in a browser context of their own, are listed there as Jean starts; Ana finds Bob in Settings › People and adds him,
 // with no meeting, and sends him a task from Share; his Jean takes her first letter through the list and shows its card, from her as
 // the list names her. Chromium only: Playwright's WebKit keeps nothing, where no one is kept (test/playwright.config.js).
-import { test, expect } from '@playwright/test'
-import { start, openSettings, closeSettings, openTasks, withPolicy, RELAY_URL, SHARE_URL } from './helpers.js'
+import { test, expect, start, openSettings, closeSettings, openTasks, withPolicy, RELAY_URL, SHARE_URL } from './helpers.js'
 import { POLICY, fakeIssuer, fakeGateway } from './fixtures/fake-issuer.js'
 import { authority, issue, requested, certsOnly } from './fixtures/ca.js'
 

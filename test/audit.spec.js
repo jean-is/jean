@@ -4,8 +4,7 @@
 // is gone, never one a refusal kept (D412), and what is done outside the records (D421); on localhost
 // no key is needed, and elsewhere a policy that asks for it without one stops Jean with a message for IT (D139).
 // Settings › Your data says what goes, and who it names: the account, or a pseudonym (D427).
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, withPolicy, openSettings, openProfile, openProfiles, closeSettings, openTasks, turnOn, connect, MAIL_URL, deleteOpenTask, openData, servedFrom } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, withPolicy, openSettings, openProfile, openProfiles, closeSettings, openTasks, turnOn, connect, MAIL_URL, deleteOpenTask, openData, servedFrom } from './helpers.js'
 import { POLICY, COLLECTOR, fakeIssuer, fakeGateway, fakeCollector } from './fixtures/fake-issuer.js'
 import { open, trusteePair } from './fixtures/trustee.js'
 

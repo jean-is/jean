@@ -3,7 +3,7 @@
 // doesn't read or reads otherwise, the addresses it names, refused by the site's own Content-Security-Policy
 // or answering when tried, what ee/ says of its key, and how the server sends Jean's files; then a policy.json
 // chosen there; in English, Arabic and Japanese.
-import { test, expect } from '@playwright/test'
+import { test, expect } from './helpers.js'
 
 /** A policy with a typo, a part not read, a wrong value and two addresses, one the fake brain's. */
 const POLICY = {

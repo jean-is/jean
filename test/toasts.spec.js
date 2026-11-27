@@ -2,8 +2,7 @@
 // Toasts: each one closes, with its own button or swiped aside either way, the new version's too; a swipe cut short
 // brings it back, and its buttons stay buttons, over a pane that makes the room inert too. In Arabic and Japanese once.
 import { readFileSync } from 'node:fs'
-import { test, expect } from '@playwright/test'
-import { start } from './helpers.js'
+import { test, expect, start } from './helpers.js'
 
 /** Where a toast's words begin, clear of its buttons. @param {import('@playwright/test').Locator} toast */
 const grip = (toast) => toast.evaluate((element) => {

@@ -5,8 +5,7 @@
 // of it, and its proof, which holds them (D274). An answer whose request reached an address outside
 // this device says so, and where.
 import { readFile } from 'node:fs/promises'
-import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, fadeOut, turnOn, openSettings, closeSettings, withPolicy, MAIL_URL, BRAIN_URL } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask, fadeOut, turnOn, openSettings, closeSettings, withPolicy, MAIL_URL, BRAIN_URL } from './helpers.js'
 
 for (const [lang, about, local, free, save, prove] of [
   ['en', 'About this answer', 'Kept private', 'Free', 'Save the certificate', 'Save the proof'],

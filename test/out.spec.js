@@ -3,8 +3,8 @@
 // (Publish, for a page on its own where the share host publishes sites, Share, Send to an app, Copy), as a file (Download, the format most want first, its own file last), on paper, then the design system
 // for what wears one. What a browser or this Jean can't do isn't there, and one way alone is the button itself. Each kind's own files
 // and prints are tested with it (documents, tables, slides, designs, scores, games).
-import { test, expect, chromium, devices } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, turnOn, openSettings, SHARE_URL } from './helpers.js'
+import { chromium, devices } from '@playwright/test'
+import { test, expect, recorded, start, connectFakeBrain, ask, answered, turnOn, openSettings, SHARE_URL } from './helpers.js'
 
 /** The system's sheet, as a browser with one has it, and what it was given. @param {import('@playwright/test').Page} page */
 const withSheet = (page) => page.addInitScript(() => {
@@ -182,6 +182,7 @@ test('an app: a link holds its block, its page downloads, and paper has it as it
 test('an app installs from Jean’s own address, nothing published, and the app opened alone keeps what it kept beside its task', async ({ baseURL }, info) => {
   // Chromium itself, in a profile of its own: its headless shell installs nothing, and a passing context is a private window.
   const context = await chromium.launchPersistentContext(info.outputPath('profile'), { channel: 'chromium', viewport: devices['Desktop Chrome'].viewport, baseURL, serviceWorkers: 'block' })
+  recorded(context)
   const page = context.pages()[0] ?? await context.newPage(), browser = await context.newCDPSession(page)
   // The browser's question, as the person answers it; and the system's sheet, which Chromium has on a Mac and not on Linux.
   await page.addInitScript(() => { /** @type {any} */ (window).BeforeInstallPromptEvent.prototype.prompt = async function () { /** @type {any} */ (window).asked = true; return { outcome: 'accepted' } } })

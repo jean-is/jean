@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: MIT
 // Compaction (D359): a conversation past 3/4 of its brain's window is summed up by that brain before it answers,
 // and read on from the summary; the room shows the conversation whole, a line where it happened, and the summary to read.
-import { test, expect } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
-import { start, connectFakeBrain, ask } from './helpers.js'
+import { test, expect, start, connectFakeBrain, ask } from './helpers.js'
 
 /** @param {string} lang */
 const strings = async (lang) => JSON.parse(await readFile(new URL(`../app/locales/compact/${lang}.json`, import.meta.url), 'utf8'))
