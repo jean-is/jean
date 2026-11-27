@@ -50,7 +50,7 @@ const ALIASES = /** @type {Record<string, PropertyType>} */ ({
  * 'none' kept as such (D752); group: what a table view's rows and its board's lanes are grouped by, a board's own its lanes else; colour: the choice whose colours its rows take; date: the date column a calendar's rows
  * are on, until: the one they last to. `table` is the collection's own arrangement, `board` and `calendar` what those are by; one with a name is a view the person kept,
  * shown as its type, arranged on its own; deleted: when it was taken away, kept so that no copy brings it back.
- * @typedef {{ id: string, type: 'table' | 'board' | 'list' | 'calendar' | 'gallery' | 'timeline', name?: string, group?: string, colour?: string, date?: string, until?: string, sort?: Sort[], filter?: { and: Rule[] }, hidden?: string[], calculate?: Partial<Record<string, import('./query.js').Total | 'none'>>, deleted?: string }} View
+ * @typedef {{ id: string, type: 'table' | 'board' | 'list' | 'calendar' | 'gallery' | 'timeline', name?: string, group?: string, colour?: string, date?: string, until?: string, sort?: Sort[], filter?: { and: Rule[] }, hidden?: string[], calculate?: Partial<Record<string, import('./query.js').Total | 'none'>>, frozen?: number, deleted?: string }} View
  */
 /**
  * kept: the time of Jean's latest change the user kept, after which Jean's changes are marked (D491); order: the rows' ids in the

@@ -961,6 +961,60 @@ test('a Formula column’s cells are worked out from each row’s others, and a 
   await expect(page.locator('.table-grid thead input')).toHaveValue('Formula')
 })
 
+for (const lang of /** @type {const} */ (['en', 'ar'])) {
+  test(`columns kept in view from the start: the divider after them dragged to a column's end edge, moved by the arrows or set from a head's menu, the others scrolling under them (${lang})`, async ({ page }) => {
+    const rtl = lang === 'ar', words = rtl ? { freeze: 'تجميد حتى هنا', unfreeze: 'إلغاء تجميد الأعمدة', frozen: 'الأعمدة المجمّدة' } : { freeze: 'Freeze up to here', unfreeze: 'Unfreeze columns', frozen: 'Frozen columns' }
+    await page.setViewportSize({ width: 1280, height: 760 })
+    await start(page, lang)
+    await page.evaluate(async () => {
+      const [{ unlock }, { app }] = await Promise.all([import('/ui/caps.js'), import('/ui/state.js')])
+      await unlock('tables')
+      const folder = 'collections/01K85Z1T00000000000000000K-wide', at = '2026-10-26T09:00:00.000Z', names = ['Name', 'City', 'Country', 'Street', 'Notes', 'Owner', 'Phone', 'Email', 'Region', 'Status', 'Tags', 'Code']
+      await app.fs.write(`${app.projectDir}/${folder}/collection.json`, JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000K', name: 'Wide', author: 'user', created: at, changed: at,
+        properties: names.map((name) => ({ id: name.toLowerCase(), name, type: 'text' })), views: [{ id: 'table', type: 'table' }] }))
+      await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, [1, 2, 3].map((n) => `${JSON.stringify({ row: `01K800000000000000000000${n}0`, set: Object.fromEntries(names.map((name) => [name.toLowerCase(), `${name} ${n}`])), at, by: 'user' })}\n`).join(''))
+      ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'Wide', title: 'Wide' })
+    })
+    const divider = page.getByRole('separator', { name: words.frozen }), table = page.locator('.table-grid'), scroll = page.locator('.table-scroll'), heads = page.locator('.table-grid thead th[data-column]')
+    const x = async (/** @type {import('@playwright/test').Locator} */ at) => /** @type {{ x: number }} */ (await at.boundingBox()).x
+    await expect(divider).toHaveAttribute('aria-valuenow', '0')
+    await expect(table).not.toHaveAttribute('data-frozen')
+    // The arrows move it a column at a time, toward the end edge as the page reads, Home back to none.
+    await divider.focus()
+    await page.keyboard.press(rtl ? 'ArrowLeft' : 'ArrowRight')
+    await page.keyboard.press(rtl ? 'ArrowLeft' : 'ArrowRight')
+    await page.keyboard.press(rtl ? 'ArrowLeft' : 'ArrowRight')
+    await page.keyboard.press(rtl ? 'ArrowRight' : 'ArrowLeft')
+    await expect(divider).toHaveAttribute('aria-valuenow', '2')
+    await expect(table).toHaveAttribute('data-frozen', '2')
+    await expect(divider).toBeFocused()
+    // Scrolled sideways, the two first stay where they are and the others pass under them.
+    const [kept, passing, cell] = [await x(heads.nth(1)), await x(heads.nth(4)), await x(page.locator('.table-grid tbody tr').first().locator('td').nth(1))]
+    await scroll.evaluate((box, back) => { box.scrollLeft = back ? -150 : 150 }, rtl)
+    await expect.poll(() => x(heads.nth(4))).toBeCloseTo(passing + (rtl ? 150 : -150), 0)
+    expect(await x(heads.nth(1))).toBeCloseTo(kept, 0)
+    expect(await x(page.locator('.table-grid tbody tr').first().locator('td').nth(1))).toBeCloseTo(cell, 0)
+    await scroll.evaluate((box) => { box.scrollLeft = 0 })
+    // Dragged, it goes to the nearest column's end edge.
+    const knob = /** @type {{ x: number, y: number, width: number }} */ (await divider.boundingBox()), name = /** @type {{ x: number, width: number }} */ (await heads.nth(0).boundingBox())
+    await page.mouse.move(knob.x + knob.width / 2, knob.y + 12)
+    await page.mouse.down()
+    await page.mouse.move((rtl ? name.x : name.x + name.width) + (rtl ? 6 : -6), knob.y + 12, { steps: 6 })
+    await page.mouse.up()
+    await expect(divider).toHaveAttribute('aria-valuenow', '1')
+    await expect(table).toHaveAttribute('data-frozen', '1')
+    // A head's menu freezes up to its column, or unfreezes them all from the last one kept.
+    await page.locator('.table-grid .table-head').nth(2).click()
+    await page.locator('.table-menu:popover-open').getByRole('button', { name: words.freeze }).click()
+    await expect(divider).toHaveAttribute('aria-valuenow', '3')
+    await page.locator('.table-grid .table-head').nth(2).click()
+    await page.locator('.table-menu:popover-open').getByRole('button', { name: words.unfreeze }).click()
+    await expect(divider).toHaveAttribute('aria-valuenow', '0')
+    await expect(table).not.toHaveAttribute('data-frozen')
+    expect(await page.evaluate(async () => { const { app } = await import('/ui/state.js'); return JSON.parse(await app.fs.read(`${app.projectDir}/collections/01K85Z1T00000000000000000K-wide/collection.json`)).views[0].frozen ?? null })).toBe(null)
+  })
+}
+
 for (const [lang, width, height] of /** @type {const} */ ([['en', 1100, 700], ['ar', 1100, 700], ['fr', 900, 380], ['ar', 900, 380]])) {
   test(`in ${lang}, in a window ${width} by ${height}, a head half out of it opens its whole menu inside it`, async ({ page }) => {
     await page.setViewportSize({ width, height })

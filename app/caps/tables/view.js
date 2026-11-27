@@ -38,7 +38,7 @@ import { searchable } from '../../ui/mentions.js'
  * what was typed in cells their columns refuse, by "row column", the row open as a sheet, by its id (`openRow` opens one), the column whose menu lists its
  * choices' colours, the collection as it is now, its calendar's month on show, whether the view picked is being named, what arranges
  * the view on show (`arrange`), its rows as it sorts them, a row moved by hand then theirs to order (`order`), whether it is narrow (D757), and whether the table was picked there.
- * @typedef {{ box: HTMLElement, beside: boolean, as: Signal<string>, naming: Signal<string>, kinds: Signal<string>, relating: Signal<boolean>, collections: Signal<{ folder: string, name: string }[]>, list: () => void, id: string, reviewed?: boolean, search: Signal<string>, formula: Signal<string>, wrong: Signal<boolean>, refused: Signal<Map<string, string>>, from?: Element | null, digits?: Map<string, number>, folded: Signal<Set<string>>, open: Signal<string>, choosing: Signal<string>, month: Signal<string>, titling: Signal<boolean>, narrow: Signal<boolean>, grid: Signal<boolean>, arrange?: (edit: (view: View) => Partial<View>) => unknown, order?: () => Row[], openRow: (id: string) => void, now: () => Loaded | null, by?: Property, calculate?: NonNullable<View['calculate']>, follow?: (row: string, value: unknown) => void }} State
+ * @typedef {{ box: HTMLElement, beside: boolean, as: Signal<string>, naming: Signal<string>, kinds: Signal<string>, relating: Signal<boolean>, collections: Signal<{ folder: string, name: string }[]>, list: () => void, id: string, reviewed?: boolean, search: Signal<string>, formula: Signal<string>, wrong: Signal<boolean>, refused: Signal<Map<string, string>>, from?: Element | null, digits?: Map<string, number>, folded: Signal<Set<string>>, open: Signal<string>, choosing: Signal<string>, month: Signal<string>, titling: Signal<boolean>, narrow: Signal<boolean>, grid: Signal<boolean>, arrange?: (edit: (view: View) => Partial<View>) => unknown, order?: () => Row[], openRow: (id: string) => void, now: () => Loaded | null, by?: Property, calculate?: NonNullable<View['calculate']>, frozen?: number, edge?: () => void, follow?: (row: string, value: unknown) => void }} State
  */
 
 /** The kinds of column the user adds or makes one, in the order they are offered, then those Jean works out. */
@@ -135,7 +135,16 @@ export function view(holds, source = shown, beside = false) {
     // Written only when they change, on the fade alone: each write would restyle the whole table.
     for (const [name, px] of Object.entries({ '--top': scroll.offsetTop, '--height': scroll.clientHeight, '--end': decide + scroll.offsetWidth - scroll.clientWidth })) if (fade.style.getPropertyValue(name) !== `${px}px`) fade.style.setProperty(name, `${px}px`)
     fade.classList.toggle('is-more', Math.abs(scroll.scrollLeft) + scroll.clientWidth < scroll.scrollWidth - 4)
+    // Where each column kept in view sticks, after the grip and those before it, and the divider after them, while they leave 10rem to scroll.
+    const table = /** @type {HTMLTableElement | null} */ (scroll.querySelector('.table-grid')), cells = [...table?.tHead?.rows[0].cells ?? []].slice(0, Number(table?.dataset.frozen ?? 0) + 1)
+    /** @type {[string, number][]} */
+    const sticks = []
+    let at = 0
+    for (const [k, cell] of cells.entries()) sticks.push([`--frozen-${k + 1}`, at]), at += cell.getBoundingClientRect().width
+    for (const [name, px] of [...sticks, ['--frozen-end', at], ['--tall', table?.offsetHeight ?? 0]]) if (table && table.style.getPropertyValue(String(name)) !== `${px}px`) table.style.setProperty(String(name), `${px}px`)
+    table?.classList.toggle('is-frozen', at <= scroll.clientWidth - 10 * parseFloat(getComputedStyle(scroll).fontSize))
   }
+  state.edge = edge
   // The table's own scrolls alone: a field's, as a word is typed in Find, would lay the whole table out for nothing.
   box.addEventListener('scroll', (event) => { if (/** @type {Element} */ (event.target).classList?.contains('table-scroll')) edge() }, { capture: true, passive: true })
   // Narrow under 30rem, as its style sheet says it, once it has a width.
@@ -236,7 +245,7 @@ function draw(one, state, go) {
   // The choice whose colours the cards, a calendar's rows and a timeline's bars take, as Arrange names it.
   const tints = columns.filter(({ type }) => type === 'status' || type === 'select'), tint = tints.find((property) => property.id === settings.colour)
   state.by = by
-  state.calculate = calculate
+  state.calculate = calculate, state.frozen = settings.frozen ?? 0
   const kept = filterOf(one.table, settings), words = searchable(search.value.trim()), texts = words && indexOf(one, columns)
   const asked = { sort: sorted ? [{ property: sorted.property.id, direction: sorted.direction }] : [], locale: locale.value, names: one.names, me: meIn(one) }
   const rows = query(one.table, one.rows, { ...(kept.length && { filter: { and: kept } }), ...asked }).rows.filter((row) => !texts || texts.get(row.id)?.includes(words))
@@ -378,7 +387,20 @@ const decide = (one, row) => html`<button type="button" class="icon-button" aria
  * @param {{ ask: string, about: (row: Row) => string }} words @param {unknown} top
  */
 function grid(one, columns, shown, rows, calculate, fresh, state, words, top) {
-  const { box, naming, kinds, relating, list, by } = state, title = /** @type {Property} */ (titleOf(one.table))
+  const { box, naming, kinds, relating, list, by } = state, title = /** @type {Property} */ (titleOf(one.table)), most = Math.min(shown.length, 5), frozen = Math.min(state.frozen ?? 0, most)
+  // The columns kept in view as the others scroll sideways, five at most, from the start: the divider after them, dragged to a column's end edge (the nearest),
+  // or moved by the arrows, Home and End, as WAI-ARIA's window splitter is; a head's menu freezes up to it too (WCAG 2.5.7).
+  const freeze = (/** @type {number} */ to) => to !== frozen && (state.frozen = to, state.arrange?.(() => ({ frozen: to || undefined })))
+  /** @param {PointerEvent} e */
+  const drag = (e) => {
+    const handle = /** @type {HTMLElement} */ (e.currentTarget), table = /** @type {HTMLTableElement} */ (handle.closest('table')), rtl = getComputedStyle(table).direction === 'rtl'
+    const ends = [...table.tHead?.rows[0].cells ?? []].slice(0, most + 1).map((cell) => ((rect) => (rtl ? rect.left : rect.right))(cell.getBoundingClientRect())), start = ends[0] - (table.tHead?.rows[0].cells[0].getBoundingClientRect().width ?? 0) * (rtl ? -1 : 1)
+    let to = frozen
+    handle.setPointerCapture(e.pointerId)
+    handle.classList.add('is-dragging')
+    handle.onpointermove = (move) => { to = ends.reduce((best, end, k) => (Math.abs(end - move.clientX) < Math.abs(ends[best] - move.clientX) ? k : best), 0); table.style.setProperty('--frozen-end', `${Math.abs(ends[to] - start)}px`) }
+    handle.onpointerup = handle.onpointercancel = () => { handle.onpointermove = handle.onpointerup = handle.onpointercancel = null; handle.classList.remove('is-dragging'); freeze(to) || state.edge?.() }
+  }
   // As many decimals in each column of plain numbers as its longest has (D752).
   state.digits = new Map(shown.flatMap((property) => (property.type === 'number' && !property.format ? [[property.id, digitsOf(one.rows, property)]] : [])))
   // This collection first, then the others a relation can be to.
@@ -532,7 +554,7 @@ function grid(one, columns, shown, rows, calculate, fresh, state, words, top) {
           [row(ascending, t('tables.ascending'), () => sort(state, property, 'ascending')), row(descending, t('tables.descending'), () => sort(state, property, 'descending'))],
           [row(icons.back, t('tables.insertStart'), () => added('text', place)), row(icons.arrow, t('tables.insertEnd'), () => added('text', place + 1))],
           [row(toStart, t('tables.moveStart'), moved(shown[i - 1], false), !i), row(toEnd, t('tables.moveEnd'), moved(shown[i + 1], true), i === shown.length - 1)],
-          [row(shut, t('tables.hide'), () => state.arrange?.(({ hidden = [] }) => ({ hidden: [...hidden, property.id] })), property === title)],
+          [row(icons.pin, t(i + 1 === frozen ? 'tables.unfreeze' : 'tables.freeze'), () => freeze(i + 1 === frozen ? 0 : i + 1), i >= most), row(shut, t('tables.hide'), () => state.arrange?.(({ hidden = [] }) => ({ hidden: [...hidden, property.id] })), property === title)],
           [row(icons.trash, t('action.delete'), gone, columns.length < 2, 'danger')])}</div>
     </th>`
   }
@@ -643,8 +665,9 @@ function grid(one, columns, shown, rows, calculate, fresh, state, words, top) {
         <th scope="rowgroup"><button type="button" class="table-fold" aria-expanded=${String(!shut)} @click=${fold}>${icons.chevron}<span dir="auto">${groupName(group.value, by)}</span>
           <span class="muted">${format('NumberFormat', intlLocales()).format(list.length)}</span></button></th>${shown.slice(1).map((property) => ((how) => html`<td class="table-sub">${how ? html`<span class="visually-hidden">${t('tables.subtotal')}</span>${totalOf(list, property, how, state.digits?.get(property.id))}` : nothing}</td>`)(calcOf(property, calculate)))}<td></td></tr>` : nothing}${repeat(shut ? [] : list, (row) => row.id, line)}</tbody>`
   }
-  return html`<div class="table-scroll" @paste=${pasted}>${top}<table class="table-grid" aria-label=${one.table.name}>
-      <thead><tr><td class="table-grip"></td>${shown.map(heading)}<th scope="col"><button type="button" class="table-add-column" aria-label=${t('tables.addColumn')} popovertarget=${`${state.id}-add`} @focus=${list} @pointerenter=${list}>+</button>
+  return html`<div class="table-scroll" @paste=${pasted}>${top}<table class="table-grid" aria-label=${one.table.name} data-frozen=${frozen || nothing}>
+      <thead><tr><td class="table-grip"><div class="table-freeze" role="separator" tabindex="0" aria-orientation="vertical" aria-label=${t('tables.frozen')} aria-valuemin="0" aria-valuemax=${most} aria-valuenow=${frozen} @pointerdown=${drag}
+        @keydown=${(/** @type {KeyboardEvent} */ e) => ((to) => to >= 0 && to <= most && (e.preventDefault(), freeze(to)))(e.key === 'Home' ? 0 : e.key === 'End' ? most : e.key === (getComputedStyle(box).direction === 'rtl' ? 'ArrowLeft' : 'ArrowRight') ? (state.frozen ?? 0) + 1 : /^Arrow(Left|Right)$/.test(e.key) ? (state.frozen ?? 0) - 1 : -1)}></div></td>${shown.map(heading)}<th scope="col"><button type="button" class="table-add-column" aria-label=${t('tables.addColumn')} popovertarget=${`${state.id}-add`} @focus=${list} @pointerenter=${list}>+</button>
         <div id=${`${state.id}-add`} class="menu table-menu" popover @focusout=${leaving}>${listed(KINDS.map(adds),
           targets.map(({ folder, name }) => html`<button type="button" popovertarget=${`${state.id}-add`} popovertargetaction="hide" @click=${() => added('relation', undefined, folder)}>${GLYPHS.relation}${t('tables.kind.relation')} <span class="menu-value" dir="auto">${name}</span></button>`),
           WORKED.map(adds))}</div></th></tr></thead>
