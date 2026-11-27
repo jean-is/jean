@@ -3,12 +3,12 @@
 // seeded collection as Tables answers (app/caps/tables/tables.js, `rowsTool`), and table_create with a `format` on its number columns.
 //   A: today's table_rows, word for word: 200 rows at most, a JSON filter, then "and N more: filter them."
 //   B: the plan's ("Jean answers from every row, and shows its working"): `where` in the words a page's parts take (`rules()`,
-//      app/caps/tables/fill.js), and `sum`, `count` and `by`, worked out on every row the where keeps, never the first 200: the
+//      app/caps/fill/fill.js), and `sum`, `count` and `by`, worked out on every row the where keeps, never the first 200: the
 //      figures, how many rows they count and how many had no value. Rows themselves still stop at 200. A `filter`, which a
 //      conversation begun before knows, is still taken, and said nowhere.
 //   C: B's answers under fewer words, tried to see how few do.
 import { query, valueOf } from '../../app/caps/tables/query.js'
-import { rules } from '../../app/caps/tables/fill.js'
+import { rules } from '../../app/caps/fill/fill.js'
 import { propertyOf } from '../../app/caps/tables/table.js'
 import { tableCreate } from '../../app/caps/tables/tool.js'
 

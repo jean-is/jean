@@ -7,6 +7,20 @@ the request asks: the rows it should keep, in order where one is asked, shown, g
 request's language. The gate, written before the first run: right on 80% of the requests for a view or more, and no view on
 90% or more of the requests for something else, an answer or a change.
 
+## sonnet (claudecode), 2026-11-27
+
+Right on 100% of 80 requests for a view (4 languages): over the gate of 80%. No view on 100% of 24 requests for something else: over the gate of 90%.
+
+| Language | Called table_view | Taken | Right at once | Right | No view for something else |
+|---|---:|---:|---:|---:|---:|
+| en | 100% (20/20) | 100% (20/20) | 100% (20/20) | 100% (20/20) | 100% (6/6) |
+| fr | 100% (20/20) | 100% (20/20) | 100% (20/20) | 100% (20/20) | 100% (6/6) |
+| ar | 100% (20/20) | 100% (20/20) | 100% (20/20) | 100% (20/20) | 100% (6/6) |
+| ja | 100% (20/20) | 100% (20/20) | 100% (20/20) | 100% (20/20) | 100% (6/6) |
+| All | 100% (80/80) | 100% (80/80) | 100% (80/80) | 100% (80/80) | 100% (24/24) |
+
+Commonest misses: none.
+
 ## haiku (claudecode), 2026-11-17
 
 Right on 92% of 160 requests for a view (4 languages, 2 runs each): over the gate of 80%. No view on 98% of 48 requests for something else: over the gate of 90%.
