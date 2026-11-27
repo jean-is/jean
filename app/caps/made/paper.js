@@ -138,7 +138,8 @@ function wide(table, room) {
  */
 export async function printPage(dom, { turn } = {}) {
   const look = await dress(), holder = document.body.appendChild(Object.assign(document.createElement('div'), { className: 'document paper-print' })), page = /** @type {HTMLElement} */ (dom.cloneNode(true))
-  for (const one of page.querySelectorAll('.suggest')) one.remove()
+  // What Jean suggests, and the editor's own controls: a table's grips, the button that asks the assistant to do a line.
+  for (const one of page.querySelectorAll('.suggest, .grid-grip, .mention-ask')) one.remove()
   for (const one of page.querySelectorAll('.suggest-old, .is-editing')) one.classList.remove('suggest-old', 'is-editing')
   for (const one of page.querySelectorAll('app-table')) one.replaceWith(await rowsOf(one.getAttribute('folder') ?? ''))
   // What draws itself does so again as it joins the page, beside its copy if that stayed.
