@@ -3,10 +3,13 @@
 // one (an opaque-origin frame running a classic worker). Jean is served as written, or as a web
 // deploy serves it with SITE=dist/web after npm run build:web (D318), and a deterministic fake
 // brain answers (D37). Each is a <capability>.spec.js, beside the unit tests'
-// *.test.js, which node --test runs (D247). Usage: npm run e2e
+// *.test.js, which node --test runs (D247). Usage: npm run e2e, or SHARD=2/8 npm run e2e for one part of eight.
+import { readFileSync, readdirSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { defineConfig, devices } from '@playwright/test'
+import { part } from './parts.js'
 import { ISSUER, JWKS, POLICY } from './fixtures/fake-issuer.js'
 import { vapid } from '../relay/relay.js'
 
@@ -28,6 +31,16 @@ const RELAY = 4187
 const CHROMIUM_ONLY = ['out', 'report', 'begin', 'collect', 'soon', 'look', 'related', 'sources', 'people', 'together', 'colleagues', 'about', 'approvals', 'ask', 'audit', 'authority', 'away', 'compact', 'compare', 'delegate', 'demo', 'dlp', 'find', 'flows', 'google', 'session', 'starters', 'feedback', 'company-server', 'tour',
   'guards', 'help', 'learn', 'lists', 'meaning', 'microsoft', 'notifications', 'panes', 'plan', 'policy', 'reach', 'remember', 'retention', 'signin', 'site', 'steer',
   'thinking', 'you', 'compose']
+
+/** Every spec's name, and those each engine runs. */
+const SPECS = readdirSync(new URL('.', import.meta.url)).filter((name) => name.endsWith('.spec.js')).map((name) => name.slice(0, -'.spec.js'.length)).sort()
+const ENGINES = { chromium: SPECS, webkit: SPECS.filter((name) => !CHROMIUM_ONLY.includes(name)) }
+
+// One part of them on each of CI's runners, both engines' specs in each, packed by how long each took (test/parts.js).
+const PART = process.env.SHARD ? part(process.env.SHARD, ENGINES, JSON.parse(readFileSync(new URL('durations.json', import.meta.url), 'utf8'))) : null
+/** An engine's specs as testMatch: its part's alone when there is one (none matches no file). @param {string} engine */
+const specsOf = (engine) => (PART ? new RegExp(`/test/(?:${PART[engine].join('|') || '(?!)'})\\.spec\\.js$`) : '**/*.spec.js')
+
 const RELAYED = { origins: [`http://127.0.0.1:${APP}`], hosts: ['127.0.0.1'],
   clients: [{ issuer: `http://127.0.0.1:${MAIL}/closed`, tokenEndpoint: `http://127.0.0.1:${MAIL}/token`, clientId: 'gateway-app', clientSecret: 'gateway-secret' }] }
 
@@ -44,7 +57,8 @@ export default defineConfig({
   // Half of the cores, Playwright's own default, said here because each worker's browser takes several: at 85% a run took
   // hardly less time, the processor well over-committed, and tests that wait on timers failed by the handful.
   workers: '50%',
-  reporter: 'list',
+  // And how long each spec took, for CI's parts (scripts/durations.js).
+  reporter: [['list'], [fileURLToPath(new URL('../scripts/durations.js', import.meta.url))]],
   // Without motion: Jean's light and face move for as long as a page is open, and with a few
   // pages at once that alone kept the processor busy. A test that needs it turns it back on for its page.
   // Service workers blocked: Playwright's script for it reads navigator.serviceWorker in every frame, which throws
@@ -53,8 +67,8 @@ export default defineConfig({
   use: { baseURL: `http://127.0.0.1:${APP}/`, serviceWorkers: 'block', reducedMotion: 'reduce' },
   projects: [
     // Muted: a score's test plays music (WebKit has no such flag: start() in helpers.js silences it).
-    { name: 'chromium', use: { ...devices['Desktop Chrome'], launchOptions: { args: ['--mute-audio'] } } },
-    { name: 'webkit', use: { ...devices['Desktop Safari'] }, testIgnore: ['**/.cache/**', ...CHROMIUM_ONLY.map((name) => `**/${name}.spec.js`)],
+    { name: 'chromium', testMatch: specsOf('chromium'), use: { ...devices['Desktop Chrome'], launchOptions: { args: ['--mute-audio'] } } },
+    { name: 'webkit', testMatch: specsOf('webkit'), use: { ...devices['Desktop Safari'] }, testIgnore: ['**/.cache/**', ...CHROMIUM_ONLY.map((name) => `**/${name}.spec.js`)],
       grepInvert: [/@chromium/, /\((?:[^)]*, )?(?!en[,)])[a-z]{2}(?:-[A-Za-z]+)?[,)]|\bin (?:ar|ja|fr|Arabic|Japanese|French)\b/] },
   ],
   webServer: [

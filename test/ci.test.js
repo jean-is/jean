@@ -4,7 +4,8 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { describe, it } from 'node:test'
-import { ACTIONS, OUTWARD, TRIVY, adjust, combinations, outputs, parse, plan, rehearse, schedule, substitute, when, workflows } from '../scripts/ci.js'
+import { ACTIONS, OUTWARD, TRIVY, adjust, combinations, fit, outputs, parse, plan, rehearse, schedule, substitute, when, workflows } from '../scripts/ci.js'
+import { part } from './parts.js'
 
 const CI = readFileSync(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8')
 /** @type {import('../scripts/ci.js').GitHub} */
@@ -55,13 +56,22 @@ describe('the workflows’ YAML', () => {
 describe('the jobs, as replayed here', () => {
   const runs = workflows()
 
-  it('runs each part of the browser tests in the image CI names, with the workers CI’s runner has', () => {
+  it('runs the browser tests’ parts as one, in the image CI names, with the workers of them all that the machine holds', () => {
     const parts = runs.filter((run) => run.job === 'e2e')
-    assert.deepEqual(parts.map((run) => run.key), ['e2e:chromium:1', 'e2e:chromium:2', 'e2e:chromium:3', 'e2e:webkit:1', 'e2e:webkit:2', 'e2e:webkit:3'])
-    for (const run of parts) {
-      assert.equal(run.image, /container: (\S+)/.exec(CI)?.[1])
-      assert.match(run.steps.map((step) => step.script ?? '').join('\n'), /^npm run e2e -- .* --workers=2$/m)
-    }
+    assert.deepEqual(parts.map((run) => run.key), ['e2e'])
+    const [e2e] = parts
+    const count = Number(/shard: \[([\d, ]+)\]/.exec(CI)?.[1].split(',').length)
+    assert.equal(e2e.parts, count)
+    assert.equal(e2e.image, /container: (\S+)/.exec(CI)?.[1])
+    assert.ok(e2e.steps.every((step) => !('SHARD' in step.env)), 'the whole suite, no part of it')
+    assert.match(e2e.steps.map((step) => step.script ?? '').join('\n'), new RegExp(`^npm run e2e -- .* --workers=${2 * count}$`, 'm'))
+    assert.deepEqual(e2e.matrix, { shard: 'all' }, 'what it keeps named for all its parts: durations-all')
+    // Ten processors hold seven of a part’s workers at 1.4 each; as many as all the parts have, at most.
+    const [held] = fit(workflows().filter((run) => run.job === 'e2e'), 10)
+    assert.deepEqual([held.cpus, held.memory], [9.8, 8.75])
+    assert.match(held.steps.map((step) => step.script ?? '').join('\n'), /^npm run e2e -- .* --workers=7$/m)
+    assert.match(fit(workflows().filter((run) => run.job === 'e2e'), 400)[0].steps.map((step) => step.script ?? '').join('\n'), new RegExp(`--workers=${2 * count}$`, 'm'))
+    assert.throws(() => plan('x.yml', parse('jobs:\n  t:\n    runs-on: ubuntu-24.04\n    strategy:\n      matrix:\n        shard: [1, 2]\n    steps:\n      - run: npm run e2e -- --shard=${{ matrix.shard }}/2\n')), /name it in the step's env/)
   })
 
   it('gives the version the release job tags to what publishes it, a tag pushed only on GitHub (D735)', () => {
@@ -72,7 +82,7 @@ describe('the jobs, as replayed here', () => {
     assert.ok(release.steps.some((step) => step.id === 'version' && step.script === 'node scripts/version.js --tag >> "$GITHUB_OUTPUT"'))
     assert.ok(release.steps.some((step) => step.skipped.some((line) => /git push origin/.test(line))), 'the tag goes to GitHub from GitHub alone')
     for (const job of ['images', 'chart', 'deploy']) assert.ok(runs.filter((run) => run.job === job).every((run) => run.needs.includes('release')), job)
-    assert.deepEqual(runs.filter((run) => run.job === 'e2e').map((run) => run.steps[0].inputs?.['fetch-depth']), ['0', '0', '0', '0', '0', '0'], 'the build names the version Settings shows')
+    assert.deepEqual(runs.filter((run) => run.job === 'e2e').map((run) => run.steps[0].inputs?.['fetch-depth']), ['0'], 'the build names the version Settings shows')
   })
 
   it('drives Docker, kind and helm here, and the rest in a container', () => {
@@ -172,6 +182,21 @@ describe('a step’s shell', () => {
   it('reads what a step wrote to $GITHUB_OUTPUT, as GitHub does', () => {
     assert.deepEqual(outputs('version=0.10.0\nrelease=\nnotes<<END\na=b\nc\nEND\n'), { version: '0.10.0', release: '', notes: 'a=b\nc' })
     assert.throws(() => outputs('notes<<END\na'), /never ends/)
+  })
+})
+
+describe('the browser tests in parts', () => {
+  it('puts every spec of every engine in one part, each part taking about as long', () => {
+    const engines = { chromium: ['a', 'b', 'c', 'd', 'e'], webkit: ['a', 'c', 'f'] }
+    const durations = { chromium: { a: 90, b: 60, c: 30, d: 30, e: 10 }, webkit: { a: 50, c: 20 } }
+    const parts = [1, 2, 3].map((index) => part(`${index}/3`, engines, durations))
+    for (const engine of Object.keys(engines)) assert.deepEqual(parts.flatMap((one) => one[engine]).sort(), engines[engine], engine)
+    // f, unknown, takes WebKit's median: 50.
+    const loads = parts.map((one) => Object.entries(one).reduce((sum, [engine, names]) => sum + names.reduce((all, name) => all + (/** @type {Record<string, Record<string, number>>} */ (durations)[engine][name] ?? 50), 0), 0))
+    assert.deepEqual(loads, [120, 110, 110])
+    assert.deepEqual(part('1/3', engines, durations), parts[0], 'the same parts on every runner')
+    assert.throws(() => part('4/3', engines, durations), /one part of them/)
+    assert.throws(() => part('all', engines, durations), /one part of them/)
   })
 })
 

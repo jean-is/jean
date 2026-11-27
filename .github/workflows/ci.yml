@@ -359,18 +359,19 @@ jobs:
           SERVER_HOST_KEYS: ${{ vars.SERVER_HOST_KEYS }}
           SERVER_KEY: ${{ secrets.SERVER_KEY }}
 
-  # The smoke tests, each engine in three parts side by side, rather than half an hour on one runner:
-  # a red job names its engine, and running it again repeats that part alone. A part has its own
-  # servers on its own runner. A second try tells a flake from a failure, and a failure keeps that
-  # try's trace. A failure in any part stops the images and the deploy.
+  # The smoke tests in ten parts side by side, rather than fifty minutes on one runner: both engines' specs packed by how long
+  # each took here (test/parts.js), so that every part takes as long, where Playwright's own --shard, by how many tests, had
+  # parts of seven minutes and of fourteen. Running a red one again repeats that part alone. A part has its own servers on its
+  # own runner. A second try tells a flake from a failure, and a failure keeps that try's trace. Each part keeps how long its
+  # specs took, which scripts/durations.js writes into test/durations.json. A failure in any part stops the images and the
+  # deploy. npm run ci runs the parts as one, with the workers the machine holds (D724).
   e2e:
     runs-on: ubuntu-24.04
     container: mcr.microsoft.com/playwright:v1.64.1-noble
     strategy:
       fail-fast: false
       matrix:
-        project: [chromium, webkit]
-        shard: [1, 2, 3]
+        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     steps:
       # The whole history and its tags, from which the build reads the version Settings › General names (D735).
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -383,10 +384,17 @@ jobs:
           node-version-file: .nvmrc
       - run: npm ci --no-audit --no-fund
       - run: npm run build
-      - run: npm run e2e -- --project=${{ matrix.project }} --shard=${{ matrix.shard }}/3 --retries=1 --trace=on-first-retry
+      - run: npm run e2e -- --retries=1 --trace=on-first-retry
+        env:
+          SHARD: ${{ matrix.shard }}/10
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: durations-${{ matrix.shard }}
+          path: test-results/durations.json
+          retention-days: 30
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: failure()
         with:
-          name: test-results-${{ matrix.project }}-${{ matrix.shard }}
+          name: test-results-${{ matrix.shard }}
           path: test-results/
           retention-days: 7

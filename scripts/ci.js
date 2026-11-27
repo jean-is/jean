@@ -30,7 +30,7 @@ const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const OUT = join(ROOT, 'dist/ci')
 
 /** The runner every job names: GitHub's for a public repository has four processors, and Playwright's '50%' two workers. */
-const RUNNER = { label: 'ubuntu-24.04', workers: 2 }
+const RUNNER = { label: 'ubuntu-24.04', cpus: 4, workers: 2 }
 /** The Trivy that trivy-action runs at the commit ci.yml pins (its input `version`'s default), as Aqua's image of it. */
 export const TRIVY = { action: '38b337fff0a2f984d5be173c99e3f633438167ec', image: 'aquasec/trivy:0.76.2@sha256:8f6bb947dbc528902e11f2f5be52f7b519f6a39d5d148f41166f2040499768fb' }
 /** The buildx builder setup-buildx-action makes: BuildKit in a container of its own, which builds for several platforms. */
@@ -38,11 +38,12 @@ const BUILDER = 'jean-ci'
 /** Where a container finds this repository, read-only, to fetch the whole history from. */
 const ORIGIN = '/origin.git'
 /**
- * What a job takes of Docker's machine, processors and GB, by its id: the scheduler's measure, and a container's limits. The
- * browser tests take the runner's four processors, as their two workers have them on GitHub: on two, a game's frame budget and
- * the slower decks miss their time.
+ * What a job takes of Docker's machine, processors and GB, by its id: the scheduler's measure, and a container's limits. For a
+ * job in parts (fit()), what one part's two workers take. The browser tests' workers take 1.4 processors each: at one, a game's
+ * frame budget and the slower decks missed their time; on an M3 Max, seven workers ran the suite in 13m51s where five took
+ * 16m32s, six tests of 2003 passing on their second try rather than two.
  */
-const SIZES = /** @type {Record<string, [number, number]>} */ ({ e2e: [4, 2.5], check: [4, 4], containers: [4, 6], images: [4, 4], analyze: [4, 6] })
+const SIZES = /** @type {Record<string, [number, number]>} */ ({ e2e: [2.8, 2.5], check: [4, 4], containers: [4, 6], images: [4, 4], analyze: [4, 6] })
 /** Which jobs go first: the longest. */
 const FIRST = ['e2e', 'containers', 'check', 'analyze']
 
@@ -254,11 +255,28 @@ export function rehearse (script, withheld) {
 }
 
 /**
- * A step's shell with what this machine needs that GitHub's doesn't: Playwright's workers as CI's runner has them, since
+ * A step's shell with what this machine needs that GitHub's doesn't: Playwright's workers as CI's runners have them, since
  * inside a container os.cpus() counts the whole machine, and '50%' of it would be several times CI's.
- * @param {string} script
+ * @param {string} script @param {number} [workers]
  */
-export const adjust = (script) => script.replace(/^\s*npm run e2e\b.*$/gm, (line) => (/--workers\b/.test(line) ? line : line.includes(' -- ') ? `${line} --workers=${RUNNER.workers}` : `${line} -- --workers=${RUNNER.workers}`))
+export const adjust = (script, workers = RUNNER.workers) => script.replace(/^\s*npm run e2e\b.*$/gm, (line) => (/--workers\b/.test(line) ? line : line.includes(' -- ') ? `${line} --workers=${workers}` : `${line} -- --workers=${workers}`))
+
+/**
+ * A job split into parts (a matrix of `shard`) as one run that holds the machine: the workers of all its parts, as many as
+ * `cpus` processors take at a part's processors per worker, its processors and memory those workers'. One Playwright run
+ * hands each worker the next test, so no part waits on a slower one, and builds and starts its servers once.
+ * @param {Run[]} runs @param {number} cpus
+ */
+export function fit(runs, cpus) {
+  for (const run of runs.filter((one) => one.parts > 1)) {
+    const [perPart, memory] = SIZES[run.job] ?? [2, 2]
+    const each = perPart / RUNNER.workers
+    const workers = Math.max(RUNNER.workers, Math.min(RUNNER.workers * run.parts, Math.floor(cpus / each)))
+    Object.assign(run, { cpus: Math.round(workers * each * 100) / 100, memory: (workers * memory) / RUNNER.workers })
+    for (const step of run.steps) if (step.script) step.script = step.script.replace(/^(\s*npm run e2e\b.*--workers=)\d+/gm, `$1${workers}`)
+  }
+  return runs
+}
 
 // Actions
 
@@ -360,14 +378,15 @@ export const ACTIONS = {
       const config = join(OUT, 'work', `${job.slug}.codeql.yml`)
       await writeFile(config, inputs.config ?? '')
       job.state.suite = `codeql/javascript-queries:codeql-suites/javascript-${inputs.queries || 'code-scanning'}.qls`
-      return job.sh(`codeql database create "$CODEQL_DB" --overwrite --language=javascript --source-root=. --codescanning-config='${config}'`)
+      // The runner's processors, as the action takes every one of them, where the CLI alone takes one.
+      return job.sh(`codeql database create "$CODEQL_DB" --overwrite --threads=${RUNNER.cpus} --language=javascript --source-root=. --codescanning-config='${config}'`)
     },
   },
   'github/codeql-action/analyze': {
     inputs: [],
     host: true,
     run: (job) => job.sh([
-      `codeql database analyze "$CODEQL_DB" --download --format=sarif-latest --output="$CODEQL_SARIF" '${job.state.suite}'`,
+      `codeql database analyze "$CODEQL_DB" --threads=${RUNNER.cpus} --download --format=sarif-latest --output="$CODEQL_SARIF" '${job.state.suite}'`,
       // CI sends what it finds to the Security tab and fails on none of it: listed here, a finding fails nothing either.
       `node -e 'const found = JSON.parse(require("fs").readFileSync(process.env.CODEQL_SARIF, "utf8")).runs.flatMap((run) => run.results); for (const one of found) { const at = one.locations?.[0]?.physicalLocation; console.log(one.ruleId, (at?.artifactLocation?.uri ?? "") + ":" + (at?.region?.startLine ?? ""), one.message.text) } console.log(found.length + " finding(s), which CI sends to the Security tab")'`,
     ].join('\n')),
@@ -377,7 +396,7 @@ export const ACTIONS = {
 // Plans
 
 /** @typedef {{ name: string, if: string, minutes?: number, env: Record<string, string>, id?: string, action?: string, inputs?: Record<string, string>, script?: string, skipped: string[], install?: boolean }} Step */
-/** @typedef {{ key: string, name: string, slug: string, workflow: string, job: string, matrix: Record<string, string>, needs: string[], when: 'always' | 'push', host: boolean, image: string | null, steps: Step[], outputs: Record<string, string>, cpus: number, memory: number, minutes?: number, tools: string[] }} Run */
+/** @typedef {{ key: string, name: string, slug: string, workflow: string, job: string, matrix: Record<string, string>, needs: string[], when: 'always' | 'push', host: boolean, image: string | null, steps: Step[], outputs: Record<string, string>, cpus: number, memory: number, parts: number, minutes?: number, tools: string[] }} Run */
 
 const JOB_KEYS = ['name', 'runs-on', 'container', 'steps', 'strategy', 'needs', 'if', 'permissions', 'environment', 'concurrency', 'timeout-minutes', 'outputs']
 const STEP_KEYS = ['name', 'id', 'uses', 'run', 'with', 'env', 'if', 'timeout-minutes']
@@ -426,8 +445,13 @@ export function plan (workflow, document) {
     const image = job.container ?? null
     const runs = when(job.if)
     const needs = [job.needs ?? []].flat()
-    return combinations(job.strategy?.matrix).map((matrix) => {
-      const values = Object.values(matrix)
+    // A job split into parts by `shard` is one run here (fit()): a step's env that names its part is left out, and matrix.shard
+    // reads as all of them.
+    const { shard: shards, ...others } = job.strategy?.matrix ?? {}
+    const parts = Array.isArray(shards) && shards.length > 1 ? shards.length : 1
+    return combinations(parts > 1 ? (Object.keys(others).length ? others : null) : job.strategy?.matrix).map((combination) => {
+      const values = Object.values(combination)
+      const matrix = parts > 1 ? { ...combination, shard: 'all' } : combination
       // A run's name: its matrix's short values, as GitHub's, or an `include`'s first, which names it.
       const short = (job.strategy?.matrix?.include ? values.slice(0, 1) : values).filter((value) => value && /^[\w.-]{1,24}$/.test(value))
       /** @type {Context} */
@@ -445,7 +469,8 @@ export function plan (workflow, document) {
         if (odd.length) throw new Error(`${label}: ${odd.join(', ')}, which this runner doesn't replay`)
         const condition = step.if ?? 'success()'
         if (!(condition in STATUS)) throw new Error(`${label}: if: ${condition}, which this runner doesn't replay`)
-        const pairs = Object.entries(step.env ?? {}).map(([key, value]) => [key, check(String(value))])
+        if (parts > 1 && /\bmatrix\.shard\b/.test(step.run ?? '')) throw new Error(`${label}: its part named in its line, which runs here as one: name it in the step's env, as SHARD`)
+        const pairs = Object.entries(step.env ?? {}).filter(([, value]) => !(parts > 1 && /\bmatrix\.shard\b/.test(String(value)))).map(([key, value]) => [key, check(String(value))])
         // A secret or a variable of GitHub's is unset here, rather than empty, and a line naming it doesn't run.
         const withheld = pairs.filter(([, value]) => SECRET.test(value)).map(([key]) => key)
         /** @type {Step} */
@@ -461,7 +486,7 @@ export function plan (workflow, document) {
           if (action.skip) planned.skipped.push(`${name}: it ${action.skip}`)
         } else if (typeof step.run === 'string') {
           const { script, skipped } = rehearse(step.run, withheld)
-          Object.assign(planned, { script: adjust(check(script)), skipped, install: /^npm ci(?: --[\w-]+)*\n?$/.test(step.run) })
+          Object.assign(planned, { script: adjust(check(script), RUNNER.workers * parts), skipped, install: /^npm ci(?: --[\w-]+)*\n?$/.test(step.run) })
         } else throw new Error(`${label}: neither uses nor run`)
         return planned
       })
@@ -472,7 +497,7 @@ export function plan (workflow, document) {
       return {
         key: [id, ...short].join(':'), name: short.length ? `${id} (${short.join(', ')})` : id,
         slug: [id, ...short].join('-').replace(/[^\w.-]/g, '-'), workflow, job: id, matrix, needs, when: runs, host, image,
-        steps, outputs: Object.fromEntries(Object.entries(job.outputs ?? {}).map(([key, value]) => [key, check(String(value))])), cpus, memory, minutes: job['timeout-minutes'] ? Number(job['timeout-minutes']) : undefined,
+        steps, outputs: Object.fromEntries(Object.entries(job.outputs ?? {}).map(([key, value]) => [key, check(String(value))])), cpus: cpus * parts, memory: memory * parts, parts, minutes: job['timeout-minutes'] ? Number(job['timeout-minutes']) : undefined,
         tools: host ? TOOLS.filter((tool) => calls(tool).test(text) || (tool === 'codeql' && text.includes('codeql-action')) || (tool === 'docker' && /docker\/|trivy/.test(text))) : [],
       }
     })
@@ -795,7 +820,12 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   const given = {}
   // Docker's processors but a runner's four, for what runs beside its containers and outside their limits: the jobs here (CodeQL,
   // the containers job's builder and cluster) and the machine itself. Every one of them taken, WebKit's frames came late.
-  const results = await schedule(runnable, { cpus: Math.max(4, info[0] - 4), memory: info[1] / 2 ** 30 }, async (run) => {
+  const budget = { cpus: Math.max(4, info[0] - 4), memory: info[1] / 2 ** 30 }
+  fit(runnable, budget.cpus)
+  // A job that can't run here fails at once, waiting for no room; one here that drives no Docker (CodeQL's) runs on the four
+  // processors Docker's room leaves, beside the browser tests rather than after them.
+  for (const run of runnable) if (blocked.includes(run) || (run.host && !run.tools.some((tool) => tool !== 'codeql'))) Object.assign(run, { cpus: 0, memory: 0 })
+  const results = await schedule(runnable, budget, async (run) => {
     if (blocked.includes(run)) {
       // A log of its own all the same, which the summary reads.
       const failed = `needs ${run.tools.filter((tool) => missing.includes(tool)).join(', ')} here`

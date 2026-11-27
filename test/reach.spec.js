@@ -144,6 +144,8 @@ test('what Google’s services bring in goes only to brains whose service never 
   await openSettings(page, 'Connections')
   await page.locator('app-settings [data-page="gmail"]').click()
   await expect(page.locator('app-settings .connection-trains')).toHaveText(/goes only to brains that never train on it/)
+  // What the brain still streams after the answer (its suggestions, a title) ends with the test, its route with it.
+  await page.unrouteAll({ behavior: 'ignoreErrors' })
 })
 
 test('a service Jean knows is read on its page, then connects with every server its one sign-in reaches (D344); those not reached yet wait apart, saying why', async ({ page }) => {
