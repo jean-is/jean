@@ -439,6 +439,8 @@ const LEVELS = ['picker.fast', 'picker.smart', 'picker.best']
 function auto() {
   const { settings } = effective.value
   const { choosable, lean, usual, steps } = ladder()
+  // What policy set stays as it set it (D773).
+  const [mixFixed, stepsFixed] = ['mix', 'steps'].map((key) => effective.value.locked.has(key))
   const near = brainsHere.value.find((brain) => brain.api === 'device') ?? brainsHere.value.find(isLocal)
   const sensed = loaded.value.has('reflexes')
   const mix = settings.mix ?? 'balanced'
@@ -457,23 +459,23 @@ function auto() {
     }
     return html`<li role="group" aria-labelledby=${`auto-${kind}`}><span class="item-icon">${icon}</span><span class="item-text"><strong id=${`auto-${kind}`}>${t(`auto.${kind}`)}</strong>
       <small>${[PLANS[brain.provider] ? '' : describe(brain).name, isLocal(brain) ? t('brain.free') : price(brain, brain.model, modelsOf(brain).find((info) => info.id === brain.model)?.pricing)].filter(Boolean).join(' · ')}</small></span>
-      <select title=${t('auto.brain')} dir="ltr" @change=${choose}>${choosable.map((one) => html`<optgroup label=${PLANS[one.provider] ?? describe(one).name}>${versions.map((version, i) => (version.brain === one
+      <select title=${t('auto.brain')} dir="ltr" ?disabled=${stepsFixed} @change=${choose}>${choosable.map((one) => html`<optgroup label=${PLANS[one.provider] ?? describe(one).name}>${versions.map((version, i) => (version.brain === one
         ? html`<option value=${i} ?selected=${one.id === brain.id && version.model === brain.model}>${version.model.split('/').at(-1)}</option>` : nothing))}</optgroup>`)}</select>
-      ${thinks(brain) ? html`<select title=${t('brain.thinking')} @change=${(/** @type {Event} */ e) => setStep(level, { effort: /** @type {Effort} */ (valueOf(e)) || undefined }).catch(showError)}>
+      ${thinks(brain) ? html`<select title=${t('brain.thinking')} ?disabled=${stepsFixed} @change=${(/** @type {Event} */ e) => setStep(level, { effort: /** @type {Effort} */ (valueOf(e)) || undefined }).catch(showError)}>
         ${['', ...EFFORTS].map((one) => html`<option value=${one} ?selected=${effort === one}>${t(one ? `brain.thinking.${one}` : 'auto.name')}</option>`)}</select>` : nothing}</li>`
   }
   const here = (/** @type {unknown} */ icon, /** @type {string} */ kind) => html`<li><span class="item-icon">${icon}</span><span class="item-text"><strong>${t(`auto.${kind}`)}</strong>
     <small><bdi dir="ltr">${describe(/** @type {BrainConfig} */ (near)).name}</bdi></small></span><span class="brain-price">${t('brain.free')}</span></li>`
   return html`${head(t('auto.name'), autoLine())}
     ${lean ? html`<section><h3 id="auto-mix">${t('auto.mix')}</h3><div class="list brains" role="radiogroup" aria-labelledby="auto-mix">${Object.keys(MIXES).map((id) => html`<div class=${mix === id ? 'is-selected' : ''}>
-      <label class="item" for=${`mix-${id}`}><input id=${`mix-${id}`} type="radio" name="mix" .checked=${live(mix === id)} @change=${() => updateSettings({ mix: /** @type {Mix} */ (id) }).catch(showError)}>
+      <label class="item" for=${`mix-${id}`}><input id=${`mix-${id}`} type="radio" name="mix" .checked=${live(mix === id)} ?disabled=${mixFixed} @change=${() => updateSettings({ mix: /** @type {Mix} */ (id) }).catch(showError)}>
       <span class="item-text"><strong>${t(`auto.mix.${id}`)}</strong><small>${t(`auto.mix.${id}Text`)}</small></span></label></div>`)}</div></section>` : nothing}
     <section><h3 id="auto-who">${t('brain.who')}</h3><ul class="list auto-steps" aria-labelledby="auto-who">
       ${lean ? (sensed ? [step(icons.bolt, 'quick', 0), step(icons.lamp, 'everyday', 1), step(icons.star, 'demanding', 2)] : step(icons.lamp, 'all', MIXES[mix].levels[1])) : nothing}
       ${near && sensed && lean ? here(icons.lock, 'personal') : nothing}
       ${near ? here(icons['brain-device'], lean ? 'offline' : 'all') : nothing}
     </ul></section>
-    <p class="hint">${t('auto.steps')}</p>`
+    <p class="hint">${t('auto.steps')}</p>${mixFixed || stepsFixed ? html`<p class="muted">${lockedBy()}</p>` : nothing}`
 }
 
 /** The versions a brain's service lists, once asked. @param {BrainConfig} brain */

@@ -60,12 +60,13 @@ export const saveSettings = (fs, settings) => writeJSON(fs, 'settings.json', set
  * and the keys an organisation locked ("rules.fetch", "brains", "locale"…).
  * @param {Settings} settings
  * Policy's one language is locked; one it doesn't offer (`locales`) is none.
- * @param {{ locale?: string, locales?: string[], brains?: BrainConfig[], ownBrains?: string[], jurisdictions?: string[], rules?: Record<string, RuleValue> }} [policy]
+ * @param {{ locale?: string, locales?: string[], brains?: BrainConfig[], ownBrains?: string[], jurisdictions?: string[], rules?: Record<string, RuleValue>, mix?: Settings['mix'], steps?: Settings['steps'] }} [policy]
  */
 export function applyPolicy(settings, policy = {}) {
   /** @type {Set<string>} */
   const locked = new Set()
-  const effective = { ...settings, rules: { ...settings.rules } }
+  const effective = { ...settings, rules: { ...settings.rules }, ...policy.mix && { mix: policy.mix }, ...policy.steps && { steps: policy.steps } }
+  for (const key of ['mix', 'steps']) if (key in policy) locked.add(key)
   const only = policy.locale ?? (policy.locales?.length === 1 ? policy.locales[0] : null)
   if (only) {
     effective.locale = only

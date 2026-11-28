@@ -245,6 +245,35 @@
         }
       }
     },
+    "mix": {
+      "enum": [
+        "less",
+        "balanced",
+        "best"
+      ]
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "brain": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "effort": {
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
     "rules": {
       "type": "object",
       "properties": {
@@ -1743,6 +1772,49 @@
                       "null"
                     ]
                   }
+                }
+              },
+              "mix": {
+                "enum": [
+                  "less",
+                  "balanced",
+                  "best",
+                  null
+                ]
+              },
+              "steps": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "brain": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "model": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "effort": {
+                      "enum": [
+                        "low",
+                        "medium",
+                        "high",
+                        null
+                      ]
+                    }
+                  },
+                  "additionalProperties": false
                 }
               },
               "rules": {

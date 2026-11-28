@@ -55,6 +55,8 @@ export const SCHEMA = {
   // Beside its brains, the providers whose brains people may keep of their own, `*` any (core/settings.js).
   ownBrains: [new Set([...Object.keys(PROVIDERS), '*'])],
   tiers: { '*': ['text'] },
+  // What matters most to Auto, and its quick, everyday and demanding steps, each a brain by its id at a version, or {} for Auto's own (D773).
+  mix: new Set(['less', 'balanced', 'best']), steps: [{ brain: 'text', model: 'text', effort: new Set(['low', 'medium', 'high']) }],
   rules: Object.fromEntries([...Object.keys(DEFAULT_RULES), 'share'].map((kind) => [kind, RULE])),
   guards: [{ 'id!': 'text', kind: 'text', service: 'text', if: 'text', 'then!': new Set(['ask', 'never']), reason: 'text' }],
   capabilities: { deny: ['capability'], preUnlock: ['capability'] },

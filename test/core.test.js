@@ -307,6 +307,12 @@ test('settings: front matter round trip and policy', () => {
   assert.equal(offered.settings.locale, null)
   assert.ok(!offered.locked.has('locale'))
   assert.equal(applyPolicy({ ...DEFAULT_SETTINGS, locale: 'en' }, { locales: ['fr', 'en'] }).settings.locale, 'en')
+  // What matters most to Auto, and its steps, set by policy over the person's and locked (D773); left to them when policy says none.
+  const steps = [{ brain: 'gateway', model: 'small' }, {}, { brain: 'gateway', model: 'large', effort: /** @type {const} */ ('high') }]
+  const set = applyPolicy({ ...DEFAULT_SETTINGS, mix: 'best', steps: [null, null, null] }, { mix: 'less', steps })
+  assert.deepEqual([set.settings.mix, set.settings.steps, set.locked.has('mix'), set.locked.has('steps')], ['less', steps, true, true])
+  const theirs = applyPolicy({ ...DEFAULT_SETTINGS, mix: 'best' }, {})
+  assert.deepEqual([theirs.settings.mix, theirs.locked.has('mix'), theirs.locked.has('steps')], ['best', false, false])
 })
 
 test('settings: beside policy’s brains, a person keeps their own of the providers ownBrains lists, and then adds more', () => {

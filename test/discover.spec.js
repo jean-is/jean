@@ -484,6 +484,17 @@ test('Auto’s steps: what matters most, each step any brain connected, and the 
   await expect(page.locator('#brain-menu').getByRole('button', { name: 'Smart' })).toHaveAttribute('title', /^claude-sonnet-5-5/)
 })
 
+test('policy sets what matters most to Auto and its steps, which Settings shows locked (D773)', { tag: '@chromium' }, async ({ page }) => {
+  await withPolicy(page, { brains: [{ id: 'gateway', provider: 'openai', api: 'openai', baseURL: 'https://gateway.invalid/v1', model: 'small' }], mix: 'best', steps: [{ brain: 'gateway', model: 'small' }, {}, {}] })
+  await start(page)
+  const brains = await openSettings(page, 'Brains')
+  await brains.getByRole('button', { name: 'How Auto chooses' }).click()
+  await expect(brains.getByRole('radio', { name: /^Best answers/ })).toBeChecked()
+  await expect(brains.getByRole('radio', { name: /^Spend less/ })).toBeDisabled()
+  await expect(brains.getByRole('group', { name: 'Every message' }).getByTitle('Brain')).toBeDisabled()
+  await expect(brains.locator('.hint + .muted')).toHaveText('Set by your organization')
+})
+
 test('beside the organisation’s brains, a person keeps their own of the providers policy leaves them, each of policy’s locked, and adds only those', { tag: '@chromium' }, async ({ page }) => {
   await withPolicy(page, { brains: [{ id: 'corp', provider: 'custom', api: 'openai', baseURL: BRAIN_URL, model: 'fake-brain-1', label: 'Corp' }], ownBrains: ['openai'] })
   await start(page)
