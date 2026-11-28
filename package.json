@@ -62,6 +62,7 @@
     "schemas": "node scripts/schemas.js",
     "documents": "node scripts/documents.js",
     "longtasks": "node scripts/longtasks.js",
+    "helpers": "node scripts/helpers.js",
     "directory": "node scripts/directory.js",
     "csp": "node scripts/csp.js"
   },

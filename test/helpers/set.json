@@ -1,0 +1,30 @@
+{
+  "format": 1,
+  "about": "Large tasks in independent parts for `npm run helpers`, each asking for helpers in its own words, since what is measured is how well helpers do their parts on a brain a step under their task's (D7), not whether Jean hands them out. The same requests in each language.",
+  "requests": {
+    "posts": {
+      "en": "Write three short blog posts for our neighbourhood bakery: one about our sourdough and how long it rises, one introducing our new almond croissant, and one announcing that we open at 6:30 every morning this summer. Have helpers do the parts at the same time.",
+      "fr": "Écris trois courts articles de blog pour notre boulangerie de quartier : un sur notre pain au levain et son temps de pousse, un pour présenter notre nouveau croissant aux amandes, et un pour annoncer que nous ouvrons à 6 h 30 tous les matins cet été. Fais faire les parties en même temps par des assistants.",
+      "ar": "اكتب ثلاث مقالات قصيرة لمدونة مخبز حيّنا: واحدة عن خبز العجين المخمّر ومدة تخميره، وواحدة تقدّم كرواسون اللوز الجديد، وواحدة تعلن أننا نفتح في السادسة والنصف صباحًا كل يوم هذا الصيف. اجعل المساعدين ينجزون الأجزاء في الوقت نفسه.",
+      "ja": "近所のパン屋のブログ記事を3本、短く書いてください。サワードウとその発酵時間について、新しいアーモンドクロワッサンの紹介、そしてこの夏は毎朝6時半に開店するお知らせです。 各パートはヘルパーに同時に任せてください。"
+    },
+    "emails": {
+      "en": "Draft four emails for our choir: thank the volunteers who ran last Saturday's concert, remind members that the annual meeting is on 12 March at 7 pm, announce that Inès is our new treasurer, and ask everyone to send their photos of the concert. Have helpers do the parts at the same time.",
+      "fr": "Rédige quatre e-mails pour notre chorale : remercier les bénévoles du concert de samedi dernier, rappeler aux membres que l’assemblée générale a lieu le 12 mars à 19 h, annoncer qu’Inès est notre nouvelle trésorière, et demander à chacun d’envoyer ses photos du concert. Fais faire les parties en même temps par des assistants.",
+      "ar": "اكتب أربع رسائل بريد إلكتروني لجوقتنا: شكر المتطوعين الذين نظموا حفل السبت الماضي، وتذكير الأعضاء بأن الاجتماع السنوي في 12 مارس الساعة السابعة مساءً، والإعلان أن إيناس هي أمينة الصندوق الجديدة، وطلب أن يرسل الجميع صورهم من الحفل. اجعل المساعدين ينجزون الأجزاء في الوقت نفسه.",
+      "ja": "合唱団のメールを4通書いてください。先週土曜の演奏会を手伝ってくれたボランティアへのお礼、年次総会が3月12日19時にあることの会員へのお知らせ、イネスさんが新しい会計になったことのお知らせ、そして演奏会の写真を送ってほしいというお願いです。 各パートはヘルパーに同時に任せてください。"
+    },
+    "guides": {
+      "en": "Write three one-page guides for new staff at our small office: how to use the coffee machine and keep it clean, how to book a meeting room, and how to claim expenses. Have helpers do the parts at the same time.",
+      "fr": "Écris trois guides d’une page pour les nouveaux arrivants de notre petit bureau : comment utiliser la machine à café et la garder propre, comment réserver une salle de réunion, et comment se faire rembourser ses frais. Fais faire les parties en même temps par des assistants.",
+      "ar": "اكتب ثلاثة أدلة من صفحة واحدة للموظفين الجدد في مكتبنا الصغير: كيف يستخدمون آلة القهوة ويحافظون على نظافتها، وكيف يحجزون قاعة اجتماعات، وكيف يطالبون باسترداد النفقات. اجعل المساعدين ينجزون الأجزاء في الوقت نفسه.",
+      "ja": "小さな事務所の新人向けに、1ページのガイドを3つ書いてください。コーヒーマシンの使い方と手入れ、会議室の予約のしかた、経費の精算のしかたです。 各パートはヘルパーに同時に任せてください。"
+    },
+    "trip": {
+      "en": "Plan a long weekend for four friends, as three separate pieces: a day in Lisbon on Friday, a day in Sintra on Saturday, and a beach day near Cascais on Sunday, each with where to go, where to eat and how to get there. Have helpers do the parts at the same time.",
+      "fr": "Prépare un long week-end pour quatre amis, en trois parties séparées : une journée à Lisbonne le vendredi, une journée à Sintra le samedi et une journée à la plage près de Cascais le dimanche, chacune avec où aller, où manger et comment s’y rendre. Fais faire les parties en même temps par des assistants.",
+      "ar": "خطّط لعطلة نهاية أسبوع طويلة لأربعة أصدقاء، في ثلاثة أجزاء منفصلة: يوم في لشبونة الجمعة، ويوم في سينترا السبت، ويوم على الشاطئ قرب كاشكايش الأحد، ولكل يوم أين نذهب وأين نأكل وكيف نصل. اجعل المساعدين ينجزون الأجزاء في الوقت نفسه.",
+      "ja": "友人4人の3連休の計画を、3つに分けて立ててください。金曜はリスボンで1日、土曜はシントラで1日、日曜はカスカイス近くの海辺で1日。それぞれ行く場所、食事の場所、行き方を入れてください。 各パートはヘルパーに同時に任せてください。"
+    }
+  }
+}

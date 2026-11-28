@@ -141,6 +141,7 @@ npm run schemas   # write app/schemas/policy.schema.json again from what policy.
 npm run masks     # measure the names model of masked requests in Jean's own worker, on an annotated set in eight languages (-- --speed, -- --write; weights fetched once into test/masks/.cache/)
 npm run documents # the document evals: corpus, retrieval, answers through OpenRouter, benches (-- --report --write)
 npm run longtasks # Jean's long-task features against the same brain without them: GDPval, steering, checkpoints, summaries and plans (BRAIN=<provider>:<model>, -- --write)
+npm run helpers   # whether helpers a step under their task's brain do their parts as well, judged blind in both orders (BRAIN=<provider>:<model>, HELPER_MODEL=<its version a step under>, JUDGE=…, -- --write)
 npm run directory # check from a browser's point of view which known services and sources of skills Jean can reach
 npm run csp     # the pages' policies in every browser here: Playwright's engines, Chrome and Edge themselves, then Safari and Firefox over WebDriver (D326)
 npm run serve   # serve app/ as it is

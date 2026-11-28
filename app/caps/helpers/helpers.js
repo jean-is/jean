@@ -10,6 +10,12 @@ import { splitSuggestions } from '../../core/events.js'
 import { askTool } from '../ask/ask.js'
 
 /** @typedef {import('../../core/loop.js').Tool} Tool */
+/** @typedef {import('../../core/types.js').BrainConfig} BrainConfig */
+
+/** The brain a helper answers with, from its task's (D7): the same, until a measurement says one a step under does its part as well (npm run helpers). */
+let helperBrain = (/** @type {BrainConfig} */ brain) => brain
+/** For that measurement alone. @param {typeof helperBrain} choose */
+export const chooseHelperBrain = (choose) => { helperBrain = choose }
 
 // At most this many parts, this many helpers at once, and this many brain calls each.
 const MAX_PARTS = 5
@@ -78,6 +84,7 @@ const helperTool = {
     // Its questions say which part they are for (D146).
     const ask = askTool(String(args?.title ?? ''))
     const { text, stopReason } = await ctx.turn({
+      brain: helperBrain(ctx.brain),
       system: prompt(assistantName()),
       history: [{ role: 'user', content: String(args?.task ?? '') }],
       tools: () => [...contributions().tools.filter((tool) => !NOT_FOR_HELPERS.has(tool.spec.name)), ask],
