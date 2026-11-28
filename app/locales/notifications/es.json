@@ -1,7 +1,7 @@
 {
   "notifications.done": "Hecho. Tu respuesta está lista.",
   "notifications.waiting": "Esperando tu respuesta.",
-  "notifications.text": "Cuando una tarea termina o espera tu respuesta mientras estás en otra pestaña o aplicación. Solo se muestra su título.",
+  "notifications.text": "Cuando una tarea termina o espera tu respuesta.",
   "notifications.blocked": "Tu navegador bloquea las notificaciones de este sitio. Permítelas en sus ajustes para este sitio.",
   "notifications.test": "Enviar una prueba",
   "notifications.tested": "Así se ve una tarea terminada.",

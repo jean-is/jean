@@ -1,7 +1,7 @@
 {
   "notifications.done": "完了しました。回答の準備ができています。",
   "notifications.waiting": "あなたの返事を待っています。",
-  "notifications.text": "別のタブやアプリにいる間にタスクが終わったときや、あなたの返事を待っているとき。表示されるのはタイトルだけです。",
+  "notifications.text": "タスクが終わったときや、あなたの返事を待っているとき。",
   "notifications.blocked": "このブラウザーは、このサイトの通知をブロックしています。ブラウザーの設定で、このサイトの通知を許可してください。",
   "notifications.test": "テスト送信",
   "notifications.tested": "終わったタスクはこのように表示されます。",

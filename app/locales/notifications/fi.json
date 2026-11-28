@@ -1,7 +1,7 @@
 {
   "notifications.done": "Valmis. Vastauksesi on valmis.",
   "notifications.waiting": "Odottaa vastaustasi.",
-  "notifications.text": "Kun tehtävä valmistuu tai odottaa vastaustasi, kun olet toisessa välilehdessä tai sovelluksessa. Vain sen otsikko näkyy.",
+  "notifications.text": "Kun tehtävä valmistuu tai odottaa vastaustasi.",
   "notifications.blocked": "Selaimesi estää tämän sivuston ilmoitukset. Salli ne selaimen asetuksissa tälle sivustolle.",
   "notifications.test": "Lähetä testi",
   "notifications.tested": "Tältä valmis tehtävä näyttää.",

@@ -108,7 +108,7 @@ test('a task done out of sight offers notifications; on, the next one is told, a
   const toggle = settings.getByRole('switch', { name: 'Notifications' })
   await expect(toggle).toBeChecked()
   const row = settings.locator('section', { hasText: 'While you’re away' }).locator('li', { has: page.getByRole('switch', { name: 'Notifications' }) })
-  await expect(row).toContainText('When a task is done or waits for your answer while you’re in another tab or app. Only its title shows.')
+  await expect(row).toContainText('When a task is done or waits for your answer.')
   await row.getByRole('button', { name: 'Send a test' }).click()
   await expect.poll(async () => (await shown(page)).at(-1)).toEqual({ title: 'Jean', body: 'This is how a finished task shows.', lang: 'en', dir: 'ltr', closed: false })
   await toggle.click()
