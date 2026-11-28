@@ -412,11 +412,10 @@ function listed(closed) {
     ${troubled ? html`<div class="brain-wait" role="alert"><p>${said(troubled)} ${fix(troubled)}</p><button class="button" @click=${() => go(troubled.id)}>${t('brain.fix')}</button></div>` : nothing}
     <section><h3 id="brains-who">${t('brain.who')}</h3>
       <div class="list brains" role="radiogroup" aria-labelledby="brains-who">
-        ${choice('auto', mode, icons.brain, t('auto.name'), autoLine(), () => updateSettings({ auto: true, cloud: true }))}
+        ${choice('auto', mode, icons.brain, t('auto.name'), autoLine(), () => updateSettings({ auto: true, cloud: true }), html`<button class="link-button brain-link" data-brain="auto" @click=${() => go('auto')}>${t('auto.adjust')} ${icons.chevron}</button>`)}
         ${choice('same', mode, icons.pin, t('brain.same'), t('brain.sameText'), () => updateSettings({ auto: false, cloud: true }), same())}
         ${cloud ? choice('device', mode, icons.lock, t('picker.keepOnDevice'), t(kept ? 'picker.projectKept' : brainsHere.value.some(isLocal) ? 'brain.onlyText' : 'auto.noPrivate'), () => keepOnDevice(true), nothing, !brainsHere.value.some(isLocal)) : nothing}
       </div>
-      <button class="link-button brain-link" data-brain="auto" @click=${() => go('auto')}>${t('auto.how')} ${icons.chevron}</button>
     </section>
     <section><h3>${t('brain.connectedTitle')}</h3>
       <ul class="list brain-rows">${settings.brains.map((brain) => html`<li><button class="item" data-brain=${brain.id} @click=${() => go(brain.id)}>
@@ -466,7 +465,7 @@ function auto() {
   }
   const here = (/** @type {unknown} */ icon, /** @type {string} */ kind) => html`<li><span class="item-icon">${icon}</span><span class="item-text"><strong>${t(`auto.${kind}`)}</strong>
     <small><bdi dir="ltr">${describe(/** @type {BrainConfig} */ (near)).name}</bdi></small></span><span class="brain-price">${t('brain.free')}</span></li>`
-  return html`${head(t('auto.name'), autoLine())}
+  return html`${head(t('auto.how'), autoLine())}<p class="muted">${t('auto.stakes')}</p>
     ${lean ? html`<section><h3 id="auto-mix">${t('auto.mix')}</h3><div class="list brains" role="radiogroup" aria-labelledby="auto-mix">${Object.keys(MIXES).map((id) => html`<div class=${mix === id ? 'is-selected' : ''}>
       <label class="item" for=${`mix-${id}`}><input id=${`mix-${id}`} type="radio" name="mix" .checked=${live(mix === id)} ?disabled=${mixFixed} @change=${() => updateSettings({ mix: /** @type {Mix} */ (id) }).catch(showError)}>
       <span class="item-text"><strong>${t(`auto.mix.${id}`)}</strong><small>${t(`auto.mix.${id}Text`)}</small></span></label></div>`)}</div></section>` : nothing}

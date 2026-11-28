@@ -80,6 +80,8 @@
   "brain.keyed": "Kunci daripada perkhidmatan",
   "brain.free": "Percuma",
   "auto.how": "Cara Auto memilih",
+  "auto.adjust": "Laraskan",
+  "auto.stakes": "Setiap otak di sini membaca mesej yang dijawabnya, pada harga dan syarat perkhidmatannya.",
   "auto.both": "{brain}, sebanyak yang diperlukan setiap mesej, dan peranti ini untuk semua perkara peribadi",
   "auto.cloud": "{brain}, sebanyak yang diperlukan setiap mesej",
   "auto.mix": "Perkara paling penting",

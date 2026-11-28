@@ -80,6 +80,8 @@
   "brain.keyed": "Egy szolgáltatás kulcsa",
   "brain.free": "Ingyenes",
   "auto.how": "Hogyan választ az Auto",
+  "auto.adjust": "Beállítás",
+  "auto.stakes": "Minden itteni agy elolvassa az üzeneteket, amelyekre válaszol, a szolgáltatása árán és feltételei szerint.",
   "auto.both": "{brain}, amennyire az adott üzenet kívánja, és ez az eszköz mindenhez, ami személyes",
   "auto.cloud": "{brain}, amennyire az adott üzenet kívánja",
   "auto.mix": "Mi a legfontosabb",

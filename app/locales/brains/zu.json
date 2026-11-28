@@ -80,6 +80,8 @@
   "brain.keyed": "Ukhiye ovela kunsiza",
   "brain.free": "Mahhala",
   "auto.how": "Indlela Okuzenzakalelayo okukhetha ngayo",
+  "auto.adjust": "Lungisa",
+  "auto.stakes": "Yonke ingqondo lapha ifunda imilayezo eyiphendulayo, ngentengo nemibandela yesevisi yayo.",
   "auto.both": "Ingqondo {brain}, ngokuthi umlayezo ngamunye udinga okungakanani, nale divayisi kunoma yini engokwakho",
   "auto.cloud": "Ingqondo {brain}, ngokuthi umlayezo ngamunye udinga okungakanani",
   "auto.mix": "Okubaluleke kakhulu",

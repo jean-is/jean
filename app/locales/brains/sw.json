@@ -80,6 +80,8 @@
   "brain.keyed": "Ufunguo kutoka kwa huduma",
   "brain.free": "Bure",
   "auto.how": "Jinsi Otomatiki inavyochagua",
+  "auto.adjust": "Rekebisha",
+  "auto.stakes": "Kila ubongo hapa husoma jumbe unazojibu, kwa bei na masharti ya huduma yake.",
   "auto.both": "{brain}, kadiri kila ujumbe unavyohitaji, na kifaa hiki kwa chochote cha binafsi",
   "auto.cloud": "{brain}, kadiri kila ujumbe unavyohitaji",
   "auto.mix": "Kinachojalisha zaidi",

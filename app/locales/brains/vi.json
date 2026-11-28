@@ -80,6 +80,8 @@
   "brain.keyed": "Khóa từ một dịch vụ",
   "brain.free": "Miễn phí",
   "auto.how": "Tự động chọn thế nào",
+  "auto.adjust": "Điều chỉnh",
+  "auto.stakes": "Mỗi bộ não ở đây đọc các tin nhắn mà nó trả lời, theo giá và điều khoản của dịch vụ đó.",
   "auto.both": "{brain}, tùy mỗi tin nhắn cần, và thiết bị này cho mọi điều riêng tư",
   "auto.cloud": "{brain}, tùy mỗi tin nhắn cần",
   "auto.mix": "Điều quan trọng nhất",

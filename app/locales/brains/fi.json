@@ -80,6 +80,8 @@
   "brain.keyed": "Palvelun avain",
   "brain.free": "Ilmainen",
   "auto.how": "Miten Auto valitsee",
+  "auto.adjust": "Säädä",
+  "auto.stakes": "Kaikki täällä olevat aivot lukevat viestit, joihin ne vastaavat, palvelunsa hinnalla ja ehdoilla.",
   "auto.both": "{brain}, niin paljon kuin kukin viesti vaatii, ja tämä laite kaikkeen henkilökohtaiseen",
   "auto.cloud": "{brain}, niin paljon kuin kukin viesti vaatii",
   "auto.mix": "Mikä on tärkeintä",

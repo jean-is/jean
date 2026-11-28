@@ -80,6 +80,8 @@
   "brain.keyed": "Susi mula sa isang serbisyo",
   "brain.free": "Libre",
   "auto.how": "Paano pumipili ang Auto",
+  "auto.adjust": "Ayusin",
+  "auto.stakes": "Binabasa ng bawat utak dito ang mga mensaheng sinasagot nito, sa presyo at mga tuntunin ng serbisyo nito.",
   "auto.both": "{brain}, hangga’t kailangan ng bawat mensahe, at ang device na ito para sa anumang personal",
   "auto.cloud": "{brain}, hangga’t kailangan ng bawat mensahe",
   "auto.mix": "Ano ang pinakamahalaga",

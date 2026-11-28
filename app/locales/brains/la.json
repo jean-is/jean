@@ -80,6 +80,8 @@
   "brain.keyed": "Clavis a servitio",
   "brain.free": "Gratuitum",
   "auto.how": "Quomodo Auto eligit",
+  "auto.adjust": "Accommoda",
+  "auto.stakes": "Quodque cerebrum hic nuntios ad quos respondet legit, pretio et condicionibus servitii sui.",
   "auto.both": "{brain}, quantum quisque nuntius eget, et hoc instrumentum pro rebus privatis",
   "auto.cloud": "{brain}, quantum quisque nuntius eget",
   "auto.mix": "Quid maxime refert",

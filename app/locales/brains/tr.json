@@ -80,6 +80,8 @@
   "brain.keyed": "Bir hizmetten anahtar",
   "brain.free": "Ücretsiz",
   "auto.how": "Otomatik nasıl seçer",
+  "auto.adjust": "Ayarla",
+  "auto.stakes": "Buradaki her beyin yanıtladığı mesajları okur; fiyatı ve koşulları hizmetininkidir.",
   "auto.both": "{brain}, her mesajın gerektirdiği kadar; kişisel olan her şey için bu cihaz",
   "auto.cloud": "{brain}, her mesajın gerektirdiği kadar",
   "auto.mix": "En çok ne önemli",

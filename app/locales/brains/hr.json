@@ -80,6 +80,8 @@
   "brain.keyed": "Ključ od usluge",
   "brain.free": "Besplatno",
   "auto.how": "Kako Automatski bira",
+  "auto.adjust": "Prilagodi",
+  "auto.stakes": "Svaki mozak ovdje čita poruke na koje odgovara, po cijeni i uvjetima svoje usluge.",
   "auto.both": "{brain}, koliko koja poruka traži, a ovaj uređaj za sve osobno",
   "auto.cloud": "{brain}, koliko koja poruka traži",
   "auto.mix": "Što je najvažnije",

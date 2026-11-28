@@ -80,6 +80,8 @@
   "brain.keyed": "Klíč od služby",
   "brain.free": "Zdarma",
   "auto.how": "Jak Auto vybírá",
+  "auto.adjust": "Upravit",
+  "auto.stakes": "Každý mozek zde čte zprávy, na které odpovídá, za cenu a podle podmínek své služby.",
   "auto.both": "{brain}, tolik, kolik která zpráva potřebuje, a toto zařízení pro vše osobní",
   "auto.cloud": "{brain}, tolik, kolik která zpráva potřebuje",
   "auto.mix": "Na čem záleží nejvíc",

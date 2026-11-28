@@ -80,6 +80,8 @@
   "brain.keyed": "A key from a service",
   "brain.free": "Free",
   "auto.how": "How Auto chooses",
+  "auto.adjust": "Adjust",
+  "auto.stakes": "Each brain here reads the messages it answers, at its service’s price and under its terms.",
   "auto.both": "{brain}, as much as each message needs, and this device for anything personal",
   "auto.cloud": "{brain}, as much as each message needs",
   "auto.mix": "What matters most",

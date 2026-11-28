@@ -80,6 +80,8 @@
   "brain.keyed": "En nøgle fra en tjeneste",
   "brain.free": "Gratis",
   "auto.how": "Sådan vælger Auto",
+  "auto.adjust": "Juster",
+  "auto.stakes": "Hver hjerne her læser de beskeder, den svarer på, til sin tjenestes pris og vilkår.",
   "auto.both": "{brain}, så meget som hver besked kræver, og denne enhed til alt personligt",
   "auto.cloud": "{brain}, så meget som hver besked kræver",
   "auto.mix": "Hvad der betyder mest",

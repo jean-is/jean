@@ -80,6 +80,8 @@
   "brain.keyed": "서비스의 키",
   "brain.free": "무료",
   "auto.how": "자동이 고르는 방법",
+  "auto.adjust": "조정",
+  "auto.stakes": "여기 있는 두뇌는 답하는 메시지를 읽어요. 요금과 조건은 각 서비스를 따라요.",
   "auto.both": "메시지마다 필요한 만큼 {brain}, 개인적인 내용은 이 기기",
   "auto.cloud": "메시지마다 필요한 만큼 {brain}",
   "auto.mix": "가장 중요한 것",

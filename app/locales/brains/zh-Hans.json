@@ -80,6 +80,8 @@
   "brain.keyed": "某个服务的密钥",
   "brain.free": "免费",
   "auto.how": "自动如何选择",
+  "auto.adjust": "调整",
+  "auto.stakes": "这里的每个大脑都会读取它回答的消息，价格和条款以其服务为准。",
   "auto.both": "按每条消息的需要使用 {brain}，个人内容则用这台设备",
   "auto.cloud": "按每条消息的需要使用 {brain}",
   "auto.mix": "最看重什么",

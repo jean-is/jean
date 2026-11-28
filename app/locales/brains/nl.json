@@ -80,6 +80,8 @@
   "brain.keyed": "Een sleutel van een dienst",
   "brain.free": "Gratis",
   "auto.how": "Hoe Auto kiest",
+  "auto.adjust": "Aanpassen",
+  "auto.stakes": "Elk brein hier leest de berichten die het beantwoordt, tegen de prijs en volgens de voorwaarden van zijn dienst.",
   "auto.both": "{brain}, zoveel als elk bericht vraagt, en dit apparaat voor alles wat persoonlijk is",
   "auto.cloud": "{brain}, zoveel als elk bericht vraagt",
   "auto.mix": "Wat het meest telt",

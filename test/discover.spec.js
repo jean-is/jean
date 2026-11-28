@@ -454,8 +454,10 @@ test('Auto’s steps: what matters most, each step any brain connected, and the 
     app.models.value = { claude: ['claude-haiku-4-5', 'claude-sonnet-5-5', 'claude-opus-5-5'].map((id) => ({ id })), gemini: ['gemini-3.5-flash-lite', 'gemini-3.8-flash', 'gemini-3.1-pro-preview'].map((id) => ({ id })) }
   })
   const brains = await openSettings(page, 'Brains')
-  await brains.getByRole('button', { name: 'How Auto chooses' }).click()
-  await expect(brains.getByRole('heading', { name: 'Auto' })).toBeFocused()
+  await brains.getByRole('button', { name: 'Adjust' }).click()
+  await expect(brains.getByRole('heading', { name: 'How Auto chooses' })).toBeFocused()
+  // Under the title, what is at stake: who reads the messages, at what price.
+  await expect(brains.locator('.brain-head + .muted')).toHaveText('Each brain here reads the messages it answers, at its service’s price and under its terms.')
   // Without Intuition every message gets its mix's everyday step: Smart when Balanced, the quick one to spend less, the top one for the best.
   const step = brains.getByRole('group', { name: 'Every message' })
   const version = step.getByTitle('Brain')
@@ -485,6 +487,9 @@ test('Auto’s steps: what matters most, each step any brain connected, and the 
   await expect(check).not.toBeChecked()
   await check.check()
   expect(await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.crossCheck)).toBe(true)
+  // Back on Brains, the keyboard is on Auto's Adjust, where it came from.
+  await brains.locator('.back').click()
+  await expect(brains.getByRole('button', { name: 'Adjust' })).toBeFocused()
   await closeSettings(page)
   await page.locator('.brain-chip').click()
   await expect(page.locator('#brain-menu').getByRole('button', { name: 'Fast' })).toHaveAttribute('title', /^gemini-3\.5-flash-lite/)
@@ -495,7 +500,7 @@ test('policy sets what matters most to Auto and its steps, which Settings shows 
   await withPolicy(page, { brains: [{ id: 'gateway', provider: 'openai', api: 'openai', baseURL: 'https://gateway.invalid/v1', model: 'small' }], mix: 'best', steps: [{ brain: 'gateway', model: 'small' }, {}, {}] })
   await start(page)
   const brains = await openSettings(page, 'Brains')
-  await brains.getByRole('button', { name: 'How Auto chooses' }).click()
+  await brains.getByRole('button', { name: 'Adjust' }).click()
   await expect(brains.getByRole('radio', { name: /^Best answers/ })).toBeChecked()
   await expect(brains.getByRole('radio', { name: /^Spend less/ })).toBeDisabled()
   await expect(brains.getByRole('group', { name: 'Every message' }).getByTitle('Brain')).toBeDisabled()
