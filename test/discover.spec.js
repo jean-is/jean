@@ -451,7 +451,7 @@ test('Auto’s steps: what matters most, each step any brain connected, and the 
       { id: 'claude', provider: 'anthropic', api: 'anthropic', baseURL: 'https://api.anthropic.invalid/v1', model: 'claude-sonnet-5-5' },
       { id: 'gemini', provider: 'gemini', api: 'openai', baseURL: 'https://gemini.invalid/v1beta/openai', model: 'gemini-3.8-flash' },
       { id: 'near', provider: 'lmstudio', api: 'openai', baseURL: 'http://localhost:1234/v1', model: 'qwen3.6-35b-a3b' }] })
-    app.models.value = { claude: ['claude-haiku-4-5', 'claude-sonnet-5-5', 'claude-opus-5-5'].map((id) => ({ id })), gemini: ['gemini-3.5-flash-lite', 'gemini-3.8-flash', 'gemini-3.1-pro-preview'].map((id) => ({ id })) }
+    app.models.value = { claude: ['claude-haiku-5-5', 'claude-sonnet-5-5', 'claude-opus-5-5'].map((id) => ({ id })), gemini: ['gemini-3.5-flash-lite', 'gemini-3.8-flash', 'gemini-4-carbon'].map((id) => ({ id })) }
   })
   const brains = await openSettings(page, 'Brains')
   await brains.getByRole('button', { name: 'Adjust' }).click()
@@ -464,7 +464,7 @@ test('Auto’s steps: what matters most, each step any brain connected, and the 
   await expect(brains.getByRole('radio', { name: /^Balanced/ })).toBeChecked()
   await expect(version.locator('option:checked')).toHaveText('claude-sonnet-5-5')
   await brains.getByRole('radio', { name: /^Spend less/ }).check()
-  await expect(version.locator('option:checked')).toHaveText('claude-haiku-4-5')
+  await expect(version.locator('option:checked')).toHaveText('claude-haiku-5-5')
   // That step becomes another maker's brain, thinking little, and the line under Auto names both.
   await version.selectOption({ label: 'gemini-3.5-flash-lite' })
   await step.getByTitle('Thinking').selectOption('low')
@@ -474,7 +474,7 @@ test('Auto’s steps: what matters most, each step any brain connected, and the 
   await expect(version.locator('option:checked')).toHaveText('claude-opus-5-5')
   // Picking what Auto would choose itself gives the step back to it, how much it thinks kept.
   await brains.getByRole('radio', { name: /^Spend less/ }).check()
-  await version.selectOption({ label: 'claude-haiku-4-5' })
+  await version.selectOption({ label: 'claude-haiku-5-5' })
   expect(await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.steps)).toEqual([{ effort: 'low' }, null, null])
   // A brain on this computer can be a step too, free.
   await version.selectOption({ label: 'qwen3.6-35b-a3b' })
