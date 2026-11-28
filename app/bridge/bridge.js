@@ -57,7 +57,7 @@ import { createInterface } from 'node:readline'
 import { pathToFileURL } from 'node:url'
 import { parseArgs } from 'node:util'
 
-const VERSION = '6'
+const VERSION = '7'
 const LEGACY = '2025-11-25'
 // What a command's output keeps, from its end; a request's body at most (a conversation, with its pictures).
 const KEPT = 1_000_000
@@ -181,7 +181,8 @@ async function firstOf(names) {
 }
 
 // Claude Code's names for the latest of each, which it keeps current: Auto's tiers, in order.
-const MODELS = ['haiku', 'sonnet', 'opus'].map((id) => ({ id, display_name: id[0].toUpperCase() + id.slice(1) }))
+// Claude Code's names, which one too old to list its versions offers: its best first, which a new brain starts on.
+const MODELS = ['opus', 'sonnet', 'haiku'].map((id) => ({ id, display_name: id[0].toUpperCase() + id.slice(1) }))
 // A conversation's CLI ends after this long without a request, and the least recently used idle one beyond this many.
 const IDLE_MS = 30 * 60_000
 const KEPT_SESSIONS = 8
@@ -395,6 +396,21 @@ export function modelsOf(result, first = false) {
   const current = option ? option.currentValue : result?.models?.currentModelId
   const models = listed.filter((/** @type {any} */ each) => each.id && each.id !== 'auto').map((/** @type {any} */ each) => ({ id: String(each.id), display_name: String(each.name ?? each.id) }))
   return first ? [...models.filter((each) => each.id === current), ...models.filter((each) => each.id !== current)] : models
+}
+
+/**
+ * Claude Code's versions, from the models its initialize lists, as its own picker has them: each name at the version it
+ * stands for ("sonnet" as claude-sonnet-5-5), once, in its order, so its default's first, which a new brain starts on.
+ * @param {any} models @returns {{ id: string, display_name: string }[]}
+ */
+export function versionsOf(models) {
+  /** @type {Map<string, string>} */
+  const named = new Map()
+  for (const each of Array.isArray(models) ? models : []) {
+    const id = each?.value === 'default' ? each.resolvedModel : each?.resolvedModel || each?.value
+    if (id && (each.value !== 'default' || !named.has(id))) named.set(String(id), String(each.value !== 'default' && each.displayName || id))
+  }
+  return [...named].map(([id, display_name]) => ({ id, display_name }))
 }
 
 /** ACP's reasons a turn ends, as Anthropic's. */
@@ -1172,6 +1188,35 @@ export async function bridge({ folder, origins, key, port, claude = [], copilot 
     return /** @type {object[] | false | null} */ (found)
   }
 
+  /** @type {{ at: number, models: object[] } | undefined} */
+  let versions
+
+  /**
+   * Claude Code's versions, as the Agent SDK asks for them: its initialize, which asks its brain nothing, with what connects it
+   * to the person's provider and nothing else of their settings, as a conversation has it. Kept an hour; one too old to list
+   * them, or not here, offers its names (MODELS). @returns {Promise<object[]>}
+   */
+  async function claudeVersions() {
+    if (versions && Date.now() - versions.at < MODELS_MS) return versions.models
+    const [{ env, helpers }, { program = 'claude', before }] = await Promise.all([reach(), whereIs('claude')])
+    const child = spawn(program, [...before, '-p', '--input-format', 'stream-json', '--output-format', 'stream-json', '--verbose', '--tools', '', '--strict-mcp-config',
+      '--setting-sources', '', '--settings', JSON.stringify(helpers), '--disable-slash-commands', '--no-session-persistence'], { cwd: temp, env })
+    child.on('error', () => {})
+    child.stdin.on('error', () => {})
+    child.stdin.end(`${JSON.stringify({ type: 'control_request', request_id: 'versions', request: { subtype: 'initialize' } })}\n`)
+    const said = await Promise.race([new Promise((done) => setTimeout(() => done(null), 30_000)), (async () => {
+      for await (const line of createInterface({ input: child.stdout, crlfDelay: Infinity })) {
+        const message = (() => { try { return JSON.parse(line) } catch { return null } })()
+        if (message?.type === 'control_response' && message.response?.request_id === 'versions') return message.response.response
+      }
+      return null
+    })()])
+    child.kill()
+    const found = versionsOf(/** @type {any} */ (said)?.models)
+    if (found.length) versions = { at: Date.now(), models: found }
+    return found.length ? found : MODELS
+  }
+
   /** Each CLI's sign-in under way, which another takes the place of, as when the person closed its page. @type {Partial<Record<Cli, import('node:child_process').ChildProcess>>} */
   const signing = {}
 
@@ -1523,7 +1568,7 @@ export async function bridge({ folder, origins, key, port, claude = [], copilot 
     const gone = new AbortController()
     res.on('close', () => { if (!res.writableFinished) gone.abort() })
     const json = (/** @type {number} */ status, /** @type {object} */ data) => res.writeHead(status, { 'content-type': 'application/json' }).end(JSON.stringify(data))
-    if (req.method === 'GET' && path === '/v1/models') return json(200, { data: MODELS })
+    if (req.method === 'GET' && path === '/v1/models') return json(200, { data: await claudeVersions() })
     const listed = /** @type {Speaker | undefined} */ ({ '/copilot/v1/models': 'copilot', '/antigravity/v1/models': 'antigravity' })[path]
     if (req.method === 'GET' && listed) {
       const found = await here(listed)

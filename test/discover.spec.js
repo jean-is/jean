@@ -490,10 +490,42 @@ test('Auto’s steps: what matters most, each step any brain connected, and the 
   // Back on Brains, the keyboard is on Auto's Adjust, where it came from.
   await brains.locator('.back').click()
   await expect(brains.getByRole('button', { name: 'Adjust' })).toBeFocused()
+  // Always the same has each version under its service's name, as the steps do: its tier and version alone, whole on a phone.
+  await expect(brains.getByRole('combobox', { name: 'Always the same' }).locator('optgroup[label="Anthropic"] option:checked')).toHaveText('Smart · claude-sonnet-5-5')
+  // Keeping to this device leaves Auto's line as it was: it says what Auto does once it's back.
+  const line = brains.locator('.brains > div').first().locator('small')
+  await expect(line).toContainText('Google Gemini and Anthropic')
+  await brains.getByRole('radio', { name: /^Keep on this device/ }).check()
+  await expect(brains.getByRole('radio', { name: /^Keep on this device/ })).toBeChecked()
+  await expect(line).toContainText('Google Gemini and Anthropic')
+  await brains.getByRole('radio', { name: /^Auto/ }).check()
   await closeSettings(page)
   await page.locator('.brain-chip').click()
   await expect(page.locator('#brain-menu').getByRole('button', { name: 'Fast' })).toHaveAttribute('title', /^gemini-3\.5-flash-lite/)
   await expect(page.locator('#brain-menu').getByRole('button', { name: 'Smart' })).toHaveAttribute('title', /^claude-sonnet-5-5/)
+})
+
+test('a plan’s page lists every version its program offers, Fast, Smart and Best first, each a step can be too', { tag: '@chromium' }, async ({ page }) => {
+  await start(page)
+  await page.evaluate(async () => {
+    const { app, updateSettings } = await import('/ui/state.js')
+    await updateSettings({ activeBrain: 'plan', brains: [{ id: 'plan', provider: 'claudecode', api: 'anthropic', baseURL: 'http://127.0.0.1:9/v1', model: 'sonnet' }] })
+    app.models.value = { plan: [['claude-opus-5-5', 'Opus 5.5'], ['claude-fable-5-2', 'Fable 5.2'], ['claude-sonnet-5-5', 'Sonnet 5.5'], ['claude-haiku-5-5', 'Haiku 5.5'], ['claude-opus-4-8', 'Opus 4.8']].map(([id, name]) => ({ id, name })) }
+  })
+  const brains = await openSettings(page, 'Brains')
+  await brains.locator('.brain-rows [data-brain="plan"]').click()
+  const versions = brains.getByRole('radiogroup', { name: 'Brain version' })
+  // A name it had before it listed versions stays, last, until another is picked; nothing to type, its list is the plan's.
+  await expect(versions.locator('strong')).toHaveText(['Haiku 5.5', 'Sonnet 5.5', 'Opus 5.5', 'Fable 5.2', 'Opus 4.8', 'sonnet'])
+  await expect(versions.getByRole('radio', { name: /^Haiku 5\.5/ })).toHaveAccessibleName('Haiku 5.5 Fast · in your Claude plan')
+  await expect(brains.getByRole('textbox', { name: 'Brain version' })).toHaveCount(0)
+  await versions.getByRole('radio', { name: /^Fable 5\.2/ }).check()
+  expect(await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.brains[0].model)).toBe('claude-fable-5-2')
+  await expect(versions.locator('strong')).toHaveText(['Haiku 5.5', 'Sonnet 5.5', 'Opus 5.5', 'Fable 5.2', 'Opus 4.8'])
+  // A step of Auto can be any of them.
+  await brains.locator('.back').click()
+  await brains.getByRole('button', { name: 'Adjust' }).click()
+  await expect(brains.getByRole('group', { name: 'Every message' }).getByTitle('Brain').locator('option')).toHaveText(['claude-haiku-5-5', 'claude-sonnet-5-5', 'claude-opus-5-5', 'claude-fable-5-2', 'claude-opus-4-8'])
 })
 
 test('policy sets what matters most to Auto and its steps, which Settings shows locked (D773)', { tag: '@chromium' }, async ({ page }) => {

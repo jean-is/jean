@@ -9,7 +9,8 @@
 // its thought in words only when --thinking-display asks for them; anything else is echoed with what came with it.
 // CLAUDE_SIGNED_OUT=1 plays one not signed in, or, naming a file, while it is there: `auth login` removes it, as a sign-in in
 // the browser leaves Claude Code's credentials, and CLAUDE_DECLINED plays one the person left; CLAUDE_OLD=1 one too old to know
-// --thinking-display, which it refuses; CLAUDE_PLAN its plan on claude.ai (max without it).
+// --thinking-display, which it refuses, and lists no versions; CLAUDE_PLAN its plan on claude.ai (max without it). Its initialize,
+// as the Agent SDK sends it, lists its versions, each name at the one it stands for, as Claude Code does.
 import { existsSync, rmSync } from 'node:fs'
 import { writeFile } from 'node:fs/promises'
 import { createInterface } from 'node:readline'
@@ -33,7 +34,7 @@ if (argv.slice(0, 3).includes('auth')) {
   process.exit(out ? 1 : 0)
 }
 const { values } = parseArgs({ args: argv, strict: false, options: { model: { type: 'string' }, 'system-prompt': { type: 'string' }, 'mcp-config': { type: 'string' }, tools: { type: 'string' }, settings: { type: 'string' }, 'thinking-display': { type: 'string' } } })
-const server = JSON.parse(String(values['mcp-config'])).mcpServers.jean
+const server = values['mcp-config'] ? JSON.parse(String(values['mcp-config'])).mcpServers.jean : null
 const out = (/** @type {object} */ line) => process.stdout.write(`${JSON.stringify(line)}\n`)
 const event = (/** @type {object} */ e) => out({ type: 'stream_event', event: e })
 
@@ -69,8 +70,16 @@ async function call(params) {
 const inbox = []
 /** @type {(() => void) | null} */
 let wake = null
+/** Its versions, as Claude Code 2.1 lists them: its default, its names, then versions of their own. */
+const VERSIONS = [
+  { value: 'default', resolvedModel: 'claude-opus-5-5', displayName: 'Default (recommended)' }, { value: 'opus', resolvedModel: 'claude-opus-5-5', displayName: 'Opus 5.5' },
+  { value: 'sonnet', resolvedModel: 'claude-sonnet-5-5', displayName: 'Sonnet 5.5' }, { value: 'haiku', resolvedModel: 'claude-haiku-5-5', displayName: 'Haiku 5.5' },
+  { value: 'claude-opus-4-8', resolvedModel: 'claude-opus-4-8', displayName: 'Opus 4.8' },
+]
 createInterface({ input: process.stdin }).on('line', (line) => {
-  inbox.push(JSON.parse(line).message.content)
+  const message = JSON.parse(line)
+  if (message.type === 'control_request') return out({ type: 'control_response', response: { subtype: 'success', request_id: message.request_id, response: { commands: [], ...!process.env.CLAUDE_OLD && { models: VERSIONS } } } })
+  inbox.push(message.message.content)
   wake?.()
 }).on('close', () => process.exit(0))
 const textOf = (/** @type {any[]} */ content) => content.filter((block) => block.type === 'text').map((block) => block.text).join('\n')

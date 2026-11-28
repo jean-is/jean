@@ -109,7 +109,7 @@ export default {
       <p class="allai-said">${say('thread.ask')}</p>
       <div class="allai-answer">
         <ul class="allai-bars">${list('thread.bars').map((what, i) => /* html */ `<li><span>${what}</span><svg aria-hidden="true"><rect height="100%" width="${(bars[i] / most * 100).toFixed(1)}%" rx="3"/></svg><b>${xml(money.format(bars[i]))}</b></li>`).join('')}</ul>
-        ${by(`${kit.appText('provider.claudecode')} · ${PROVIDERS.claudecode.defaultModel}`)}
+        ${by(`${kit.appText('provider.claudecode')} · ${PROVIDERS.anthropic.defaultModel}`)}
       </div>
       <figcaption>${say('thread.caption')}</figcaption>
     </figure>`

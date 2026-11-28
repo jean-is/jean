@@ -8,7 +8,7 @@ import { existsSync } from 'node:fs'
 import { mkdtemp, mkdir, readFile, writeFile, rm, realpath, stat } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
-import { bridge, jeans, modelsOf, snapshot } from '../app/bridge/bridge.js'
+import { bridge, jeans, modelsOf, snapshot, versionsOf } from '../app/bridge/bridge.js'
 import { mcpClient } from '../app/caps/connections/mcp.js'
 import { chromium } from '@playwright/test'
 
@@ -151,12 +151,19 @@ describe('Claude Code through the bridge (D235)', { skip: process.platform === '
     return { text, calls, done }
   }
 
-  test('it lists Claude Code’s own names, and says whether Claude Code is here and signed in', async () => {
-    assert.deepEqual((await llm.listModels({ brain, apiKey: KEY })).map((model) => model.id), ['haiku', 'sonnet', 'opus'])
+  test('it lists Claude Code’s versions, its default first, or its names when it is too old to, and says whether Claude Code is here and signed in', async () => {
+    process.env.CLAUDE_OLD = '1'
+    try {
+      assert.deepEqual((await llm.listModels({ brain, apiKey: KEY })).map((model) => model.id), ['opus', 'sonnet', 'haiku'])
+    } finally {
+      delete process.env.CLAUDE_OLD
+    }
+    assert.deepEqual((await llm.listModels({ brain, apiKey: KEY })).map((model) => [model.id, model.name]),
+      [['claude-opus-5-5', 'Opus 5.5'], ['claude-sonnet-5-5', 'Sonnet 5.5'], ['claude-haiku-5-5', 'Haiku 5.5'], ['claude-opus-4-8', 'Opus 4.8']])
     await assert.rejects(llm.listModels({ brain, apiKey: 'nope' }), { code: 'auth' })
     const client = mcpClient({ url: brain.baseURL.replace('/v1', '/'), client: { name: 'Jean', version: 'test' }, authorization: async () => `Bearer ${KEY}` })
     const about = (await client.callTool({ name: 'about' }, { claude: true })).structuredContent
-    assert.deepEqual([about.version, about.claude], ['6', true])
+    assert.deepEqual([about.version, about.claude], ['7', true])
     // How it reaches Claude, for what may read Google's services' data (D440), with no address of the user's own in the way,
     // which whatever runs these tests may have.
     const own = { ANTHROPIC_BASE_URL: process.env.ANTHROPIC_BASE_URL, ANTHROPIC_AUTH_TOKEN: process.env.ANTHROPIC_AUTH_TOKEN }
@@ -601,6 +608,11 @@ describe('what the bridge makes of an ACP CLI (D756)', () => {
     assert.deepEqual(modelsOf({ configOptions }, true).map((model) => model.id), ['b', 'a'])
     assert.deepEqual(modelsOf({ models: { currentModelId: 'y', availableModels: [{ modelId: 'x' }, { modelId: 'y', name: 'Y' }] } }, true), [{ id: 'y', display_name: 'Y' }, { id: 'x', display_name: 'x' }])
     assert.deepEqual(modelsOf({}), [])
+    // Claude Code's initialize: each name at its version, once, its default's place kept; a default it can't resolve is no version.
+    assert.deepEqual(versionsOf([{ value: 'default', resolvedModel: 'm-2', displayName: 'Default (recommended)' }, { value: 'big', resolvedModel: 'm-2', displayName: 'Big 2' }, { value: 'small' }, { value: 'm-1', resolvedModel: 'm-1' }]),
+      [{ id: 'm-2', display_name: 'Big 2' }, { id: 'small', display_name: 'small' }, { id: 'm-1', display_name: 'm-1' }])
+    assert.deepEqual(versionsOf([{ value: 'default', displayName: 'Default' }]), [])
+    assert.deepEqual(versionsOf(undefined), [])
   })
 })
 

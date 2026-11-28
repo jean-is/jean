@@ -85,7 +85,8 @@ const pairing = () => (paired ??= (async () => {
 /**
  * A plan's brain on this computer (D235, D262, D756): where Jean reaches it through the bridge, and whether it is ready
  * (Claude Code, Copilot or Antigravity there and signed in, the bridge signed in to ChatGPT with the plan's use), or
- * the bridge, started before it knew that plan, needs starting again, a CLI's before it could install and sign it in (6);
+ * the bridge, started before it knew that plan, needs starting again, a CLI's before it could install and sign it in (6),
+ * Claude Code's before it listed its versions (7);
  * here: the CLI there and signed in, there only (false), or not there (null); null while the bridge isn't running.
  * For Claude Code, how it reaches Claude too, as `claude auth status` says, for what may read Google's data (D440).
  * @param {string} provider claudecode, copilot, antigravity or chatgpt
@@ -98,7 +99,7 @@ export async function plan(provider) {
   const about = await clientOf(pair).callTool({ name: 'about' }, { [asked]: true }, AbortSignal.timeout(40_000)).catch(() => null)
   const found = about?.structuredContent?.[asked]
   return { baseURL: `http://127.0.0.1:${pair.port}${path}`, apiKey: pair.key, ready: found === true, here: found ?? null, terms: about?.structuredContent?.claudeTerms,
-    old: Boolean(about) && (found === undefined || provider !== 'chatgpt' && found !== true && Number(about?.structuredContent?.version) < 6) }
+    old: Boolean(about) && (found === undefined || Number(about?.structuredContent?.version) < (provider === 'claudecode' ? 7 : provider !== 'chatgpt' && found !== true ? 6 : 0)) }
 }
 
 /** A plan's CLI by its provider: claude, copilot or antigravity. @param {string} provider claudecode, copilot or antigravity */

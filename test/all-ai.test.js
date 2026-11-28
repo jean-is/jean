@@ -108,7 +108,7 @@ test('under each answer of its thread is the app’s own line, naming who answer
   for (const [lang, address] of Object.entries(page.addresses)) {
     const html = main(files[`${address}.html`])
     const app = await appWords(lang)
-    for (const brain of [app['provider.device'], `${app['provider.claudecode']} · ${PROVIDERS.claudecode.defaultModel}`]) {
+    for (const brain of [app['provider.device'], `${app['provider.claudecode']} · ${PROVIDERS.anthropic.defaultModel}`]) {
       assert.ok(html.includes(`</svg>${xml(fill(app['activity.answeredWith'], { brain }))}</p>`), `${lang}: ${brain}`)
     }
     const money = new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 })

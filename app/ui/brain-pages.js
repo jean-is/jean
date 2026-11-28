@@ -177,7 +177,7 @@ async function connectPlan(id, signed = false) {
     : { way: id, kind: 'info', message: t(`brain.${id}.install`), act: machine.installs(provider) ? { label: t(`brain.${id}.installAction`), run: () => readyPlan(machine, id, true) } : undefined })
   status.value = found && found.old ? { way: id, kind: 'error', message: t('brain.claude.restart', { computer: t('cap.machine.name') }) } : null
   if (!machine) openSettings('computer')
-  else if (found && found.ready) attempt(id, t(`provider.${provider}`), () => connectBrain({ provider, baseURL: found.baseURL, apiKey: found.apiKey }))
+  else if (found && found.ready && !found.old) attempt(id, t(`provider.${provider}`), () => connectBrain({ provider, baseURL: found.baseURL, apiKey: found.apiKey }))
 }
 
 /**
@@ -387,16 +387,22 @@ const choice = (id, mode, icon, name, text, choose, end = nothing, closed = fals
   <input id=${`answers-${id}`} type="radio" name="answers" .checked=${live(mode === id)} ?disabled=${closed || (app.project.value.data.cloud === false && id !== 'device')} @change=${choose}>
   <span class="item-icon">${icon}</span><span class="item-text"><strong>${name}</strong><small>${text}</small></span></label>${end}</div>`
 
-/** The brain Always the same answers with: the picker's choices, each its tier, its plan or where it answers from, and its model ("Fast · Claude · haiku", "LM Studio · flint"), the one picked by hand selected, at a version the picker no longer offers too. */
+/**
+ * The brain Always the same answers with: the picker's choices under their plan's or service's name, as Auto's steps have
+ * them, each its tier and its version ("Fast · haiku"), short enough that a phone shows it whole; the one picked by hand
+ * selected, at a version the picker no longer offers too.
+ */
 function same() {
   const [offered, active] = [choices(), activeBrain.value]
-  const named = (/** @type {BrainConfig} */ brain, /** @type {string} */ model, tier = '') => [tier, PLANS[brain.provider] ?? describe(brain).name, model.split('/').at(-1)].filter(Boolean).join(' · ')
+  const named = (/** @type {string} */ model, tier = '') => [tier, model.split('/').at(-1)].filter(Boolean).join(' · ')
   const at = offered.findIndex(({ brain, model }) => brain.id === active?.id && model === active.model)
   if (!offered.length && !active) return nothing
+  const brains = [...new Map([...offered.map(({ brain }) => brain), ...active && at < 0 ? [active] : []].map((brain) => [brain.id, brain])).values()]
   return html`<select class="brain-same" title=${t('brain.same')} ?disabled=${app.project.value.data.cloud === false}
     @change=${(/** @type {Event} */ e) => { const { brain, model } = offered[Number(valueOf(e))]; updateSettings({ auto: false, cloud: true }).then(() => useBrain(brain.id, model)) }}>
-    ${offered.map(({ label, tier, brain, model }, i) => html`<option value=${i} ?selected=${i === at}>${named(brain, model, tier ? label : '')}</option>`)}
-    ${active && at < 0 ? html`<option selected>${named(active, active.model)}</option>` : nothing}
+    ${brains.map((one) => html`<optgroup label=${PLANS[one.provider] ?? describe(one).name}>
+      ${offered.map(({ label, tier, brain, model }, i) => brain.id === one.id ? html`<option value=${i} ?selected=${i === at}>${named(model, tier ? label : '')}</option>` : nothing)}
+      ${active && at < 0 && active.id === one.id ? html`<option selected>${named(active.model)}</option>` : nothing}</optgroup>`)}
   </select>`
 }
 
@@ -444,8 +450,9 @@ function auto() {
   const sensed = loaded.value.has('reflexes')
   const mix = settings.mix ?? 'balanced'
   const tiers = /** @type {Record<string, string[]>} */ (app.policy.tiers ?? TIERS)
-  // What a step may be: each brain's Fast, Smart and Best that its list has, the version it is set to, and any a step names.
-  const versions = choosable.flatMap((brain) => [...new Set([...(tiers[brain.provider] ?? []).filter((model) => modelsOf(brain).some((info) => info.id === model)), brain.model,
+  // What a step may be: each brain's Fast, Smart and Best that its list has, a plan's every version, the version it is set to, and any a step names.
+  const versions = choosable.flatMap((brain) => [...new Set([...(tiers[brain.provider] ?? []).filter((model) => modelsOf(brain).some((info) => info.id === model)),
+    ...PLANS[brain.provider] ? modelsOf(brain).map((info) => info.id) : [], brain.model,
     ...steps.flatMap((step) => (step?.id === brain.id ? [step.model] : []))])].map((model) => ({ brain, model })))
   /** A kind of message: its step's brain and version, which to change, what it costs and how much it thinks. @param {unknown} icon @param {string} kind @param {number} level */
   const step = (icon, kind, level) => {
@@ -489,10 +496,10 @@ const thinks = (brain) => !/^(claudecode|copilot|antigravity)$/.test(brain.provi
 /**
  * Auto's steps here (D773): the brains it may set a step to, those in the cloud then those on this device or this computer,
  * the one in the cloud it leans on, each step as Auto would set it itself, and as it is, that brain as it is where its
- * service has no version for the step.
+ * service has no version for the step. Whoever answers now: Keep on this device leaves them as they are, for when Auto is back.
  */
 function ladder() {
-  const cloud = cloudAllowed() ? brainsHere.value.filter((brain) => !isLocal(brain)) : []
+  const cloud = brainsHere.value.filter((brain) => !isLocal(brain))
   const lean = cloud.find((brain) => brain.id === activeBrain.value?.id) ?? cloud[0]
   const choosable = lean ? [...cloud, ...brainsHere.value.filter(isLocal)] : []
   const input = { brains: choosable, preferred: lean?.id, tiers: app.policy.tiers ?? TIERS, has: (/** @type {BrainConfig} */ brain, /** @type {string} */ model) => modelsOf(brain).some((info) => info.id === model) }
@@ -531,18 +538,21 @@ function page(brain, closed) {
   const { name } = describe(brain)
   const models = app.models.value[brain.id] ?? []
   const tiers = (/** @type {Record<string, string[]>} */ (app.policy.tiers ?? TIERS)[brain.provider] ?? []).filter((model) => models.some((info) => info.id === model))
-  const version = (/** @type {string} */ model, level = tiers.indexOf(model)) => {
-    const info = models.find((one) => one.id === model)
-    return html`<div class=${brain.model === model ? 'is-selected' : ''}><label class="item" for=${`version-${level}`}><input id=${`version-${level}`} type="radio" name="version" .checked=${live(brain.model === model)} @change=${() => setVersion(brain.id, model)}>
+  // A plan's CLI lists the versions the plan may use, a few: every one is shown, Fast, Smart and Best first; a provider's list may hold hundreds, found by name.
+  const plan = Boolean(PLANS[brain.provider]) && models.length > 0
+  const shown = plan ? [...tiers, ...models.map((info) => info.id).filter((model) => !tiers.includes(model))] : tiers
+  const version = (/** @type {string} */ model, /** @type {number} */ at) => {
+    const [info, level] = [models.find((one) => one.id === model), tiers.indexOf(model)]
+    return html`<div class=${brain.model === model ? 'is-selected' : ''}><label class="item" for=${`version-${at}`}><input id=${`version-${at}`} type="radio" name="version" .checked=${live(brain.model === model)} @change=${() => setVersion(brain.id, model)}>
       <span class="item-text"><strong><bdi dir="ltr">${info?.name ?? model.split('/').at(-1)}</bdi></strong><small>${level < 0 ? '' : `${t(LEVELS[level])} · `}${price(brain, model, info?.pricing)}</small></span></label></div>`
   }
   return html`${head(name, line(brain))}
     ${troubles.value[brain.id] ? html`<div class="brain-wait" role="alert"><p>${said(brain)} ${fix(brain)}</p><button class="button" @click=${() => ask(brain)}>${t('action.retry')}</button></div>` : nothing}
     ${brain.api === 'device' ? nothing : html`<section><h3 id="brain-version">${t('brain.model')}</h3>
-      ${tiers.length ? html`<p class="muted small">${t('brain.versionHint', { brain: name })}</p>
-        <div class="list brains" role="radiogroup" aria-labelledby="brain-version">${tiers.map((model) => version(model))}${tiers.includes(brain.model) ? nothing : version(brain.model)}</div>` : nothing}
-      <input class="model-input" aria-labelledby="brain-version" title=${t('brain.model')} list=${`models-${brain.id}`} .value=${live(brain.model)} dir="ltr" @change=${(/** @type {Event} */ e) => setVersion(brain.id, valueOf(e).trim())}>
-      <datalist id=${`models-${brain.id}`}>${models.map((model) => html`<option value=${model.id}>${model.name ?? ''}</option>`)}</datalist>
+      ${shown.length ? html`${tiers.length ? html`<p class="muted small">${t('brain.versionHint', { brain: name })}</p>` : nothing}
+        <div class="list brains" role="radiogroup" aria-labelledby="brain-version">${shown.map(version)}${shown.includes(brain.model) ? nothing : version(brain.model, shown.length)}</div>` : nothing}
+      ${plan ? nothing : html`<input class="model-input" aria-labelledby="brain-version" title=${t('brain.model')} list=${`models-${brain.id}`} .value=${live(brain.model)} dir="ltr" @change=${(/** @type {Event} */ e) => setVersion(brain.id, valueOf(e).trim())}>
+      <datalist id=${`models-${brain.id}`}>${models.map((model) => html`<option value=${model.id}>${model.name ?? ''}</option>`)}</datalist>`}
       ${!closed && thinks(brain) && (effective.value.settings.hurried || brain.effort) ? html`<label for="brain-effort">${t('brain.thinking')}<select id="brain-effort" @change=${(/** @type {Event} */ e) => setEffort(brain.id, valueOf(e)).catch(showError)}>
         ${['', 'low', 'medium', 'high'].map((effort) => html`<option value=${effort} ?selected=${(brain.effort ?? '') === effort}>${t(effort ? `brain.thinking.${effort}` : 'auto.name')}</option>`)}</select></label>` : nothing}
     </section>`}

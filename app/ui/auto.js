@@ -27,7 +27,7 @@ export const TIERS = /** @type {Record<string, string[]>} */ ({
   vertex: ['google/gemini-3.5-flash-lite', 'google/gemini-3.8-flash', 'google/gemini-3.1-pro-preview'],
   mistral: ['mistral-small-latest', 'mistral-medium-latest', 'mistral-large-latest'],
   vercel: ['anthropic/claude-haiku-4.5', 'anthropic/claude-sonnet-5.5', 'anthropic/claude-opus-5.5'],
-  claudecode: ['haiku', 'sonnet', 'opus'],
+  claudecode: ['claude-haiku-5-5', 'claude-sonnet-5-5', 'claude-opus-5-5'],
   // Copilot's free one first: its plan counts the others' requests.
   copilot: ['gpt-5-mini', 'claude-sonnet-5.5', 'claude-opus-5.5'],
   antigravity: ['gemini-3.5-flash-lite', 'gemini-3.8-flash', 'gemini-3.1-pro'],

@@ -261,7 +261,7 @@ test('the user’s Claude plan answers, through Claude Code on this computer, wh
     await expect((await openSettings(page, 'Brains')).locator('.brain-rows button', { hasText: 'Claude Code' })).toContainText('In the cloud')
     await closeSettings(page)
     await ask(page, 'hello there')
-    await expect(page.locator('.msg-jean .prose').last()).toContainText(/Heard \((haiku|sonnet|opus), .*hello there/, { timeout: 20_000 })
+    await expect(page.locator('.msg-jean .prose').last()).toContainText(/Heard \(claude-(haiku|sonnet|opus)-5-5, .*hello there/, { timeout: 20_000 })
     // What it thought shows in the activity, under its line.
     await ask(page, 'think it over')
     await expect(page.locator('.msg-jean .prose').last()).toContainText('Thought it over', { timeout: 20_000 })
