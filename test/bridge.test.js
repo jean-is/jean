@@ -518,6 +518,8 @@ describe('a Gemini plan through Antigravity and the bridge (D756)', { skip: proc
 
   test('a plan’s limit is the brain’s limit, and a version Antigravity doesn’t offer says so', async () => {
     await assert.rejects(step([{ role: 'user', content: 'over the limit' }]), { code: 'rate_limit', message: /weekly limit/ })
+    // Said where the answer goes, as Antigravity 1.5.16 says it: a limit all the same, never the brain's words.
+    await assert.rejects(step([{ role: 'user', content: 'past my quota' }]), { code: 'rate_limit', message: /Individual quota reached/ })
     await assert.rejects(step([{ role: 'user', content: 'hello' }], [], { ...brain, model: 'gemini-9' }), { message: /Unknown model: gemini-9/ })
   })
 })
@@ -583,9 +585,11 @@ describe('a plan’s CLI installed and signed in from Jean (D767, D768)', { skip
 describe('what the bridge makes of an ACP CLI (D756)', () => {
   test('a call is Jean’s when its title names one of Jean’s tools and its kind is none of the CLI’s own work', () => {
     const tools = [{ name: 'weather' }, { name: 'find_tools' }]
-    for (const title of ['jean-weather', 'jean/weather', 'mcp(jean/weather)', 'weather', 'jean: find_tools']) assert.ok(jeans({ title, kind: 'other' }, tools), title)
+    // Antigravity 1.5.16 titles a call to an MCP server's tool `Run mcp_<server>_<tool>`.
+    for (const title of ['jean-weather', 'jean/weather', 'mcp(jean/weather)', 'weather', 'jean: find_tools', 'Run mcp_jean_weather', 'Run mcp_jean_find_tools']) assert.ok(jeans({ title, kind: 'other' }, tools), title)
     assert.ok(jeans({ title: 'jean/weather' }, tools))
-    for (const call of [{ title: 'Run weather', kind: 'execute' }, { title: 'jean/weather', kind: 'fetch' }, { title: 'jean/weather_now', kind: 'other' }, { title: 'jean/find', kind: 'other' }, { kind: 'other' }, null]) {
+    for (const call of [{ title: 'Run weather', kind: 'execute' }, { title: 'jean/weather', kind: 'fetch' }, { title: 'jean/weather_now', kind: 'other' }, { title: 'jean/find', kind: 'other' },
+      { title: 'Run mcp_jean_weather_now', kind: 'other' }, { title: 'Run run_weather', kind: 'other' }, { title: 'Run mcp_other_weather', kind: 'other' }, { kind: 'other' }, null]) {
       assert.equal(jeans(call, tools), false, JSON.stringify(call))
     }
   })

@@ -95,6 +95,11 @@ async function prompt(id, params) {
     say(params.sessionId, `In Lyon: ${said}, its own command ${ran ? 'run' : 'refused'}${steers()}`)
     answer({ result: { stopReason: 'end_turn', usage: { inputTokens: 30, outputTokens: 5, cachedReadTokens: 10 } } })
   } else if (/limit/i.test(text)) answer({ error: { code: -32603, message: 'Quota exhausted: your weekly limit is reached.' } })
+  // As 1.5.16 says a plan's quota: a notice where the answer goes, and the turn ended.
+  else if (/quota/i.test(text)) {
+    say(params.sessionId, '\n⚠ Individual quota reached. Please upgrade your subscription to increase your limits. Resets in 158h6m14s.\n')
+    answer({ result: { stopReason: 'end_turn', usage: { inputTokens: 0, outputTokens: 0 } } })
+  }
   else {
     // The agent's prompt, after the bridge's word on whose instructions these are, and whether it lists tools of its own.
     const file = await readFile(join(session.cwd, '.agents', 'agents', `${values.agent}.md`), 'utf8').catch(() => '')

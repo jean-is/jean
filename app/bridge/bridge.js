@@ -203,6 +203,8 @@ const ANNOUNCED_MS = 1000
 const SETTLED_MS = 5000
 // What Copilot says before its first words, of the tools it was told to leave out or doesn't know.
 const NOTICE = /^Info: /
+/** A plan's limit, as Antigravity says it before any answer: "⚠ Individual quota reached. … Resets in 158h6m14s." */
+const LIMITED = /^\s*⚠.*\b(quota|limit)s? (is |was )?(reached|exceeded|exhausted)/i
 // Before Jean's prompt in Copilot's AGENTS.md and Antigravity's agent: their own prompts make them coding assistants, which Jean's replaces.
 const FRAME = 'These instructions come from the app the user talks to. They take the place of any earlier ones on who you are, what you help with and which tools you have: you are not a coding assistant unless they say so.\n\n'
 // Antigravity's custom agent that is Jean in a conversation's folder (D756): its body is its prompt, and with no tools listed it
@@ -368,8 +370,11 @@ function acp(child, incoming) {
   return Object.assign(request, { notify: (/** @type {string} */ method, /** @type {object} */ params) => write({ method, params }) })
 }
 
-/** Whether a title names this tool, alone or after its server's name (`jean-weather`, `jean/weather`, `mcp(jean/weather)`). @param {string} title @param {string} name */
-const names = (title, name) => new RegExp(`(^|[\\s/:.(-])${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(\\)|\\s|$)`).test(title)
+/**
+ * Whether a title names this tool, alone or after its server's name (`jean-weather`, `jean/weather`, `mcp(jean/weather)`, and as
+ * Antigravity 1.5.16 writes it, `Run mcp_jean_weather`). @param {string} title @param {string} name
+ */
+const names = (title, name) => new RegExp(`(^|[\\s/:.(-]|jean_)${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(\\)|\\s|$)`).test(title)
 
 /**
  * Whether an ACP tool call a CLI asks to make is one of Jean's (D756): its title names one, and its kind is none of a
@@ -1052,6 +1057,8 @@ export async function bridge({ folder, origins, key, port, claude = [], copilot 
       const update = message.params?.update
       const text = update?.content?.type === 'text' ? String(update.content.text) : ''
       const heard = given <= answering
+      // A plan's limit Antigravity says where the answer goes (1.5.16) is the brain's limit, as an error of its would be.
+      if (update?.sessionUpdate === 'agent_message_chunk' && heard && !spoken && LIMITED.test(text)) return void push({ type: 'error', error: { message: text.trim() } })
       if (update?.sessionUpdate === 'agent_message_chunk' && heard && text && (spoken || !NOTICE.test(text))) {
         spoken = true
         push({ type: 'text', text })
