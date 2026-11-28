@@ -14,7 +14,7 @@ import { styleSheet } from './sheet.js'
 import { icon, icons } from './menu-icons.js'
 import { counts } from './kinds.js'
 import { brainName } from './chat.js'
-import { nameAt } from './creations.js'
+import { naming } from './named.js'
 
 /** @import { Step } from '../core/events.js' */
 /** @import { ToolCallInfo, ResourceLink } from '../core/types.js' */
@@ -96,7 +96,7 @@ function nameOf(entry, files) {
  * A place a call worked on, by name: a file shared in the conversation, the project's creation there (a document, a collection…), never its
  * place, which holds its id; else the file's own name. @param {string} path @param {ResourceLink[]} files
  */
-const named = (path, files) => files.findLast((file) => file.uri === path)?.name ?? nameAt(path) ?? path.split('/').at(-1) ?? path
+const named = (path, files) => files.findLast((file) => file.uri === path)?.name ?? naming.value?.(path) ?? path.split('/').at(-1) ?? path
 
 /**
  * Plain-language label in the current language: from the kind and the file it touched, or

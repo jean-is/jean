@@ -12,6 +12,7 @@ import { signal, effect } from '@preact/signals-core'
 import { app, newConversation, newTasks, openFile, turnPage } from './state.js'
 import { slots, loaded } from './caps.js'
 import { keep } from './windows.js'
+import { naming } from './named.js'
 import { styleSheet } from './sheet.js'
 import { t } from '../core/i18n.js'
 import { icon } from './menu-icons.js'
@@ -35,6 +36,7 @@ export const creationsHere = async () => (await Promise.all(slots('creations').m
 export const all = signal(/** @type {Awaited<ReturnType<typeof creationsHere>>} */ ([])), shown = signal(false), read = signal(false)
 /** The name of the one at a place, as they are listed, which a step says rather than its place and the id in it. @param {string} place */
 export const nameAt = (place) => all.value.find((one) => one.path === place)?.name
+naming.value = nameAt
 let reading = 0
 // Each kind's as soon as it is read, so that a slow kind (the scores of many tasks) holds back none of the others.
 export const reread = () => { const at = ++reading, kinds = slots('creations'); return Promise.all(kinds.map((kind) => of(kind).then((list) => { if (at === reading) all.value = [...all.value.filter((one) => one.kind !== kind && kinds.includes(one.kind)), ...list].sort(latest) }))).then(() => { if (at === reading) read.value = true }).catch(console.warn) }

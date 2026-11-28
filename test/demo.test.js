@@ -7,6 +7,7 @@ import { readFile } from 'node:fs/promises'
 import { createHash } from 'node:crypto'
 import { PACE, exchanges, requestOf, words, beats } from '../app/ui/replay.js'
 import { applyUpdate } from '../app/core/events.js'
+import { extractStaticImports, parseImportMap, resolveSpecifier } from '../scripts/graph.js'
 
 const lines = (await readFile(new URL('./fixtures/demo.jsonl', import.meta.url), 'utf8')).trim().split('\n').map((line) => JSON.parse(line))
 const records = lines.slice(1)
@@ -65,4 +66,26 @@ test('demo.html runs only its import map, by its hash, and Jean’s own modules,
   assert.equal(JSON.parse(map).imports['./ui/state.js'], './ui/reader-state.js')
   assert.match(csp, /connect-src 'self';/)
   assert.match(csp, /require-trusted-types-for 'script'; trusted-types lit-html app-urls$/)
+})
+
+test('the copy’s state has every name a demo’s modules take from the room’s, so that none of them fails to load', async () => {
+  const read = (/** @type {string} */ path) => readFile(new URL(`../app/${path}`, import.meta.url), 'utf8')
+  // What demo.html puts in a module's place, by their paths in app/.
+  const stood = Object.fromEntries(Object.entries(parseImportMap(await read('demo.html')).imports).filter(([from]) => from.startsWith('./')).map(([from, to]) => [from.slice(2), to.slice(2)]))
+  const state = await read(stood['ui/state.js'])
+  const has = new Set([...[...state.matchAll(/^export (?:const|async function|function) (\w+)/gm)].map((match) => match[1]),
+    ...[...state.matchAll(/^export \{([^}]*)\}/gm)].flatMap((match) => match[1].split(',').map((part) => part.trim().split(/\s+as\s+/).at(-1)))])
+  // What a demo loads as it plays, each with all it imports: the conversation, a stretch's lines, a page's parts and a tour.
+  const queue = ['ui/demo.js', 'ui/chat.js', 'ui/steps.js', 'caps/interactive/interactive.js', 'caps/tour/tour.js'], seen = new Set(queue)
+  for (let path; (path = queue.shift());) {
+    const source = await read(path)
+    for (const [, names, from] of source.matchAll(/^import \{([^}]*)\} from '([^']+)'/gm)) {
+      if (resolveSpecifier(from, path) !== 'ui/state.js') continue
+      for (const name of names.split(',').map((part) => part.trim().split(/\s+as\s+/)[0]).filter(Boolean)) assert.ok(has.has(name), `${path} takes ${name}, which ${stood['ui/state.js']} lacks`)
+    }
+    for (const specifier of extractStaticImports(source)) {
+      const found = resolveSpecifier(specifier, path), to = found && (stood[found] ?? found)
+      if (to && !to.startsWith('vendor/') && !seen.has(to)) seen.add(to), queue.push(to)
+    }
+  }
 })
