@@ -31,7 +31,7 @@ export const PROVIDERS = {
   gemini: { api: 'openai', baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai', defaultModel: 'gemini-3.8-flash', needsKey: true },
   // {project} is the user's Google Cloud project; the key is a service account's key file, or an hour-long access token (vertex.js).
   vertex: { api: 'openai', baseURL: 'https://aiplatform.googleapis.com/v1/projects/{project}/locations/global/endpoints/openapi', defaultModel: 'google/gemini-3.8-flash', needsKey: true, trains: false },
-  mistral: { api: 'openai', baseURL: 'https://api.mistral.ai/v1', defaultModel: 'mistral-medium-latest', needsKey: true },
+  mistral: { api: 'openai', baseURL: 'https://api.mistral.ai/v1', defaultModel: 'mistral-large-latest', needsKey: true },
   meta: { api: 'openai', baseURL: 'https://api.meta.ai/v1', defaultModel: 'muse-spark-1.3', needsKey: true },
   huggingface: { api: 'openai', baseURL: 'https://router.huggingface.co/v1', defaultModel: null, needsKey: true, keyCheck: 'https://huggingface.co/api/whoami-v2' },
   vercel: { api: 'openai', baseURL: 'https://ai-gateway.vercel.sh/v1', defaultModel: 'anthropic/claude-sonnet-5.5', needsKey: true, keyCheck: 'https://ai-gateway.vercel.sh/v1/credits' },

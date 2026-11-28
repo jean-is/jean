@@ -22,10 +22,11 @@ import { isLocal } from '../core/settings.js'
 export const TIERS = /** @type {Record<string, string[]>} */ ({
   anthropic: ['claude-haiku-5-5', 'claude-sonnet-5-5', 'claude-opus-5-5'],
   openrouter: ['google/gemini-3.8-flash', 'anthropic/claude-sonnet-5.5', 'anthropic/claude-opus-5.5'],
-  openai: ['gpt-6-luna', 'gpt-6-sol', 'gpt-6-astra'],
+  openai: ['gpt-6-luna', 'gpt-6.2-sol', 'gpt-6.2-astra'],
   gemini: ['gemini-3.5-flash-lite', 'gemini-3.8-flash', 'gemini-4-carbon'],
   vertex: ['google/gemini-3.5-flash-lite', 'google/gemini-3.8-flash', 'google/gemini-4-carbon'],
-  mistral: ['mistral-small-latest', 'mistral-medium-latest', 'mistral-large-latest'],
+  // Mistral's Medium is retired and its Large costs less than it did: Best is the brain as it is, Large unless the person changed it.
+  mistral: ['mistral-small-latest', 'mistral-large-latest'],
   vercel: ['anthropic/claude-haiku-5.5', 'anthropic/claude-sonnet-5.5', 'anthropic/claude-opus-5.5'],
   claudecode: ['claude-haiku-5-5', 'claude-sonnet-5-5', 'claude-opus-5-5'],
   // Copilot's free one first: its plan counts the others' requests.
