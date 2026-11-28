@@ -396,6 +396,7 @@ Screen sharing (D699), on a computer, is found from a capture of the screen or w
 - **Coverage.** 54 locales. They cover right-to-left languages (Arabic, Hebrew, Persian, Urdu, Pashto), Chinese, Japanese and Korean, the major Indic and Southeast Asian languages (Punjabi, Gujarati and Burmese among them), African languages (Igbo, Oromo and Zulu among them), Breton and Corsican, French as Canada writes it (D496), Latin, and ten of the European Union's official languages Jean lacked (D563). Translations are machine-made, with no per-language review (D44).
 - **Instant switching.** The language changes immediately, with no reload, including in past conversations (activity labels are rendered from structured data).
 - **Conversations.** Jean replies in the language of the user's last message, and otherwise in the UI language.
+- **Register** (D776). Under the language in Settings › General, Tone sets how answers speak to the person: Formal, Everyday, which is the default, or Casual, as each language marks them (*vous* or *tu*, *Sie* or *du*, Japanese's polite forms). French has a fourth, Vieux françois, the French of Rabelais and Montaigne, for the pleasure of it. It changes Jean's answers only: the interface keeps its own form of address, and a letter or a document Jean writes for someone else takes the register it needs.
 
 ## In an editor
 

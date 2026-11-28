@@ -22,14 +22,15 @@ const RULES = [
 ]
 
 /**
- * The context a conversation starts with, in prompt order: the project's name, the user's
+ * The context a conversation starts with, in prompt order: the register the user asked to be addressed in
+ * (D776, ui/register.js), the project's name, the user's
  * instructions (organisation, global, project), what Jean noticed, the skills ("name: when
  * to use it"), the connected services and their tools, the documents and tables the project keeps
  * (D488, D491), the folder the conversation works in (D141), the page open in the browser. Each is frozen with
  * the rest, then changed by notes.
- * @typedef {Partial<Record<'project' | 'instructions' | 'memory' | 'skills' | 'connections' | 'documents' | 'tables' | 'designs' | 'folder' | 'page', string>>} Sections
+ * @typedef {Partial<Record<'register' | 'project' | 'instructions' | 'memory' | 'skills' | 'connections' | 'documents' | 'tables' | 'designs' | 'folder' | 'page', string>>} Sections
  */
-const SECTIONS = /** @type {const} */ (['project', 'instructions', 'memory', 'skills', 'connections', 'documents', 'tables', 'designs', 'folder', 'page'])
+const SECTIONS = /** @type {const} */ (['register', 'project', 'instructions', 'memory', 'skills', 'connections', 'documents', 'tables', 'designs', 'folder', 'page'])
 
 /**
  * @typedef {Object} PromptInput

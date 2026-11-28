@@ -32,7 +32,7 @@ const RELAY = 4187
 // changes the words and the layout, which are style sheets, not the engine's logic.
 const CHROMIUM_ONLY = ['out', 'report', 'begin', 'collect', 'soon', 'look', 'related', 'sources', 'people', 'together', 'colleagues', 'about', 'approvals', 'ask', 'audit', 'authority', 'away', 'compact', 'compare', 'delegate', 'demo', 'dlp', 'find', 'flows', 'google', 'session', 'starters', 'feedback', 'company-server', 'tour',
   'guards', 'help', 'learn', 'lists', 'meaning', 'microsoft', 'notifications', 'panes', 'plan', 'policy', 'reach', 'remember', 'retention', 'signin', 'site', 'steer',
-  'thinking', 'you', 'compose']
+  'thinking', 'you', 'compose', 'register']
 
 // Only the specs a change affects, as the last runs read them (scripts/affected.js): AFFECTED=<base>, or AFFECTED=1 since
 // origin/main, picks them; SPECS names them, as npm run ci -- --affected does. Each runs in every engine that runs it.

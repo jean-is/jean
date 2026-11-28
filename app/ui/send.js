@@ -186,14 +186,16 @@ async function approve(toolCall, conversation) {
  * @param {{ id: string, path: string, records: Envelope[] } | null} task null: one about to start on screen
  * @returns {Promise<import('../core/prompt.js').Sections>}
  */
-async function context(task) {
+async function context(task, told = false) {
   const { dir, data, body } = app.project.value
   const home = data.default === true
   const instructions = [app.policy.instructions, await readBody('instructions.md'), home ? '' : await readBody(`${dir}/instructions.md`)].filter(Boolean).join('\n\n')
   const added = await Promise.all(contributions().sections.map((section) => section(task)))
   // The project's name, then what the user calls its assistant there and how it should be.
   const project = [String(data.name), ...(data.assistantName ? [`The user calls you ${data.assistantName} here.`] : []), ...(body.trim() ? [`How to be: ${body.trim()}`] : [])].join('\n')
-  return Object.assign({ ...(!home && { project }), ...(instructions && { instructions }) }, ...added)
+  // The register answers address the person in (D776), its module read once one is chosen, or the conversation was told one.
+  const { register: kept } = app.settings.value, register = kept || told ? (await import('./register.js')).registerLine(kept, locale.value, told) : ''
+  return Object.assign({ ...(register && { register }), ...(!home && { project }), ...(instructions && { instructions }) }, ...added)
 }
 
 /** When a request stops waiting for capabilities to come back: five seconds after the first one waited, and from then on at once. */
@@ -225,9 +227,9 @@ async function prepare(text, brain, task, notes = [], items = app.attachments.va
   const tools = all.filter((tool) => tool.for?.(brain) ?? true)
   // Connections' tools are deferred: found with find_tools, never declared upfront (D47); one the user turned off isn't either (D304).
   const names = tools.filter((tool) => !tool.hidden && !tool.deferred && !tool.off).map((tool) => tool.spec.name)
-  const sections = await context(task)
-  const now = promptState({ language: languageName(locale.value, 'en'), tools: names, sections })
   const frozen = frozenPrompt(records)
+  const sections = await context(task, Boolean(frozen?.state.sections?.register))
+  const now = promptState({ language: languageName(locale.value, 'en'), tools: names, sections })
   const head = frozen
     ? changeNotes(frozen.state, now, sections, tools.filter((tool) => tool.off).map((tool) => tool.spec.name))
     : [promptRecord(app.deviceId, buildSystemPrompt({ assistantName: assistantName(), uiLanguage: now.language, tools: lines.filter((line) => tools.some((tool) => tool.spec.name === line.name) || !all.some((tool) => tool.spec.name === line.name)), rules, sections, now: new Date() }), now)]

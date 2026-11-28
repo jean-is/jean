@@ -15,6 +15,7 @@ import { site } from './csp.js'
 import { t, tParts, locale, dir, intlLocales, useStrings, languageName, preferredLocales } from '../core/i18n.js'
 import { deviceVoices, listen, natural, SPEAKERS } from './voices.js'
 import { voiceMenu } from './language.js'
+import { registersOf, OLD_FRENCH } from './register.js'
 import { speaking } from './speech.js'
 import { icons } from './menu-icons.js'
 import { sidebarBody, keyNames, backwards } from './inbox.js'
@@ -168,7 +169,8 @@ const looked = signal('')
 const lookNow = () => { looked.value = 'settings.checking'; import('./update.js').then((update) => update.look()).then((next) => { looked.value = next ? '' : 'settings.newest' }, (error) => { looked.value = error instanceof TypeError ? 'error.network' : 'error.unknown' }) }
 
 /**
- * Settings' General: its title; the language, with its shortcut or who set it; Reading aloud, the voice that reads
+ * Settings' General: its title; the language, with its shortcut or who set it, and the register answers address the
+ * person in, of those this language offers (D776); Reading aloud, the voice that reads
  * the interface's language with Listen, and what capabilities add (the natural voice's row, which opens its page); While
  * you're away, Notifications once found; at its foot, the version and when it was made, and a check for a new one. A capability's part is a
  * row in a group, `{ id, at, group, draw, page? }`.
@@ -186,6 +188,8 @@ function general() {
   const chosen = [...plain, ...others].some(({ voice }) => voice.name === settings.voice) ? settings.voice : reads ? '' : plain[0]?.voice.name
   const option = (/** @type {{ voice: SpeechSynthesisVoice, label: string }} */ { voice, label }) => html`<option value=${voice.name} ?selected=${voice.name === chosen}>${label}</option>`
   const sample = speaking.value === 'sample'
+  // One kept for French shows as the everyday one elsewhere, and is there again in French.
+  const register = registersOf(tag).includes(settings.register ?? '') ? settings.register ?? '' : ''
   const voice = plain.length || others.length || reads ? html`<li><span class="item-icon">${icons.speaker}</span>
     <span class="item-text"><strong id="general-voice">${t('settings.voice')}</strong><small>${t('settings.voiceText')}</small></span>
     <button type="button" class="icon-button listen" aria-label=${t(sample ? 'action.stop' : 'settings.listen')} @click=${() => listen(t('settings.sample'), tag, settings.voice)}>${sample ? icons.stop : icons.play}</button>
@@ -204,7 +208,11 @@ function general() {
         : html`<small class="keys"><kbd><bdi dir="ltr">${keyNames(SHORTCUTS.language)}</bdi></kbd> ${t('keyboard.language')}</small>`}</span>
       <select aria-labelledby="general-language" autocomplete="language" ?disabled=${locked.has('locale')} aria-keyshortcuts=${locked.has('locale') ? nothing : `${SHORTCUTS.language} ${backwards(SHORTCUTS.language)}`}
         .value=${picked.value || locale.value} @change=${(/** @type {Event} */ e) => { picked.value = valueOf(e) }}>${languageOptions()}</select>
-      ${picked.value && picked.value !== locale.value ? html`<button class="button primary language-change" @click=${(/** @type {Event} */ e) => { /** @type {HTMLElement} */ (/** @type {Element} */ (e.currentTarget).previousElementSibling).focus(); setLocale(picked.value); picked.value = '' }}>${t('settings.changeLanguage')}</button>` : nothing}</li></ul>
+      ${picked.value && picked.value !== locale.value ? html`<button class="button primary language-change" @click=${(/** @type {Event} */ e) => { /** @type {HTMLElement} */ (/** @type {Element} */ (e.currentTarget).previousElementSibling).focus(); setLocale(picked.value); picked.value = '' }}>${t('settings.changeLanguage')}</button>` : nothing}</li>
+      <li><span class="item-icon">${icons.compose}</span>
+      <span class="item-text"><strong id="general-register">${t('settings.register')}</strong><small>${t('settings.registerText')}</small></span>
+      <select class="register" aria-labelledby="general-register" @change=${(/** @type {Event} */ e) => updateSettings({ register: /** @type {import('../core/types.js').Settings['register']} */ (valueOf(e) || undefined) })}>
+        ${registersOf(tag).map((id) => html`<option value=${id} lang=${id === 'old' ? 'fr' : nothing} ?selected=${id === register}>${id === 'old' ? OLD_FRENCH : t(`register.${id || 'everyday'}`)}</option>`)}</select></li></ul>
     ${group('reading', [voice, ...drawn('reading')].filter((row) => row !== nothing))}
     ${group('away', drawn('away'))}
     ${version && date ? html`<p class="muted small version">${tParts('settings.version', { name: BRAND.name, version, date: html`<time datetime=${date}>${madeOn(date)}</time>` })}</p>` : nothing}

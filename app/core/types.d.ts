@@ -190,7 +190,7 @@ export type SystemNoteData = { others?: true } & (
   /** tools the user turned off, still declared, or on again (D304) */
   | { kind: 'switch', off?: string[], on?: string[] }
   /** version: the section's fingerprint now, '' when it is empty */
-  | { kind: 'section', name: 'project' | 'instructions' | 'memory' | 'skills' | 'connections' | 'documents' | 'tables' | 'designs' | 'folder' | 'page', version: string }
+  | { kind: 'section', name: 'register' | 'project' | 'instructions' | 'memory' | 'skills' | 'connections' | 'documents' | 'tables' | 'designs' | 'folder' | 'page', version: string }
   /** the user came back: a routine's run set off by it only reads ("Since last time", D101) */
   | { kind: 'since', since: string }
   /** the user marked the answer to the request at `answer` as not right, its words the next message, and asked it kept in mind (D712) */
@@ -289,6 +289,8 @@ export interface Settings {
   rules: Record<string, RuleValue>
   guards?: import('./rules.js').Guard[]
   voice: string | null
+  /** the register answers address the person in, none for the everyday one; `old`, French's own, the French of Rabelais and Montaigne (D776) */
+  register?: 'formal' | 'casual' | 'old'
   /** what the user is called, set by them or once by Jean from a conversation; '' when they cleared it */
   name?: string
   /** capabilities discovered so far */
