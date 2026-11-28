@@ -349,6 +349,11 @@ test('Auto: each step any brain connected, how much it thinks, and a mix that cl
   assert.deepEqual(stepsOf({ brains: [claude, gemini], preferred: 'c' }).map((brain) => brain?.model), ['claude-haiku-4-5', 'claude-sonnet-5-5', 'claude-opus-5-5'])
   assert.deepEqual(stepsOf({ brains: [groq] }), [null, null, null])
   assert.deepEqual(stepsOf({ brains: [claude], has: (_, model) => model !== 'claude-haiku-4-5' }).map((brain) => brain?.model), [undefined, 'claude-sonnet-5-5', 'claude-opus-5-5'])
+  // The plans' steps are versions their programs list: Claude Code's, and Antigravity's, which offers no Gemini deeper than Gemini 4's fast one.
+  const listed = { claudecode: ['claude-opus-5-5', 'claude-fable-5-2', 'claude-sonnet-5-5', 'claude-haiku-5-5'], antigravity: ['gemini-4-hydrogen', 'gemini-3.8-flash', 'claude-sonnet-4-6', 'claude-opus-4-6-thinking', 'gpt-oss-120b-medium'] }
+  const plan = (/** @type {'claudecode' | 'antigravity'} */ provider) => stepsOf({ brains: [{ id: 'p', provider, api: 'anthropic', baseURL: 'http://127.0.0.1:41000/v1', model: listed[provider][0] }], has: (_, model) => listed[provider].includes(model) }).map((brain) => brain?.model)
+  assert.deepEqual(plan('claudecode'), ['claude-haiku-5-5', 'claude-sonnet-5-5', 'claude-opus-5-5'])
+  assert.deepEqual(plan('antigravity'), ['gemini-3.8-flash', 'gemini-4-hydrogen', undefined])
   // A step the user set is any brain and version, whoever makes it; one whose brain isn't here gives way to the usual.
   const steps = [{ brain: 'g', model: 'gemini-3.5-flash-lite', effort: /** @type {const} */ ('low') }, null, { brain: 'q', model: 'kimi-k3', effort: /** @type {const} */ ('high') }]
   assert.deepEqual(stepsOf({ brains: [claude, gemini, groq], preferred: 'c', steps }).map((brain) => brain && `${brain.id}:${brain.model}`), ['g:gemini-3.5-flash-lite', 'c:claude-sonnet-5-5', 'q:kimi-k3'])

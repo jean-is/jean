@@ -30,7 +30,8 @@ export const TIERS = /** @type {Record<string, string[]>} */ ({
   claudecode: ['claude-haiku-5-5', 'claude-sonnet-5-5', 'claude-opus-5-5'],
   // Copilot's free one first: its plan counts the others' requests.
   copilot: ['gpt-5-mini', 'claude-sonnet-5.5', 'claude-opus-5.5'],
-  antigravity: ['gemini-3.5-flash-lite', 'gemini-3.8-flash', 'gemini-3.1-pro'],
+  // Antigravity offers Gemini 4's fast one and none deeper: Best is the brain as it is until it does.
+  antigravity: ['gemini-3.8-flash', 'gemini-4-hydrogen'],
   chatgpt: ['gpt-6-luna', 'gpt-6-sol', 'gpt-6-astra'],
 })
 
