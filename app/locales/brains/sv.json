@@ -90,6 +90,8 @@
   "auto.mix.best": "Bästa svaren",
   "auto.mix.bestText": "Den starkaste hjärnan för allt utöver en snabb fråga, med grundligt tänkande",
   "auto.brain": "Hjärna",
+  "auto.check": "Dubbelkolla med en annan tillverkare",
+  "auto.checkText": "En hjärna från en annan tillverkare kontrollerar svaren mot deras källor: de kontrollerade avsnitten går också till dess tjänst",
   "auto.quick": "En snabb fråga",
   "auto.everyday": "En vardaglig uppgift",
   "auto.demanding": "En krävande uppgift",

@@ -90,6 +90,8 @@
   "auto.mix.best": "最良の答え",
   "auto.mix.bestText": "簡単な質問以外はいちばん強い頭脳で、じっくり考えます",
   "auto.brain": "頭脳",
+  "auto.check": "別のメーカーで再確認",
+  "auto.checkText": "別のメーカーの頭脳が答えを出典と照らし合わせます。確かめる箇所はそのサービスにも送られます",
   "auto.quick": "簡単な質問",
   "auto.everyday": "ふだんの作業",
   "auto.demanding": "手のかかる作業",

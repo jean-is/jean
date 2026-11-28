@@ -90,6 +90,8 @@
   "auto.mix.best": "Best answers",
   "auto.mix.bestText": "The strongest brain past a quick question, thinking thoroughly",
   "auto.brain": "Brain",
+  "auto.check": "Double-check with another maker",
+  "auto.checkText": "A brain from another maker checks answers against their sources: the passages it checks go to its service too",
   "auto.quick": "A quick question",
   "auto.everyday": "An everyday task",
   "auto.demanding": "A demanding task",

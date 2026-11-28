@@ -90,6 +90,8 @@
   "auto.mix.best": "Najlepsze odpowiedzi",
   "auto.mix.bestText": "Najsilniejszy mózg do wszystkiego poza krótkim pytaniem, z dogłębnym namysłem",
   "auto.brain": "Mózg",
+  "auto.check": "Sprawdzanie przez innego twórcę",
+  "auto.checkText": "Mózg innego twórcy sprawdza odpowiedzi z ich źródłami: sprawdzane fragmenty trafiają też do jego usługi",
   "auto.quick": "Krótkie pytanie",
   "auto.everyday": "Codzienne zadanie",
   "auto.demanding": "Wymagające zadanie",

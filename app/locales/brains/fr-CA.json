@@ -90,6 +90,8 @@
   "auto.mix.best": "Les meilleures réponses",
   "auto.mix.bestText": "Le cerveau le plus fort dès qu’une question n’est pas rapide, avec une réflexion approfondie",
   "auto.brain": "Cerveau",
+  "auto.check": "Vérifier avec un autre fabricant",
+  "auto.checkText": "Un cerveau d’un autre fabricant vérifie les réponses d’après leurs sources : les passages vérifiés vont aussi à son service",
   "auto.quick": "Une question rapide",
   "auto.everyday": "Une tâche courante",
   "auto.demanding": "Une tâche exigeante",

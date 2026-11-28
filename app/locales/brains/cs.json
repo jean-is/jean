@@ -90,6 +90,8 @@
   "auto.mix.best": "Nejlepší odpovědi",
   "auto.mix.bestText": "Nejsilnější mozek na vše kromě rychlých otázek, s důkladným přemýšlením",
   "auto.brain": "Mozek",
+  "auto.check": "Kontrola jiným výrobcem",
+  "auto.checkText": "Mozek jiného výrobce ověřuje odpovědi podle jejich zdrojů: kontrolované pasáže jdou i do jeho služby",
   "auto.quick": "Rychlá otázka",
   "auto.everyday": "Běžný úkol",
   "auto.demanding": "Náročný úkol",

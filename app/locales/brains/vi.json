@@ -90,6 +90,8 @@
   "auto.mix.best": "Câu trả lời tốt nhất",
   "auto.mix.bestText": "Bộ não mạnh nhất cho mọi việc hơn một câu hỏi nhanh, suy nghĩ kỹ lưỡng",
   "auto.brain": "Bộ não",
+  "auto.check": "Kiểm tra lại bằng nhà sản xuất khác",
+  "auto.checkText": "Một bộ não của nhà sản xuất khác đối chiếu câu trả lời với nguồn của chúng: các đoạn được kiểm tra cũng được gửi đến dịch vụ đó",
   "auto.quick": "Một câu hỏi nhanh",
   "auto.everyday": "Một việc thường ngày",
   "auto.demanding": "Một việc khó",

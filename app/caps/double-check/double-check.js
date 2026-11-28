@@ -3,14 +3,16 @@
 // Jean checks each claim an answer makes against the source it cites. The brain that wrote the
 // answer is asked, in one short request outside the conversation, whether the passages support
 // the claims. It has read those sources already, so nothing new leaves the device, and the
-// conversation's prompt and cache are untouched. The verdicts are kept in the conversation, as a
+// conversation's prompt and cache are untouched; unless the user turned on a check by another maker's
+// brain on Auto's page (D100), which then reads those passages too. The verdicts are kept in the conversation, as a
 // record the brain never reads, and shown under the answer.
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { register, loaded, contributions } from '../../ui/caps.js'
 import { fire } from '../../core/hooks.js'
-import { app, activeBrain, brainsHere, send, keepRecords } from '../../ui/state.js'
+import { app, activeBrain, brainsHere, effective, cloudAllowed, send, keepRecords } from '../../ui/state.js'
+import { isLocal } from '../../core/settings.js'
 import { getSecret } from '../../ui/secrets.js'
 import { foldTurns, linkedFiles, metaRecord, splitSuggestions } from '../../core/events.js'
 import { fileText } from '../../core/files.js'
@@ -73,7 +75,10 @@ async function ask(brain, text, task) {
  */
 export async function check(path, at, records) {
   const turn = foldTurns(records).find((candidate) => candidate.at === at)
-  const brain = turn && brainOf(turn)
+  const wrote = turn && brainOf(turn)
+  // Another maker's brain, when the user asked for one and one may read the task (D100).
+  const [{ secondOpinion }, { mayRead }] = await Promise.all([import('../../ui/auto.js'), import('../../core/llm.js')])
+  const brain = wrote && ((effective.peek().settings.crossCheck && secondOpinion(wrote, brainsHere.peek().filter((one) => (cloudAllowed() || isLocal(one)) && mayRead(one, records, app.policy)))) || wrote)
   if (!turn || !brain || checking.peek().includes(at)) return
   const answer = splitSuggestions(turn.steps.map((step) => step.text).filter(Boolean).join('\n\n')).text
   const texts = sourceTexts(records)

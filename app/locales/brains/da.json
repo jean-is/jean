@@ -90,6 +90,8 @@
   "auto.mix.best": "Bedste svar",
   "auto.mix.bestText": "Den stærkeste hjerne til alt ud over et hurtigt spørgsmål, med grundig eftertanke",
   "auto.brain": "Hjerne",
+  "auto.check": "Dobbelttjek med en anden producent",
+  "auto.checkText": "En hjerne fra en anden producent tjekker svar mod deres kilder: de tjekkede passager sendes også til dens tjeneste",
   "auto.quick": "Et hurtigt spørgsmål",
   "auto.everyday": "En hverdagsopgave",
   "auto.demanding": "En krævende opgave",

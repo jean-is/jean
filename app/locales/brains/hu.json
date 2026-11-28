@@ -90,6 +90,8 @@
   "auto.mix.best": "A legjobb válaszok",
   "auto.mix.bestText": "A legerősebb agy mindenhez, ami több egy gyors kérdésnél, alapos gondolkodással",
   "auto.brain": "Agy",
+  "auto.check": "Ellenőrzés egy másik gyártóval",
+  "auto.checkText": "Egy másik gyártó agya veti össze a válaszokat a forrásaikkal: az ellenőrzött részek az ő szolgáltatásához is eljutnak",
   "auto.quick": "Egy gyors kérdés",
   "auto.everyday": "Egy hétköznapi feladat",
   "auto.demanding": "Egy igényes feladat",

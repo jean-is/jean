@@ -305,6 +305,8 @@ export interface Settings {
   mix?: 'less' | 'balanced' | 'best'
   /** Auto's quick, everyday and demanding steps as the user set them, null where Auto chooses (D773) */
   steps?: (Step | null)[]
+  /** true: Double-check asks a brain of another maker than the one that answered (D100) */
+  crossCheck?: boolean
   /** The brain a task that starts with a skill answers with, by the skill's name, while Auto chooses (D773) */
   skillBrains?: Record<string, { brain: string, model?: string }>
   /** offer id → when the user answered it (ISO) */

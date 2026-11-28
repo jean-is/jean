@@ -89,7 +89,7 @@ export function walk(value, known, depth = 0) {
 }
 
 // What settings say that is never the person's own words: switches, counts, choices among Jean's own.
-const SWITCHES = ['format', 'locale', 'auto', 'cloud', 'wasAuto', 'mix', 'memory', 'naturalVoice', 'notifications', 'hurried', 'restored', 'terminal', 'films', 'search', 'limit', 'forget',
+const SWITCHES = ['format', 'locale', 'auto', 'cloud', 'wasAuto', 'mix', 'crossCheck', 'memory', 'naturalVoice', 'notifications', 'hurried', 'restored', 'terminal', 'films', 'search', 'limit', 'forget',
   'retried', 'cited', 'browsed', 'photos', 'readAloud', 'stepped', 'dictated', 'voice', 'pictures']
 
 /**

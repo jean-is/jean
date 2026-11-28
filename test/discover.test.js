@@ -12,7 +12,7 @@ import { bm25, words } from '../app/core/search.js'
 import { KEV, pack, answers, render } from '../app/core/decide.js'
 import { documentPart, sourceNumber } from '../app/core/files.js'
 import { openaiMessages } from '../app/core/llm.js'
-import { chooseBrain, chooseEffort, isLocal, tierFor, stepsOf, startedWith, MIXES } from '../app/ui/auto.js'
+import { chooseBrain, chooseEffort, isLocal, tierFor, stepsOf, startedWith, secondOpinion, MIXES } from '../app/ui/auto.js'
 import { REFLEXES, CAPABILITIES } from '../app/ui/questions.js'
 
 const brain = { id: 'b', provider: /** @type {const} */ ('custom'), api: /** @type {const} */ ('openai'), baseURL: 'http://x', model: 'm' }
@@ -404,6 +404,21 @@ test('a task that starts with a skill named with / is that skill’s, all throug
   const started = [noteRecord('', { kind: 'mentions', words: ['/make-a-site'], skills: ['make-a-site'] }), ...userRecords('/make-a-site for my bakery', [], 'dev')]
   assert.equal(startedWith('now /reply-to-a-client', started, names), 'make-a-site')
   assert.equal(startedWith('/make-a-site again', userRecords('hello', [], 'dev'), names), undefined, 'a task that started otherwise')
+})
+
+test('a second opinion comes from another maker’s brain, one in the cloud first, never the same maker’s through another service (D100)', () => {
+  const claude = { id: 'c', provider: /** @type {const} */ ('anthropic'), api: /** @type {const} */ ('anthropic'), baseURL: 'https://api.anthropic.com/v1', model: 'claude-sonnet-5-5' }
+  const routed = { id: 'r', provider: /** @type {const} */ ('openrouter'), api: /** @type {const} */ ('openai'), baseURL: 'https://openrouter.ai/api/v1', model: 'anthropic/claude-opus-5.5' }
+  const plan = { id: 'p', provider: /** @type {const} */ ('antigravity'), api: /** @type {const} */ ('anthropic'), baseURL: 'http://127.0.0.1:9/antigravity/v1', model: 'claude-sonnet-4-6' }
+  const gemini = { ...plan, id: 'g', model: 'gemini-3.8-flash' }
+  const gpt = { id: 'o', provider: /** @type {const} */ ('openai'), api: /** @type {const} */ ('openai'), baseURL: 'https://api.openai.com/v1', model: 'gpt-6-sol' }
+  const device = { id: 'd', provider: /** @type {const} */ ('device'), api: /** @type {const} */ ('device'), baseURL: '', model: 'gemma-4-e2b' }
+  const mistral = { id: 'm', provider: /** @type {const} */ ('lmstudio'), api: /** @type {const} */ ('openai'), baseURL: 'http://localhost:1234/v1', model: 'mistral-small' }
+  assert.equal(secondOpinion(claude, [claude, routed, plan]), undefined, 'Claude through OpenRouter or a Gemini plan is still Anthropic’s')
+  assert.equal(secondOpinion(claude, [claude, device, gemini])?.id, 'g', 'one in the cloud before the device’s')
+  assert.equal(secondOpinion(claude, [claude, mistral])?.id, 'm')
+  assert.equal(secondOpinion(gpt, [gpt, plan])?.id, 'p')
+  assert.equal(secondOpinion(gemini, [device, gpt])?.id, 'o', 'Gemma is Google’s too')
 })
 
 test('Auto: as much thinking as the request demands, a step more when the user is unhappy, never less; the brain’s own setting first (D414)', () => {

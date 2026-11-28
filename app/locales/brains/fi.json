@@ -90,6 +90,8 @@
   "auto.mix.best": "Parhaat vastaukset",
   "auto.mix.bestText": "Vahvimmat aivot kaikkeen nopeaa kysymystä vaativampaan, perusteellisesti pohtien",
   "auto.brain": "Aivot",
+  "auto.check": "Tarkistus toisen valmistajan aivoilla",
+  "auto.checkText": "Toisen valmistajan aivot tarkistavat vastaukset niiden lähteistä: tarkistetut kohdat menevät myös sen palveluun",
   "auto.quick": "Nopea kysymys",
   "auto.everyday": "Arkinen tehtävä",
   "auto.demanding": "Vaativa tehtävä",

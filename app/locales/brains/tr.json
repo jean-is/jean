@@ -90,6 +90,8 @@
   "auto.mix.best": "En iyi yanıtlar",
   "auto.mix.bestText": "Kısa bir sorunun ötesindeki her şey için en güçlü beyin, derinlemesine düşünerek",
   "auto.brain": "Beyin",
+  "auto.check": "Başka bir üreticiyle doğrula",
+  "auto.checkText": "Başka bir üreticinin beyni yanıtları kaynaklarıyla karşılaştırır: kontrol ettiği bölümler onun hizmetine de gider",
   "auto.quick": "Kısa bir soru",
   "auto.everyday": "Gündelik bir iş",
   "auto.demanding": "Zorlu bir iş",

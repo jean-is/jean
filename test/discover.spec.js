@@ -478,6 +478,13 @@ test('Auto’s steps: what matters most, each step any brain connected, and the 
   await version.selectOption({ label: 'qwen3.6-35b-a3b' })
   await expect(step.locator('small')).toHaveText('LM Studio · Free')
   await version.selectOption({ label: 'gemini-3.5-flash-lite' })
+  // Once Double-check is found, with another maker's brain here, a switch has that brain check answers, off by default (D100).
+  const check = brains.getByRole('switch', { name: 'Double-check with another maker' })
+  await expect(check).toHaveCount(0)
+  await page.evaluate(async () => (await import('/ui/caps.js')).unlock('double-check'))
+  await expect(check).not.toBeChecked()
+  await check.check()
+  expect(await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.crossCheck)).toBe(true)
   await closeSettings(page)
   await page.locator('.brain-chip').click()
   await expect(page.locator('#brain-menu').getByRole('button', { name: 'Fast' })).toHaveAttribute('title', /^gemini-3\.5-flash-lite/)

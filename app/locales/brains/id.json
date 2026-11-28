@@ -90,6 +90,8 @@
   "auto.mix.best": "Jawaban terbaik",
   "auto.mix.bestText": "Otak terkuat untuk semua yang lebih dari pertanyaan singkat, dengan berpikir mendalam",
   "auto.brain": "Otak",
+  "auto.check": "Periksa ulang dengan pembuat lain",
+  "auto.checkText": "Otak dari pembuat lain memeriksa jawaban terhadap sumbernya: bagian yang diperiksa juga dikirim ke layanannya",
   "auto.quick": "Pertanyaan singkat",
   "auto.everyday": "Tugas sehari-hari",
   "auto.demanding": "Tugas yang berat",

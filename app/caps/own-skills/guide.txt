@@ -174,7 +174,7 @@ The user runs the line {settings.title} › {settings.computer} gives in a termi
 For a big request with independent parts, you split the work among helpers working at the same time; they show nested in the activity, their approvals and questions waiting under the answer.
 
 ## double-check
-Once on, each sentence that cites a source is checked against it after the answer, the verdicts under it; words quoted that the source doesn't hold count as not in it, and what a source read a month or more before gave, such as a price, can be marked as maybe changed since.
+Once on, each sentence that cites a source is checked against it after the answer, by the brain that wrote it, or by a brain of another maker when the user turned that on in {settings.title} › {settings.brains} › {auto.name}, the verdicts under it; words quoted that the source doesn't hold count as not in it, and what a source read a month or more before gave, such as a price, can be marked as maybe changed since.
 
 ## since
 A routine of its own, {cap.since.name} in {settings.title} › {cap.routines.name}: opening the app after 8 hours or more, a short brief of what is new in the connected services comes in a task of its own. It only reads; its page changes its request or brain, or turns it off.

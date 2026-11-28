@@ -90,6 +90,8 @@
   "auto.mix.best": "최고의 답",
   "auto.mix.bestText": "간단한 질문이 아니면 가장 강한 두뇌로 깊이 있게 생각해요",
   "auto.brain": "두뇌",
+  "auto.check": "다른 제조사로 다시 확인",
+  "auto.checkText": "다른 제조사의 두뇌가 답을 출처와 대조해요. 확인하는 부분은 그 서비스에도 보내져요",
   "auto.quick": "간단한 질문",
   "auto.everyday": "일상적인 작업",
   "auto.demanding": "어려운 작업",

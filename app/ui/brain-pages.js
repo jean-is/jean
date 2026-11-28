@@ -9,7 +9,7 @@ import { live } from 'lit-html/directives/live.js'
 import { signal, effect, untracked } from '@preact/signals-core'
 import { app, effective, activeBrain, brainsHere, updateSettings, cloudAllowed, showError, notify, sitePage } from './state.js'
 import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, setVersion, setEffort, setStep, keepBrain, startOpenRouter, leave, keepOnDevice } from './brains.js'
-import { isLocal, TIERS, MIXES, EFFORTS, stepsOf } from './auto.js'
+import { isLocal, TIERS, MIXES, EFFORTS, stepsOf, secondOpinion } from './auto.js'
 import { unlock, isDenied, loaded, slots } from './caps.js'
 import { openSettings, sectionOpen, pageOpen, placeable, where, projectName, lockedBy, valueOf } from './dialogs.js'
 import { choices, cost } from './picker.js'
@@ -475,7 +475,10 @@ function auto() {
       ${near && sensed && lean ? here(icons.lock, 'personal') : nothing}
       ${near ? here(icons['brain-device'], lean ? 'offline' : 'all') : nothing}
     </ul></section>
-    <p class="hint">${t('auto.steps')}</p>${mixFixed || stepsFixed ? html`<p class="muted">${lockedBy()}</p>` : nothing}`
+    <p class="hint">${t('auto.steps')}</p>
+    ${loaded.value.has('double-check') && lean && secondOpinion(lean, brainsHere.value) ? html`<ul class="list"><li><label class="item" for="auto-check"><span class="item-text"><strong>${t('auto.check')}</strong><small>${t('auto.checkText')}</small></span></label>
+      <input id="auto-check" type="checkbox" class="switch" role="switch" .checked=${live(Boolean(settings.crossCheck))} @change=${(/** @type {Event} */ e) => updateSettings({ crossCheck: /** @type {HTMLInputElement} */ (e.target).checked || undefined }).catch(showError)}></li></ul>` : nothing}
+    ${mixFixed || stepsFixed ? html`<p class="muted">${lockedBy()}</p>` : nothing}`
 }
 
 /** The versions a brain's service lists, once asked. @param {BrainConfig} brain */

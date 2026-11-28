@@ -90,6 +90,8 @@
   "auto.mix.best": "最好的回答",
   "auto.mix.bestText": "除了簡單的問題，都用最強的大腦深入思考",
   "auto.brain": "大腦",
+  "auto.check": "由其他廠商複核",
+  "auto.checkText": "由其他廠商的大腦對照來源核對回答：被核對的段落也會傳送到它的服務",
   "auto.quick": "簡單的問題",
   "auto.everyday": "日常任務",
   "auto.demanding": "複雜任務",

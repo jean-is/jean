@@ -81,6 +81,13 @@ export function startedWith(text, records, names) {
   return names.filter((name) => at(name) >= 0).sort((a, b) => at(a) - at(b))[0]
 }
 
+/** Who makes a brain's model, as its name tells, else as its provider does. @param {BrainConfig} brain */
+const makerOf = ({ provider, model }) => (/claude|sonnet|opus|haiku/i.test(model) ? 'anthropic' : /(^|\/)(gpt|o\d)/i.test(model) ? 'openai' : /gemini|gemma/i.test(model) ? 'google'
+  : /** @type {Record<string, string>} */ ({ claudecode: 'anthropic', chatgpt: 'openai' })[provider] ?? provider)
+
+/** A brain of another maker than the one that wrote an answer, to double-check it (D100): one in the cloud first. @param {BrainConfig} wrote @param {BrainConfig[]} brains those that may read it */
+export const secondOpinion = (wrote, brains) => ((others) => others.find((one) => !isLocal(one)) ?? others[0])(brains.filter((one) => makerOf(one) !== makerOf(wrote)))
+
 /** How much a brain thinks, from least to most (D414). @type {readonly Effort[]} */
 export const EFFORTS = ['low', 'medium', 'high']
 
