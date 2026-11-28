@@ -30,7 +30,10 @@ import { SECRET, STORE, LIMIT, ULID, deviceName, recordOf, recordFor, recordsOf,
 /** @typedef {import('./flow.js').Identity} Identity */
 /** @typedef {import('./flow.js').Device} Device */
 /** @typedef {import('./flow.js').Context} Context */
-/** Why a pairing failed. @typedef {'link' | 'used' | 'gone' | 'key' | 'child' | 'relay' | 'storage' | 'exists' | 'paired' | 'removed' | 'tries' | 'broken'} Reason */
+/**
+ * Why a pairing failed; on A, B's leaving as said there: its person said no (declined), the two sync already (synced), or B can't join A
+ * and adds A instead (reverse). @typedef {'link' | 'used' | 'gone' | 'key' | 'child' | 'relay' | 'storage' | 'exists' | 'paired' | 'removed' | 'tries' | 'declined' | 'synced' | 'reverse' | 'broken'} Reason
+ */
 /**
  * Adding a device, on the one that has the Jean: the link to show, with Jean's web address (none in the desktop app: the link is then only
  * pasted), B's name, the lock to ask first where the profile has one (caps/lock/lock.js's ways(passed)), the code and the tries left, sending,
@@ -46,9 +49,9 @@ import { SECRET, STORE, LIMIT, ULID, deviceName, recordOf, recordFor, recordsOf,
  */
 /**
  * The pairing under way, on either side: what ends its reads, the mailboxes it opened, removed as it ends; on A what the code needs and
- * the reader of B's answers; on B the person's Join on what came, and how A hears that it was left unopened.
+ * the reader of B's answers; on B the person's Join on what came, and how A hears that it was left unopened, and why.
  * @typedef {{ controller: AbortController, boxes: string[], me?: Identity, hello?: { key: JsonWebKey, mailbox: string, name: string }, code?: string,
- *   answers?: import('../../ui/relay.js').Reader, agree?: () => void, leave?: () => Promise<unknown> }} Flow
+ *   answers?: import('../../ui/relay.js').Reader, agree?: () => void, leave?: (reason?: Reason) => Promise<unknown> }} Flow
  */
 
 export const [adding, joining] = [signal(/** @type {Adding} */ ({ step: 'idle' })), signal(/** @type {Joining} */ ({ step: 'idle' }))]
@@ -262,8 +265,10 @@ export function cancel() {
 
 /** Why a pairing failed, from what refused it. @param {any} error @returns {Reason} */
 const reasonOf = (error) => error?.reason ?? (error?.status === 409 ? 'used' : error?.status === 404 ? 'gone' : error?.status || error instanceof TypeError ? 'relay' : /another key/.test(error?.message) ? 'key' : 'broken')
-/** A pairing ended by what went wrong, said on its side, unless it was stopped. @param {Flow} one @param {typeof adding | typeof joining} side @param {unknown} error */
-const failed = (one, side, error) => { if (!one.controller.signal.aborted) { warn(error); one.leave?.().catch(() => {}); end(one); side.value = { step: 'failed', reason: reasonOf(error) } } }
+/** A pairing ended by what went wrong, said on its side, and on B to A, unless it was stopped. @param {Flow} one @param {typeof adding | typeof joining} side @param {unknown} error */
+const failed = (one, side, error) => { if (!one.controller.signal.aborted) { const reason = reasonOf(error); warn(error); one.leave?.(reason).catch(() => {}); end(one); side.value = { step: 'failed', reason } } }
+/** What A says of B's leaving, from why B said it left: B's person said no, B paired with A already, B can't join A, or what failed. @param {unknown} why @returns {Reason} */
+const leftFor = (why) => (why === 'declined' ? 'declined' : why === 'exists' ? 'synced' : why === 'paired' || why === 'removed' ? 'reverse' : why === 'relay' ? 'relay' : 'broken')
 
 /**
  * Adds a device, on A: the pairing mailbox opened once and one for B's answers, the link shown, then B's hello, A's nonce, B's reveal, and
@@ -325,7 +330,7 @@ export async function confirm(typed) {
     // makes anything. Then every device has the list, B too, whose mailbox, read in order, holds it before anything a device removed
     // meanwhile may send; one that didn't take it gets it again (share()).
     const joined = await nextFrom(one.answers, me, hello.key, (value) => value?.kind === 'joined' || value?.kind === 'left')
-    if (joined.kind !== 'joined') throw Object.assign(new Error('The other device didn’t open it.'), { reason: 'gone' })
+    if (joined.kind !== 'joined') throw Object.assign(new Error(`The other device didn’t open it: ${joined.reason}.`), { reason: leftFor(joined.reason) })
     if ((await identity(false))?.id !== me.id) throw new Error('This device was removed meanwhile.')
     await writeRecord(app.fs, you, locked)
     await mark(ctx)
@@ -386,8 +391,8 @@ export async function join(link) {
       return value?.kind === kind && (kind !== 'bundle' || ULID.test(value.you))
     })
     const bundle = await fromA('bundle')
-    // From here, A hears whether its bundle was opened: left, when the person cancels or it can't be taken.
-    one.leave = async () => send(base, nonce.mailbox, await envelope(me, nonce.key, { kind: 'left' }))
+    // From here, A hears whether its bundle was opened: left, when the person cancels, or why it can't be taken.
+    one.leave = async (reason = 'declined') => send(base, nonce.mailbox, await envelope(me, nonce.key, { kind: 'left', reason }))
     await welcome(nonce.key)
     await next.done()
     const from = (Array.isArray(bundle.devices) ? bundle.devices : []).map(recordOf).find((/** @type {Device | null} */ record) => record && sameKey(record.key, nonce.key))

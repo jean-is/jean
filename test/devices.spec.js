@@ -335,7 +335,7 @@ test('a second device opening the same link hears it was already used', async ({
   await Promise.all([b, c].map((one) => one.context().close()))
 })
 
-test('a device already with others joins no other device: it says so, adds nothing, and the other hears it stopped', async ({ page, browser }) => {
+test('a device already with others joins no other device: it says so, adds nothing, and the other hears why, to add it from there instead', async ({ page, browser }) => {
   await deviceA(page)
   const b = await device(browser)
   await pair(page, b)
@@ -348,9 +348,22 @@ test('a device already with others joins no other device: it says so, adds nothi
   await expect(digits).toHaveText(/^\d{3} \d{3}$/)
   await typeCode(settings, String(await digits.textContent()).replace(' ', ''))
   await expect(b.locator('app-settings .devices-wrong')).toHaveText('This device already syncs with your other devices. Add the new one from here instead.')
-  await expect(settings.locator('.devices-wrong')).toHaveText('Your other device stopped adding this one. Start again there.')
+  await expect(settings.locator('.devices-wrong')).toHaveText('Your other device can’t join this one. Add this device from there instead.')
   expect([(await listed(b)).length, (await listed(c)).length]).toEqual([2, 1])
   await Promise.all([b, c].map((one) => one.context().close()))
+})
+
+test('a device paired already, added again, says so, and the one adding hears the two already sync', async ({ page, browser }) => {
+  await deviceA(page)
+  const b = await device(browser)
+  await pair(page, b)
+  await closeSettings(page)
+  const { settings, code } = await exchange(page, b)
+  await typeCode(settings, code)
+  await expect(b.locator('app-settings .devices-wrong')).toHaveText('Your Jean from that device is already here.')
+  await expect(settings.locator('.devices-wrong')).toHaveText('These two devices already sync with each other.')
+  expect([(await listed(page)).length, (await listed(b)).length]).toEqual([2, 2])
+  await b.context().close()
 })
 
 test('settings follow the person from one device to the other, and each keeps its voice', async ({ page, browser }) => {
@@ -617,7 +630,7 @@ test('a link opened does nothing until Sync the two, and the profile that comes,
   await expect(flow.getByRole('button', { name: 'Add a device' })).toBeFocused()
   expect([await here(b), await profiles(b)]).toEqual([first, [first]])
   expect(String(await read(b, '.secrets/keys.json'))).not.toMatch(/key of the cloud/)
-  await expect(settings.locator('.devices-wrong')).toHaveText('Your other device stopped adding this one. Start again there.')
+  await expect(settings.locator('.devices-wrong')).toHaveText('Your other device said no, so nothing was added.')
   expect(await listed(page)).toHaveLength(1)
   await settings.locator('.devices-actions').getByRole('button', { name: 'Close' }).click()
   await expect(settings.locator('.devices-cards > li')).toHaveCount(1)
