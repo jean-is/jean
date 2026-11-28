@@ -126,6 +126,7 @@ npm run cards   # draw the pictures a link to jean.is shows, one per language of
 npm run check   # vendor, manifest, tsc --noEmit (strict), tests, budgets
 npm run security  # the security rules above, in the code, no secret in a tracked file (D679), and each file of code's licence (-- --fix writes a missing one); npm test runs it too
 npm run lts     # whether .nvmrc names Node's newest LTS, from Node's list of releases (D701); -- --write moves it and every node:<major> image there; CI runs it each Monday too
+npm run tiers   # whether Auto's Fast, Smart and Best are current, from models.dev's catalogue: none retired, none with a newer version at no more cost, a plan's only noted; CI runs it each Monday too
 npm test        # node --test --test-force-exit test/*.test.js
 npm run e2e     # Playwright smoke tests in Chromium and WebKit (once: npx playwright install chromium webkit); AFFECTED=origin/main runs only the specs a change since then affects, as the last runs read them (D772), SPECS='ask files' those
 npm run ci      # GitHub's CI here (D724): every job read from .github/workflows/, run in the images CI uses, side by side, logs in dist/ci/; -- e2e:webkit or -- check audit picks jobs, --worktree takes uncommitted changes, --affected only the browser tests a change since origin/main affects (D772), --amd64 runs as GitHub's runners do; what publishes is rehearsed, never pushed; needs Docker, and helm, kind and kubectl for the containers job

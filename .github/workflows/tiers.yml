@@ -1,0 +1,26 @@
+# Whether Auto's Fast, Smart and Best (TIERS in app/ui/auto.js) are current (npm run tiers): on every push to main and each
+# Monday, so that a retired version, or a newer one at no more cost, shows within a week even when nothing is pushed. A red
+# run names the tier and the version to move to, from models.dev's catalogue, the one Jean reads its prices from. It stops
+# no image and no deploy, which never wait on models.dev.
+
+name: Auto's tiers
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '23 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tiers:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+      - run: npm run tiers
