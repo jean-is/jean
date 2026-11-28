@@ -669,7 +669,7 @@ test('a page of parts goes online from its pane as a site its host runs: drawn a
     const { app } = await import('/ui/state.js'), [site] = (await app.fs.list(`${app.projectDir}/sites`)).map(({ name }) => name)
     return JSON.parse((await app.fs.read(`${app.projectDir}/sites/${site}/site.json`)) ?? '{}')
   })
-  expect(record).toMatchObject({ files: ['alive.js', 'parts.js', 'live.js', 'formula.js', 'option.js', 'echarts.js', 'index.html'], published: { name, address } })
+  expect(record).toMatchObject({ files: ['alive.js', 'parts.js', 'live.js', 'engine.js', 'formula.js', 'option.js', 'echarts.js', 'index.html'], published: { name, address } })
 
   await throughHost(context)
   const visit = await context.newPage(), refused = /** @type {string[]} */ ([]), errors = /** @type {string[]} */ ([])

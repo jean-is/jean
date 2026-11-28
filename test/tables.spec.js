@@ -964,7 +964,8 @@ test('a Formula column’s cells are worked out from each row’s others, and a 
 for (const lang of /** @type {const} */ (['en', 'ar'])) {
   test(`columns kept in view from the start: the divider after them dragged to a column's end edge, moved by the arrows or set from a head's menu, the others scrolling under them (${lang})`, async ({ page }) => {
     const rtl = lang === 'ar', words = rtl ? { freeze: 'تجميد حتى هنا', unfreeze: 'إلغاء تجميد الأعمدة', frozen: 'الأعمدة المجمّدة' } : { freeze: 'Freeze up to here', unfreeze: 'Unfreeze columns', frozen: 'Frozen columns' }
-    await page.setViewportSize({ width: 1280, height: 760 })
+    // Wide enough that two columns leave the pane its 10rem to scroll in any engine's fonts: at 1280, Linux's WebKit draws them a third of a pixel too wide to keep.
+    await page.setViewportSize({ width: 1440, height: 760 })
     await start(page, lang)
     await page.evaluate(async () => {
       const [{ unlock }, { app }] = await Promise.all([import('/ui/caps.js'), import('/ui/state.js')])
@@ -987,6 +988,7 @@ for (const lang of /** @type {const} */ (['en', 'ar'])) {
     await page.keyboard.press(rtl ? 'ArrowRight' : 'ArrowLeft')
     await expect(divider).toHaveAttribute('aria-valuenow', '2')
     await expect(table).toHaveAttribute('data-frozen', '2')
+    await expect(table).toHaveClass(/is-frozen/)
     await expect(divider).toBeFocused()
     // Scrolled sideways, the two first stay where they are and the others pass under them.
     const [kept, passing, cell] = [await x(heads.nth(1)), await x(heads.nth(4)), await x(page.locator('.table-grid tbody tr').first().locator('td').nth(1))]
